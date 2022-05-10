@@ -1,0 +1,15 @@
+﻿namespace TicketManagement.DataAccess.Entities
+{
+    public class Area
+    {
+        public int Id { get; set; }
+
+        public int LayoutId { get; set; }
+
+        public string Descpription { get; set; }
+
+        public int CoordX { get; set; }
+
+        public int CoordY { get; set; }
+    }
+}
