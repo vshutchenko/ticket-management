@@ -6,7 +6,7 @@
 
         public int LayoutId { get; set; }
 
-        public string Descpription { get; set; }
+        public string Description { get; set; }
 
         public int CoordX { get; set; }
 
