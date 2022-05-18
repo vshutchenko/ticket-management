@@ -71,7 +71,7 @@ namespace TicketManagement.DataAccess.Implementations
         {
             using SqlConnection connection = new SqlConnection(_connectionString);
 
-            using SqlCommand command = new SqlCommand("SELECT Id, Name, Description, LayoutId, StartDate, EndDate FROM Event");
+            using SqlCommand command = new SqlCommand("SELECT Id, Name, Description, LayoutId, StartDate, EndDate FROM Event", connection);
 
             connection.Open();
 
@@ -95,12 +95,7 @@ namespace TicketManagement.DataAccess.Implementations
         {
             using SqlConnection connection = new SqlConnection(_connectionString);
 
-            using SqlCommand command = new SqlCommand("SelectIvent", connection)
-            {
-                CommandType = CommandType.StoredProcedure,
-            };
-
-            command.Parameters.Add(new SqlParameter("eventId", id));
+            using SqlCommand command = new SqlCommand($"SELECT Id, Name, Description, LayoutId, StartDate, EndDate FROM Event WHERE Id = {id}", connection);
 
             connection.Open();
 
