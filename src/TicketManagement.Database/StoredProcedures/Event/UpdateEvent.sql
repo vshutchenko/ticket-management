@@ -11,6 +11,7 @@ AS
 
 	UPDATE Event
 	SET Name = @name, Description = @description, LayoutId = @layoutId
+	WHERE Id = @eventId
 
 	INSERT INTO EventArea (EventId, Description, CoordX, CoordY, Price)
 	SELECT @eventId, Description, CoordX, CoordY, 0
