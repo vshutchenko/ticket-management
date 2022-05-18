@@ -1,9 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using TicketManagement.BusinessLogic.Interfaces;
 using TicketManagement.BusinessLogic.Validation;
 using TicketManagement.DataAccess.Entities;
 using TicketManagement.DataAccess.Interfaces;
+
+[assembly: InternalsVisibleTo("TicketManagement.IntegrationTests")]
+[assembly: InternalsVisibleTo("TicketManagement.UnitTests")]
 
 namespace TicketManagement.BusinessLogic.Implementations
 {
@@ -60,16 +64,16 @@ namespace TicketManagement.BusinessLogic.Implementations
             return _areaRepository.GetById(id);
         }
 
-        public void Update(Area layout)
+        public void Update(Area area)
         {
-            if (layout is null)
+            if (area is null)
             {
-                throw new ArgumentNullException(nameof(layout));
+                throw new ArgumentNullException(nameof(area));
             }
 
-            if (_validationService.Validate(layout))
+            if (_validationService.Validate(area))
             {
-                _areaRepository.Update(layout);
+                _areaRepository.Update(area);
             }
         }
     }

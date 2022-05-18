@@ -9,7 +9,7 @@ namespace TicketManagement.BusinessLogic.Interfaces
     {
         IEnumerable<Event> GetAll();
         Event GetById(int id);
-        int Create(Event @event, IEnumerable<EventArea> eventAreas);
+        int Create(Event @event);
         void Update(Event @event);
         void Delete(int id);
     }

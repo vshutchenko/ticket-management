@@ -1,19 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using TicketManagement.BusinessLogic.Interfaces;
 using TicketManagement.DataAccess.Entities;
+using TicketManagement.DataAccess.Interfaces;
 
 namespace TicketManagement.BusinessLogic.Validation
 {
     internal class AreaValidationService : IValidationService<Area>
     {
-        private readonly IAreaService _areaService;
+        private readonly IRepository<Area> _areaRepository;
         private readonly List<ValidationDetails> _details;
 
-        public AreaValidationService(IAreaService areaService)
+        public AreaValidationService(IRepository<Area> areaRepository)
         {
-            _areaService = areaService ?? throw new ArgumentNullException(nameof(areaService));
+            _areaRepository = areaRepository ?? throw new ArgumentNullException(nameof(areaRepository));
             _details = new List<ValidationDetails>();
         }
 
@@ -26,7 +26,7 @@ namespace TicketManagement.BusinessLogic.Validation
 
         private bool IsUniqueDecriptionInLayout(int layoutId, string description, StringComparison comparisonType = StringComparison.OrdinalIgnoreCase)
         {
-            if (_areaService.GetAll().Any(a => a.LayoutId == layoutId && a.Description.Equals(description, comparisonType)))
+            if (_areaRepository.GetAll().Any(a => a.LayoutId == layoutId && a.Description.Equals(description, comparisonType)))
             {
                 _details.Add(new ValidationDetails("the same area is already exists in the layout", nameof(description), description.ToString()));
                 return false;

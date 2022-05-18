@@ -1,19 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using TicketManagement.BusinessLogic.Interfaces;
 using TicketManagement.DataAccess.Entities;
+using TicketManagement.DataAccess.Interfaces;
 
 namespace TicketManagement.BusinessLogic.Validation
 {
     internal class SeatValidationService : IValidationService<Seat>
     {
-        private readonly ISeatService _seatService;
+        private readonly IRepository<Seat> _seatRepository;
         private readonly List<ValidationDetails> _details;
 
-        public SeatValidationService(ISeatService seatService)
+        public SeatValidationService(IRepository<Seat> seatRepository)
         {
-            _seatService = seatService ?? throw new ArgumentNullException(nameof(seatService));
+            _seatRepository = seatRepository ?? throw new ArgumentNullException(nameof(seatRepository));
             _details = new List<ValidationDetails>();
         }
 
@@ -26,7 +26,7 @@ namespace TicketManagement.BusinessLogic.Validation
 
         private bool IsUniqueRowAndNumberInArea(int areaId, int row, int number)
         {
-            if (_seatService.GetAll().Any(s => s.AreaId == areaId && s.Row == row && s.Number == number))
+            if (_seatRepository.GetAll().Any(s => s.AreaId == areaId && s.Row == row && s.Number == number))
             {
                 _details.Add(new ValidationDetails("seat with same row and number is already exists in the area", nameof(areaId), areaId.ToString()));
                 return false;

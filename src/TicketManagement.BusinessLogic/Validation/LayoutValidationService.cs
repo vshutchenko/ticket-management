@@ -1,20 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using TicketManagement.BusinessLogic.Interfaces;
 using TicketManagement.DataAccess.Entities;
+using TicketManagement.DataAccess.Interfaces;
 
 namespace TicketManagement.BusinessLogic.Validation
 {
     internal class LayoutValidationService : IValidationService<Layout>
     {
-        private readonly ILayoutService _layoutService;
+        private readonly IRepository<Layout> _layoutRepsitory;
         private readonly List<ValidationDetails> _details;
 
-        public LayoutValidationService(ILayoutService layoutService)
+        public LayoutValidationService(IRepository<Layout> layoutRepsitory)
         {
-            _layoutService = layoutService ?? throw new ArgumentNullException(nameof(layoutService));
-
+            _layoutRepsitory = layoutRepsitory ?? throw new ArgumentNullException(nameof(layoutRepsitory));
             _details = new List<ValidationDetails>();
         }
 
@@ -27,7 +26,7 @@ namespace TicketManagement.BusinessLogic.Validation
 
         private bool IsUniqueDescriptionInVenue(int venueId, string description, StringComparison comparisonType = StringComparison.OrdinalIgnoreCase)
         {
-            if (_layoutService.GetAll().Any(l => l.VenueId == venueId && description.Equals(l.Description, comparisonType)))
+            if (_layoutRepsitory.GetAll().Any(l => l.VenueId == venueId && description.Equals(l.Description, comparisonType)))
             {
                 _details.Add(new ValidationDetails("the same layout is already exists int current venue", nameof(description), description.ToString()));
                 return false;

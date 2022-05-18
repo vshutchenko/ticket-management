@@ -28,7 +28,7 @@ namespace TicketManagement.BusinessLogic.Implementations
 
             if (!_eventValidator.Validate(@event))
             {
-                throw new ArgumentException(nameof(@event), "invalid event")
+                throw new ArgumentException(nameof(@event));
             }
 
             return _eventRepository.Create(@event);
@@ -36,25 +36,37 @@ namespace TicketManagement.BusinessLogic.Implementations
 
         public void Delete(int id)
         {
+            if (id < 1)
+            {
+                throw new ArgumentException(nameof(id));
+            }
+
             _eventRepository.Delete(id);
         }
 
         public IEnumerable<Event> GetAll()
         {
-            foreach (var @event in _eventRepository.Get(offset, limit))
-            {
-                yield return @event;
-            }
+            return _eventRepository.GetAll();
         }
 
         public Event GetById(int id)
         {
+            if (id < 1)
+            {
+                throw new ArgumentException(nameof(id));
+            }
+
             return _eventRepository.GetById(id);
         }
 
         public void Update(Event @event)
         {
-            throw new NotImplementedException();
+            if (@event is null)
+            {
+                throw new ArgumentNullException(nameof(@event));
+            }
+
+            _eventRepository.Update(@event);
         }
     }
 }
