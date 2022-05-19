@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using TicketManagement.BusinessLogic.Interfaces;
 using TicketManagement.BusinessLogic.Validation;
 using TicketManagement.DataAccess.Entities;
@@ -11,12 +10,12 @@ namespace TicketManagement.BusinessLogic.Implementations
     internal class EventService : IEventService
     {
         private readonly IRepository<Event> _eventRepository;
-        private readonly IValidationService<Event> _eventValidator;
+        private readonly IValidationService<Event> _validationService;
 
-        public EventService(IRepository<Event> eventRepository, IValidationService<Event> eventValidator)
+        public EventService(IRepository<Event> eventRepository, IValidationService<Event> validationService)
         {
             _eventRepository = eventRepository ?? throw new ArgumentNullException(nameof(eventRepository));
-            _eventValidator = eventValidator ?? throw new ArgumentNullException(nameof(eventValidator));
+            _validationService = validationService ?? throw new ArgumentNullException(nameof(validationService));
         }
 
         public int Create(Event @event)
@@ -26,12 +25,14 @@ namespace TicketManagement.BusinessLogic.Implementations
                 throw new ArgumentNullException(nameof(@event));
             }
 
-            if (!_eventValidator.Validate(@event))
+            bool isValid = _validationService.Validate(@event);
+
+            if (isValid)
             {
-                throw new ArgumentException(nameof(@event));
+                return _eventRepository.Create(@event);
             }
 
-            return _eventRepository.Create(@event);
+            return -1;
         }
 
         public void Delete(int id)
@@ -66,7 +67,10 @@ namespace TicketManagement.BusinessLogic.Implementations
                 throw new ArgumentNullException(nameof(@event));
             }
 
-            _eventRepository.Update(@event);
+            if (_validationService.Validate(@event))
+            {
+                _eventRepository.Update(@event);
+            }
         }
     }
 }
