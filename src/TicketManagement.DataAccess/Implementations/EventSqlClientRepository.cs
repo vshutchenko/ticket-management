@@ -18,11 +18,6 @@ namespace TicketManagement.DataAccess.Implementations
 
         public int Create(Event @event)
         {
-            if (@event is null)
-            {
-                throw new ArgumentNullException(nameof(@event));
-            }
-
             using SqlConnection connection = new SqlConnection(_connectionString);
 
             using SqlCommand command = new SqlCommand("InsertEvent", connection)
@@ -30,16 +25,14 @@ namespace TicketManagement.DataAccess.Implementations
                 CommandType = CommandType.StoredProcedure,
             };
 
-            int newId = -1;
-
             SqlParameter[] parameters = new SqlParameter[]
             {
-                new SqlParameter("eventId", newId),
-                new SqlParameter("name", @event.Name),
-                new SqlParameter("description", @event.Descpription),
-                new SqlParameter("layoutId", @event.LayoutId),
-                new SqlParameter("startDate", @event.StartDate),
-                new SqlParameter("endDate", @event.EndDate),
+                new SqlParameter("@eventId", SqlDbType.Int) { Direction = ParameterDirection.Output },
+                new SqlParameter("@name", @event.Name),
+                new SqlParameter("@description", @event.Descpription),
+                new SqlParameter("@layoutId", @event.LayoutId),
+                new SqlParameter("@startDate", @event.StartDate),
+                new SqlParameter("@endDate", @event.EndDate),
             };
 
             command.Parameters.AddRange(parameters);
@@ -48,7 +41,7 @@ namespace TicketManagement.DataAccess.Implementations
 
             command.ExecuteNonQuery();
 
-            return newId;
+            return Convert.ToInt32(command.Parameters["@eventId"].Value);
         }
 
         public void Delete(int id)
@@ -114,11 +107,6 @@ namespace TicketManagement.DataAccess.Implementations
 
         public void Update(Event @event)
         {
-            if (@event is null)
-            {
-                throw new ArgumentNullException(nameof(@event));
-            }
-
             using SqlConnection connection = new SqlConnection(_connectionString);
 
             using SqlCommand command = new SqlCommand("UpdateEvent", connection)

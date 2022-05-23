@@ -18,11 +18,6 @@ namespace TicketManagement.DataAccess.Implementations
 
         public int Create(Venue item)
         {
-            if (item is null)
-            {
-                throw new ArgumentNullException(nameof(item));
-            }
-
             using SqlConnection connection = new SqlConnection(_connectionString);
 
             using SqlCommand command = new SqlCommand("InsertVenue", connection)
@@ -30,11 +25,8 @@ namespace TicketManagement.DataAccess.Implementations
                 CommandType = CommandType.StoredProcedure,
             };
 
-            int newId = -1;
-
             SqlParameter[] parameters = new SqlParameter[]
             {
-                new SqlParameter("venueId", newId),
                 new SqlParameter("description", item.Description),
                 new SqlParameter("address", item.Address),
                 new SqlParameter("phone", item.Phone),
@@ -44,9 +36,9 @@ namespace TicketManagement.DataAccess.Implementations
 
             connection.Open();
 
-            command.ExecuteNonQuery();
+            var id = Convert.ToInt32(command.ExecuteScalar());
 
-            return newId;
+            return id;
         }
 
         public void Delete(int id)
@@ -108,11 +100,6 @@ namespace TicketManagement.DataAccess.Implementations
 
         public void Update(Venue item)
         {
-            if (item is null)
-            {
-                throw new ArgumentNullException(nameof(item));
-            }
-
             using SqlConnection connection = new SqlConnection(_connectionString);
 
             using SqlCommand command = new SqlCommand("UpdateVenue", connection)

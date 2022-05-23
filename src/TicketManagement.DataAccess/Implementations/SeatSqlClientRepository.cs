@@ -8,22 +8,17 @@ using TicketManagement.DataAccess.Interfaces;
 
 namespace TicketManagement.DataAccess.Implementations
 {
-    internal class SeatSqlClientService : IRepository<Seat>
+    internal class SeatSqlClientRepository : IRepository<Seat>
     {
         private readonly string _connectionString;
 
-        public SeatSqlClientService(string connectionString)
+        public SeatSqlClientRepository(string connectionString)
         {
             _connectionString = connectionString ?? throw new ArgumentNullException(nameof(connectionString));
         }
 
         public int Create(Seat item)
         {
-            if (item is null)
-            {
-                throw new ArgumentNullException(nameof(item));
-            }
-
             using SqlConnection connection = new SqlConnection(_connectionString);
 
             using SqlCommand command = new SqlCommand("InsertSeat", connection)
@@ -31,11 +26,8 @@ namespace TicketManagement.DataAccess.Implementations
                 CommandType = CommandType.StoredProcedure,
             };
 
-            int newId = -1;
-
             SqlParameter[] parameters = new SqlParameter[]
             {
-                new SqlParameter("seatId", newId),
                 new SqlParameter("areaId", item.AreaId),
                 new SqlParameter("row", item.Row),
                 new SqlParameter("number", item.Number),
@@ -45,9 +37,9 @@ namespace TicketManagement.DataAccess.Implementations
 
             connection.Open();
 
-            command.ExecuteNonQuery();
+            var id = Convert.ToInt32(command.ExecuteScalar());
 
-            return newId;
+            return id;
         }
 
         public void Delete(int id)
@@ -109,11 +101,6 @@ namespace TicketManagement.DataAccess.Implementations
 
         public void Update(Seat item)
         {
-            if (item is null)
-            {
-                throw new ArgumentNullException(nameof(item));
-            }
-
             using SqlConnection connection = new SqlConnection(_connectionString);
 
             using SqlCommand command = new SqlCommand("UpdateSeat", connection)

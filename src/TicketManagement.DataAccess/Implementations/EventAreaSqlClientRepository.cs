@@ -18,11 +18,6 @@ namespace TicketManagement.DataAccess.Implementations
 
         public int Create(EventArea item)
         {
-            if (item is null)
-            {
-                throw new ArgumentNullException(nameof(item));
-            }
-
             using SqlConnection connection = new SqlConnection(_connectionString);
 
             using SqlCommand command = new SqlCommand("InsertEventArea", connection)
@@ -30,11 +25,8 @@ namespace TicketManagement.DataAccess.Implementations
                 CommandType = CommandType.StoredProcedure,
             };
 
-            int newId = -1;
-
             SqlParameter[] parameters = new SqlParameter[]
             {
-                new SqlParameter("eventAreaId", newId),
                 new SqlParameter("eventId", item.EventId),
                 new SqlParameter("description", item.Description),
                 new SqlParameter("coordX", item.CoordX),
@@ -46,9 +38,9 @@ namespace TicketManagement.DataAccess.Implementations
 
             connection.Open();
 
-            command.ExecuteNonQuery();
+            var id = Convert.ToInt32(command.ExecuteScalar());
 
-            return newId;
+            return id;
         }
 
         public void Delete(int id)
@@ -86,7 +78,7 @@ namespace TicketManagement.DataAccess.Implementations
                     Description = reader.GetString("Description"),
                     CoordX = reader.GetInt32("CoordX"),
                     CoordY = reader.GetInt32("CoordY"),
-                    Price = reader.GetInt32("Price"),
+                    Price = reader.GetDecimal("Price"),
                 };
             }
         }
@@ -114,11 +106,6 @@ namespace TicketManagement.DataAccess.Implementations
 
         public void Update(EventArea item)
         {
-            if (item is null)
-            {
-                throw new ArgumentNullException(nameof(item));
-            }
-
             using SqlConnection connection = new SqlConnection(_connectionString);
 
             using SqlCommand command = new SqlCommand("UpdateEventArea", connection)

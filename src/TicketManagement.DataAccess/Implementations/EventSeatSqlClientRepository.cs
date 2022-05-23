@@ -7,22 +7,17 @@ using TicketManagement.DataAccess.Interfaces;
 
 namespace TicketManagement.DataAccess.Implementations
 {
-    internal class EventSeatSqlClientService : IRepository<EventSeat>
+    internal class EventSeatSqlClientRepository : IRepository<EventSeat>
     {
         private readonly string _connectionString;
 
-        public EventSeatSqlClientService(string connectionString)
+        public EventSeatSqlClientRepository(string connectionString)
         {
             _connectionString = connectionString ?? throw new ArgumentNullException(nameof(connectionString));
         }
 
         public int Create(EventSeat item)
         {
-            if (item is null)
-            {
-                throw new ArgumentNullException(nameof(item));
-            }
-
             using SqlConnection connection = new SqlConnection(_connectionString);
 
             using SqlCommand command = new SqlCommand("EventSeat", connection)
@@ -30,11 +25,8 @@ namespace TicketManagement.DataAccess.Implementations
                 CommandType = CommandType.StoredProcedure,
             };
 
-            int newId = -1;
-
             SqlParameter[] parameters = new SqlParameter[]
             {
-                new SqlParameter("eventSeatId", newId),
                 new SqlParameter("eventAreaId", item.EventAreaId),
                 new SqlParameter("row", item.Row),
                 new SqlParameter("number", item.Number),
@@ -45,9 +37,9 @@ namespace TicketManagement.DataAccess.Implementations
 
             connection.Open();
 
-            command.ExecuteNonQuery();
+            var id = Convert.ToInt32(command.ExecuteScalar());
 
-            return newId;
+            return id;
         }
 
         public void Delete(int id)
@@ -111,11 +103,6 @@ namespace TicketManagement.DataAccess.Implementations
 
         public void Update(EventSeat item)
         {
-            if (item is null)
-            {
-                throw new ArgumentNullException(nameof(item));
-            }
-
             using SqlConnection connection = new SqlConnection(_connectionString);
 
             using SqlCommand command = new SqlCommand("UpdateEventSeat", connection)
