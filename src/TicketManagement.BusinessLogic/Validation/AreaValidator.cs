@@ -14,14 +14,12 @@ namespace TicketManagement.BusinessLogic.Validation
             _areaRepository = areaRepository ?? throw new ArgumentNullException(nameof(areaRepository));
         }
 
-        public bool Validate(Area item)
+        public void Validate(Area item)
         {
             if (_areaRepository.GetAll().Any(a => a.LayoutId == item.LayoutId && a.Description.Equals(item.Description, StringComparison.OrdinalIgnoreCase)))
             {
                 throw new ValidationException("Area description should be unique in the layout.");
             }
-
-            return true;
         }
     }
 }

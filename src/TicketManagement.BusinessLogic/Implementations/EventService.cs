@@ -10,9 +10,9 @@ namespace TicketManagement.BusinessLogic.Implementations
     internal class EventService : IEventService
     {
         private readonly IRepository<Event> _eventRepository;
-        private readonly IValidationService<Event> _validationService;
+        private readonly IValidator<Event> _validationService;
 
-        public EventService(IRepository<Event> eventRepository, IValidationService<Event> validationService)
+        public EventService(IRepository<Event> eventRepository, IValidator<Event> validationService)
         {
             _eventRepository = eventRepository ?? throw new ArgumentNullException(nameof(eventRepository));
             _validationService = validationService ?? throw new ArgumentNullException(nameof(validationService));
@@ -25,14 +25,9 @@ namespace TicketManagement.BusinessLogic.Implementations
                 throw new ArgumentNullException(nameof(@event));
             }
 
-            bool isValid = _validationService.Validate(@event);
+            _validationService.Validate(@event);
 
-            if (isValid)
-            {
-                return _eventRepository.Create(@event);
-            }
-
-            return -1;
+            return _eventRepository.Create(@event);
         }
 
         public void Delete(int id)
@@ -67,10 +62,9 @@ namespace TicketManagement.BusinessLogic.Implementations
                 throw new ArgumentNullException(nameof(@event));
             }
 
-            if (_validationService.Validate(@event))
-            {
-                _eventRepository.Update(@event);
-            }
+            _validationService.Validate(@event);
+
+            _eventRepository.Update(@event);
         }
     }
 }

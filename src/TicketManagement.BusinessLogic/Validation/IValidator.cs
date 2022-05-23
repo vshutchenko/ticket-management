@@ -2,6 +2,11 @@
 {
     public interface IValidator<T>
     {
-        public bool Validate(T item);
+        /// <summary>
+        /// Validates object.
+        /// </summary>
+        /// <param name="item">Object to validate.</param>
+        /// <exception cref="ValidationException">Throws if object is invalid.</exception>
+        public void Validate(T item);
     }
 }

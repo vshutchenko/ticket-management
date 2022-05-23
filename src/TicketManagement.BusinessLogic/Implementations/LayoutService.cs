@@ -10,9 +10,9 @@ namespace TicketManagement.BusinessLogic.Implementations
     internal class LayoutService : ILayoutService
     {
         private readonly IRepository<Layout> _layoutRepository;
-        private readonly IValidationService<Layout> _validationService;
+        private readonly IValidator<Layout> _validationService;
 
-        public LayoutService(IRepository<Layout> layoutRepository, IValidationService<Layout> validationService)
+        public LayoutService(IRepository<Layout> layoutRepository, IValidator<Layout> validationService)
         {
             _layoutRepository = layoutRepository ?? throw new ArgumentNullException(nameof(layoutRepository));
             _validationService = validationService ?? throw new ArgumentNullException(nameof(validationService));
@@ -25,14 +25,9 @@ namespace TicketManagement.BusinessLogic.Implementations
                 throw new ArgumentNullException(nameof(layout));
             }
 
-            bool isValid = _validationService.Validate(layout);
+            _validationService.Validate(layout);
 
-            if (isValid)
-            {
-                return _layoutRepository.Create(layout);
-            }
-
-            return -1;
+            return _layoutRepository.Create(layout);
         }
 
         public void Delete(int id)
@@ -67,10 +62,9 @@ namespace TicketManagement.BusinessLogic.Implementations
                 throw new ArgumentNullException(nameof(layout));
             }
 
-            if (_validationService.Validate(layout))
-            {
-                _layoutRepository.Update(layout);
-            }
+            _validationService.Validate(layout);
+
+            _layoutRepository.Update(layout);
         }
     }
 }

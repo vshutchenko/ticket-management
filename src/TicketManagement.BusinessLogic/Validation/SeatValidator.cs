@@ -14,14 +14,12 @@ namespace TicketManagement.BusinessLogic.Validation
             _seatRepository = seatRepository ?? throw new ArgumentNullException(nameof(seatRepository));
         }
 
-        public bool Validate(Seat item)
+        public void Validate(Seat item)
         {
             if (_seatRepository.GetAll().Any(s => s.AreaId == item.AreaId && s.Row == item.Row && s.Number == item.Number))
             {
                 throw new ValidationException("Seat with same row and number is already exists in the area.");
             }
-
-            return true;
         }
     }
 }

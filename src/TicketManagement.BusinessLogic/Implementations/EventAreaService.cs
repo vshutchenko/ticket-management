@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using TicketManagement.BusinessLogic.Interfaces;
+using TicketManagement.BusinessLogic.Validation;
 using TicketManagement.DataAccess.Entities;
 using TicketManagement.DataAccess.Interfaces;
 
@@ -9,10 +10,12 @@ namespace TicketManagement.BusinessLogic.Implementations
     internal class EventAreaService : IEventAreaService
     {
         private readonly IRepository<EventArea> _eventAreaRepository;
+        private readonly IValidator<decimal> _priceValidator;
 
-        public EventAreaService(IRepository<EventArea> eventAreaRepository)
+        public EventAreaService(IRepository<EventArea> eventAreaRepository, IValidator<decimal> priceValidator)
         {
             _eventAreaRepository = eventAreaRepository ?? throw new ArgumentNullException(nameof(eventAreaRepository));
+            _priceValidator = priceValidator ?? throw new ArgumentNullException(nameof(priceValidator));
         }
 
         public IEnumerable<EventArea> GetAll()
@@ -37,10 +40,7 @@ namespace TicketManagement.BusinessLogic.Implementations
                 throw new ArgumentException(nameof(id));
             }
 
-            if (price < 0)
-            {
-                throw new ArgumentException("price cannot be negative");
-            }
+            _priceValidator.Validate(price);
 
             var area = _eventAreaRepository.GetById(id);
             area.Price = price;

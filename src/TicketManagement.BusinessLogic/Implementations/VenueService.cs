@@ -10,9 +10,9 @@ namespace TicketManagement.BusinessLogic.Implementations
     internal class VenueService : IVenueService
     {
         private readonly IRepository<Venue> _venueRepository;
-        private readonly IValidationService<Venue> _validationService;
+        private readonly IValidator<Venue> _validationService;
 
-        public VenueService(IRepository<Venue> venueRepository, IValidationService<Venue> validationService)
+        public VenueService(IRepository<Venue> venueRepository, IValidator<Venue> validationService)
         {
             _venueRepository = venueRepository ?? throw new ArgumentNullException(nameof(venueRepository));
             _validationService = validationService ?? throw new ArgumentNullException(nameof(validationService));
@@ -25,14 +25,9 @@ namespace TicketManagement.BusinessLogic.Implementations
                 throw new ArgumentNullException(nameof(venue));
             }
 
-            bool isValid = _validationService.Validate(venue);
+            _validationService.Validate(venue);
 
-            if (isValid)
-            {
-                return _venueRepository.Create(venue);
-            }
-
-            return -1;
+            return _venueRepository.Create(venue);
         }
 
         public void Delete(int id)
@@ -67,10 +62,9 @@ namespace TicketManagement.BusinessLogic.Implementations
                 throw new ArgumentNullException(nameof(venue));
             }
 
-            if (_validationService.Validate(venue))
-            {
-                _venueRepository.Update(venue);
-            }
+            _validationService.Validate(venue);
+
+            _venueRepository.Update(venue);
         }
     }
 }

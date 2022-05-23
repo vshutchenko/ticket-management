@@ -14,15 +14,13 @@ namespace TicketManagement.BusinessLogic.Validation
             _layoutRepsitory = layoutRepsitory ?? throw new ArgumentNullException(nameof(layoutRepsitory));
         }
 
-        public bool Validate(Layout item)
+        public void Validate(Layout item)
         {
             if (_layoutRepsitory.GetAll().Any(l => l.VenueId == item.VenueId
                 && item.Description.Equals(l.Description, StringComparison.OrdinalIgnoreCase)))
             {
                 throw new ValidationException("The same layout is already exists in current venue.");
             }
-
-            return true;
         }
     }
 }

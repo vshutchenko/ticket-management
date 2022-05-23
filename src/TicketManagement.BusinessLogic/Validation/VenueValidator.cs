@@ -14,14 +14,12 @@ namespace TicketManagement.BusinessLogic.Validation
             _venueRepository = venueRepository ?? throw new ArgumentNullException(nameof(venueRepository));
         }
 
-        public bool Validate(Venue item)
+        public void Validate(Venue item)
         {
             if (_venueRepository.GetAll().Any(v => v.Description.Equals(item.Description, StringComparison.OrdinalIgnoreCase)))
             {
                 throw new ValidationException("Venue with same description is already exists.");
             }
-
-            return true;
         }
     }
 }

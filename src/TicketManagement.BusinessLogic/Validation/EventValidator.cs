@@ -19,14 +19,14 @@ namespace TicketManagement.BusinessLogic.Validation
             _areaRepository = areaRepository ?? throw new ArgumentNullException(nameof(areaRepository));
         }
 
-        public bool Validate(Event item)
+        public void Validate(Event item)
         {
-            return IsValidDate(item.StartDate, item.EndDate)
-                && IsAvailableLayout(item.LayoutId, item.StartDate, item.EndDate)
-                && IsAvailableSeats(item.LayoutId);
+            ValidateDate(item.StartDate, item.EndDate);
+            ValidateAvailableLayout(item.LayoutId, item.StartDate, item.EndDate);
+            ValidateAvailableSeats(item.LayoutId);
         }
 
-        private bool IsValidDate(DateTime start, DateTime end)
+        private void ValidateDate(DateTime start, DateTime end)
         {
             if (start < DateTime.Now)
             {
@@ -37,11 +37,9 @@ namespace TicketManagement.BusinessLogic.Validation
             {
                 throw new ValidationException("End date is less than start date.");
             }
-
-            return true;
         }
 
-        private bool IsAvailableLayout(int layoutId, DateTime start, DateTime end)
+        private void ValidateAvailableLayout(int layoutId, DateTime start, DateTime end)
         {
             var eventInTheSameLayout = _eventRepository
                 .GetAll()
@@ -52,11 +50,9 @@ namespace TicketManagement.BusinessLogic.Validation
             {
                 throw new ValidationException("Event in the same layout and the same time is already exists.");
             }
-
-            return true;
         }
 
-        private bool IsAvailableSeats(int layoutId)
+        private void ValidateAvailableSeats(int layoutId)
         {
             var layoutAreas = _areaRepository.GetAll().Where(a => a.LayoutId == layoutId).ToList();
 
@@ -64,8 +60,6 @@ namespace TicketManagement.BusinessLogic.Validation
             {
                 throw new ValidationException("There are no available seats in the layout.");
             }
-
-            return true;
         }
     }
 }

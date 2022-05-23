@@ -2,14 +2,12 @@
 {
     internal class PriceValidator : IValidator<decimal>
     {
-        public bool Validate(decimal item)
+        public void Validate(decimal item)
         {
             if (item < 0)
             {
                 throw new ValidationException("price cannotbe negative");
             }
-
-            return true;
         }
     }
 }

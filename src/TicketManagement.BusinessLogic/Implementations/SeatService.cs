@@ -10,9 +10,9 @@ namespace TicketManagement.BusinessLogic.Implementations
     internal class SeatService : ISeatService
     {
         private readonly IRepository<Seat> _seatRepository;
-        private readonly IValidationService<Seat> _validationService;
+        private readonly IValidator<Seat> _validationService;
 
-        public SeatService(IRepository<Seat> seatRepository, IValidationService<Seat> validationService)
+        public SeatService(IRepository<Seat> seatRepository, IValidator<Seat> validationService)
         {
             _seatRepository = seatRepository ?? throw new ArgumentNullException(nameof(seatRepository));
             _validationService = validationService ?? throw new ArgumentNullException(nameof(validationService));
@@ -25,14 +25,9 @@ namespace TicketManagement.BusinessLogic.Implementations
                 throw new ArgumentNullException(nameof(seat));
             }
 
-            bool isValid = _validationService.Validate(seat);
+            _validationService.Validate(seat);
 
-            if (isValid)
-            {
-                return _seatRepository.Create(seat);
-            }
-
-            return -1;
+            return _seatRepository.Create(seat);
         }
 
         public void Delete(int id)
@@ -67,10 +62,8 @@ namespace TicketManagement.BusinessLogic.Implementations
                 throw new ArgumentNullException(nameof(seat));
             }
 
-            if (_validationService.Validate(seat))
-            {
-                _seatRepository.Update(seat);
-            }
+            _validationService.Validate(seat);
+            _seatRepository.Update(seat);
         }
     }
 }
