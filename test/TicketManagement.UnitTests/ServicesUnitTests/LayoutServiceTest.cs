@@ -12,47 +12,43 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
     internal class LayoutServiceTest
     {
         private Mock<IRepository<Layout>> _layoutRepositoryMock;
-        private Mock<IValidationService<Layout>> _layoutValidationMockAlwaysTrue;
-        private Mock<IValidationService<Layout>> _layoutValidationMockAlwaysFalse;
+        private Mock<IValidator<Layout>> _layoutValidatorMock;
+        private Mock<IValidator<Layout>> _layoutValidatorMockThrowsException;
 
         [SetUp]
         public void SetUp()
         {
             _layoutRepositoryMock = new Mock<IRepository<Layout>>();
 
-            _layoutValidationMockAlwaysTrue = new Mock<IValidationService<Layout>>();
-            _layoutValidationMockAlwaysTrue.Setup(x => x.Validate(It.IsAny<Layout>())).Returns(true);
+            _layoutValidatorMock = new Mock<IValidator<Layout>>();
 
-            _layoutValidationMockAlwaysFalse = new Mock<IValidationService<Layout>>();
-            _layoutValidationMockAlwaysFalse.Setup(x => x.Validate(It.IsAny<Layout>())).Returns(false);
+            _layoutValidatorMockThrowsException = new Mock<IValidator<Layout>>();
+            _layoutValidatorMockThrowsException.Setup(x => x.Validate(It.IsAny<Layout>())).Throws<ValidationException>();
         }
 
         [Test]
         public void Create_ValidLayout()
         {
-            ILayoutService layoutService = new LayoutService(_layoutRepositoryMock.Object, _layoutValidationMockAlwaysTrue.Object);
+            ILayoutService layoutService = new LayoutService(_layoutRepositoryMock.Object, _layoutValidatorMock.Object);
 
             layoutService.Create(new Layout());
 
-            _layoutValidationMockAlwaysTrue.Verify(x => x.Validate(It.IsAny<Layout>()), Times.Once);
+            _layoutValidatorMock.Verify(x => x.Validate(It.IsAny<Layout>()), Times.Once);
             _layoutRepositoryMock.Verify(x => x.Create(It.IsAny<Layout>()), Times.Once);
         }
 
         [Test]
         public void Create_InvalidLayout()
         {
-            ILayoutService layoutService = new LayoutService(_layoutRepositoryMock.Object, _layoutValidationMockAlwaysFalse.Object);
+            ILayoutService layoutService = new LayoutService(_layoutRepositoryMock.Object, _layoutValidatorMockThrowsException.Object);
 
-            layoutService.Create(new Layout());
-
-            _layoutValidationMockAlwaysFalse.Verify(x => x.Validate(It.IsAny<Layout>()), Times.Once);
-            _layoutRepositoryMock.Verify(x => x.Create(It.IsAny<Layout>()), Times.Never);
+            Assert.Throws<ValidationException>(() => layoutService.Create(new Layout()));
         }
 
         [Test]
         public void Create_NullLayout_ThrowsAgrumentNullException()
         {
-            ILayoutService layoutService = new LayoutService(_layoutRepositoryMock.Object, _layoutValidationMockAlwaysFalse.Object);
+            ILayoutService layoutService = new LayoutService(_layoutRepositoryMock.Object, _layoutValidatorMockThrowsException.Object);
 
             Assert.Throws<ArgumentNullException>(() => layoutService.Create(null));
         }
@@ -61,7 +57,7 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
         [TestCase(int.MaxValue)]
         public void Delete_ValidId(int id)
         {
-            ILayoutService layoutService = new LayoutService(_layoutRepositoryMock.Object, _layoutValidationMockAlwaysTrue.Object);
+            ILayoutService layoutService = new LayoutService(_layoutRepositoryMock.Object, _layoutValidatorMock.Object);
 
             layoutService.Delete(id);
 
@@ -72,7 +68,7 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
         [TestCase(-1)]
         public void Delete_InvalidId_ThrowsAgrumentException(int id)
         {
-            ILayoutService layoutService = new LayoutService(_layoutRepositoryMock.Object, _layoutValidationMockAlwaysTrue.Object);
+            ILayoutService layoutService = new LayoutService(_layoutRepositoryMock.Object, _layoutValidatorMock.Object);
 
             Assert.Throws<ArgumentException>(() => layoutService.Delete(id));
             _layoutRepositoryMock.Verify(x => x.Delete(id), Times.Never);
@@ -81,29 +77,26 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
         [Test]
         public void Update_ValidLayout()
         {
-            ILayoutService layoutService = new LayoutService(_layoutRepositoryMock.Object, _layoutValidationMockAlwaysTrue.Object);
+            ILayoutService layoutService = new LayoutService(_layoutRepositoryMock.Object, _layoutValidatorMock.Object);
 
             layoutService.Update(new Layout());
 
-            _layoutValidationMockAlwaysTrue.Verify(x => x.Validate(It.IsAny<Layout>()), Times.Once);
+            _layoutValidatorMock.Verify(x => x.Validate(It.IsAny<Layout>()), Times.Once);
             _layoutRepositoryMock.Verify(x => x.Update(It.IsAny<Layout>()), Times.Once);
         }
 
         [Test]
         public void Update_InvalidLayout()
         {
-            ILayoutService layoutService = new LayoutService(_layoutRepositoryMock.Object, _layoutValidationMockAlwaysFalse.Object);
+            ILayoutService layoutService = new LayoutService(_layoutRepositoryMock.Object, _layoutValidatorMockThrowsException.Object);
 
-            layoutService.Update(new Layout());
-
-            _layoutValidationMockAlwaysFalse.Verify(x => x.Validate(It.IsAny<Layout>()), Times.Once);
-            _layoutRepositoryMock.Verify(x => x.Update(It.IsAny<Layout>()), Times.Never);
+            Assert.Throws<ValidationException>(() => layoutService.Update(new Layout()));
         }
 
         [Test]
         public void Update_NullLayout_ThrowsAgrumentNullException()
         {
-            ILayoutService layoutService = new LayoutService(_layoutRepositoryMock.Object, _layoutValidationMockAlwaysFalse.Object);
+            ILayoutService layoutService = new LayoutService(_layoutRepositoryMock.Object, _layoutValidatorMockThrowsException.Object);
 
             Assert.Throws<ArgumentNullException>(() => layoutService.Update(null));
         }
@@ -111,7 +104,7 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
         [Test]
         public void GetAll_Test()
         {
-            ILayoutService layoutService = new LayoutService(_layoutRepositoryMock.Object, _layoutValidationMockAlwaysTrue.Object);
+            ILayoutService layoutService = new LayoutService(_layoutRepositoryMock.Object, _layoutValidatorMock.Object);
 
             layoutService.GetAll();
 
@@ -122,7 +115,7 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
         [TestCase(int.MaxValue)]
         public void GetById_Test(int id)
         {
-            ILayoutService layoutService = new LayoutService(_layoutRepositoryMock.Object, _layoutValidationMockAlwaysTrue.Object);
+            ILayoutService layoutService = new LayoutService(_layoutRepositoryMock.Object, _layoutValidatorMock.Object);
 
             layoutService.GetById(id);
 
@@ -133,7 +126,7 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
         [TestCase(-1)]
         public void GetById_InvalidId_ThrowsArgumentException(int id)
         {
-            ILayoutService layoutService = new LayoutService(_layoutRepositoryMock.Object, _layoutValidationMockAlwaysTrue.Object);
+            ILayoutService layoutService = new LayoutService(_layoutRepositoryMock.Object, _layoutValidatorMock.Object);
 
             Assert.Throws<ArgumentException>(() => layoutService.GetById(id));
         }

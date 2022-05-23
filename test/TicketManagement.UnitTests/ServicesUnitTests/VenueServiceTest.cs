@@ -12,47 +12,43 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
     internal class VenueServiceTest
     {
         private Mock<IRepository<Venue>> _venueRepositoryMock;
-        private Mock<IValidationService<Venue>> _venueValidationMockAlwaysTrue;
-        private Mock<IValidationService<Venue>> _venueValidationMockAlwaysFalse;
+        private Mock<IValidator<Venue>> _venueValidatorMock;
+        private Mock<IValidator<Venue>> _venueValidatorMockThrowsException;
 
         [SetUp]
         public void SetUp()
         {
             _venueRepositoryMock = new Mock<IRepository<Venue>>();
 
-            _venueValidationMockAlwaysTrue = new Mock<IValidationService<Venue>>();
-            _venueValidationMockAlwaysTrue.Setup(x => x.Validate(It.IsAny<Venue>())).Returns(true);
+            _venueValidatorMock = new Mock<IValidator<Venue>>();
 
-            _venueValidationMockAlwaysFalse = new Mock<IValidationService<Venue>>();
-            _venueValidationMockAlwaysFalse.Setup(x => x.Validate(It.IsAny<Venue>())).Returns(false);
+            _venueValidatorMockThrowsException = new Mock<IValidator<Venue>>();
+            _venueValidatorMockThrowsException.Setup(x => x.Validate(It.IsAny<Venue>())).Throws<ValidationException>();
         }
 
         [Test]
         public void Create_ValidVenue()
         {
-            IVenueService venueService = new VenueService(_venueRepositoryMock.Object, _venueValidationMockAlwaysTrue.Object);
+            IVenueService venueService = new VenueService(_venueRepositoryMock.Object, _venueValidatorMock.Object);
 
             venueService.Create(new Venue());
 
-            _venueValidationMockAlwaysTrue.Verify(x => x.Validate(It.IsAny<Venue>()), Times.Once);
+            _venueValidatorMock.Verify(x => x.Validate(It.IsAny<Venue>()), Times.Once);
             _venueRepositoryMock.Verify(x => x.Create(It.IsAny<Venue>()), Times.Once);
         }
 
         [Test]
         public void Create_InvalidVenue()
         {
-            IVenueService venueService = new VenueService(_venueRepositoryMock.Object, _venueValidationMockAlwaysFalse.Object);
+            IVenueService venueService = new VenueService(_venueRepositoryMock.Object, _venueValidatorMockThrowsException.Object);
 
-            venueService.Create(new Venue());
-
-            _venueValidationMockAlwaysFalse.Verify(x => x.Validate(It.IsAny<Venue>()), Times.Once);
-            _venueRepositoryMock.Verify(x => x.Create(It.IsAny<Venue>()), Times.Never);
+            Assert.Throws<ValidationException>(() => venueService.Create(new Venue()));
         }
 
         [Test]
         public void Create_NullVenue_ThrowsAgrumentNullException()
         {
-            IVenueService venueService = new VenueService(_venueRepositoryMock.Object, _venueValidationMockAlwaysFalse.Object);
+            IVenueService venueService = new VenueService(_venueRepositoryMock.Object, _venueValidatorMockThrowsException.Object);
 
             Assert.Throws<ArgumentNullException>(() => venueService.Create(null));
         }
@@ -61,7 +57,7 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
         [TestCase(int.MaxValue)]
         public void Delete_ValidId(int id)
         {
-            IVenueService venueService = new VenueService(_venueRepositoryMock.Object, _venueValidationMockAlwaysTrue.Object);
+            IVenueService venueService = new VenueService(_venueRepositoryMock.Object, _venueValidatorMock.Object);
 
             venueService.Delete(id);
 
@@ -72,7 +68,7 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
         [TestCase(-1)]
         public void Delete_InvalidId_ThrowsAgrumentException(int id)
         {
-            IVenueService venueService = new VenueService(_venueRepositoryMock.Object, _venueValidationMockAlwaysTrue.Object);
+            IVenueService venueService = new VenueService(_venueRepositoryMock.Object, _venueValidatorMock.Object);
 
             Assert.Throws<ArgumentException>(() => venueService.Delete(id));
             _venueRepositoryMock.Verify(x => x.Delete(id), Times.Never);
@@ -81,29 +77,26 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
         [Test]
         public void Update_ValidVenue()
         {
-            IVenueService venueService = new VenueService(_venueRepositoryMock.Object, _venueValidationMockAlwaysTrue.Object);
+            IVenueService venueService = new VenueService(_venueRepositoryMock.Object, _venueValidatorMock.Object);
 
             venueService.Update(new Venue());
 
-            _venueValidationMockAlwaysTrue.Verify(x => x.Validate(It.IsAny<Venue>()), Times.Once);
+            _venueValidatorMock.Verify(x => x.Validate(It.IsAny<Venue>()), Times.Once);
             _venueRepositoryMock.Verify(x => x.Update(It.IsAny<Venue>()), Times.Once);
         }
 
         [Test]
         public void Update_InvalidVenue()
         {
-            IVenueService venueService = new VenueService(_venueRepositoryMock.Object, _venueValidationMockAlwaysFalse.Object);
+            IVenueService venueService = new VenueService(_venueRepositoryMock.Object, _venueValidatorMockThrowsException.Object);
 
-            venueService.Update(new Venue());
-
-            _venueValidationMockAlwaysFalse.Verify(x => x.Validate(It.IsAny<Venue>()), Times.Once);
-            _venueRepositoryMock.Verify(x => x.Update(It.IsAny<Venue>()), Times.Never);
+            Assert.Throws<ValidationException>(() => venueService.Update(new Venue()));
         }
 
         [Test]
         public void Update_NullVenue_ThrowsAgrumentNullException()
         {
-            IVenueService venueService = new VenueService(_venueRepositoryMock.Object, _venueValidationMockAlwaysFalse.Object);
+            IVenueService venueService = new VenueService(_venueRepositoryMock.Object, _venueValidatorMockThrowsException.Object);
 
             Assert.Throws<ArgumentNullException>(() => venueService.Update(null));
         }
@@ -111,7 +104,7 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
         [Test]
         public void GetAll_Test()
         {
-            IVenueService venueService = new VenueService(_venueRepositoryMock.Object, _venueValidationMockAlwaysTrue.Object);
+            IVenueService venueService = new VenueService(_venueRepositoryMock.Object, _venueValidatorMock.Object);
 
             venueService.GetAll();
 
@@ -122,7 +115,7 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
         [TestCase(int.MaxValue)]
         public void GetById_Test(int id)
         {
-            IVenueService venueService = new VenueService(_venueRepositoryMock.Object, _venueValidationMockAlwaysTrue.Object);
+            IVenueService venueService = new VenueService(_venueRepositoryMock.Object, _venueValidatorMock.Object);
 
             venueService.GetById(id);
 
@@ -133,7 +126,7 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
         [TestCase(-1)]
         public void GetById_InvalidId_ThrowsArgumentException(int id)
         {
-            IVenueService venueService = new VenueService(_venueRepositoryMock.Object, _venueValidationMockAlwaysTrue.Object);
+            IVenueService venueService = new VenueService(_venueRepositoryMock.Object, _venueValidatorMock.Object);
 
             Assert.Throws<ArgumentException>(() => venueService.GetById(id));
         }
