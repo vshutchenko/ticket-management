@@ -73,7 +73,7 @@ namespace TicketManagement.DataAccess.Implementations
                 yield return new EventSeat
                 {
                     Id = reader.GetInt32("Id"),
-                    EventAreaId = reader.GetInt32("AreaId"),
+                    EventAreaId = reader.GetInt32("EventAreaId"),
                     Row = reader.GetInt32("Row"),
                     Number = reader.GetInt32("Number"),
                     State = (EventSeatState)reader.GetInt32("State"),
@@ -91,14 +91,19 @@ namespace TicketManagement.DataAccess.Implementations
 
             using SqlDataReader reader = command.ExecuteReader();
 
-            return new EventSeat
+            if (reader.Read())
             {
-                Id = reader.GetInt32("Id"),
-                EventAreaId = reader.GetInt32("AreaId"),
-                Row = reader.GetInt32("Row"),
-                Number = reader.GetInt32("Number"),
-                State = (EventSeatState)reader.GetInt32("State"),
-            };
+                return new EventSeat
+                {
+                    Id = reader.GetInt32("Id"),
+                    EventAreaId = reader.GetInt32("EventAreaId"),
+                    Row = reader.GetInt32("Row"),
+                    Number = reader.GetInt32("Number"),
+                    State = (EventSeatState)reader.GetInt32("State"),
+                };
+            }
+
+            return null;
         }
 
         public void Update(EventSeat item)

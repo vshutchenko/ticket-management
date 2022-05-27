@@ -87,21 +87,26 @@ namespace TicketManagement.DataAccess.Implementations
         {
             using SqlConnection connection = new SqlConnection(_connectionString);
 
-            using SqlCommand command = new SqlCommand("SELECT Id, EventId, Description, CoordX, CoordY, Price FROM EventArea WHERE Id = {id}", connection);
+            using SqlCommand command = new SqlCommand($"SELECT Id, EventId, Description, CoordX, CoordY, Price FROM EventArea WHERE Id = {id}", connection);
 
             connection.Open();
 
             using SqlDataReader reader = command.ExecuteReader();
 
-            return new EventArea
+            if (reader.Read())
             {
-                Id = reader.GetInt32("Id"),
-                EventId = reader.GetInt32("EventId"),
-                Description = reader.GetString("Description"),
-                CoordX = reader.GetInt32("CoordX"),
-                CoordY = reader.GetInt32("CoordY"),
-                Price = reader.GetInt32("Price"),
-            };
+                return new EventArea
+                {
+                    Id = reader.GetInt32("Id"),
+                    EventId = reader.GetInt32("EventId"),
+                    Description = reader.GetString("Description"),
+                    CoordX = reader.GetInt32("CoordX"),
+                    CoordY = reader.GetInt32("CoordY"),
+                    Price = reader.GetDecimal("Price"),
+                };
+            }
+
+            return null;
         }
 
         public void Update(EventArea item)

@@ -89,13 +89,18 @@ namespace TicketManagement.DataAccess.Implementations
 
             using SqlDataReader reader = command.ExecuteReader();
 
-            return new Venue
+            if (reader.Read())
             {
-                Id = reader.GetInt32("Id"),
-                Description = reader.GetString("Description"),
-                Address = reader.GetString("Address"),
-                Phone = reader.GetString("Phone"),
-            };
+                return new Venue
+                {
+                    Id = reader.GetInt32("Id"),
+                    Description = reader.GetString("Description"),
+                    Address = reader.GetString("Address"),
+                    Phone = reader.GetString("Phone"),
+                };
+            }
+
+            return null;
         }
 
         public void Update(Venue item)

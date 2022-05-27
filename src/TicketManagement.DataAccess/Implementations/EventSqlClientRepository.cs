@@ -94,15 +94,20 @@ namespace TicketManagement.DataAccess.Implementations
 
             using SqlDataReader reader = command.ExecuteReader();
 
-            return new Event
+            if (reader.Read())
             {
-                Id = reader.GetInt32("Id"),
-                Name = reader.GetString("Name"),
-                Descpription = reader.GetString("Description"),
-                LayoutId = reader.GetInt32("LayoutId"),
-                StartDate = reader.GetDateTime("StartDate"),
-                EndDate = reader.GetDateTime("EndDate"),
-            };
+                return new Event
+                {
+                    Id = reader.GetInt32("Id"),
+                    Name = reader.GetString("Name"),
+                    Descpription = reader.GetString("Description"),
+                    LayoutId = reader.GetInt32("LayoutId"),
+                    StartDate = reader.GetDateTime("StartDate"),
+                    EndDate = reader.GetDateTime("EndDate"),
+                };
+            }
+
+            return null;
         }
 
         public void Update(Event @event)
@@ -121,7 +126,6 @@ namespace TicketManagement.DataAccess.Implementations
                 new SqlParameter("description", @event.Descpription),
                 new SqlParameter("layoutId", @event.LayoutId),
                 new SqlParameter("startDate", @event.StartDate),
-                new SqlParameter("endDate", @event.EndDate),
                 new SqlParameter("endDate", @event.EndDate),
             };
 

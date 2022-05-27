@@ -91,14 +91,19 @@ namespace TicketManagement.DataAccess.Implementations
 
             using SqlDataReader reader = command.ExecuteReader();
 
-            return new Area
+            if (reader.Read())
             {
-                Id = reader.GetInt32("Id"),
-                LayoutId = reader.GetInt32("LayoutId"),
-                Description = reader.GetString("Description"),
-                CoordX = reader.GetInt32("CoordX"),
-                CoordY = reader.GetInt32("CoordY"),
-            };
+                return new Area
+                {
+                    Id = reader.GetInt32("Id"),
+                    LayoutId = reader.GetInt32("LayoutId"),
+                    Description = reader.GetString("Description"),
+                    CoordX = reader.GetInt32("CoordX"),
+                    CoordY = reader.GetInt32("CoordY"),
+                };
+            }
+
+            return null;
         }
 
         public void Update(Area item)

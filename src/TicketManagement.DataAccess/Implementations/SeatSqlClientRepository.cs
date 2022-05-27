@@ -90,13 +90,18 @@ namespace TicketManagement.DataAccess.Implementations
 
             using SqlDataReader reader = command.ExecuteReader();
 
-            return new Seat
+            if (reader.Read())
             {
-                Id = reader.GetInt32("Id"),
-                AreaId = reader.GetInt32("AreaId"),
-                Row = reader.GetInt32("Row"),
-                Number = reader.GetInt32("Number"),
-            };
+                return new Seat
+                {
+                    Id = reader.GetInt32("Id"),
+                    AreaId = reader.GetInt32("AreaId"),
+                    Row = reader.GetInt32("Row"),
+                    Number = reader.GetInt32("Number"),
+                };
+            }
+
+            return null;
         }
 
         public void Update(Seat item)

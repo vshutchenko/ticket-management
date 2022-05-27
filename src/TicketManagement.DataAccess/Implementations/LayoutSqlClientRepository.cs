@@ -87,12 +87,17 @@ namespace TicketManagement.DataAccess.Implementations
 
             using SqlDataReader reader = command.ExecuteReader();
 
-            return new Layout
+            if (reader.Read())
             {
-                Id = reader.GetInt32("Id"),
-                Description = reader.GetString("Description"),
-                VenueId = reader.GetInt32("VenueId"),
-            };
+                return new Layout
+                {
+                    Id = reader.GetInt32("Id"),
+                    Description = reader.GetString("Description"),
+                    VenueId = reader.GetInt32("VenueId"),
+                };
+            }
+
+            return null;
         }
 
         public void Update(Layout item)
