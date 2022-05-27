@@ -1,4 +1,6 @@
-﻿using System;
+﻿using System.Collections.Generic;
+using System.Linq;
+using FluentAssertions;
 using Moq;
 using NUnit.Framework;
 using TicketManagement.BusinessLogic.Implementations;
@@ -9,126 +11,112 @@ using TicketManagement.DataAccess.Interfaces;
 
 namespace TicketManagement.UnitTests.ServicesUnitTests
 {
+    [TestFixture]
     internal class SeatServiceTest
     {
         private Mock<IRepository<Seat>> _seatRepositoryMock;
-        private Mock<IValidator<Seat>> _seatValidatorMock;
-        private Mock<IValidator<Seat>> _seatValidatorMockThrowsException;
+        private ISeatService _seatService;
+        private List<Seat> _seats;
 
         [SetUp]
         public void SetUp()
         {
+            _seats = new List<Seat>
+            {
+                new Seat { Id = 1, Row = 1, Number = 1, AreaId = 1, },
+                new Seat { Id = 2, Row = 1, Number = 2, AreaId = 1, },
+                new Seat { Id = 3, Row = 1, Number = 3, AreaId = 1, },
+            };
+
             _seatRepositoryMock = new Mock<IRepository<Seat>>();
 
-            _seatValidatorMock = new Mock<IValidator<Seat>>();
+            _seatRepositoryMock.Setup(x => x.GetAll()).Returns(_seats);
 
-            _seatValidatorMockThrowsException = new Mock<IValidator<Seat>>();
-            _seatValidatorMockThrowsException.Setup(x => x.Validate(It.IsAny<Seat>())).Throws<ValidationException>();
+            var seatValidator = new SeatValidator(_seatRepositoryMock.Object);
+
+            _seatService = new SeatService(_seatRepositoryMock.Object, seatValidator);
         }
 
         [Test]
-        public void Create_ValidSeat()
+        public void Create_ValidSeat_SeatCreated()
         {
-            ISeatService seatService = new SeatService(_seatRepositoryMock.Object, _seatValidatorMock.Object);
+            var seatToCreate = new Seat { Id = 1, Row = 1, Number = 4, AreaId = 1, };
 
-            seatService.Create(new Seat());
+            _seatService.Create(seatToCreate);
 
-            _seatValidatorMock.Verify(x => x.Validate(It.IsAny<Seat>()), Times.Once);
-            _seatRepositoryMock.Verify(x => x.Create(It.IsAny<Seat>()), Times.Once);
+            _seatRepositoryMock.Verify(x => x.Create(seatToCreate), Times.Once);
         }
 
         [Test]
-        public void Create_InvalidSeat()
+        public void Create_SeatWithSameRowAndNumberExists_ThrowsValidationException()
         {
-            ISeatService seatService = new SeatService(_seatRepositoryMock.Object, _seatValidatorMockThrowsException.Object);
+            var seatToCreate = new Seat { Id = 1, Row = 1, Number = 1, AreaId = 1, };
 
-            Assert.Throws<ValidationException>(() => seatService.Create(new Seat()));
+            Assert.Throws<ValidationException>(() => _seatService.Create(seatToCreate));
         }
 
         [Test]
-        public void Create_NullSeat_ThrowsAgrumentNullException()
+        public void Create_NullSeat_ThrowsValidationException()
         {
-            ISeatService seatService = new SeatService(_seatRepositoryMock.Object, _seatValidatorMockThrowsException.Object);
-
-            Assert.Throws<ArgumentNullException>(() => seatService.Create(null));
+            Assert.Throws<ValidationException>(() => _seatService.Create(null));
         }
 
         [TestCase(1)]
-        [TestCase(int.MaxValue)]
-        public void Delete_ValidId(int id)
+        public void Delete_SeatDeleted(int id)
         {
-            ISeatService seatService = new SeatService(_seatRepositoryMock.Object, _seatValidatorMock.Object);
-
-            seatService.Delete(id);
+            _seatService.Delete(id);
 
             _seatRepositoryMock.Verify(x => x.Delete(id), Times.Once);
         }
 
-        [TestCase(0)]
-        [TestCase(-1)]
-        public void Delete_InvalidId_ThrowsAgrumentException(int id)
+        [Test]
+        public void Update_ValidSeat_SeatUpdated()
         {
-            ISeatService seatService = new SeatService(_seatRepositoryMock.Object, _seatValidatorMock.Object);
+            var seatToUpdate = new Seat { Id = 1, Row = 2, Number = 1, AreaId = 1, };
 
-            Assert.Throws<ArgumentException>(() => seatService.Delete(id));
-            _seatRepositoryMock.Verify(x => x.Delete(id), Times.Never);
+            _seatService.Update(seatToUpdate);
+
+            _seatRepositoryMock.Verify(x => x.Update(seatToUpdate), Times.Once);
         }
 
         [Test]
-        public void Update_ValidSeat()
+        public void Update_SeatWithSameRowAndNumberExists_ThrowsValidationException()
         {
-            ISeatService seatService = new SeatService(_seatRepositoryMock.Object, _seatValidatorMock.Object);
+            var seatToUpdate = new Seat { Id = 1, Row = 1, Number = 2, AreaId = 1, };
 
-            seatService.Update(new Seat());
-
-            _seatValidatorMock.Verify(x => x.Validate(It.IsAny<Seat>()), Times.Once);
-            _seatRepositoryMock.Verify(x => x.Update(It.IsAny<Seat>()), Times.Once);
+            Assert.Throws<ValidationException>(() => _seatService.Update(seatToUpdate));
         }
 
         [Test]
-        public void Update_InvalidSeat()
+        public void Update_NullSeat_ThrowsValidationException()
         {
-            ISeatService seatService = new SeatService(_seatRepositoryMock.Object, _seatValidatorMockThrowsException.Object);
-
-            Assert.Throws<ValidationException>(() => seatService.Update(new Seat()));
+            Assert.Throws<ValidationException>(() => _seatService.Update(null));
         }
 
         [Test]
-        public void Update_NullSeat_ThrowsAgrumentNullException()
+        public void GetAll_SeatListReturned()
         {
-            ISeatService seatService = new SeatService(_seatRepositoryMock.Object, _seatValidatorMockThrowsException.Object);
+            var seats = _seatService.GetAll().ToList();
 
-            Assert.Throws<ArgumentNullException>(() => seatService.Update(null));
+            seats.Should().BeEquivalentTo(_seats);
         }
 
         [Test]
-        public void GetAll_Test()
+        public void GetById_SeatReturned()
         {
-            ISeatService seatService = new SeatService(_seatRepositoryMock.Object, _seatValidatorMock.Object);
+            var seat = new Seat { Id = 1, Row = 1, Number = 1, AreaId = 1, };
 
-            seatService.GetAll();
+            _seatRepositoryMock.Setup(x => x.GetById(It.IsAny<int>())).Returns(seat);
 
-            _seatRepositoryMock.Verify(x => x.GetAll(), Times.Once);
+            _seatService.GetById(It.IsAny<int>()).Should().BeEquivalentTo(seat);
         }
 
-        [TestCase(1)]
-        [TestCase(int.MaxValue)]
-        public void GetById_Test(int id)
+        [Test]
+        public void GetById_SeatNotFound_NullReturned()
         {
-            ISeatService seatService = new SeatService(_seatRepositoryMock.Object, _seatValidatorMock.Object);
+            _seatRepositoryMock.Setup(x => x.GetById(It.IsAny<int>())).Returns<Seat>(null);
 
-            seatService.GetById(id);
-
-            _seatRepositoryMock.Verify(x => x.GetById(id), Times.Once);
-        }
-
-        [TestCase(0)]
-        [TestCase(-1)]
-        public void GetById_InvalidId_ThrowsArgumentException(int id)
-        {
-            ISeatService seatService = new SeatService(_seatRepositoryMock.Object, _seatValidatorMock.Object);
-
-            Assert.Throws<ArgumentException>(() => seatService.GetById(id));
+            Assert.IsNull(_seatService.GetById(It.IsAny<int>()));
         }
     }
 }

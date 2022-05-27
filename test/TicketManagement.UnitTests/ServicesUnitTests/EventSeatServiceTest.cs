@@ -1,4 +1,5 @@
-﻿using System;
+﻿using System.Collections.Generic;
+using FluentAssertions;
 using Moq;
 using NUnit.Framework;
 using TicketManagement.BusinessLogic.Implementations;
@@ -8,6 +9,7 @@ using TicketManagement.DataAccess.Interfaces;
 
 namespace TicketManagement.UnitTests.ServicesUnitTests
 {
+    [TestFixture]
     internal class EventSeatServiceTest
     {
         private Mock<IRepository<EventSeat>> _eventSeatRepositoryMock;
@@ -20,47 +22,60 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
             _eventSeatService = new EventSeatService(_eventSeatRepositoryMock.Object);
         }
 
-        [TestCase(1, 0)]
-        [TestCase(int.MaxValue, 1)]
-        public void SetSeatState_ValidParameters(int id, EventSeatState state)
+        [Test]
+        public void SetSeatState_ValidParameters_StateChanged()
         {
-            _eventSeatRepositoryMock.Setup(x => x.GetById(id)).Returns(new EventSeat());
+            int id = 1;
+            var eventSeat = new EventSeat { Id = 1, EventAreaId = 1, Number = 1, Row = 1, State = EventSeatState.Available };
 
-            _eventSeatService.SetSeatState(id, state);
+            _eventSeatRepositoryMock.Setup(x => x.GetById(id)).Returns(eventSeat);
 
-            _eventSeatRepositoryMock.Verify(x => x.GetById(id), Times.Once);
-            _eventSeatRepositoryMock.Verify(x => x.Update(It.IsAny<EventSeat>()), Times.Once);
-        }
+            _eventSeatService.SetSeatState(id, EventSeatState.Ordered);
 
-        [TestCase(-1, 0)]
-        [TestCase(0, 1)]
-        public void SetSeatState_InvalidParameters(int id, EventSeatState state)
-        {
-            Assert.Throws<ArgumentException>(() => _eventSeatService.SetSeatState(id, state));
+            _eventSeatRepositoryMock.Verify(x => x.Update(eventSeat), Times.Once);
         }
 
         [Test]
-        public void GetAll_Test()
+        public void SetSeatState_InvalidId_StateNotChanged()
         {
-            _eventSeatService.GetAll();
+            _eventSeatRepositoryMock.Setup(x => x.GetById(It.IsAny<int>())).Returns<EventSeat>(null);
 
-            _eventSeatRepositoryMock.Verify(x => x.GetAll(), Times.Once);
+            _eventSeatService.SetSeatState(1, EventSeatState.Ordered);
+
+            _eventSeatRepositoryMock.Verify(x => x.Update(It.IsAny<EventSeat>()), Times.Never);
         }
 
-        [TestCase(1)]
-        [TestCase(int.MaxValue)]
-        public void GetById_Test(int id)
+        [Test]
+        public void GetAll_EventSeatListReturned()
         {
-            _eventSeatService.GetById(id);
+            var eventSeats = new List<EventSeat>
+            {
+                new EventSeat { Id = 1, EventAreaId = 1, Row = 1, Number = 1, State = EventSeatState.Available },
+                new EventSeat { Id = 2, EventAreaId = 1, Row = 1, Number = 2, State = EventSeatState.Available },
+                new EventSeat { Id = 2, EventAreaId = 1, Row = 1, Number = 3, State = EventSeatState.Ordered },
+            };
 
-            _eventSeatRepositoryMock.Verify(x => x.GetById(id), Times.Once);
+            _eventSeatRepositoryMock.Setup(x => x.GetAll()).Returns(eventSeats);
+
+            _eventSeatService.GetAll().Should().BeEquivalentTo(eventSeats);
         }
 
-        [TestCase(0)]
-        [TestCase(-1)]
-        public void GetById_InvalidId_ThrowsArgumentException(int id)
+        [Test]
+        public void GetById_EveneSeatRetruned()
         {
-            Assert.Throws<ArgumentException>(() => _eventSeatService.GetById(id));
+            var eventSeat = new EventSeat { Id = 1, EventAreaId = 1, Row = 1, Number = 1, State = EventSeatState.Available };
+
+            _eventSeatRepositoryMock.Setup(x => x.GetById(It.IsAny<int>())).Returns(eventSeat);
+
+            _eventSeatService.GetById(It.IsAny<int>()).Should().BeEquivalentTo(eventSeat);
+        }
+
+        [Test]
+        public void GetById_EventSeatNotFound_NullReturned()
+        {
+            _eventSeatRepositoryMock.Setup(x => x.GetById(It.IsAny<int>())).Returns<Layout>(null);
+
+            Assert.IsNull(_eventSeatService.GetById(It.IsAny<int>()));
         }
     }
 }
