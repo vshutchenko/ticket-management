@@ -1,7 +1,8 @@
 ﻿--- Venue
 insert into dbo.Venue
 	values 
-		('First venue', 'First venue address', '123 45 678 90 12')
+		('First venue', 'First venue address', '123 45 678 90 12'),
+		('Second venue', 'Second venue address', '213 345 34 3434')
 
 --- Layout
 insert into dbo.Layout

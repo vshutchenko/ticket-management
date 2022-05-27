@@ -114,4 +114,7 @@
   <ItemGroup>
     <PostDeploy Include="Post\Script.PostDeployment.sql" />
   </ItemGroup>
+  <PropertyGroup>
+    <PostBuildEvent>xcopy /y "$(ProjectDir)$(OutDir)*.dacpac" "$(SolutionDir)\test\TicketManagement.IntegrationTests\TestDatabase"</PostBuildEvent>
+  </PropertyGroup>
 </Project>

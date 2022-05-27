@@ -1,7 +1,6 @@
 ﻿CREATE PROCEDURE [dbo].[InsertLayout]
 	@venueId int,
-	@description nvarchar(120),
-	@layoutId int out
+	@description nvarchar(120)
 AS
 	INSERT INTO Layout(Description, VenueId)
 	VALUES(@description, @venueId)
