@@ -21,6 +21,11 @@ namespace TicketManagement.BusinessLogic.Validation
 
         public void Validate(Event item)
         {
+            if (item is null)
+            {
+                throw new ValidationException("Event is null.");
+            }
+
             ValidateDate(item.StartDate, item.EndDate);
             ValidateAvailableLayout(item.LayoutId, item.StartDate, item.EndDate);
             ValidateAvailableSeats(item.LayoutId);

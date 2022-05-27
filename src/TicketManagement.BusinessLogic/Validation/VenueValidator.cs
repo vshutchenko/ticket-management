@@ -16,6 +16,11 @@ namespace TicketManagement.BusinessLogic.Validation
 
         public void Validate(Venue item)
         {
+            if (item is null)
+            {
+                throw new ValidationException("Venue is null.");
+            }
+
             if (_venueRepository.GetAll().Any(v => v.Description.Equals(item.Description, StringComparison.OrdinalIgnoreCase)))
             {
                 throw new ValidationException("Venue with same description is already exists.");

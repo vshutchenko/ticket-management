@@ -14,33 +14,22 @@ namespace TicketManagement.BusinessLogic.Implementations
     internal class AreaService : IAreaService
     {
         private readonly IRepository<Area> _areaRepository;
-        private readonly IValidator<Area> _validationService;
+        private readonly IValidator<Area> _areaValidator;
 
-        public AreaService(IRepository<Area> areaRepository, IValidator<Area> validationService)
+        public AreaService(IRepository<Area> areaRepository, IValidator<Area> areaValidator)
         {
             _areaRepository = areaRepository ?? throw new ArgumentNullException(nameof(areaRepository));
-            _validationService = validationService ?? throw new ArgumentNullException(nameof(validationService));
+            _areaValidator = areaValidator ?? throw new ArgumentNullException(nameof(areaValidator));
         }
 
         public int Create(Area area)
         {
-            if (area is null)
-            {
-                throw new ArgumentNullException(nameof(area));
-            }
-
-            _validationService.Validate(area);
-
+            _areaValidator.Validate(area);
             return _areaRepository.Create(area);
         }
 
         public void Delete(int id)
         {
-            if (id < 1)
-            {
-                throw new ArgumentException(nameof(id));
-            }
-
             _areaRepository.Delete(id);
         }
 
@@ -51,22 +40,12 @@ namespace TicketManagement.BusinessLogic.Implementations
 
         public Area GetById(int id)
         {
-            if (id < 1)
-            {
-                throw new ArgumentException(nameof(id));
-            }
-
             return _areaRepository.GetById(id);
         }
 
         public void Update(Area area)
         {
-            if (area is null)
-            {
-                throw new ArgumentNullException(nameof(area));
-            }
-
-            _validationService.Validate(area);
+            _areaValidator.Validate(area);
 
             _areaRepository.Update(area);
         }

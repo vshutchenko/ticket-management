@@ -22,24 +22,18 @@ namespace TicketManagement.BusinessLogic.Implementations
 
         public EventSeat GetById(int id)
         {
-            if (id < 1)
-            {
-                throw new ArgumentException(nameof(id));
-            }
-
             return _eventSeatRepository.GetById(id);
         }
 
         public void SetSeatState(int id, EventSeatState state)
         {
-            if (id < 1)
-            {
-                throw new ArgumentException(nameof(id));
-            }
-
             var seat = _eventSeatRepository.GetById(id);
-            seat.State = state;
-            _eventSeatRepository.Update(seat);
+
+            if (seat != null)
+            {
+                seat.State = state;
+                _eventSeatRepository.Update(seat);
+            }
         }
     }
 }

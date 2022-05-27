@@ -10,33 +10,23 @@ namespace TicketManagement.BusinessLogic.Implementations
     internal class LayoutService : ILayoutService
     {
         private readonly IRepository<Layout> _layoutRepository;
-        private readonly IValidator<Layout> _validationService;
+        private readonly IValidator<Layout> _layoutValidator;
 
-        public LayoutService(IRepository<Layout> layoutRepository, IValidator<Layout> validationService)
+        public LayoutService(IRepository<Layout> layoutRepository, IValidator<Layout> layoutValidator)
         {
             _layoutRepository = layoutRepository ?? throw new ArgumentNullException(nameof(layoutRepository));
-            _validationService = validationService ?? throw new ArgumentNullException(nameof(validationService));
+            _layoutValidator = layoutValidator ?? throw new ArgumentNullException(nameof(layoutValidator));
         }
 
         public int Create(Layout layout)
         {
-            if (layout is null)
-            {
-                throw new ArgumentNullException(nameof(layout));
-            }
-
-            _validationService.Validate(layout);
+            _layoutValidator.Validate(layout);
 
             return _layoutRepository.Create(layout);
         }
 
         public void Delete(int id)
         {
-            if (id < 1)
-            {
-                throw new ArgumentException(nameof(id));
-            }
-
             _layoutRepository.Delete(id);
         }
 
@@ -47,22 +37,12 @@ namespace TicketManagement.BusinessLogic.Implementations
 
         public Layout GetById(int id)
         {
-            if (id < 1)
-            {
-                throw new ArgumentException(nameof(id));
-            }
-
             return _layoutRepository.GetById(id);
         }
 
         public void Update(Layout layout)
         {
-            if (layout is null)
-            {
-                throw new ArgumentNullException(nameof(layout));
-            }
-
-            _validationService.Validate(layout);
+            _layoutValidator.Validate(layout);
 
             _layoutRepository.Update(layout);
         }

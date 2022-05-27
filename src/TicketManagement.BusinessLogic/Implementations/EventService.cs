@@ -10,33 +10,23 @@ namespace TicketManagement.BusinessLogic.Implementations
     internal class EventService : IEventService
     {
         private readonly IRepository<Event> _eventRepository;
-        private readonly IValidator<Event> _validationService;
+        private readonly IValidator<Event> _eventValidator;
 
-        public EventService(IRepository<Event> eventRepository, IValidator<Event> validationService)
+        public EventService(IRepository<Event> eventRepository, IValidator<Event> eventValidator)
         {
             _eventRepository = eventRepository ?? throw new ArgumentNullException(nameof(eventRepository));
-            _validationService = validationService ?? throw new ArgumentNullException(nameof(validationService));
+            _eventValidator = eventValidator ?? throw new ArgumentNullException(nameof(eventValidator));
         }
 
         public int Create(Event @event)
         {
-            if (@event is null)
-            {
-                throw new ArgumentNullException(nameof(@event));
-            }
-
-            _validationService.Validate(@event);
+            _eventValidator.Validate(@event);
 
             return _eventRepository.Create(@event);
         }
 
         public void Delete(int id)
         {
-            if (id < 1)
-            {
-                throw new ArgumentException(nameof(id));
-            }
-
             _eventRepository.Delete(id);
         }
 
@@ -47,22 +37,12 @@ namespace TicketManagement.BusinessLogic.Implementations
 
         public Event GetById(int id)
         {
-            if (id < 1)
-            {
-                throw new ArgumentException(nameof(id));
-            }
-
             return _eventRepository.GetById(id);
         }
 
         public void Update(Event @event)
         {
-            if (@event is null)
-            {
-                throw new ArgumentNullException(nameof(@event));
-            }
-
-            _validationService.Validate(@event);
+            _eventValidator.Validate(@event);
 
             _eventRepository.Update(@event);
         }

@@ -25,26 +25,20 @@ namespace TicketManagement.BusinessLogic.Implementations
 
         public EventArea GetById(int id)
         {
-            if (id < 1)
-            {
-                throw new ArgumentException(nameof(id));
-            }
-
             return _eventAreaRepository.GetById(id);
         }
 
         public void SetPrice(int id, decimal price)
         {
-            if (id < 1)
-            {
-                throw new ArgumentException(nameof(id));
-            }
-
             _priceValidator.Validate(price);
 
             var area = _eventAreaRepository.GetById(id);
-            area.Price = price;
-            _eventAreaRepository.Update(area);
+
+            if (area != null)
+            {
+                area.Price = price;
+                _eventAreaRepository.Update(area);
+            }
         }
     }
 }

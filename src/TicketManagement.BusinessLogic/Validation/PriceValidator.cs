@@ -6,7 +6,7 @@
         {
             if (item < 0)
             {
-                throw new ValidationException("price cannotbe negative");
+                throw new ValidationException("Price is less than zero.");
             }
         }
     }

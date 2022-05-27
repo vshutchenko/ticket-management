@@ -10,33 +10,23 @@ namespace TicketManagement.BusinessLogic.Implementations
     internal class VenueService : IVenueService
     {
         private readonly IRepository<Venue> _venueRepository;
-        private readonly IValidator<Venue> _validationService;
+        private readonly IValidator<Venue> _venueValidator;
 
-        public VenueService(IRepository<Venue> venueRepository, IValidator<Venue> validationService)
+        public VenueService(IRepository<Venue> venueRepository, IValidator<Venue> venueValidator)
         {
             _venueRepository = venueRepository ?? throw new ArgumentNullException(nameof(venueRepository));
-            _validationService = validationService ?? throw new ArgumentNullException(nameof(validationService));
+            _venueValidator = venueValidator ?? throw new ArgumentNullException(nameof(venueValidator));
         }
 
         public int Create(Venue venue)
         {
-            if (venue is null)
-            {
-                throw new ArgumentNullException(nameof(venue));
-            }
-
-            _validationService.Validate(venue);
+            _venueValidator.Validate(venue);
 
             return _venueRepository.Create(venue);
         }
 
         public void Delete(int id)
         {
-            if (id < 1)
-            {
-                throw new ArgumentException(nameof(id));
-            }
-
             _venueRepository.Delete(id);
         }
 
@@ -47,22 +37,12 @@ namespace TicketManagement.BusinessLogic.Implementations
 
         public Venue GetById(int id)
         {
-            if (id < 1)
-            {
-                throw new ArgumentException(nameof(id));
-            }
-
             return _venueRepository.GetById(id);
         }
 
         public void Update(Venue venue)
         {
-            if (venue is null)
-            {
-                throw new ArgumentNullException(nameof(venue));
-            }
-
-            _validationService.Validate(venue);
+            _venueValidator.Validate(venue);
 
             _venueRepository.Update(venue);
         }
