@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Data.SqlClient;
+using System.IO;
 using Microsoft.Extensions.Configuration;
 using Microsoft.SqlServer.Dac;
 
@@ -15,10 +16,12 @@ namespace TicketManagement.IntegrationTests
                 .Build()
                 .GetConnectionString("TestDatabase");
 
+            var builder = new SqlConnectionStringBuilder(_connectionString);
+
             var dacpac = DacPackage.Load(Path.Combine("TestDatabase", "TicketManagement.Database.dacpac"));
             var dacpacService = new DacServices(_connectionString);
             var dacOptions = new DacDeployOptions { CreateNewDatabase = true };
-            dacpacService.Deploy(dacpac, "TicketManagement.TestDatabase", true, dacOptions);
+            dacpacService.Deploy(dacpac, builder["Initial Catalog"].ToString(), true, dacOptions);
         }
 
         public string ConnectionString => _connectionString;
