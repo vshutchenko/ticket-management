@@ -62,9 +62,11 @@ namespace TicketManagement.DataAccess.Implementations
 
         public IEnumerable<Event> GetAll()
         {
+            var query = "SELECT Id, Name, Description, LayoutId, StartDate, EndDate FROM Event";
+
             using SqlConnection connection = new SqlConnection(_connectionString);
 
-            using SqlCommand command = new SqlCommand("SELECT Id, Name, Description, LayoutId, StartDate, EndDate FROM Event", connection);
+            using SqlCommand command = new SqlCommand(query, connection);
 
             connection.Open();
 
@@ -86,9 +88,13 @@ namespace TicketManagement.DataAccess.Implementations
 
         public Event GetById(int id)
         {
+            var query = "SELECT Id, Name, Description, LayoutId, StartDate, EndDate FROM Event WHERE Id = @id";
+
             using SqlConnection connection = new SqlConnection(_connectionString);
 
-            using SqlCommand command = new SqlCommand($"SELECT Id, Name, Description, LayoutId, StartDate, EndDate FROM Event WHERE Id = {id}", connection);
+            using SqlCommand command = new SqlCommand(query, connection);
+
+            command.Parameters.AddWithValue("@id", id);
 
             connection.Open();
 

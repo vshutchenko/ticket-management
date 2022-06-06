@@ -62,13 +62,6 @@
     <Folder Include="Tables" />
     <Folder Include="Post" />
     <Folder Include="StoredProcedures" />
-    <Folder Include="StoredProcedures\Event" />
-    <Folder Include="StoredProcedures\Area" />
-    <Folder Include="StoredProcedures\Layout" />
-    <Folder Include="StoredProcedures\Venue" />
-    <Folder Include="StoredProcedures\Seat" />
-    <Folder Include="StoredProcedures\EventArea" />
-    <Folder Include="StoredProcedures\EventSeat" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="ForeignKeys\FK_Venue_Layout.sql" />
@@ -78,27 +71,9 @@
     <Build Include="ForeignKeys\FK_Layout_Event.sql" />
     <Build Include="ForeignKeys\FK_Event_EventArea.sql" />
     <Build Include="ForeignKeys\FK_EventArea_EventSeat.sql" />
-    <Build Include="StoredProcedures\Event\InsertEvent.sql" />
-    <Build Include="StoredProcedures\Event\DeleteEvent.sql" />
-    <Build Include="StoredProcedures\Event\UpdateEvent.sql" />
-    <Build Include="StoredProcedures\Area\DeleteArea.sql" />
-    <Build Include="StoredProcedures\Area\InsertArea.sql" />
-    <Build Include="StoredProcedures\Area\UpdateArea.sql" />
-    <Build Include="StoredProcedures\Layout\DeleteLayout.sql" />
-    <Build Include="StoredProcedures\Layout\UpdateLayout.sql" />
-    <Build Include="StoredProcedures\Layout\InsertLayout.sql" />
-    <Build Include="StoredProcedures\Seat\DeleteSeat.sql" />
-    <Build Include="StoredProcedures\Seat\UpdateSeat.sql" />
-    <Build Include="StoredProcedures\Seat\InsertSeat.sql" />
-    <Build Include="StoredProcedures\Venue\DeleteVenue.sql" />
-    <Build Include="StoredProcedures\Venue\InsertVenue.sql" />
-    <Build Include="StoredProcedures\Venue\UpdateVenue.sql" />
-    <Build Include="StoredProcedures\EventArea\DeleteEventArea.sql" />
-    <Build Include="StoredProcedures\EventArea\UpdateEventArea.sql" />
-    <Build Include="StoredProcedures\EventArea\InsertEventArea.sql" />
-    <Build Include="StoredProcedures\EventSeat\DeleteEventSeat.sql" />
-    <Build Include="StoredProcedures\EventSeat\UpdateEventSeat.sql" />
-    <Build Include="StoredProcedures\EventSeat\InsertEventSeat.sql" />
+    <Build Include="StoredProcedures\DeleteEvent.sql" />
+    <Build Include="StoredProcedures\InsertEvent.sql" />
+    <Build Include="StoredProcedures\UpdateEvent.sql" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="Tables\Event.sql" />

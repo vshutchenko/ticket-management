@@ -18,20 +18,14 @@ namespace TicketManagement.DataAccess.Implementations
 
         public int Create(Layout item)
         {
+            var query = "INSERT INTO Layout(Description, VenueId) VALUES(@description, @venueId); SELECT SCOPE_IDENTITY()";
+
             using SqlConnection connection = new SqlConnection(_connectionString);
 
-            using SqlCommand command = new SqlCommand("InsertLayout", connection)
-            {
-                CommandType = CommandType.StoredProcedure,
-            };
+            using SqlCommand command = new SqlCommand(query, connection);
 
-            SqlParameter[] parameters = new SqlParameter[]
-            {
-                new SqlParameter("description", item.Description),
-                new SqlParameter("venueId", item.VenueId),
-            };
-
-            command.Parameters.AddRange(parameters);
+            command.Parameters.AddWithValue("@description", item.Description);
+            command.Parameters.AddWithValue("@venueId", item.VenueId);
 
             connection.Open();
 
@@ -42,14 +36,13 @@ namespace TicketManagement.DataAccess.Implementations
 
         public void Delete(int id)
         {
+            var query = "DELETE FROM Layout WHERE Id = @layoutId";
+
             using SqlConnection connection = new SqlConnection(_connectionString);
 
-            using SqlCommand command = new SqlCommand("DeleteLayout", connection)
-            {
-                CommandType = CommandType.StoredProcedure,
-            };
+            using SqlCommand command = new SqlCommand(query, connection);
 
-            command.Parameters.Add(new SqlParameter("layoutId", id));
+            command.Parameters.AddWithValue("@layoutId", id);
 
             connection.Open();
 
@@ -58,9 +51,11 @@ namespace TicketManagement.DataAccess.Implementations
 
         public IEnumerable<Layout> GetAll()
         {
+            var query = "SELECT Id, Description, VenueId FROM Layout";
+
             using SqlConnection connection = new SqlConnection(_connectionString);
 
-            using SqlCommand command = new SqlCommand("SELECT Id, Description, VenueId FROM Layout", connection);
+            using SqlCommand command = new SqlCommand(query, connection);
 
             connection.Open();
 
@@ -79,9 +74,13 @@ namespace TicketManagement.DataAccess.Implementations
 
         public Layout GetById(int id)
         {
+            var query = "SELECT Id, Description, VenueId FROM Layout WHERE Id = @id";
+
             using SqlConnection connection = new SqlConnection(_connectionString);
 
-            using SqlCommand command = new SqlCommand($"SELECT Id, Description, VenueId FROM Layout WHERE Id = {id}", connection);
+            using SqlCommand command = new SqlCommand(query, connection);
+
+            command.Parameters.AddWithValue("@id", id);
 
             connection.Open();
 
@@ -102,21 +101,15 @@ namespace TicketManagement.DataAccess.Implementations
 
         public void Update(Layout item)
         {
+            var query = "UPDATE Layout SET Description = @description, VenueId = @venueId WHERE Id = @layoutId";
+
             using SqlConnection connection = new SqlConnection(_connectionString);
 
-            using SqlCommand command = new SqlCommand("UpdateLayout", connection)
-            {
-                CommandType = CommandType.StoredProcedure,
-            };
+            using SqlCommand command = new SqlCommand(query, connection);
 
-            SqlParameter[] parameters = new SqlParameter[]
-            {
-                new SqlParameter("layoutId", item.Id),
-                new SqlParameter("description", item.Description),
-                new SqlParameter("venueId", item.VenueId),
-            };
-
-            command.Parameters.AddRange(parameters);
+            command.Parameters.AddWithValue("@layoutId", item.Id);
+            command.Parameters.AddWithValue("@description", item.Description);
+            command.Parameters.AddWithValue("@venueId", item.VenueId);
 
             connection.Open();
 

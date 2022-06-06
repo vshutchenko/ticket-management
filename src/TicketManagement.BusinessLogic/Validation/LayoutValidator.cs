@@ -21,8 +21,11 @@ namespace TicketManagement.BusinessLogic.Validation
                 throw new ValidationException("Layout is null.");
             }
 
-            if (_layoutRepsitory.GetAll().Any(l => l.VenueId == item.VenueId
-                && item.Description.Equals(l.Description, StringComparison.OrdinalIgnoreCase)))
+            bool layoutExists = _layoutRepsitory
+                .GetAll()
+                .Any(l => l.VenueId == item.VenueId && item.Description.Equals(l.Description, StringComparison.OrdinalIgnoreCase));
+
+            if (layoutExists)
             {
                 throw new ValidationException("The same layout is already exists in current venue.");
             }

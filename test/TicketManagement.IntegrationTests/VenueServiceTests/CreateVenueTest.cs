@@ -24,7 +24,7 @@ namespace TicketManagement.IntegrationTests.VenueServiceTests
         }
 
         [Test]
-        public void Create_ValidVenue_VenueIsCreated()
+        public void Create_ValidVenue_CreatesVenue()
         {
             var venueToCreate = new Venue
             {

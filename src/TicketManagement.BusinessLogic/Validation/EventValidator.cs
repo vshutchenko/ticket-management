@@ -61,7 +61,9 @@ namespace TicketManagement.BusinessLogic.Validation
         {
             var layoutAreas = _areaRepository.GetAll().Where(a => a.LayoutId == layoutId).ToList();
 
-            if (!_seatRepository.GetAll().Any(s => layoutAreas.Any(a => a.Id == s.AreaId)))
+            bool availableSeatsExist = _seatRepository.GetAll().Any(s => layoutAreas.Any(a => a.Id == s.AreaId));
+
+            if (!availableSeatsExist)
             {
                 throw new ValidationException("There are no available seats in the layout.");
             }

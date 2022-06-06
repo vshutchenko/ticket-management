@@ -18,22 +18,16 @@ namespace TicketManagement.DataAccess.Implementations
 
         public int Create(Area item)
         {
+            var query = "INSERT INTO Area(LayoutId, Description, CoordX, CoordY) VALUES(@layoutId, @description, @coordX, @coordY); SELECT SCOPE_IDENTITY()";
+
             using SqlConnection connection = new SqlConnection(_connectionString);
 
-            using SqlCommand command = new SqlCommand("InsertArea", connection)
-            {
-                CommandType = CommandType.StoredProcedure,
-            };
+            using SqlCommand command = new SqlCommand(query, connection);
 
-            SqlParameter[] parameters = new SqlParameter[]
-            {
-                new SqlParameter("layoutId", item.LayoutId),
-                new SqlParameter("description", item.Description),
-                new SqlParameter("coordX", item.CoordX),
-                new SqlParameter("coordY", item.CoordY),
-            };
-
-            command.Parameters.AddRange(parameters);
+            command.Parameters.AddWithValue("@layoutId", item.LayoutId);
+            command.Parameters.AddWithValue("@description", item.Description);
+            command.Parameters.AddWithValue("@coordX", item.CoordX);
+            command.Parameters.AddWithValue("@coordY", item.CoordY);
 
             connection.Open();
 
@@ -44,14 +38,13 @@ namespace TicketManagement.DataAccess.Implementations
 
         public void Delete(int id)
         {
+            var query = "DELETE FROM Area WHERE Id = @areaId";
+
             using SqlConnection connection = new SqlConnection(_connectionString);
 
-            using SqlCommand command = new SqlCommand("DeleteArea", connection)
-            {
-                CommandType = CommandType.StoredProcedure,
-            };
+            using SqlCommand command = new SqlCommand(query, connection);
 
-            command.Parameters.Add(new SqlParameter("areaId", id));
+            command.Parameters.AddWithValue("@areaId", id);
 
             connection.Open();
 
@@ -60,9 +53,11 @@ namespace TicketManagement.DataAccess.Implementations
 
         public IEnumerable<Area> GetAll()
         {
+            var query = "SELECT Id, LayoutId, Description, CoordX, CoordY FROM Area";
+
             using SqlConnection connection = new SqlConnection(_connectionString);
 
-            using SqlCommand command = new SqlCommand("SELECT Id, LayoutId, Description, CoordX, CoordY FROM Area", connection);
+            using SqlCommand command = new SqlCommand(query, connection);
 
             connection.Open();
 
@@ -83,9 +78,13 @@ namespace TicketManagement.DataAccess.Implementations
 
         public Area GetById(int id)
         {
+            var query = "SELECT Id, LayoutId, Description, CoordX, CoordY FROM Area WHERE Id = @id";
+
             using SqlConnection connection = new SqlConnection(_connectionString);
 
-            using SqlCommand command = new SqlCommand($"SELECT Id, LayoutId, Description, CoordX, CoordY FROM Area WHERE Id = {id}", connection);
+            using SqlCommand command = new SqlCommand(query, connection);
+
+            command.Parameters.AddWithValue("@id", id);
 
             connection.Open();
 
@@ -108,23 +107,17 @@ namespace TicketManagement.DataAccess.Implementations
 
         public void Update(Area item)
         {
+            var query = "UPDATE Area SET LayoutId = @layoutId, Description = @description, CoordX = @coordX, CoordY = @coordY WHERE Id = @areaId";
+
             using SqlConnection connection = new SqlConnection(_connectionString);
 
-            using SqlCommand command = new SqlCommand("UpdateArea", connection)
-            {
-                CommandType = CommandType.StoredProcedure,
-            };
+            using SqlCommand command = new SqlCommand(query, connection);
 
-            SqlParameter[] parameters = new SqlParameter[]
-            {
-                new SqlParameter("areaId", item.Id),
-                new SqlParameter("layoutId", item.LayoutId),
-                new SqlParameter("description", item.Description),
-                new SqlParameter("coordX", item.CoordX),
-                new SqlParameter("coordY", item.CoordY),
-            };
-
-            command.Parameters.AddRange(parameters);
+            command.Parameters.AddWithValue("@areaId", item.Id);
+            command.Parameters.AddWithValue("@layoutId", item.LayoutId);
+            command.Parameters.AddWithValue("@description", item.Description);
+            command.Parameters.AddWithValue("@coordX", item.CoordX);
+            command.Parameters.AddWithValue("@coordY", item.CoordY);
 
             connection.Open();
 

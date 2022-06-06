@@ -44,11 +44,25 @@ namespace TicketManagement.IntegrationTests.EventServiceTests
         }
 
         [Test]
-        public void Update_ValidEvent_Event_EventAreas_EventSeats_AreUpdated()
+        public void Update_ValidEvent_UpdatesEventWithAreasAndSeats()
         {
+            int id = 1;
+
+            var eventBeforeUpdate = new Event
+            {
+                Id = id,
+                Name = "First event",
+                Descpription = "First event description",
+                LayoutId = 1,
+                StartDate = new DateTime(2023, 1, 1, 10, 0, 0),
+                EndDate = new DateTime(2023, 1, 1, 15, 0, 0),
+            };
+
+            _eventService.GetById(id).Should().BeEquivalentTo(eventBeforeUpdate);
+
             var eventToUpdate = new Event
             {
-                Id = 1,
+                Id = id,
                 Name = "First Updated Event",
                 Descpription = "Test description",
                 LayoutId = 1,
@@ -69,11 +83,11 @@ namespace TicketManagement.IntegrationTests.EventServiceTests
 
             var actualEventAreasCount = _eventAreaService
                 .GetAll()
-                .Count(a => a.EventId == eventToUpdate.Id);
+                .Count(a => a.EventId == id);
 
             var actualEventSeatsCount = _eventAreaService
                 .GetAll()
-                .Where(a => a.EventId == eventToUpdate.Id)
+                .Where(a => a.EventId == id)
                 .Sum(a => _eventSeatService.GetAll().Count(s => s.EventAreaId == a.Id));
 
             Assert.AreEqual(expectedEventAreasCount, actualEventAreasCount);

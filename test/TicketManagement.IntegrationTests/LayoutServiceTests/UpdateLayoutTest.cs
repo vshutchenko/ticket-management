@@ -24,18 +24,29 @@ namespace TicketManagement.IntegrationTests.LayoutServiceTests
         }
 
         [Test]
-        public void Update_ValidLayout_LayoutIsUpdated()
+        public void Update_ValidLayout_UpdatesLayout()
         {
+            int id = 1;
+
+            var layoutBeforeUpdate = new Layout
+            {
+                Id = id,
+                Description = "First layout",
+                VenueId = 1,
+            };
+
+            _layoutService.GetById(id).Should().BeEquivalentTo(layoutBeforeUpdate);
+
             var layoutToUpdate = new Layout
             {
-                Id = 1,
+                Id = id,
                 Description = "Test layout 1",
                 VenueId = 1,
             };
 
             _layoutService.Update(layoutToUpdate);
 
-            _layoutService.GetById(layoutToUpdate.Id).Should().BeEquivalentTo(layoutToUpdate);
+            _layoutService.GetById(id).Should().BeEquivalentTo(layoutToUpdate);
         }
     }
 }

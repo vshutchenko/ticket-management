@@ -43,7 +43,7 @@ namespace TicketManagement.IntegrationTests.EventServiceTests
         }
 
         [Test]
-        public void Create_ValidEvent_Event_EventAreas_EventSeats_AreCreated()
+        public void Create_ValidEvent_CreatesEventWithAreasAndSeats()
         {
             var eventToCreate = new Event
             {

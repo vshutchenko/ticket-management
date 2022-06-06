@@ -24,7 +24,7 @@ namespace TicketManagement.IntegrationTests.LayoutServiceTests
         }
 
         [Test]
-        public void Create_ValidLayout_LayoutIsCreated()
+        public void Create_ValidLayout_CreatesLayout()
         {
             var layoutToCreate = new Layout
             {

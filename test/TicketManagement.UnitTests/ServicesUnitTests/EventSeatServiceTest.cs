@@ -4,6 +4,7 @@ using Moq;
 using NUnit.Framework;
 using TicketManagement.BusinessLogic.Implementations;
 using TicketManagement.BusinessLogic.Interfaces;
+using TicketManagement.BusinessLogic.Validation;
 using TicketManagement.DataAccess.Entities;
 using TicketManagement.DataAccess.Interfaces;
 
@@ -23,7 +24,7 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
         }
 
         [Test]
-        public void SetSeatState_ValidParameters_StateChanged()
+        public void SetSeatState_ValidParameters_SetsState()
         {
             int id = 1;
             var eventSeat = new EventSeat { Id = 1, EventAreaId = 1, Number = 1, Row = 1, State = EventSeatState.Available };
@@ -36,17 +37,15 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
         }
 
         [Test]
-        public void SetSeatState_InvalidId_StateNotChanged()
+        public void SetSeatState_InvalidId_ThrowsValidationException()
         {
             _eventSeatRepositoryMock.Setup(x => x.GetById(It.IsAny<int>())).Returns<EventSeat>(null);
 
-            _eventSeatService.SetSeatState(1, EventSeatState.Ordered);
-
-            _eventSeatRepositoryMock.Verify(x => x.Update(It.IsAny<EventSeat>()), Times.Never);
+            Assert.Throws<ValidationException>(() => _eventSeatService.SetSeatState(1, EventSeatState.Ordered));
         }
 
         [Test]
-        public void GetAll_EventSeatListReturned()
+        public void GetAll_EventSeatListNotEmpty_ReturnsEventSeatList()
         {
             var eventSeats = new List<EventSeat>
             {
@@ -61,7 +60,7 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
         }
 
         [Test]
-        public void GetById_EveneSeatRetruned()
+        public void GetById_EventSeatExists_ReturnsEventSeat()
         {
             var eventSeat = new EventSeat { Id = 1, EventAreaId = 1, Row = 1, Number = 1, State = EventSeatState.Available };
 
@@ -71,7 +70,7 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
         }
 
         [Test]
-        public void GetById_EventSeatNotFound_NullReturned()
+        public void GetById_EventSeatNotFound_ReturnsNull()
         {
             _eventSeatRepositoryMock.Setup(x => x.GetById(It.IsAny<int>())).Returns<Layout>(null);
 

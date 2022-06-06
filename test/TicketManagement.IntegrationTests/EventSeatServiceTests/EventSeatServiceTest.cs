@@ -1,4 +1,5 @@
-﻿using NUnit.Framework;
+﻿using FluentAssertions;
+using NUnit.Framework;
 using TicketManagement.BusinessLogic.Implementations;
 using TicketManagement.BusinessLogic.Interfaces;
 using TicketManagement.DataAccess.Entities;
@@ -20,15 +21,20 @@ namespace TicketManagement.IntegrationTests.EventSeatServiceTests
             _eventSeatService = new EventSeatService(eventSeatRepo);
         }
 
-        [TestCase(1, EventSeatState.Available)]
-        [TestCase(2, EventSeatState.Ordered)]
-        public void SetSeatState_StateChanged(int id, EventSeatState state)
+        [Test]
+        public void SetSeatState_ValidState_SetsState()
         {
-            _eventSeatService.SetSeatState(id, state);
+            int id = 1;
 
-            var actualState = _eventSeatService.GetById(id).State;
+            EventSeatState stateBeforeUpdate = EventSeatState.Ordered;
 
-            Assert.AreEqual(state, actualState);
+            _eventSeatService.GetById(id).State.Should().Be(stateBeforeUpdate);
+
+            EventSeatState stateToUpdate = EventSeatState.Available;
+
+            _eventSeatService.SetSeatState(id, stateToUpdate);
+
+            _eventSeatService.GetById(id).State.Should().Be(stateToUpdate);
         }
     }
 }

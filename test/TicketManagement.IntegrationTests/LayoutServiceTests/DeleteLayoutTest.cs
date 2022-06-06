@@ -22,7 +22,7 @@ namespace TicketManagement.IntegrationTests.LayoutServiceTests
         }
 
         [TestCase(1)]
-        public void DeleteExistingLayout_LayoutsIsDeleted(int id)
+        public void Delete_LayoutExists_DeletesLayout(int id)
         {
             _layoutService.Delete(id);
 

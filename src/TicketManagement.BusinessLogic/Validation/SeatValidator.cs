@@ -21,7 +21,9 @@ namespace TicketManagement.BusinessLogic.Validation
                 throw new ValidationException("Seat is null.");
             }
 
-            if (_seatRepository.GetAll().Any(s => s.AreaId == item.AreaId && s.Row == item.Row && s.Number == item.Number))
+            bool seatExists = _seatRepository.GetAll().Any(s => s.AreaId == item.AreaId && s.Row == item.Row && s.Number == item.Number);
+
+            if (seatExists)
             {
                 throw new ValidationException("Seat with same row and number is already exists in the area.");
             }

@@ -21,7 +21,11 @@ namespace TicketManagement.BusinessLogic.Validation
                 throw new ValidationException("Area is null.");
             }
 
-            if (_areaRepository.GetAll().Any(a => a.LayoutId == item.LayoutId && a.Description.Equals(item.Description, StringComparison.OrdinalIgnoreCase)))
+            bool areaExists = _areaRepository
+                .GetAll()
+                .Any(a => a.LayoutId == item.LayoutId && a.Description.Equals(item.Description, StringComparison.OrdinalIgnoreCase));
+
+            if (areaExists)
             {
                 throw new ValidationException("Area description should be unique in the layout.");
             }

@@ -27,7 +27,7 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
         }
 
         [Test]
-        public void SetPrice_ValidParameters_PriceChanged()
+        public void SetPrice_ValidParameters_SetsPrice()
         {
             int id = 1;
             decimal price = 15;
@@ -56,17 +56,15 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
         }
 
         [Test]
-        public void SetPrice_EventAreaNotFound_PriceNotChanged()
+        public void SetPrice_EventAreaNotFound_ThrowsValidationException()
         {
             _eventAreaRepositoryMock.Setup(x => x.GetById(It.IsAny<int>())).Returns<EventArea>(null);
 
-            _eventAreaService.SetPrice(1, 15);
-
-            _eventAreaRepositoryMock.Verify(x => x.Update(It.IsAny<EventArea>()), Times.Never);
+            Assert.Throws<ValidationException>(() => _eventAreaService.SetPrice(1, 15));
         }
 
         [Test]
-        public void GetAll_EventAreaListReturned()
+        public void GetAll_EventAreaListNotEmpty_ReturnsEventAreaList()
         {
             var eventAreas = new List<EventArea>
             {
@@ -81,7 +79,7 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
         }
 
         [Test]
-        public void GetById_EventAreaReturned()
+        public void GetById_EventAreaExists_ReturnsEventArea()
         {
             var eventArea = new EventArea { Id = 1, Description = "Area 1", CoordX = 1, CoordY = 1, EventId = 1, Price = 1 };
 
@@ -93,7 +91,7 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
         }
 
         [Test]
-        public void GetById_EventAreaNotFound_NullReturned()
+        public void GetById_EventAreaNotFound_ReturnsNull()
         {
             _eventAreaRepositoryMock.Setup(x => x.GetById(It.IsAny<int>())).Returns<EventArea>(null);
 

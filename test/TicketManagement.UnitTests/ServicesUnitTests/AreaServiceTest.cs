@@ -36,7 +36,7 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
         }
 
         [Test]
-        public void Create_ValidArea_AreaCreated()
+        public void Create_ValidArea_CreatesArea()
         {
             var areaToCreate = new Area { Description = "New Area", CoordX = 1, CoordY = 1, LayoutId = 3 };
 
@@ -60,7 +60,7 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
         }
 
         [Test]
-        public void Delete_AreaDeleted()
+        public void Delete_AreaExists_DeletesArea()
         {
             _areaService.Delete(It.IsAny<int>());
 
@@ -68,7 +68,7 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
         }
 
         [Test]
-        public void Update_ValidArea_AreaUpdated()
+        public void Update_ValidArea_UpdatesArea()
         {
             var areaToUpdate = new Area { Id = 1, Description = "New Area", CoordX = 1, CoordY = 1, LayoutId = 4 };
 
@@ -92,7 +92,7 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
         }
 
         [Test]
-        public void GetAll_AreaListReturned()
+        public void GetAll_AreaListNotEmpty_ReturnsAreaList()
         {
             var areas = _areaService.GetAll().ToList();
 
@@ -100,7 +100,7 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
         }
 
         [Test]
-        public void GetById_AreaReturned()
+        public void GetById_AreaExists_ReturnsArea()
         {
             var area = new Area { Id = 1, Description = "Area 1", CoordX = 1, CoordY = 1, LayoutId = 1 };
 
@@ -110,7 +110,7 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
         }
 
         [Test]
-        public void GetById_AreaNotFound_NullRetruned()
+        public void GetById_AreaNotFound_ReturnsNull()
         {
             _areaRepositoryMock.Setup(x => x.GetById(It.IsAny<int>())).Returns<Area>(null);
 

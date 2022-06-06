@@ -22,7 +22,7 @@ namespace TicketManagement.IntegrationTests.AreaServiceTests
         }
 
         [TestCase(1)]
-        public void DeleteExistingArea_AreaDeleted(int id)
+        public void Delete_AreaExists_DeletesArea(int id)
         {
             _areaService.Delete(id);
 

@@ -24,7 +24,7 @@ namespace TicketManagement.IntegrationTests.AreaServiceTests
         }
 
         [Test]
-        public void Create_ValidArea_AreaCreated()
+        public void Create_ValidArea_CreatesArea()
         {
             var areaToCreate = new Area
             {

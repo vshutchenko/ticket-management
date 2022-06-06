@@ -24,19 +24,31 @@ namespace TicketManagement.IntegrationTests.SeatServiceTests
         }
 
         [Test]
-        public void Update_ValidSeat_SeatIsCreated()
+        public void Update_ValidSeat_UpdatesSeat()
         {
+            int id = 1;
+
+            var seatBeforeUpdate = new Seat
+            {
+                Id = id,
+                Row = 1,
+                Number = 1,
+                AreaId = 1,
+            };
+
+            _seatService.GetById(id).Should().BeEquivalentTo(seatBeforeUpdate);
+
             var seatToUpdate = new Seat
             {
-                Id = 1,
-                AreaId = 1,
+                Id = id,
+                AreaId = 2,
                 Row = 6,
-                Number = 1,
+                Number = 6,
             };
 
             _seatService.Update(seatToUpdate);
 
-            _seatService.GetById(seatToUpdate.Id).Should().BeEquivalentTo(seatToUpdate);
+            _seatService.GetById(id).Should().BeEquivalentTo(seatToUpdate);
         }
     }
 }

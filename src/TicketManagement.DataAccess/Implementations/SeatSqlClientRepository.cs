@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-using System.Text;
 using TicketManagement.DataAccess.Entities;
 using TicketManagement.DataAccess.Interfaces;
 
@@ -19,21 +18,15 @@ namespace TicketManagement.DataAccess.Implementations
 
         public int Create(Seat item)
         {
+            var query = "INSERT INTO Seat(AreaId, Row, Number) VALUES(@areaId, @row, @number); SELECT SCOPE_IDENTITY()";
+
             using SqlConnection connection = new SqlConnection(_connectionString);
 
-            using SqlCommand command = new SqlCommand("InsertSeat", connection)
-            {
-                CommandType = CommandType.StoredProcedure,
-            };
+            using SqlCommand command = new SqlCommand(query, connection);
 
-            SqlParameter[] parameters = new SqlParameter[]
-            {
-                new SqlParameter("areaId", item.AreaId),
-                new SqlParameter("row", item.Row),
-                new SqlParameter("number", item.Number),
-            };
-
-            command.Parameters.AddRange(parameters);
+            command.Parameters.AddWithValue("@areaId", item.AreaId);
+            command.Parameters.AddWithValue("@row", item.Row);
+            command.Parameters.AddWithValue("@number", item.Number);
 
             connection.Open();
 
@@ -44,14 +37,13 @@ namespace TicketManagement.DataAccess.Implementations
 
         public void Delete(int id)
         {
+            var query = "DELETE FROM Seat WHERE Id = @seatId";
+
             using SqlConnection connection = new SqlConnection(_connectionString);
 
-            using SqlCommand command = new SqlCommand("DeleteSeat", connection)
-            {
-                CommandType = CommandType.StoredProcedure,
-            };
+            using SqlCommand command = new SqlCommand(query, connection);
 
-            command.Parameters.Add(new SqlParameter("seatId", id));
+            command.Parameters.AddWithValue("@seatId", id);
 
             connection.Open();
 
@@ -60,9 +52,11 @@ namespace TicketManagement.DataAccess.Implementations
 
         public IEnumerable<Seat> GetAll()
         {
+            var query = "SELECT Id, AreaId, Row, Number FROM Seat";
+
             using SqlConnection connection = new SqlConnection(_connectionString);
 
-            using SqlCommand command = new SqlCommand("SELECT Id, AreaId, Row, Number FROM Seat", connection);
+            using SqlCommand command = new SqlCommand(query, connection);
 
             connection.Open();
 
@@ -82,9 +76,13 @@ namespace TicketManagement.DataAccess.Implementations
 
         public Seat GetById(int id)
         {
+            var query = "SELECT Id, AreaId, Row, Number FROM Seat WHERE Id = @id";
+
             using SqlConnection connection = new SqlConnection(_connectionString);
 
-            using SqlCommand command = new SqlCommand($"SELECT Id, AreaId, Row, Number FROM Seat WHERE Id = {id}", connection);
+            using SqlCommand command = new SqlCommand(query, connection);
+
+            command.Parameters.AddWithValue("@id", id);
 
             connection.Open();
 
@@ -106,22 +104,16 @@ namespace TicketManagement.DataAccess.Implementations
 
         public void Update(Seat item)
         {
+            var query = "UPDATE Seat SET AreaId = @areaId, Row = @row, Number = @number WHERE Id = @seatId";
+
             using SqlConnection connection = new SqlConnection(_connectionString);
 
-            using SqlCommand command = new SqlCommand("UpdateSeat", connection)
-            {
-                CommandType = CommandType.StoredProcedure,
-            };
+            using SqlCommand command = new SqlCommand(query, connection);
 
-            SqlParameter[] parameters = new SqlParameter[]
-            {
-                new SqlParameter("seatId", item.Id),
-                new SqlParameter("areaId", item.AreaId),
-                new SqlParameter("row", item.Row),
-                new SqlParameter("number", item.Number),
-            };
-
-            command.Parameters.AddRange(parameters);
+            command.Parameters.AddWithValue("@seatId", item.Id);
+            command.Parameters.AddWithValue("@areaId", item.AreaId);
+            command.Parameters.AddWithValue("@row", item.Row);
+            command.Parameters.AddWithValue("@number", item.Number);
 
             connection.Open();
 

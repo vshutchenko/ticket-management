@@ -38,7 +38,7 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
         }
 
         [Test]
-        public void Create_ValidSeat_SeatCreated()
+        public void Create_ValidSeat_CreatesSeat()
         {
             var seatToCreate = new Seat { Id = 1, Row = 1, Number = 4, AreaId = 1, };
 
@@ -61,16 +61,16 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
             Assert.Throws<ValidationException>(() => _seatService.Create(null));
         }
 
-        [TestCase(1)]
-        public void Delete_SeatDeleted(int id)
+        [Test]
+        public void Delete_SeatExists_DeletesSeat()
         {
-            _seatService.Delete(id);
+            _seatService.Delete(It.IsAny<int>());
 
-            _seatRepositoryMock.Verify(x => x.Delete(id), Times.Once);
+            _seatRepositoryMock.Verify(x => x.Delete(It.IsAny<int>()), Times.Once);
         }
 
         [Test]
-        public void Update_ValidSeat_SeatUpdated()
+        public void Update_ValidSeat_UpdatesSeat()
         {
             var seatToUpdate = new Seat { Id = 1, Row = 2, Number = 1, AreaId = 1, };
 
@@ -94,7 +94,7 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
         }
 
         [Test]
-        public void GetAll_SeatListReturned()
+        public void GetAll_SeatListNotEmpty_ReturnsSeatList()
         {
             var seats = _seatService.GetAll().ToList();
 
@@ -102,7 +102,7 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
         }
 
         [Test]
-        public void GetById_SeatReturned()
+        public void GetById_SeatExists_ReturnsSeat()
         {
             var seat = new Seat { Id = 1, Row = 1, Number = 1, AreaId = 1, };
 
@@ -112,7 +112,7 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
         }
 
         [Test]
-        public void GetById_SeatNotFound_NullReturned()
+        public void GetById_SeatNotFound_ReturnsNull()
         {
             _seatRepositoryMock.Setup(x => x.GetById(It.IsAny<int>())).Returns<Seat>(null);
 

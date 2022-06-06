@@ -22,7 +22,7 @@ namespace TicketManagement.IntegrationTests.VenueServiceTests
         }
 
         [TestCase(1)]
-        public void DeleteExistingVenue_VenueDeleted(int id)
+        public void Delete_VenueExists_DeletesVenue(int id)
         {
             _venueService.Delete(id);
 

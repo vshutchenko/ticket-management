@@ -1,7 +1,9 @@
-﻿using NUnit.Framework;
+﻿using FluentAssertions;
+using NUnit.Framework;
 using TicketManagement.BusinessLogic.Implementations;
 using TicketManagement.BusinessLogic.Interfaces;
 using TicketManagement.BusinessLogic.Validation;
+using TicketManagement.DataAccess.Entities;
 using TicketManagement.DataAccess.Implementations;
 
 namespace TicketManagement.IntegrationTests.EventAreaServiceTests
@@ -20,14 +22,20 @@ namespace TicketManagement.IntegrationTests.EventAreaServiceTests
             _eventAreaService = new EventAreaService(eventareaRepo, new PriceValidator());
         }
 
-        [TestCase(1, 10)]
-        public void SetPrice_ValidPrice_PriceChanged(int id, decimal price)
+        [Test]
+        public void SetPrice_ValidPrice_SetsPrice()
         {
-            _eventAreaService.SetPrice(id, price);
+            int id = 1;
 
-            var actualPrice = _eventAreaService.GetById(id).Price;
+            decimal priceBeforeUpdate = 15;
 
-            Assert.AreEqual(price, actualPrice);
+            _eventAreaService.GetById(id).Price.Should().Be(priceBeforeUpdate);
+
+            decimal priceToUpdate = 10;
+
+            _eventAreaService.SetPrice(id, priceToUpdate);
+
+            _eventAreaService.GetById(id).Price.Should().Be(priceToUpdate);
         }
     }
 }

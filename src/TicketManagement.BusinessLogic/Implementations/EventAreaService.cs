@@ -34,11 +34,13 @@ namespace TicketManagement.BusinessLogic.Implementations
 
             var area = _eventAreaRepository.GetById(id);
 
-            if (area != null)
+            if (area is null)
             {
-                area.Price = price;
-                _eventAreaRepository.Update(area);
+                throw new ValidationException("Event area does not exist.");
             }
+
+            area.Price = price;
+            _eventAreaRepository.Update(area);
         }
     }
 }

@@ -23,7 +23,7 @@ namespace TicketManagement.IntegrationTests.SeatServiceTests
         }
 
         [TestCase(1)]
-        public void DeleteExistingSeat_SeatIsDeleted(int id)
+        public void Delete_SeatExists_DeletesSeat(int id)
         {
             _seatService.Delete(id);
 

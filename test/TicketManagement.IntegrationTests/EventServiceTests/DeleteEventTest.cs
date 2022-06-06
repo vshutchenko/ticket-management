@@ -35,7 +35,7 @@ namespace TicketManagement.IntegrationTests.EventServiceTests
         }
 
         [TestCase(1)]
-        public void DeleteExistingEvent_EventDeleted(int id)
+        public void Delete_EventExists_DeletesEvent(int id)
         {
             int expectedEventAreasCount = 0;
             int expectedEventSeatsCount = 0;

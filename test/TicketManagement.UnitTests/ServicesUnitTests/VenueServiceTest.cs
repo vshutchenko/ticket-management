@@ -38,7 +38,7 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
         }
 
         [Test]
-        public void Create_ValidVenue_VenueCreated()
+        public void Create_ValidVenue_CreatesVenue()
         {
             var venueToCreate = new Venue { Id = 1, Description = "New Venue", Address = "New Addres", Phone = "111 222 333 444" };
 
@@ -62,7 +62,7 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
         }
 
         [Test]
-        public void Delete_VenueDeleted()
+        public void Delete_VenueExists_DeletesVenue()
         {
             _venueService.Delete(It.IsAny<int>());
 
@@ -70,7 +70,7 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
         }
 
         [Test]
-        public void Update_ValidVenue_VenueUpdated()
+        public void Update_ValidVenue_UpdatesVenue()
         {
             var venueToUpdate = new Venue { Id = 1, Description = "Updated Venue", Address = "New Addres", Phone = "111 222 333 444" };
 
@@ -94,7 +94,7 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
         }
 
         [Test]
-        public void GetAll_VenueListReturned()
+        public void GetAll_VenueListNotEmpty_ReturnsVenueList()
         {
             var venues = _venueService.GetAll().ToList();
 
@@ -102,7 +102,7 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
         }
 
         [Test]
-        public void GetById_VenueReturned()
+        public void GetById_VenueExists_ReturnsVenue()
         {
             var venue = new Venue { Id = 1, Description = "Venue 1", Address = "Addres 1", Phone = "111 222 333 444" };
 
@@ -112,7 +112,7 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
         }
 
         [Test]
-        public void GetById_VenueNotFound_NullReturned()
+        public void GetById_VenueNotFound_ReturnsNull()
         {
             _venueRepositoryMock.Setup(x => x.GetById(It.IsAny<int>())).Returns<Venue>(null);
 

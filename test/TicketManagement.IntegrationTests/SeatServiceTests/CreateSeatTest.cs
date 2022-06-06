@@ -24,7 +24,7 @@ namespace TicketManagement.IntegrationTests.SeatServiceTests
         }
 
         [Test]
-        public void Create_ValidSeat_SeatIsCreated()
+        public void Create_ValidSeat_CreatesSeat()
         {
             var seatToCreate = new Seat
             {

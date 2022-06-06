@@ -37,7 +37,7 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
         }
 
         [Test]
-        public void Create_ValidLayout_LayoutCreated()
+        public void Create_ValidLayout_CreatesLayout()
         {
             var layoutToCreate = new Layout { Id = 1, Description = "New Layout", VenueId = 1, };
 
@@ -60,16 +60,16 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
             Assert.Throws<ValidationException>(() => _layoutService.Create(null));
         }
 
-        [TestCase(1)]
-        public void Delete_LayoutDeleted(int id)
+        [Test]
+        public void Delete_LayoutExists_DeletesLayout()
         {
-            _layoutService.Delete(id);
+            _layoutService.Delete(It.IsAny<int>());
 
-            _layoutRepositoryMock.Verify(x => x.Delete(id), Times.Once);
+            _layoutRepositoryMock.Verify(x => x.Delete(It.IsAny<int>()), Times.Once);
         }
 
         [Test]
-        public void Update_ValidLayout_LayoutUpdated()
+        public void Update_ValidLayout_UpdatesLayout()
         {
             var layoutToUpdate = new Layout { Id = 1, Description = "New Layout", VenueId = 1, };
 
@@ -93,7 +93,7 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
         }
 
         [Test]
-        public void GetAll_LayoutListReturned()
+        public void GetAll_LayoutListNotEmpty_ReturnsLayoutList()
         {
             var layouts = _layoutService.GetAll().ToList();
 
@@ -101,7 +101,7 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
         }
 
         [Test]
-        public void GetById_LayoutReturned()
+        public void GetById_LayoutExists_ReturnsLayout()
         {
             var layout = new Layout { Id = 1, Description = "Layout 1", VenueId = 1, };
 
@@ -111,7 +111,7 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
         }
 
         [Test]
-        public void GetById_LayoutNotFound_NullReturned()
+        public void GetById_LayoutNotFound_ReturnsNull()
         {
             _layoutRepositoryMock.Setup(x => x.GetById(It.IsAny<int>())).Returns<Layout>(null);
 

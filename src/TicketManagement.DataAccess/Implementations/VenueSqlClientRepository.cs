@@ -18,21 +18,15 @@ namespace TicketManagement.DataAccess.Implementations
 
         public int Create(Venue item)
         {
+            var query = "INSERT INTO Venue(Description, Address, Phone) VALUES(@description, @address, @phone); SELECT SCOPE_IDENTITY()";
+
             using SqlConnection connection = new SqlConnection(_connectionString);
 
-            using SqlCommand command = new SqlCommand("InsertVenue", connection)
-            {
-                CommandType = CommandType.StoredProcedure,
-            };
+            using SqlCommand command = new SqlCommand(query, connection);
 
-            SqlParameter[] parameters = new SqlParameter[]
-            {
-                new SqlParameter("description", item.Description),
-                new SqlParameter("address", item.Address),
-                new SqlParameter("phone", item.Phone),
-            };
-
-            command.Parameters.AddRange(parameters);
+            command.Parameters.AddWithValue("@description", item.Description);
+            command.Parameters.AddWithValue("@address", item.Address);
+            command.Parameters.AddWithValue("@phone", item.Phone);
 
             connection.Open();
 
@@ -43,14 +37,13 @@ namespace TicketManagement.DataAccess.Implementations
 
         public void Delete(int id)
         {
+            var query = "DELETE FROM Venue WHERE Id = @venueId";
+
             using SqlConnection connection = new SqlConnection(_connectionString);
 
-            using SqlCommand command = new SqlCommand("DeleteVenue", connection)
-            {
-                CommandType = CommandType.StoredProcedure,
-            };
+            using SqlCommand command = new SqlCommand(query, connection);
 
-            command.Parameters.Add(new SqlParameter("venueId", id));
+            command.Parameters.AddWithValue("@venueId", id);
 
             connection.Open();
 
@@ -59,9 +52,11 @@ namespace TicketManagement.DataAccess.Implementations
 
         public IEnumerable<Venue> GetAll()
         {
+            var query = "SELECT Id, Description, Address, Phone FROM Venue";
+
             using SqlConnection connection = new SqlConnection(_connectionString);
 
-            using SqlCommand command = new SqlCommand("SELECT Id, Description, Address, Phone FROM Venue", connection);
+            using SqlCommand command = new SqlCommand(query, connection);
 
             connection.Open();
 
@@ -81,9 +76,13 @@ namespace TicketManagement.DataAccess.Implementations
 
         public Venue GetById(int id)
         {
+            var query = "SELECT Id, Description, Address, Phone FROM Venue WHERE Id = @id";
+
             using SqlConnection connection = new SqlConnection(_connectionString);
 
-            using SqlCommand command = new SqlCommand($"SELECT Id, Description, Address, Phone FROM Venue WHERE Id = {id}", connection);
+            using SqlCommand command = new SqlCommand(query, connection);
+
+            command.Parameters.AddWithValue("id", id);
 
             connection.Open();
 
@@ -105,22 +104,16 @@ namespace TicketManagement.DataAccess.Implementations
 
         public void Update(Venue item)
         {
+            var query = "UPDATE Venue SET Description = @description, Address = @address, Phone = @phone WHERE Id = @venueId";
+
             using SqlConnection connection = new SqlConnection(_connectionString);
 
-            using SqlCommand command = new SqlCommand("UpdateVenue", connection)
-            {
-                CommandType = CommandType.StoredProcedure,
-            };
+            using SqlCommand command = new SqlCommand(query, connection);
 
-            SqlParameter[] parameters = new SqlParameter[]
-            {
-                new SqlParameter("venueId", item.Id),
-                new SqlParameter("description", item.Description),
-                new SqlParameter("address", item.Address),
-                new SqlParameter("phone", item.Phone),
-            };
-
-            command.Parameters.AddRange(parameters);
+            command.Parameters.AddWithValue("@venueId", item.Id);
+            command.Parameters.AddWithValue("@description", item.Description);
+            command.Parameters.AddWithValue("@address", item.Address);
+            command.Parameters.AddWithValue("@phone", item.Phone);
 
             connection.Open();
 

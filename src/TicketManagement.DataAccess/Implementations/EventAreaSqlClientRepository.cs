@@ -18,23 +18,17 @@ namespace TicketManagement.DataAccess.Implementations
 
         public int Create(EventArea item)
         {
+            var query = "INSERT INTO EventArea(EventId, Description, CoordX, CoordY, Price) VALUES(@eventId, @description, @coordX, @coordY, @price); SELECT SCOPE_IDENTITY()";
+
             using SqlConnection connection = new SqlConnection(_connectionString);
 
-            using SqlCommand command = new SqlCommand("InsertEventArea", connection)
-            {
-                CommandType = CommandType.StoredProcedure,
-            };
+            using SqlCommand command = new SqlCommand(query, connection);
 
-            SqlParameter[] parameters = new SqlParameter[]
-            {
-                new SqlParameter("eventId", item.EventId),
-                new SqlParameter("description", item.Description),
-                new SqlParameter("coordX", item.CoordX),
-                new SqlParameter("coordY", item.CoordY),
-                new SqlParameter("price", item.Price),
-            };
-
-            command.Parameters.AddRange(parameters);
+            command.Parameters.AddWithValue("@eventId", item.EventId);
+            command.Parameters.AddWithValue("@description", item.Description);
+            command.Parameters.AddWithValue("@coordX", item.CoordX);
+            command.Parameters.AddWithValue("@coordY", item.CoordY);
+            command.Parameters.AddWithValue("@price", item.Price);
 
             connection.Open();
 
@@ -45,14 +39,13 @@ namespace TicketManagement.DataAccess.Implementations
 
         public void Delete(int id)
         {
+            var query = "DELETE FROM EventArea WHERE Id = @eventAreaId";
+
             using SqlConnection connection = new SqlConnection(_connectionString);
 
-            using SqlCommand command = new SqlCommand("DeleteEventArea", connection)
-            {
-                CommandType = CommandType.StoredProcedure,
-            };
+            using SqlCommand command = new SqlCommand(query, connection);
 
-            command.Parameters.Add(new SqlParameter("eventAreaId", id));
+            command.Parameters.AddWithValue("@eventAreaId", id);
 
             connection.Open();
 
@@ -61,9 +54,11 @@ namespace TicketManagement.DataAccess.Implementations
 
         public IEnumerable<EventArea> GetAll()
         {
+            var query = "SELECT Id, EventId, Description, CoordX, CoordY, Price FROM EventArea";
+
             using SqlConnection connection = new SqlConnection(_connectionString);
 
-            using SqlCommand command = new SqlCommand("SELECT Id, EventId, Description, CoordX, CoordY, Price FROM EventArea", connection);
+            using SqlCommand command = new SqlCommand(query, connection);
 
             connection.Open();
 
@@ -85,9 +80,13 @@ namespace TicketManagement.DataAccess.Implementations
 
         public EventArea GetById(int id)
         {
+            var query = "SELECT Id, EventId, Description, CoordX, CoordY, Price FROM EventArea WHERE Id = @id";
+
             using SqlConnection connection = new SqlConnection(_connectionString);
 
-            using SqlCommand command = new SqlCommand($"SELECT Id, EventId, Description, CoordX, CoordY, Price FROM EventArea WHERE Id = {id}", connection);
+            using SqlCommand command = new SqlCommand(query, connection);
+
+            command.Parameters.AddWithValue("@id", id);
 
             connection.Open();
 
@@ -111,24 +110,18 @@ namespace TicketManagement.DataAccess.Implementations
 
         public void Update(EventArea item)
         {
+            var query = "UPDATE EventArea SET EventId = @eventId, Description = @description, CoordX = @coordX, CoordY = @coordY, Price = @price  WHERE Id = @eventAreaId";
+
             using SqlConnection connection = new SqlConnection(_connectionString);
 
-            using SqlCommand command = new SqlCommand("UpdateEventArea", connection)
-            {
-                CommandType = CommandType.StoredProcedure,
-            };
+            using SqlCommand command = new SqlCommand(query, connection);
 
-            SqlParameter[] parameters = new SqlParameter[]
-            {
-                new SqlParameter("eventAreaId", item.Id),
-                new SqlParameter("eventId", item.EventId),
-                new SqlParameter("description", item.Description),
-                new SqlParameter("coordX", item.CoordX),
-                new SqlParameter("coordY", item.CoordY),
-                new SqlParameter("price", item.Price),
-            };
-
-            command.Parameters.AddRange(parameters);
+            command.Parameters.AddWithValue("@eventAreaId", item.Id);
+            command.Parameters.AddWithValue("@eventId", item.EventId);
+            command.Parameters.AddWithValue("@description", item.Description);
+            command.Parameters.AddWithValue("@coordX", item.CoordX);
+            command.Parameters.AddWithValue("@coordY", item.CoordY);
+            command.Parameters.AddWithValue("@price", item.Price);
 
             connection.Open();
 

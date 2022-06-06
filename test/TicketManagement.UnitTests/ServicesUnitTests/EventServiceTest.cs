@@ -60,7 +60,7 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
         }
 
         [Test]
-        public void Create_ValidEvent_EventCreated()
+        public void Create_ValidEvent_CreatesEvent()
         {
             var eventToCreate = new Event
             {
@@ -110,7 +110,7 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
         }
 
         [Test]
-        public void Create_EventInTheSameLayoutIsAlreadyExist_ThrowsValidationException()
+        public void Create_EventInTheSameLayoutExists_ThrowsValidationException()
         {
             var eventToCreate = new Event
             {
@@ -150,7 +150,7 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
         }
 
         [Test]
-        public void Delete_EventDeleted()
+        public void Delete_EventExists_DeletesEvent()
         {
             _eventService.Delete(It.IsAny<int>());
 
@@ -158,7 +158,7 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
         }
 
         [Test]
-        public void Update_ValidEvent_EventUpdated()
+        public void Update_ValidEvent_UpdatesEvent()
         {
             var eventToUpdate = new Event
             {
@@ -176,7 +176,7 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
         }
 
         [Test]
-        public void Update_EventInThePast_ThrowsValidationExceptiont()
+        public void Update_EventInThePast_ThrowsValidationException()
         {
             var eventToCreate = new Event
             {
@@ -192,7 +192,7 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
         }
 
         [Test]
-        public void Update_InvalidStartDate_ThrowsValidationExceptiont()
+        public void Update_InvalidStartDate_ThrowsValidationException()
         {
             var eventToUpdate = new Event
             {
@@ -208,7 +208,7 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
         }
 
         [Test]
-        public void Update_EventInTheSameLayoutIsAlreadyExist_ThrowsValidationExceptiont()
+        public void Update_EventInTheSameLayoutIsAlreadyExist_ThrowsValidationException()
         {
             var eventToUpdate = new Event
             {
@@ -230,7 +230,7 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
         }
 
         [Test]
-        public void GetAll_EventListReturned()
+        public void GetAll_EventListNotEmpty_ReturnsEventList()
         {
             var events = _eventService.GetAll();
 
@@ -238,7 +238,7 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
         }
 
         [Test]
-        public void GetById_Test()
+        public void GetById_EventExists_ReturnsEvent()
         {
             var @event = new Event { Id = 1, Name = "New Event", Descpription = "Description 1", LayoutId = 1, StartDate = new DateTime(2023, 10, 10), EndDate = new DateTime(2023, 10, 11) };
 

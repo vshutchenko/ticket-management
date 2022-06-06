@@ -24,20 +24,33 @@ namespace TicketManagement.IntegrationTests.AreaServiceTests
         }
 
         [Test]
-        public void Update_ValidArea_AreaUpdated()
+        public void Update_ValidArea_UpdatesArea()
         {
-            var areaToUpdate = new Area
+            int id = 1;
+
+            var areaBeforeUpdate = new Area
             {
-                Id = 1,
-                Description = "Test area 1",
+                Id = id,
+                Description = "First area of first layout",
                 CoordX = 1,
                 CoordY = 1,
                 LayoutId = 1,
             };
 
+            _areaService.GetById(id).Should().BeEquivalentTo(areaBeforeUpdate);
+
+            var areaToUpdate = new Area
+            {
+                Id = id,
+                Description = "Test area 1",
+                CoordX = 6,
+                CoordY = 6,
+                LayoutId = 1,
+            };
+
             _areaService.Update(areaToUpdate);
 
-            _areaService.GetById(areaToUpdate.Id).Should().BeEquivalentTo(areaToUpdate);
+            _areaService.GetById(id).Should().BeEquivalentTo(areaToUpdate);
         }
     }
 }
