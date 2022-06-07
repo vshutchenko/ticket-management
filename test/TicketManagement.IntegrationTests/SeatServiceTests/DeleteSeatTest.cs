@@ -1,4 +1,5 @@
 ﻿using System;
+using FluentAssertions;
 using NUnit.Framework;
 using TicketManagement.BusinessLogic.Implementations;
 using TicketManagement.BusinessLogic.Interfaces;
@@ -27,7 +28,7 @@ namespace TicketManagement.IntegrationTests.SeatServiceTests
         {
             _seatService.Delete(id);
 
-            Assert.IsNull(_seatService.GetById(id));
+            _seatService.GetById(id).Should().BeNull();
         }
     }
 }

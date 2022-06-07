@@ -50,13 +50,17 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
         {
             var areaToCreate = new Area { Description = "Area 1", CoordX = 1, CoordY = 1, LayoutId = 1 };
 
-            Assert.Throws<ValidationException>(() => _areaService.Create(areaToCreate));
+            _areaService.Invoking(s => s.Create(areaToCreate))
+                .Should().Throw<ValidationException>()
+                .WithMessage("Area description should be unique in the layout.");
         }
 
         [Test]
         public void Create_NullArea_ThrowsValidationException()
         {
-            Assert.Throws<ValidationException>(() => _areaService.Create(null));
+            _areaService.Invoking(s => s.Create(null))
+                .Should().Throw<ValidationException>()
+                .WithMessage("Area is null.");
         }
 
         [Test]
@@ -82,13 +86,17 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
         {
             var areaToUpdate = new Area { Id = 2, Description = "Area 1", CoordX = 1, CoordY = 1, LayoutId = 1 };
 
-            Assert.Throws<ValidationException>(() => _areaService.Update(areaToUpdate));
+            _areaService.Invoking(s => s.Update(areaToUpdate))
+                .Should().Throw<ValidationException>()
+                .WithMessage("Area description should be unique in the layout.");
         }
 
         [Test]
         public void Update_NullArea_ThrowsValidationException()
         {
-            Assert.Throws<ValidationException>(() => _areaService.Update(null));
+            _areaService.Invoking(s => s.Update(null))
+                .Should().Throw<ValidationException>()
+                .WithMessage("Area is null.");
         }
 
         [Test]
@@ -114,7 +122,7 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
         {
             _areaRepositoryMock.Setup(x => x.GetById(It.IsAny<int>())).Returns<Area>(null);
 
-            Assert.IsNull(_areaService.GetById(It.IsAny<int>()));
+            _areaService.GetById(It.IsAny<int>()).Should().BeNull();
         }
     }
 }

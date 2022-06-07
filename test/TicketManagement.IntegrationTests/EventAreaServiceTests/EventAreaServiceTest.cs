@@ -3,7 +3,6 @@ using NUnit.Framework;
 using TicketManagement.BusinessLogic.Implementations;
 using TicketManagement.BusinessLogic.Interfaces;
 using TicketManagement.BusinessLogic.Validation;
-using TicketManagement.DataAccess.Entities;
 using TicketManagement.DataAccess.Implementations;
 
 namespace TicketManagement.IntegrationTests.EventAreaServiceTests

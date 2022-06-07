@@ -51,13 +51,17 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
         {
             var layoutToCreate = new Layout { Id = 1, Description = "Layout 1", VenueId = 1, };
 
-            Assert.Throws<ValidationException>(() => _layoutService.Create(layoutToCreate));
+            _layoutService.Invoking(s => s.Create(layoutToCreate))
+                .Should().Throw<ValidationException>()
+                .WithMessage("The same layout is already exists in current venue.");
         }
 
         [Test]
         public void Create_NullLayout_ThrowsValidationException()
         {
-            Assert.Throws<ValidationException>(() => _layoutService.Create(null));
+            _layoutService.Invoking(s => s.Create(null))
+                .Should().Throw<ValidationException>()
+                .WithMessage("Layout is null.");
         }
 
         [Test]
@@ -83,13 +87,17 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
         {
             var layoutToUpdate = new Layout { Id = 2, Description = "Layout 1", VenueId = 1, };
 
-            Assert.Throws<ValidationException>(() => _layoutService.Update(layoutToUpdate));
+            _layoutService.Invoking(s => s.Update(layoutToUpdate))
+                .Should().Throw<ValidationException>()
+                .WithMessage("The same layout is already exists in current venue.");
         }
 
         [Test]
         public void Update_NullLayout_ThrowsValidationException()
         {
-            Assert.Throws<ValidationException>(() => _layoutService.Update(null));
+            _layoutService.Invoking(s => s.Update(null))
+                .Should().Throw<ValidationException>()
+                .WithMessage("Layout is null.");
         }
 
         [Test]
@@ -115,7 +123,7 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
         {
             _layoutRepositoryMock.Setup(x => x.GetById(It.IsAny<int>())).Returns<Layout>(null);
 
-            Assert.IsNull(_layoutService.GetById(It.IsAny<int>()));
+            _layoutService.GetById(It.IsAny<int>()).Should().BeNull();
         }
     }
 }

@@ -52,13 +52,17 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
         {
             var venueToCreate = new Venue { Id = 1, Description = "Venue 1", Address = "New Addres", Phone = "111 222 333 444" };
 
-            Assert.Throws<ValidationException>(() => _venueService.Create(venueToCreate));
+            _venueService.Invoking(s => s.Create(venueToCreate))
+                .Should().Throw<ValidationException>()
+                .WithMessage("Venue with same description is already exists.");
         }
 
         [Test]
         public void Create_NullVenue_ThrowsValidationException()
         {
-            Assert.Throws<ValidationException>(() => _venueService.Create(null));
+            _venueService.Invoking(s => s.Create(null))
+                .Should().Throw<ValidationException>()
+                .WithMessage("Venue is null.");
         }
 
         [Test]
@@ -84,13 +88,17 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
         {
             var venueToUpdate = new Venue { Id = 2, Description = "Venue 1", Address = "New Addres", Phone = "111 222 333 444" };
 
-            Assert.Throws<ValidationException>(() => _venueService.Update(venueToUpdate));
+            _venueService.Invoking(s => s.Update(venueToUpdate))
+                .Should().Throw<ValidationException>()
+                .WithMessage("Venue with same description is already exists.");
         }
 
         [Test]
         public void Update_NullVenue_ThrowsValidationException()
         {
-            Assert.Throws<ValidationException>(() => _venueService.Update(null));
+            _venueService.Invoking(s => s.Update(null))
+                .Should().Throw<ValidationException>()
+                .WithMessage("Venue is null.");
         }
 
         [Test]
@@ -116,7 +124,7 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
         {
             _venueRepositoryMock.Setup(x => x.GetById(It.IsAny<int>())).Returns<Venue>(null);
 
-            Assert.IsNull(_venueService.GetById(It.IsAny<int>()));
+            _venueService.GetById(It.IsAny<int>()).Should().BeNull();
         }
     }
 }

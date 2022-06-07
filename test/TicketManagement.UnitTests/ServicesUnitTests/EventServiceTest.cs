@@ -90,7 +90,9 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
                 EndDate = new DateTime(2024, 1, 2),
             };
 
-            Assert.Throws<ValidationException>(() => _eventService.Create(eventToCreate));
+            _eventService.Invoking(s => s.Create(eventToCreate))
+                .Should().Throw<ValidationException>()
+                .WithMessage("Start date is in the past.");
         }
 
         [Test]
@@ -106,7 +108,9 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
                 EndDate = new DateTime(2024, 1, 2),
             };
 
-            Assert.Throws<ValidationException>(() => _eventService.Create(eventToCreate));
+            _eventService.Invoking(s => s.Create(eventToCreate))
+                .Should().Throw<ValidationException>()
+                .WithMessage("End date is less than start date.");
         }
 
         [Test]
@@ -122,7 +126,9 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
                 EndDate = new DateTime(2023, 1, 2),
             };
 
-            Assert.Throws<ValidationException>(() => _eventService.Create(eventToCreate));
+            _eventService.Invoking(s => s.Create(eventToCreate))
+                .Should().Throw<ValidationException>()
+                .WithMessage("Event in the same layout and the same time is already exists.");
         }
 
         [Test]
@@ -140,13 +146,17 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
                 EndDate = new DateTime(2023, 1, 2),
             };
 
-            Assert.Throws<ValidationException>(() => _eventService.Create(eventToCreate));
+            _eventService.Invoking(s => s.Create(eventToCreate))
+                .Should().Throw<ValidationException>()
+                .WithMessage("There are no available seats in the layout.");
         }
 
         [Test]
         public void Create_NullEvent_ThrowsValidationException()
         {
-            Assert.Throws<ValidationException>(() => _eventService.Create(null));
+            _eventService.Invoking(s => s.Create(null))
+                .Should().Throw<ValidationException>()
+                .WithMessage("Event is null.");
         }
 
         [Test]
@@ -178,7 +188,7 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
         [Test]
         public void Update_EventInThePast_ThrowsValidationException()
         {
-            var eventToCreate = new Event
+            var eventToUpdate = new Event
             {
                 Id = 2,
                 Name = "New Event",
@@ -188,7 +198,9 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
                 EndDate = new DateTime(2024, 1, 2),
             };
 
-            Assert.Throws<ValidationException>(() => _eventService.Create(eventToCreate));
+            _eventService.Invoking(s => s.Update(eventToUpdate))
+                .Should().Throw<ValidationException>()
+                .WithMessage("Start date is in the past.");
         }
 
         [Test]
@@ -204,7 +216,9 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
                 EndDate = new DateTime(2024, 1, 2),
             };
 
-            Assert.Throws<ValidationException>(() => _eventService.Update(eventToUpdate));
+            _eventService.Invoking(s => s.Update(eventToUpdate))
+                .Should().Throw<ValidationException>()
+                .WithMessage("End date is less than start date.");
         }
 
         [Test]
@@ -220,13 +234,17 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
                 EndDate = new DateTime(2023, 1, 2),
             };
 
-            Assert.Throws<ValidationException>(() => _eventService.Update(eventToUpdate));
+            _eventService.Invoking(s => s.Update(eventToUpdate))
+                .Should().Throw<ValidationException>()
+                .WithMessage("Event in the same layout and the same time is already exists.");
         }
 
         [Test]
         public void Update_NullEvent_ThrowsValidationException()
         {
-            Assert.Throws<ValidationException>(() => _eventService.Update(null));
+            _eventService.Invoking(s => s.Update(null))
+                .Should().Throw<ValidationException>()
+                .WithMessage("Event is null.");
         }
 
         [Test]
@@ -248,11 +266,11 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
         }
 
         [Test]
-        public void GetById_InvalidId_ThrowsArgumentException()
+        public void GetById_InvalidId_ReturnsNUll()
         {
             _eventRepositoryMock.Setup(x => x.GetById(It.IsAny<int>())).Returns<Event>(null);
 
-            Assert.IsNull(_eventService.GetById(It.IsAny<int>()));
+            _eventService.GetById(It.IsAny<int>()).Should().BeNull();
         }
     }
 }

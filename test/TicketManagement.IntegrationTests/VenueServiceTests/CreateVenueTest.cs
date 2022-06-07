@@ -35,7 +35,6 @@ namespace TicketManagement.IntegrationTests.VenueServiceTests
 
             var id = _venueService.Create(venueToCreate);
 
-            Assert.IsTrue(id > 1);
             _venueService.GetById(id).Should().BeEquivalentTo(venueToCreate, v => v.Excluding(v => v.Id));
         }
     }

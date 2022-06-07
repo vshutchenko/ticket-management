@@ -41,7 +41,9 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
         {
             _eventSeatRepositoryMock.Setup(x => x.GetById(It.IsAny<int>())).Returns<EventSeat>(null);
 
-            Assert.Throws<ValidationException>(() => _eventSeatService.SetSeatState(1, EventSeatState.Ordered));
+            _eventSeatService.Invoking(s => s.SetSeatState(1, EventSeatState.Ordered))
+                .Should().Throw<ValidationException>()
+                .WithMessage("Event seat does not exist.");
         }
 
         [Test]
@@ -74,7 +76,7 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
         {
             _eventSeatRepositoryMock.Setup(x => x.GetById(It.IsAny<int>())).Returns<Layout>(null);
 
-            Assert.IsNull(_eventSeatService.GetById(It.IsAny<int>()));
+            _eventSeatService.GetById(It.IsAny<int>()).Should().BeNull();
         }
     }
 }

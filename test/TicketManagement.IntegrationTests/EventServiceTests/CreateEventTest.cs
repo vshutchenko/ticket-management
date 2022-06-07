@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using FluentAssertions;
 using NUnit.Framework;
 using TicketManagement.BusinessLogic.Implementations;
 using TicketManagement.BusinessLogic.Interfaces;
@@ -74,9 +75,8 @@ namespace TicketManagement.IntegrationTests.EventServiceTests
                 .Where(a => a.EventId == id)
                 .Sum(a => _eventSeatService.GetAll().Count(s => s.EventAreaId == a.Id));
 
-            Assert.IsTrue(id > 1);
-            Assert.AreEqual(expectedEventAreasCount, actualEventAreasCount);
-            Assert.AreEqual(expectedEventSeatsCount, actualEventSeatsCount);
+            actualEventAreasCount.Should().Be(expectedEventAreasCount);
+            actualEventSeatsCount.Should().Be(expectedEventSeatsCount);
         }
     }
 }

@@ -52,15 +52,22 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
 
             _eventAreaRepositoryMock.Setup(x => x.GetById(id)).Returns(eventArea);
 
-            Assert.Throws<ValidationException>(() =>_eventAreaService.SetPrice(id, price));
+            _eventAreaService.Invoking(s => s.SetPrice(id, price))
+                .Should().Throw<ValidationException>()
+                .WithMessage("Price is less than zero.");
         }
 
         [Test]
         public void SetPrice_EventAreaNotFound_ThrowsValidationException()
         {
+            int id = 1;
+            decimal price = -15;
+
             _eventAreaRepositoryMock.Setup(x => x.GetById(It.IsAny<int>())).Returns<EventArea>(null);
 
-            Assert.Throws<ValidationException>(() => _eventAreaService.SetPrice(1, 15));
+            _eventAreaService.Invoking(s => s.SetPrice(id, price))
+                .Should().Throw<ValidationException>()
+                .WithMessage("Event area does not exist.");
         }
 
         [Test]
@@ -95,7 +102,7 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
         {
             _eventAreaRepositoryMock.Setup(x => x.GetById(It.IsAny<int>())).Returns<EventArea>(null);
 
-            Assert.IsNull(_eventAreaService.GetById(It.IsAny<int>()));
+            _eventAreaService.GetById(It.IsAny<int>()).Should().BeNull();
         }
     }
 }

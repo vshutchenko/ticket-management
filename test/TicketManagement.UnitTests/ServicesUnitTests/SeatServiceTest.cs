@@ -52,13 +52,17 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
         {
             var seatToCreate = new Seat { Id = 1, Row = 1, Number = 1, AreaId = 1, };
 
-            Assert.Throws<ValidationException>(() => _seatService.Create(seatToCreate));
+            _seatService.Invoking(s => s.Create(seatToCreate))
+                .Should().Throw<ValidationException>()
+                .WithMessage("Seat with same row and number is already exists in the area.");
         }
 
         [Test]
         public void Create_NullSeat_ThrowsValidationException()
         {
-            Assert.Throws<ValidationException>(() => _seatService.Create(null));
+            _seatService.Invoking(s => s.Create(null))
+                .Should().Throw<ValidationException>()
+                .WithMessage("Seat is null.");
         }
 
         [Test]
@@ -84,13 +88,17 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
         {
             var seatToUpdate = new Seat { Id = 1, Row = 1, Number = 2, AreaId = 1, };
 
-            Assert.Throws<ValidationException>(() => _seatService.Update(seatToUpdate));
+            _seatService.Invoking(s => s.Update(seatToUpdate))
+                .Should().Throw<ValidationException>()
+                .WithMessage("Seat with same row and number is already exists in the area.");
         }
 
         [Test]
         public void Update_NullSeat_ThrowsValidationException()
         {
-            Assert.Throws<ValidationException>(() => _seatService.Update(null));
+            _seatService.Invoking(s => s.Update(null))
+                .Should().Throw<ValidationException>()
+                .WithMessage("Seat is null.");
         }
 
         [Test]
@@ -116,7 +124,7 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
         {
             _seatRepositoryMock.Setup(x => x.GetById(It.IsAny<int>())).Returns<Seat>(null);
 
-            Assert.IsNull(_seatService.GetById(It.IsAny<int>()));
+            _seatService.GetById(It.IsAny<int>()).Should().BeNull();
         }
     }
 }

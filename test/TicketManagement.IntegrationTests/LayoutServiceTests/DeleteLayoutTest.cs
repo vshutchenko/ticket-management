@@ -1,4 +1,5 @@
-﻿using NUnit.Framework;
+﻿using FluentAssertions;
+using NUnit.Framework;
 using TicketManagement.BusinessLogic.Implementations;
 using TicketManagement.BusinessLogic.Interfaces;
 using TicketManagement.BusinessLogic.Validation;
@@ -26,7 +27,7 @@ namespace TicketManagement.IntegrationTests.LayoutServiceTests
         {
             _layoutService.Delete(id);
 
-            Assert.IsNull(_layoutService.GetById(id));
+            _layoutService.GetById(id).Should().BeNull();
         }
     }
 }

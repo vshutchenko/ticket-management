@@ -1,4 +1,5 @@
-﻿using NUnit.Framework;
+﻿using FluentAssertions;
+using NUnit.Framework;
 using TicketManagement.BusinessLogic.Implementations;
 using TicketManagement.BusinessLogic.Interfaces;
 using TicketManagement.BusinessLogic.Validation;
@@ -26,7 +27,7 @@ namespace TicketManagement.IntegrationTests.VenueServiceTests
         {
             _venueService.Delete(id);
 
-            Assert.IsNull(_venueService.GetById(id));
+            _venueService.GetById(id).Should().BeNull();
         }
     }
 }
