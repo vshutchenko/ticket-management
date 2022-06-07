@@ -61,7 +61,7 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
         public void SetPrice_EventAreaNotFound_ThrowsValidationException()
         {
             int id = 1;
-            decimal price = -15;
+            decimal price = 15;
 
             _eventAreaRepositoryMock.Setup(x => x.GetById(It.IsAny<int>())).Returns<EventArea>(null);
 

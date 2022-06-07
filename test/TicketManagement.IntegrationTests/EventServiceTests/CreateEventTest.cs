@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using FluentAssertions;
 using NUnit.Framework;
@@ -15,10 +16,8 @@ namespace TicketManagement.IntegrationTests.EventServiceTests
         private IEventService _eventService;
         private IEventAreaService _eventAreaService;
         private IEventSeatService _eventSeatService;
-        private IAreaService _areaService;
-        private ISeatService _seatService;
 
-        [OneTimeSetUp]
+        [SetUp]
         public void CreateServices()
         {
             var connectionString = new TestDatabase().ConnectionString;
@@ -31,12 +30,8 @@ namespace TicketManagement.IntegrationTests.EventServiceTests
             var eventSeatRepo = new EventSeatSqlClientRepository(connectionString);
 
             var eventValidationService = new EventValidator(eventRepo, seatRepo, areaRepo);
-            var seatValidationService = new SeatValidator(seatRepo);
-            var areaValidationService = new AreaValidator(areaRepo);
             var priceValidationService = new PriceValidator();
 
-            _seatService = new SeatService(seatRepo, seatValidationService);
-            _areaService = new AreaService(areaRepo, areaValidationService);
             _eventService = new EventService(eventRepo, eventValidationService);
 
             _eventSeatService = new EventSeatService(eventSeatRepo);
@@ -44,7 +39,53 @@ namespace TicketManagement.IntegrationTests.EventServiceTests
         }
 
         [Test]
-        public void Create_ValidEvent_CreatesEventWithAreasAndSeats()
+        public void Create_ValidEvent_CreatesEvent()
+        {
+            var eventToCreate = new Event
+            {
+                Id = 2,
+                Name = "First Event",
+                Descpription = "Test description",
+                LayoutId = 1,
+                StartDate = new DateTime(2023, 1, 2),
+                EndDate = new DateTime(2023, 1, 3),
+            };
+
+            var id = _eventService.Create(eventToCreate);
+
+            var actualEvent = _eventService.GetById(id);
+
+            actualEvent.Should().BeEquivalentTo(eventToCreate);
+        }
+
+        [Test]
+        public void Create_ValidEvent_CreatesAreas()
+        {
+            var eventToCreate = new Event
+            {
+                Id = 2,
+                Name = "First Event",
+                Descpription = "Test description",
+                LayoutId = 1,
+                StartDate = new DateTime(2023, 1, 2),
+                EndDate = new DateTime(2023, 1, 3),
+            };
+
+            var expectedEventAreas = new List<EventArea>
+            {
+                new EventArea { Id = 2, Description = "First area of first layout", CoordX = 1, CoordY = 1, EventId = 2, Price = 0 },
+                new EventArea { Id = 3, Description = "Second area of first layout", CoordX = 1, CoordY = 1, EventId = 2, Price = 0 },
+            };
+
+            var id = _eventService.Create(eventToCreate);
+
+            var actualEventAreas = _eventAreaService.GetAll().Where(a => a.EventId == id).ToList();
+
+            actualEventAreas.Should().BeEquivalentTo(expectedEventAreas);
+        }
+
+        [Test]
+        public void Create_ValidEvent_CreatesSeats()
         {
             var eventToCreate = new Event
             {
@@ -55,28 +96,24 @@ namespace TicketManagement.IntegrationTests.EventServiceTests
                 EndDate = new DateTime(2023, 1, 3),
             };
 
-            var expectedEventAreasCount = _areaService
-                .GetAll()
-                .Count(a => a.LayoutId == eventToCreate.LayoutId);
-
-            var expectedEventSeatsCount = _areaService
-                .GetAll()
-                .Where(a => a.LayoutId == eventToCreate.LayoutId)
-                .Sum(a => _seatService.GetAll().Count(s => s.AreaId == a.Id));
+            var expectedEventSeats = new List<EventSeat>
+            {
+                new EventSeat { Id = 6, EventAreaId = 2, Row = 1, Number = 1, State = EventSeatState.Available },
+                new EventSeat { Id = 7, EventAreaId = 2, Row = 1, Number = 2, State = EventSeatState.Available },
+                new EventSeat { Id = 8, EventAreaId = 2, Row = 1, Number = 3, State = EventSeatState.Available },
+                new EventSeat { Id = 9, EventAreaId = 2, Row = 2, Number = 2, State = EventSeatState.Available },
+                new EventSeat { Id = 10, EventAreaId = 2, Row = 2, Number = 1, State = EventSeatState.Available },
+                new EventSeat { Id = 11, EventAreaId = 3, Row = 1, Number = 1, State = EventSeatState.Available },
+            };
 
             var id = _eventService.Create(eventToCreate);
 
-            var actualEventAreasCount = _eventAreaService
-                .GetAll()
-                .Count(a => a.EventId == id);
-
-            var actualEventSeatsCount = _eventAreaService
-                .GetAll()
+            List<EventSeat> actualEventSeats = _eventAreaService.GetAll()
                 .Where(a => a.EventId == id)
-                .Sum(a => _eventSeatService.GetAll().Count(s => s.EventAreaId == a.Id));
+                .Join(_eventSeatService.GetAll(), a => a.Id, s => s.EventAreaId, (a, s) => s)
+                .ToList();
 
-            actualEventAreasCount.Should().Be(expectedEventAreasCount);
-            actualEventSeatsCount.Should().Be(expectedEventSeatsCount);
+            actualEventSeats.Should().BeEquivalentTo(expectedEventSeats);
         }
     }
 }

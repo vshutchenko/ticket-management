@@ -12,7 +12,7 @@ AS
 	WHERE EventId = @eventId
 
 	UPDATE Event
-	SET Name = @name, Description = @description, LayoutId = @layoutId
+	SET Name = @name, Description = @description, LayoutId = @layoutId, StartDate = @startDate, EndDate = @endDate
 	WHERE Id = @eventId
 
 	DECLARE @areaId int

@@ -141,7 +141,7 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
                 Id = 1,
                 Name = "New Event",
                 Descpription = "Description 1",
-                LayoutId = 1,
+                LayoutId = 3,
                 StartDate = new DateTime(2023, 1, 1),
                 EndDate = new DateTime(2023, 1, 2),
             };
@@ -237,6 +237,26 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
             _eventService.Invoking(s => s.Update(eventToUpdate))
                 .Should().Throw<ValidationException>()
                 .WithMessage("Event in the same layout and the same time is already exists.");
+        }
+
+        [Test]
+        public void Update_NoAvailableSeats_ThrowsValidationException()
+        {
+            _seatRepositoryMock.Setup(x => x.GetAll()).Returns(new List<Seat>());
+
+            var eventToUpdate = new Event
+            {
+                Id = 1,
+                Name = "New Event",
+                Descpription = "Description 1",
+                LayoutId = 3,
+                StartDate = new DateTime(2023, 1, 1),
+                EndDate = new DateTime(2023, 1, 2),
+            };
+
+            _eventService.Invoking(s => s.Update(eventToUpdate))
+                .Should().Throw<ValidationException>()
+                .WithMessage("There are no available seats in the layout.");
         }
 
         [Test]
