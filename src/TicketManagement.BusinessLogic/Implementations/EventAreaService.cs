@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using TicketManagement.BusinessLogic.Extensions;
 using TicketManagement.BusinessLogic.Interfaces;
 using TicketManagement.BusinessLogic.Validation;
 using TicketManagement.DataAccess.Entities;
@@ -25,19 +26,18 @@ namespace TicketManagement.BusinessLogic.Implementations
 
         public EventArea GetById(int id)
         {
+            _eventAreaRepository.CheckIfIdExists(id);
+
             return _eventAreaRepository.GetById(id);
         }
 
         public void SetPrice(int id, decimal price)
         {
+            _eventAreaRepository.CheckIfIdExists(id);
+
             _priceValidator.Validate(price);
 
             var area = _eventAreaRepository.GetById(id);
-
-            if (area is null)
-            {
-                throw new ValidationException("Event area does not exist.");
-            }
 
             area.Price = price;
             _eventAreaRepository.Update(area);

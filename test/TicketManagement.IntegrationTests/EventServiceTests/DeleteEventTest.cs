@@ -42,7 +42,9 @@ namespace TicketManagement.IntegrationTests.EventServiceTests
 
             _eventService.Delete(id);
 
-            _eventService.GetById(id).Should().BeNull();
+            _eventService.Invoking(s => s.GetById(id))
+                .Should().Throw<ValidationException>()
+                .WithMessage("Entity was not found.");
         }
 
         [Test]

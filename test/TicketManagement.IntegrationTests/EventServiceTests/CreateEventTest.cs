@@ -55,7 +55,7 @@ namespace TicketManagement.IntegrationTests.EventServiceTests
 
             var actualEvent = _eventService.GetById(id);
 
-            actualEvent.Should().BeEquivalentTo(eventToCreate);
+            actualEvent.Should().BeEquivalentTo(eventToCreate, opt => opt.Excluding(e => e.Id));
         }
 
         [Test]

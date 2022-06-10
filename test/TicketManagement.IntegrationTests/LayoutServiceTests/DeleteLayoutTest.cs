@@ -27,7 +27,9 @@ namespace TicketManagement.IntegrationTests.LayoutServiceTests
         {
             _layoutService.Delete(id);
 
-            _layoutService.GetById(id).Should().BeNull();
+            _layoutService.Invoking(s => s.GetById(id))
+                .Should().Throw<ValidationException>()
+                .WithMessage("Entity was not found.");
         }
     }
 }

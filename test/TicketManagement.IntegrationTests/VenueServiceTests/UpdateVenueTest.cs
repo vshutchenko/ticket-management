@@ -12,7 +12,7 @@ namespace TicketManagement.IntegrationTests.VenueServiceTests
     {
         private IVenueService _venueService;
 
-        [OneTimeSetUp]
+        [SetUp]
         public void CreateServices()
         {
             var connectionString = new TestDatabase().ConnectionString;
@@ -24,7 +24,7 @@ namespace TicketManagement.IntegrationTests.VenueServiceTests
         }
 
         [Test]
-        public void Update_ValidVenue_UpdatesVenue()
+        public void UpdateDescription_ValidVenue_UpdatesVenue()
         {
             int id = 1;
 
@@ -41,9 +41,37 @@ namespace TicketManagement.IntegrationTests.VenueServiceTests
             var venueToUpdate = new Venue
             {
                 Id = id,
-                Description = "Updated venue 1",
-                Address = "Address 1-22",
-                Phone = "880055535335",
+                Description = "Test venue 1",
+                Address = "First venue address",
+                Phone = "123 45 678 90 12",
+            };
+
+            _venueService.Update(venueToUpdate);
+
+            _venueService.GetById(id).Should().BeEquivalentTo(venueToUpdate);
+        }
+
+        [Test]
+        public void UpdateAddressAndPhone_ValidVenue_UpdatesVenue()
+        {
+            int id = 1;
+
+            var venueBeforeUpdate = new Venue
+            {
+                Id = id,
+                Description = "First venue",
+                Address = "First venue address",
+                Phone = "123 45 678 90 12",
+            };
+
+            _venueService.GetById(id).Should().BeEquivalentTo(venueBeforeUpdate);
+
+            var venueToUpdate = new Venue
+            {
+                Id = id,
+                Description = "First venue",
+                Address = "Test address",
+                Phone = "111 11 678 11 12",
             };
 
             _venueService.Update(venueToUpdate);

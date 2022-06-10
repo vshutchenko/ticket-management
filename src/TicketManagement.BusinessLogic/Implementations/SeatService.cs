@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using TicketManagement.BusinessLogic.Extensions;
 using TicketManagement.BusinessLogic.Interfaces;
 using TicketManagement.BusinessLogic.Validation;
 using TicketManagement.DataAccess.Entities;
@@ -20,6 +21,13 @@ namespace TicketManagement.BusinessLogic.Implementations
 
         public int Create(Seat seat)
         {
+            if (seat is null)
+            {
+                throw new ValidationException("Seat is null.");
+            }
+
+            seat.Id = 0;
+
             _seatValidator.Validate(seat);
 
             return _seatRepository.Create(seat);
@@ -27,6 +35,8 @@ namespace TicketManagement.BusinessLogic.Implementations
 
         public void Delete(int id)
         {
+            _seatRepository.CheckIfIdExists(id);
+
             _seatRepository.Delete(id);
         }
 
@@ -37,12 +47,22 @@ namespace TicketManagement.BusinessLogic.Implementations
 
         public Seat GetById(int id)
         {
+            _seatRepository.CheckIfIdExists(id);
+
             return _seatRepository.GetById(id);
         }
 
         public void Update(Seat seat)
         {
+            if (seat is null)
+            {
+                throw new ValidationException("Seat is null.");
+            }
+
+            _seatRepository.CheckIfIdExists(seat.Id);
+
             _seatValidator.Validate(seat);
+
             _seatRepository.Update(seat);
         }
     }

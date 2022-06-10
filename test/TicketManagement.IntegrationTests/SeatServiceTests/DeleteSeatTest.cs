@@ -28,7 +28,9 @@ namespace TicketManagement.IntegrationTests.SeatServiceTests
         {
             _seatService.Delete(id);
 
-            _seatService.GetById(id).Should().BeNull();
+            _seatService.Invoking(s => s.GetById(id))
+                .Should().Throw<ValidationException>()
+                .WithMessage("Entity was not found.");
         }
     }
 }

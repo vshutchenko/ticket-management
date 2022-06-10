@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using TicketManagement.BusinessLogic.Extensions;
 using TicketManagement.BusinessLogic.Interfaces;
 using TicketManagement.BusinessLogic.Validation;
 using TicketManagement.DataAccess.Entities;
@@ -23,17 +24,16 @@ namespace TicketManagement.BusinessLogic.Implementations
 
         public EventSeat GetById(int id)
         {
+            _eventSeatRepository.CheckIfIdExists(id);
+
             return _eventSeatRepository.GetById(id);
         }
 
         public void SetSeatState(int id, EventSeatState state)
         {
-            var seat = _eventSeatRepository.GetById(id);
+            _eventSeatRepository.CheckIfIdExists(id);
 
-            if (seat is null)
-            {
-                throw new ValidationException("Event seat does not exist.");
-            }
+            var seat = _eventSeatRepository.GetById(id);
 
             seat.State = state;
             _eventSeatRepository.Update(seat);

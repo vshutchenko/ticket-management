@@ -16,20 +16,11 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
     {
         private Mock<IRepository<Layout>> _layoutRepositoryMock;
         private ILayoutService _layoutService;
-        private List<Layout> _layouts;
 
         [SetUp]
         public void SetUp()
         {
-            _layouts = new List<Layout>
-            {
-                new Layout { Id = 1, Description = "Layout 1", VenueId = 1, },
-                new Layout { Id = 2, Description = "Layout 2", VenueId = 1, },
-                new Layout { Id = 3, Description = "Layout 3", VenueId = 2, },
-            };
-
             _layoutRepositoryMock = new Mock<IRepository<Layout>>();
-            _layoutRepositoryMock.Setup(x => x.GetAll()).Returns(_layouts);
 
             var layoutValidator = new LayoutValidator(_layoutRepositoryMock.Object);
 
@@ -49,6 +40,13 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
         [Test]
         public void Create_LayoutWithSameDescriptionExists_ThrowsValidationException()
         {
+            var layouts = new List<Layout>
+            {
+                new Layout { Id = 1, Description = "Layout 1", VenueId = 1, },
+            };
+
+            _layoutRepositoryMock.Setup(x => x.GetAll()).Returns(layouts);
+
             var layoutToCreate = new Layout { Id = 1, Description = "Layout 1", VenueId = 1, };
 
             _layoutService.Invoking(s => s.Create(layoutToCreate))
@@ -67,14 +65,46 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
         [Test]
         public void Delete_LayoutExists_DeletesLayout()
         {
-            _layoutService.Delete(It.IsAny<int>());
+            var layout = new Layout { Id = 1, Description = "Layout 1", VenueId = 1, };
 
-            _layoutRepositoryMock.Verify(x => x.Delete(It.IsAny<int>()), Times.Once);
+            int id = 1;
+
+            _layoutRepositoryMock.Setup(x => x.GetById(id)).Returns(layout);
+
+            _layoutService.Delete(id);
+
+            _layoutRepositoryMock.Verify(x => x.Delete(id), Times.Once);
+        }
+
+        [Test]
+        public void Delete_LayoutNotFound_ThrowsValidationException()
+        {
+            var layouts = new List<Layout>
+            {
+                new Layout { Id = 1, Description = "Layout 1", VenueId = 1, },
+                new Layout { Id = 2, Description = "Layout 2", VenueId = 1, },
+                new Layout { Id = 3, Description = "Layout 3", VenueId = 2, },
+            };
+
+            _layoutRepositoryMock.Setup(x => x.GetAll()).Returns(layouts);
+
+            int notExistingId = 99;
+
+            _layoutService.Invoking(s => s.Delete(notExistingId))
+                .Should().Throw<ValidationException>()
+                .WithMessage("Entity was not found.");
         }
 
         [Test]
         public void Update_ValidLayout_UpdatesLayout()
         {
+            int id = 1;
+
+            var layout = new Layout { Id = 1, Description = "Layout 1", VenueId = 1, };
+
+            _layoutRepositoryMock.Setup(x => x.GetById(id)).Returns(layout);
+            _layoutRepositoryMock.Setup(x => x.GetAll()).Returns(new List<Layout> { layout });
+
             var layoutToUpdate = new Layout { Id = 1, Description = "New Layout", VenueId = 1, };
 
             _layoutService.Update(layoutToUpdate);
@@ -83,8 +113,34 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
         }
 
         [Test]
+        public void Update_LayoutNotFound_ThrowsValidationException()
+        {
+            int notExistingId = 1;
+
+            var layoutToUpdate = new Layout { Id = 1, Description = "New Layout", VenueId = 1, };
+
+            _layoutRepositoryMock.Setup(x => x.GetById(notExistingId)).Returns<Venue>(null);
+
+            _layoutService.Invoking(s => s.Update(layoutToUpdate))
+                .Should().Throw<ValidationException>()
+                .WithMessage("Entity was not found.");
+        }
+
+        [Test]
         public void Update_LayoutWithSameDescriptionExists_ThrowsValidationException()
         {
+            var layouts = new List<Layout>
+            {
+                new Layout { Id = 1, Description = "Layout 1", VenueId = 1, },
+                new Layout { Id = 2, Description = "Layout 2", VenueId = 1, },
+            };
+
+            int id = 2;
+
+            _layoutRepositoryMock.Setup(x => x.GetAll()).Returns(layouts);
+
+            _layoutRepositoryMock.Setup(x => x.GetById(id)).Returns(layouts.First(l => l.Id == id));
+
             var layoutToUpdate = new Layout { Id = 2, Description = "Layout 1", VenueId = 1, };
 
             _layoutService.Invoking(s => s.Update(layoutToUpdate))
@@ -103,27 +159,40 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
         [Test]
         public void GetAll_LayoutListNotEmpty_ReturnsLayoutList()
         {
-            var layouts = _layoutService.GetAll().ToList();
+            var layouts = new List<Layout>
+            {
+                new Layout { Id = 1, Description = "Layout 1", VenueId = 1, },
+                new Layout { Id = 2, Description = "Layout 2", VenueId = 1, },
+                new Layout { Id = 3, Description = "Layout 3", VenueId = 2, },
+            };
 
-            layouts.Should().BeEquivalentTo(_layouts);
+            _layoutRepositoryMock.Setup(x => x.GetAll()).Returns(layouts);
+
+            _layoutService.GetAll().Should().BeEquivalentTo(layouts);
         }
 
         [Test]
         public void GetById_LayoutExists_ReturnsLayout()
         {
+            int id = 1;
+
             var layout = new Layout { Id = 1, Description = "Layout 1", VenueId = 1, };
 
-            _layoutRepositoryMock.Setup(x => x.GetById(It.IsAny<int>())).Returns(layout);
+            _layoutRepositoryMock.Setup(x => x.GetById(id)).Returns(layout);
 
-            _layoutService.GetById(It.IsAny<int>()).Should().BeEquivalentTo(layout);
+            _layoutService.GetById(id).Should().BeEquivalentTo(layout);
         }
 
         [Test]
-        public void GetById_LayoutNotFound_ReturnsNull()
+        public void GetById_LayoutNotFound_ThrowsValidationException()
         {
-            _layoutRepositoryMock.Setup(x => x.GetById(It.IsAny<int>())).Returns<Layout>(null);
+            int id = 1;
 
-            _layoutService.GetById(It.IsAny<int>()).Should().BeNull();
+            _layoutRepositoryMock.Setup(x => x.GetById(id)).Returns<Layout>(null);
+
+            _layoutService.Invoking(s => s.GetById(id))
+                .Should().Throw<ValidationException>()
+                .WithMessage("Entity was not found.");
         }
     }
 }

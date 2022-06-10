@@ -27,7 +27,9 @@ namespace TicketManagement.IntegrationTests.VenueServiceTests
         {
             _venueService.Delete(id);
 
-            _venueService.GetById(id).Should().BeNull();
+            _venueService.Invoking(s => s.GetById(id))
+                .Should().Throw<ValidationException>()
+                .WithMessage("Entity was not found.");
         }
     }
 }

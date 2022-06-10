@@ -23,7 +23,7 @@ namespace TicketManagement.BusinessLogic.Validation
 
             bool areaExists = _areaRepository
                 .GetAll()
-                .Any(a => a.LayoutId == item.LayoutId && a.Description.Equals(item.Description, StringComparison.OrdinalIgnoreCase));
+                .Any(a => a.Id != item.Id && a.LayoutId == item.LayoutId && a.Description.Equals(item.Description, StringComparison.OrdinalIgnoreCase));
 
             if (areaExists)
             {

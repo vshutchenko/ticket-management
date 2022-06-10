@@ -27,6 +27,7 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
         public void SetSeatState_ValidParameters_SetsState()
         {
             int id = 1;
+
             var eventSeat = new EventSeat { Id = 1, EventAreaId = 1, Number = 1, Row = 1, State = EventSeatState.Available };
 
             _eventSeatRepositoryMock.Setup(x => x.GetById(id)).Returns(eventSeat);
@@ -37,13 +38,15 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
         }
 
         [Test]
-        public void SetSeatState_InvalidId_ThrowsValidationException()
+        public void SetSeatState_SeatNotFound_ThrowsValidationException()
         {
-            _eventSeatRepositoryMock.Setup(x => x.GetById(It.IsAny<int>())).Returns<EventSeat>(null);
+            int notExistingId = 1;
 
-            _eventSeatService.Invoking(s => s.SetSeatState(1, EventSeatState.Ordered))
+            _eventSeatRepositoryMock.Setup(x => x.GetById(notExistingId)).Returns<EventSeat>(null);
+
+            _eventSeatService.Invoking(s => s.SetSeatState(notExistingId, EventSeatState.Ordered))
                 .Should().Throw<ValidationException>()
-                .WithMessage("Event seat does not exist.");
+                .WithMessage("Entity was not found.");
         }
 
         [Test]
@@ -64,19 +67,25 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
         [Test]
         public void GetById_EventSeatExists_ReturnsEventSeat()
         {
+            int id = 1;
+
             var eventSeat = new EventSeat { Id = 1, EventAreaId = 1, Row = 1, Number = 1, State = EventSeatState.Available };
 
-            _eventSeatRepositoryMock.Setup(x => x.GetById(It.IsAny<int>())).Returns(eventSeat);
+            _eventSeatRepositoryMock.Setup(x => x.GetById(id)).Returns(eventSeat);
 
-            _eventSeatService.GetById(It.IsAny<int>()).Should().BeEquivalentTo(eventSeat);
+            _eventSeatService.GetById(id).Should().BeEquivalentTo(eventSeat);
         }
 
         [Test]
-        public void GetById_EventSeatNotFound_ReturnsNull()
+        public void GetById_EventSeatNotFound_ThrowsValidationException()
         {
-            _eventSeatRepositoryMock.Setup(x => x.GetById(It.IsAny<int>())).Returns<Layout>(null);
+            int id = 1;
 
-            _eventSeatService.GetById(It.IsAny<int>()).Should().BeNull();
+            _eventSeatRepositoryMock.Setup(x => x.GetById(id)).Returns<Layout>(null);
+
+            _eventSeatService.Invoking(s => s.GetById(id))
+                .Should().Throw<ValidationException>()
+                .WithMessage("Entity was not found.");
         }
     }
 }

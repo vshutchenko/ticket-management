@@ -21,7 +21,7 @@ namespace TicketManagement.BusinessLogic.Validation
                 throw new ValidationException("Seat is null.");
             }
 
-            bool seatExists = _seatRepository.GetAll().Any(s => s.AreaId == item.AreaId && s.Row == item.Row && s.Number == item.Number);
+            bool seatExists = _seatRepository.GetAll().Any(s => s.Id != item.Id && s.AreaId == item.AreaId && s.Row == item.Row && s.Number == item.Number);
 
             if (seatExists)
             {

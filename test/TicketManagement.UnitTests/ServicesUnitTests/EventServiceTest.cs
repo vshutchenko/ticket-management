@@ -18,41 +18,13 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
         private Mock<IRepository<Seat>> _seatRepositoryMock;
         private Mock<IRepository<Area>> _areaRepositoryMock;
         private IEventService _eventService;
-        private List<Event> _events;
-        private List<Area> _areas;
-        private List<Seat> _seats;
 
         [SetUp]
         public void SetUp()
         {
-            _events = new List<Event>
-            {
-                new Event { Id = 1, Name = "Event 1", Descpription = "Description 1", LayoutId = 1, StartDate = new DateTime(2023, 1, 1), EndDate = new DateTime(2023, 1, 2) },
-                new Event { Id = 1, Name = "Event 2", Descpription = "Description 2", LayoutId = 2, StartDate = new DateTime(2023, 1, 1), EndDate = new DateTime(2023, 1, 2) },
-                new Event { Id = 1, Name = "Event 3", Descpription = "Description 3", LayoutId = 2, StartDate = new DateTime(2023, 1, 3), EndDate = new DateTime(2023, 1, 5) },
-            };
-
-            _areas = new List<Area>
-            {
-                new Area { Id = 1, Description = "Area 1", CoordX = 1, CoordY = 1, LayoutId = 1 },
-                new Area { Id = 2, Description = "Area 2", CoordX = 1, CoordY = 2, LayoutId = 1 },
-                new Area { Id = 3, Description = "Area 3", CoordX = 1, CoordY = 1, LayoutId = 2 },
-            };
-
-            _seats = new List<Seat>
-            {
-                new Seat { Id = 1, Row = 1, Number = 1, AreaId = 1, },
-                new Seat { Id = 2, Row = 1, Number = 2, AreaId = 2, },
-                new Seat { Id = 3, Row = 1, Number = 3, AreaId = 2, },
-            };
-
             _eventRepositoryMock = new Mock<IRepository<Event>>();
             _seatRepositoryMock = new Mock<IRepository<Seat>>();
             _areaRepositoryMock = new Mock<IRepository<Area>>();
-
-            _eventRepositoryMock.Setup(x => x.GetAll()).Returns(_events);
-            _seatRepositoryMock.Setup(x => x.GetAll()).Returns(_seats);
-            _areaRepositoryMock.Setup(x => x.GetAll()).Returns(_areas);
 
             var eventValidator = new EventValidator(_eventRepositoryMock.Object, _seatRepositoryMock.Object, _areaRepositoryMock.Object);
 
@@ -62,6 +34,19 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
         [Test]
         public void Create_ValidEvent_CreatesEvent()
         {
+            var areas = new List<Area>
+            {
+                new Area { Id = 1, Description = "Area 1", CoordX = 1, CoordY = 1, LayoutId = 1 },
+            };
+
+            var seats = new List<Seat>
+            {
+                new Seat { Id = 1, Row = 1, Number = 1, AreaId = 1, },
+            };
+
+            _seatRepositoryMock.Setup(x => x.GetAll()).Returns(seats);
+            _areaRepositoryMock.Setup(x => x.GetAll()).Returns(areas);
+
             var eventToCreate = new Event
             {
                 Id = 1,
@@ -80,6 +65,19 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
         [Test]
         public void Create_EventInThePast_ThrowsValidationException()
         {
+            var areas = new List<Area>
+            {
+                new Area { Id = 1, Description = "Area 1", CoordX = 1, CoordY = 1, LayoutId = 1 },
+            };
+
+            var seats = new List<Seat>
+            {
+                new Seat { Id = 1, Row = 1, Number = 1, AreaId = 1, },
+            };
+
+            _seatRepositoryMock.Setup(x => x.GetAll()).Returns(seats);
+            _areaRepositoryMock.Setup(x => x.GetAll()).Returns(areas);
+
             var eventToCreate = new Event
             {
                 Id = 1,
@@ -98,6 +96,19 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
         [Test]
         public void Create_InvalidStartDate_ThrowsValidationException()
         {
+            var areas = new List<Area>
+            {
+                new Area { Id = 1, Description = "Area 1", CoordX = 1, CoordY = 1, LayoutId = 1 },
+            };
+
+            var seats = new List<Seat>
+            {
+                new Seat { Id = 1, Row = 1, Number = 1, AreaId = 1, },
+            };
+
+            _seatRepositoryMock.Setup(x => x.GetAll()).Returns(seats);
+            _areaRepositoryMock.Setup(x => x.GetAll()).Returns(areas);
+
             var eventToCreate = new Event
             {
                 Id = 1,
@@ -116,6 +127,25 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
         [Test]
         public void Create_EventInTheSameLayoutExists_ThrowsValidationException()
         {
+            var areas = new List<Area>
+            {
+                new Area { Id = 1, Description = "Area 1", CoordX = 1, CoordY = 1, LayoutId = 1 },
+            };
+
+            var seats = new List<Seat>
+            {
+                new Seat { Id = 1, Row = 1, Number = 1, AreaId = 1, },
+            };
+
+            var events = new List<Event>
+            {
+                new Event { Id = 1, Name = "Event 1", Descpription = "Description 1", LayoutId = 1, StartDate = new DateTime(2023, 1, 1), EndDate = new DateTime(2023, 1, 2) },
+            };
+
+            _seatRepositoryMock.Setup(x => x.GetAll()).Returns(seats);
+            _areaRepositoryMock.Setup(x => x.GetAll()).Returns(areas);
+            _eventRepositoryMock.Setup(x => x.GetAll()).Returns(events);
+
             var eventToCreate = new Event
             {
                 Id = 1,
@@ -134,6 +164,12 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
         [Test]
         public void Create_NoAvailableSeats_ThrowsValidationException()
         {
+            var areas = new List<Area>
+            {
+                new Area { Id = 1, Description = "Area 1", CoordX = 1, CoordY = 1, LayoutId = 1 },
+            };
+
+            _areaRepositoryMock.Setup(x => x.GetAll()).Returns(areas);
             _seatRepositoryMock.Setup(x => x.GetAll()).Returns(new List<Seat>());
 
             var eventToCreate = new Event
@@ -162,14 +198,39 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
         [Test]
         public void Delete_EventExists_DeletesEvent()
         {
-            _eventService.Delete(It.IsAny<int>());
+            int id = 1;
 
-            _eventRepositoryMock.Verify(x => x.Delete(It.IsAny<int>()), Times.Once);
+            var @event = new Event { Id = 1, Name = "Event 1", Descpription = "Description 1", LayoutId = 1, StartDate = new DateTime(2023, 1, 1), EndDate = new DateTime(2023, 1, 2) };
+
+            _eventRepositoryMock.Setup(x => x.GetById(id)).Returns(@event);
+            _eventRepositoryMock.Setup(x => x.GetAll()).Returns(new List<Event> { @event });
+
+            _eventService.Delete(id);
+
+            _eventRepositoryMock.Verify(x => x.Delete(id), Times.Once);
         }
 
         [Test]
         public void Update_ValidEvent_UpdatesEvent()
         {
+            var areas = new List<Area>
+            {
+                new Area { Id = 1, Description = "Area 1", CoordX = 1, CoordY = 1, LayoutId = 1 },
+            };
+
+            var seats = new List<Seat>
+            {
+                new Seat { Id = 1, Row = 1, Number = 1, AreaId = 1, },
+            };
+
+            int id = 1;
+            var @event = new Event { Id = 1, Name = "Event 1", Descpription = "Description 1", LayoutId = 1, StartDate = new DateTime(2023, 1, 1), EndDate = new DateTime(2023, 1, 2) };
+
+            _areaRepositoryMock.Setup(x => x.GetAll()).Returns(areas);
+            _seatRepositoryMock.Setup(x => x.GetAll()).Returns(seats);
+            _eventRepositoryMock.Setup(x => x.GetById(id)).Returns(@event);
+            _eventRepositoryMock.Setup(x => x.GetAll()).Returns(new List<Event> { @event });
+
             var eventToUpdate = new Event
             {
                 Id = 1,
@@ -182,15 +243,34 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
 
             _eventService.Update(eventToUpdate);
 
-            _eventRepositoryMock.Verify(x => x.Update(It.IsAny<Event>()), Times.Once);
+            _eventRepositoryMock.Verify(x => x.Update(eventToUpdate), Times.Once);
         }
 
         [Test]
         public void Update_EventInThePast_ThrowsValidationException()
         {
+            var areas = new List<Area>
+            {
+                new Area { Id = 1, Description = "Area 1", CoordX = 1, CoordY = 1, LayoutId = 1 },
+            };
+
+            var seats = new List<Seat>
+            {
+                new Seat { Id = 1, Row = 1, Number = 1, AreaId = 1, },
+            };
+
+            int id = 1;
+            var @event = new Event { Id = 1, Name = "Event 1", Descpription = "Description 1", LayoutId = 1, StartDate = new DateTime(2023, 1, 1), EndDate = new DateTime(2023, 1, 2) };
+
+            _eventRepositoryMock.Setup(x => x.GetById(id)).Returns(@event);
+            _eventRepositoryMock.Setup(x => x.GetAll()).Returns(new List<Event> { @event });
+
+            _seatRepositoryMock.Setup(x => x.GetAll()).Returns(seats);
+            _areaRepositoryMock.Setup(x => x.GetAll()).Returns(areas);
+
             var eventToUpdate = new Event
             {
-                Id = 2,
+                Id = 1,
                 Name = "New Event",
                 Descpription = "Description",
                 LayoutId = 1,
@@ -206,9 +286,28 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
         [Test]
         public void Update_InvalidStartDate_ThrowsValidationException()
         {
+            var areas = new List<Area>
+            {
+                new Area { Id = 1, Description = "Area 1", CoordX = 1, CoordY = 1, LayoutId = 1 },
+            };
+
+            var seats = new List<Seat>
+            {
+                new Seat { Id = 1, Row = 1, Number = 1, AreaId = 1, },
+            };
+
+            int id = 1;
+            var @event = new Event { Id = 1, Name = "Event 1", Descpription = "Description 1", LayoutId = 1, StartDate = new DateTime(2023, 1, 1), EndDate = new DateTime(2023, 1, 2) };
+
+            _eventRepositoryMock.Setup(x => x.GetById(id)).Returns(@event);
+            _eventRepositoryMock.Setup(x => x.GetAll()).Returns(new List<Event> { @event });
+
+            _seatRepositoryMock.Setup(x => x.GetAll()).Returns(seats);
+            _areaRepositoryMock.Setup(x => x.GetAll()).Returns(areas);
+
             var eventToUpdate = new Event
             {
-                Id = 2,
+                Id = 1,
                 Name = "New Event",
                 Descpription = "Description",
                 LayoutId = 1,
@@ -222,11 +321,30 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
         }
 
         [Test]
-        public void Update_EventInTheSameLayoutIsAlreadyExist_ThrowsValidationException()
+        public void Update_EventInTheSameLayoutAlreadyExists_ThrowsValidationException()
         {
+            var areas = new List<Area>
+            {
+                new Area { Id = 1, Description = "Area 1", CoordX = 1, CoordY = 1, LayoutId = 1 },
+            };
+
+            var seats = new List<Seat>
+            {
+                new Seat { Id = 1, Row = 1, Number = 1, AreaId = 1, },
+            };
+
+            int id = 1;
+            var @event = new Event { Id = 1, Name = "Event 1", Descpription = "Description 1", LayoutId = 1, StartDate = new DateTime(2023, 1, 1), EndDate = new DateTime(2023, 1, 2) };
+
+            _eventRepositoryMock.Setup(x => x.GetById(id)).Returns(@event);
+            _eventRepositoryMock.Setup(x => x.GetAll()).Returns(new List<Event> { @event });
+
+            _areaRepositoryMock.Setup(x => x.GetAll()).Returns(areas);
+            _seatRepositoryMock.Setup(x => x.GetAll()).Returns(seats);
+
             var eventToUpdate = new Event
             {
-                Id = 2,
+                Id = 1,
                 Name = "New Event",
                 Descpription = "Description 1",
                 LayoutId = 1,
@@ -242,6 +360,18 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
         [Test]
         public void Update_NoAvailableSeats_ThrowsValidationException()
         {
+            var areas = new List<Area>
+            {
+                new Area { Id = 1, Description = "Area 1", CoordX = 1, CoordY = 1, LayoutId = 1 },
+            };
+
+            int id = 1;
+            var @event = new Event { Id = 1, Name = "Event 1", Descpription = "Description 1", LayoutId = 1, StartDate = new DateTime(2023, 1, 1), EndDate = new DateTime(2023, 1, 2) };
+
+            _eventRepositoryMock.Setup(x => x.GetById(id)).Returns(@event);
+            _eventRepositoryMock.Setup(x => x.GetAll()).Returns(new List<Event> { @event });
+
+            _areaRepositoryMock.Setup(x => x.GetAll()).Returns(areas);
             _seatRepositoryMock.Setup(x => x.GetAll()).Returns(new List<Seat>());
 
             var eventToUpdate = new Event
@@ -270,27 +400,39 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
         [Test]
         public void GetAll_EventListNotEmpty_ReturnsEventList()
         {
-            var events = _eventService.GetAll();
+            var events = new List<Event>
+            {
+                new Event { Id = 1, Name = "Event 1", Descpription = "Description 1", LayoutId = 1, StartDate = new DateTime(2023, 1, 1), EndDate = new DateTime(2023, 1, 2) },
+                new Event { Id = 2, Name = "Event 2", Descpription = "Description 2", LayoutId = 2, StartDate = new DateTime(2023, 2, 2, 10, 0, 0), EndDate = new DateTime(2023, 2, 2, 15, 0, 0) },
+                new Event { Id = 3, Name = "Event 3", Descpription = "Description 3", LayoutId = 2, StartDate = new DateTime(2023, 1, 3), EndDate = new DateTime(2023, 1, 5) },
+            };
 
-            events.Should().BeEquivalentTo(_events);
+            _eventRepositoryMock.Setup(x => x.GetAll()).Returns(events);
+
+            _eventService.GetAll().Should().BeEquivalentTo(events);
         }
 
         [Test]
         public void GetById_EventExists_ReturnsEvent()
         {
+            int id = 1;
             var @event = new Event { Id = 1, Name = "New Event", Descpription = "Description 1", LayoutId = 1, StartDate = new DateTime(2023, 10, 10), EndDate = new DateTime(2023, 10, 11) };
 
-            _eventRepositoryMock.Setup(x => x.GetById(It.IsAny<int>())).Returns(@event);
+            _eventRepositoryMock.Setup(x => x.GetById(id)).Returns(@event);
 
-            _eventService.GetById(It.IsAny<int>()).Should().BeEquivalentTo(@event);
+            _eventService.GetById(id).Should().BeEquivalentTo(@event);
         }
 
         [Test]
-        public void GetById_InvalidId_ReturnsNUll()
+        public void GetById_InvalidId_ThrowsValidationException()
         {
-            _eventRepositoryMock.Setup(x => x.GetById(It.IsAny<int>())).Returns<Event>(null);
+            int id = 1;
 
-            _eventService.GetById(It.IsAny<int>()).Should().BeNull();
+            _eventRepositoryMock.Setup(x => x.GetById(id)).Returns<Event>(null);
+
+            _eventService.Invoking(s => s.GetById(id))
+                .Should().Throw<ValidationException>()
+                .WithMessage("Entity was not found.");
         }
     }
 }

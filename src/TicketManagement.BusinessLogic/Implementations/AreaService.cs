@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using TicketManagement.BusinessLogic.Extensions;
 using TicketManagement.BusinessLogic.Interfaces;
 using TicketManagement.BusinessLogic.Validation;
 using TicketManagement.DataAccess.Entities;
@@ -24,12 +25,22 @@ namespace TicketManagement.BusinessLogic.Implementations
 
         public int Create(Area area)
         {
+            if (area is null)
+            {
+                throw new ValidationException("Area is null.");
+            }
+
+            area.Id = 0;
+
             _areaValidator.Validate(area);
+
             return _areaRepository.Create(area);
         }
 
         public void Delete(int id)
         {
+            _areaRepository.CheckIfIdExists(id);
+
             _areaRepository.Delete(id);
         }
 
@@ -40,11 +51,20 @@ namespace TicketManagement.BusinessLogic.Implementations
 
         public Area GetById(int id)
         {
+            _areaRepository.CheckIfIdExists(id);
+
             return _areaRepository.GetById(id);
         }
 
         public void Update(Area area)
         {
+            if (area is null)
+            {
+                throw new ValidationException("Area is null.");
+            }
+
+            _areaRepository.CheckIfIdExists(area.Id);
+
             _areaValidator.Validate(area);
 
             _areaRepository.Update(area);

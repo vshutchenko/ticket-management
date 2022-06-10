@@ -16,21 +16,11 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
     {
         private Mock<IRepository<Seat>> _seatRepositoryMock;
         private ISeatService _seatService;
-        private List<Seat> _seats;
 
         [SetUp]
         public void SetUp()
         {
-            _seats = new List<Seat>
-            {
-                new Seat { Id = 1, Row = 1, Number = 1, AreaId = 1, },
-                new Seat { Id = 2, Row = 1, Number = 2, AreaId = 1, },
-                new Seat { Id = 3, Row = 1, Number = 3, AreaId = 1, },
-            };
-
             _seatRepositoryMock = new Mock<IRepository<Seat>>();
-
-            _seatRepositoryMock.Setup(x => x.GetAll()).Returns(_seats);
 
             var seatValidator = new SeatValidator(_seatRepositoryMock.Object);
 
@@ -50,6 +40,13 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
         [Test]
         public void Create_SeatWithSameRowAndNumberExists_ThrowsValidationException()
         {
+            var seats = new List<Seat>
+            {
+                new Seat { Id = 1, Row = 1, Number = 1, AreaId = 1, },
+            };
+
+            _seatRepositoryMock.Setup(x => x.GetAll()).Returns(seats);
+
             var seatToCreate = new Seat { Id = 1, Row = 1, Number = 1, AreaId = 1, };
 
             _seatService.Invoking(s => s.Create(seatToCreate))
@@ -68,15 +65,47 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
         [Test]
         public void Delete_SeatExists_DeletesSeat()
         {
-            _seatService.Delete(It.IsAny<int>());
+            var seat = new Seat { Id = 1, Row = 1, Number = 1, AreaId = 1, };
 
-            _seatRepositoryMock.Verify(x => x.Delete(It.IsAny<int>()), Times.Once);
+            int id = 1;
+
+            _seatRepositoryMock.Setup(x => x.GetById(id)).Returns(seat);
+
+            _seatService.Delete(id);
+
+            _seatRepositoryMock.Verify(x => x.Delete(id), Times.Once);
+        }
+
+        [Test]
+        public void Delete_SeatNotFound_ThrowsValidationException()
+        {
+            var seats = new List<Seat>
+            {
+                new Seat { Id = 1, Row = 1, Number = 1, AreaId = 1, },
+                new Seat { Id = 2, Row = 1, Number = 2, AreaId = 1, },
+                new Seat { Id = 3, Row = 1, Number = 3, AreaId = 1, },
+            };
+
+            _seatRepositoryMock.Setup(x => x.GetAll()).Returns(seats);
+
+            int notExistingId = 99;
+
+            _seatService.Invoking(s => s.Delete(notExistingId))
+                .Should().Throw<ValidationException>()
+                .WithMessage("Entity was not found.");
         }
 
         [Test]
         public void Update_ValidSeat_UpdatesSeat()
         {
-            var seatToUpdate = new Seat { Id = 1, Row = 2, Number = 1, AreaId = 1, };
+            int id = 1;
+
+            var seat = new Seat { Id = 1, Row = 1, Number = 1, AreaId = 1, };
+
+            _seatRepositoryMock.Setup(x => x.GetById(id)).Returns(seat);
+            _seatRepositoryMock.Setup(x => x.GetAll()).Returns(new List<Seat> { seat });
+
+            var seatToUpdate = new Seat { Id = 1, Row = 2, Number = 2, AreaId = 1, };
 
             _seatService.Update(seatToUpdate);
 
@@ -84,9 +113,35 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
         }
 
         [Test]
+        public void Update_SeatNotFound_ThrowsValidationException()
+        {
+            int notExistingId = 1;
+
+            var seatToUpdate = new Seat { Id = 1, Row = 2, Number = 2, AreaId = 1, };
+
+            _seatRepositoryMock.Setup(x => x.GetById(notExistingId)).Returns<Venue>(null);
+
+            _seatService.Invoking(s => s.Update(seatToUpdate))
+                .Should().Throw<ValidationException>()
+                .WithMessage("Entity was not found.");
+        }
+
+        [Test]
         public void Update_SeatWithSameRowAndNumberExists_ThrowsValidationException()
         {
-            var seatToUpdate = new Seat { Id = 1, Row = 1, Number = 2, AreaId = 1, };
+            var seats = new List<Seat>
+            {
+                new Seat { Id = 1, Row = 1, Number = 1, AreaId = 1, },
+                new Seat { Id = 2, Row = 2, Number = 2, AreaId = 2, },
+            };
+
+            int id = 2;
+
+            _seatRepositoryMock.Setup(x => x.GetAll()).Returns(seats);
+
+            _seatRepositoryMock.Setup(x => x.GetById(id)).Returns(seats.First(s => s.Id == id));
+
+            var seatToUpdate = new Seat { Id = 2, Row = 1, Number = 1, AreaId = 1, };
 
             _seatService.Invoking(s => s.Update(seatToUpdate))
                 .Should().Throw<ValidationException>()
@@ -104,27 +159,40 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
         [Test]
         public void GetAll_SeatListNotEmpty_ReturnsSeatList()
         {
-            var seats = _seatService.GetAll().ToList();
+            var seats = new List<Seat>
+            {
+                new Seat { Id = 1, Row = 1, Number = 1, AreaId = 1, },
+                new Seat { Id = 2, Row = 1, Number = 2, AreaId = 1, },
+                new Seat { Id = 3, Row = 1, Number = 3, AreaId = 1, },
+            };
 
-            seats.Should().BeEquivalentTo(_seats);
+            _seatRepositoryMock.Setup(x => x.GetAll()).Returns(seats);
+
+            _seatService.GetAll().Should().BeEquivalentTo(seats);
         }
 
         [Test]
         public void GetById_SeatExists_ReturnsSeat()
         {
+            int id = 1;
+
             var seat = new Seat { Id = 1, Row = 1, Number = 1, AreaId = 1, };
 
-            _seatRepositoryMock.Setup(x => x.GetById(It.IsAny<int>())).Returns(seat);
+            _seatRepositoryMock.Setup(x => x.GetById(id)).Returns(seat);
 
-            _seatService.GetById(It.IsAny<int>()).Should().BeEquivalentTo(seat);
+            _seatService.GetById(id).Should().BeEquivalentTo(seat);
         }
 
         [Test]
-        public void GetById_SeatNotFound_ReturnsNull()
+        public void GetById_SeatNotFound_ThrowsValidationException()
         {
-            _seatRepositoryMock.Setup(x => x.GetById(It.IsAny<int>())).Returns<Seat>(null);
+            int id = 1;
 
-            _seatService.GetById(It.IsAny<int>()).Should().BeNull();
+            _seatRepositoryMock.Setup(x => x.GetById(id)).Returns<Venue>(null);
+
+            _seatService.Invoking(s => s.GetById(id))
+                .Should().Throw<ValidationException>()
+                .WithMessage("Entity was not found.");
         }
     }
 }

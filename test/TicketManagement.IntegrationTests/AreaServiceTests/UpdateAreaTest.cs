@@ -12,7 +12,7 @@ namespace TicketManagement.IntegrationTests.AreaServiceTests
     {
         private IAreaService _areaService;
 
-        [OneTimeSetUp]
+        [SetUp]
         public void CreateServices()
         {
             var connectionString = new TestDatabase().ConnectionString;
@@ -24,7 +24,7 @@ namespace TicketManagement.IntegrationTests.AreaServiceTests
         }
 
         [Test]
-        public void Update_ValidArea_UpdatesArea()
+        public void UpdateDescription_ValidArea_UpdatesArea()
         {
             int id = 1;
 
@@ -43,6 +43,36 @@ namespace TicketManagement.IntegrationTests.AreaServiceTests
             {
                 Id = id,
                 Description = "Test area 1",
+                CoordX = 1,
+                CoordY = 1,
+                LayoutId = 1,
+            };
+
+            _areaService.Update(areaToUpdate);
+
+            _areaService.GetById(id).Should().BeEquivalentTo(areaToUpdate);
+        }
+
+        [Test]
+        public void UpdateCoordinates_ValidArea_UpdatesArea()
+        {
+            int id = 1;
+
+            var areaBeforeUpdate = new Area
+            {
+                Id = id,
+                Description = "First area of first layout",
+                CoordX = 1,
+                CoordY = 1,
+                LayoutId = 1,
+            };
+
+            _areaService.GetById(id).Should().BeEquivalentTo(areaBeforeUpdate);
+
+            var areaToUpdate = new Area
+            {
+                Id = id,
+                Description = "First area of first layout",
                 CoordX = 6,
                 CoordY = 6,
                 LayoutId = 1,

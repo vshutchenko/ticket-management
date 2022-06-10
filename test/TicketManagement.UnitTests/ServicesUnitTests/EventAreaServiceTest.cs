@@ -38,7 +38,6 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
 
             _eventAreaService.SetPrice(id, price);
 
-            _eventAreaRepositoryMock.Verify(x => x.GetById(id), Times.Once);
             _eventAreaRepositoryMock.Verify(x => x.Update(eventArea), Times.Once);
         }
 
@@ -63,11 +62,11 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
             int id = 1;
             decimal price = 15;
 
-            _eventAreaRepositoryMock.Setup(x => x.GetById(It.IsAny<int>())).Returns<EventArea>(null);
+            _eventAreaRepositoryMock.Setup(x => x.GetById(id)).Returns<EventArea>(null);
 
             _eventAreaService.Invoking(s => s.SetPrice(id, price))
                 .Should().Throw<ValidationException>()
-                .WithMessage("Event area does not exist.");
+                .WithMessage("Entity was not found.");
         }
 
         [Test]
@@ -88,21 +87,25 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
         [Test]
         public void GetById_EventAreaExists_ReturnsEventArea()
         {
+            int id = 1;
+
             var eventArea = new EventArea { Id = 1, Description = "Area 1", CoordX = 1, CoordY = 1, EventId = 1, Price = 1 };
 
-            _eventAreaRepositoryMock.Setup(x => x.GetById(It.IsAny<int>())).Returns(eventArea);
+            _eventAreaRepositoryMock.Setup(x => x.GetById(id)).Returns(eventArea);
 
-            _eventAreaService.GetById(It.IsAny<int>()).Should().BeEquivalentTo(eventArea);
-
-            _eventAreaRepositoryMock.Verify(x => x.GetById(It.IsAny<int>()), Times.Once);
+            _eventAreaService.GetById(id).Should().BeEquivalentTo(eventArea);
         }
 
         [Test]
-        public void GetById_EventAreaNotFound_ReturnsNull()
+        public void GetById_EventAreaNotFound_ThrowsValidationException()
         {
-            _eventAreaRepositoryMock.Setup(x => x.GetById(It.IsAny<int>())).Returns<EventArea>(null);
+            int id = 1;
 
-            _eventAreaService.GetById(It.IsAny<int>()).Should().BeNull();
+            _eventAreaRepositoryMock.Setup(x => x.GetById(id)).Returns<EventArea>(null);
+
+            _eventAreaService.Invoking(s => s.GetById(id))
+                .Should().Throw<ValidationException>()
+                .WithMessage("Entity was not found.");
         }
     }
 }

@@ -23,7 +23,7 @@ namespace TicketManagement.BusinessLogic.Validation
 
             bool layoutExists = _layoutRepsitory
                 .GetAll()
-                .Any(l => l.VenueId == item.VenueId && item.Description.Equals(l.Description, StringComparison.OrdinalIgnoreCase));
+                .Any(l => l.Id != item.Id && l.VenueId == item.VenueId && item.Description.Equals(l.Description, StringComparison.OrdinalIgnoreCase));
 
             if (layoutExists)
             {

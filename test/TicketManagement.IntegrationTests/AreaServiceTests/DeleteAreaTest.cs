@@ -27,7 +27,9 @@ namespace TicketManagement.IntegrationTests.AreaServiceTests
         {
             _areaService.Delete(id);
 
-            _areaService.GetById(id).Should().BeNull();
+            _areaService.Invoking(s => s.GetById(id))
+                .Should().Throw<ValidationException>()
+                .WithMessage("Entity was not found.");
         }
     }
 }
