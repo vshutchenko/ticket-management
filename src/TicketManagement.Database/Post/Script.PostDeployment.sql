@@ -1,7 +1,8 @@
 ﻿--- Venue
 insert into dbo.Venue
 	values 
-		('First venue', 'First venue address', '123 45 678 90 12')
+		('First venue', 'First venue address', '123 45 678 90 12'),
+		('Second venue', 'Second venue address', '213 345 34 3434')
 
 --- Layout
 insert into dbo.Layout
@@ -25,3 +26,23 @@ insert into dbo.Seat
 		(1, 2, 2),
 		(2, 1, 1),
 		(1, 2, 1)
+
+--- Event
+insert into dbo.Event
+	values
+		('First event', 'First event description', 1, '2023-01-01 10:00:00', '2023-01-01 15:00:00')
+
+
+--- EventArea
+insert into dbo.EventArea
+	values 
+		(1, 'Event area of first event', 1, 1, 15)
+
+--- EvenSeat
+insert into dbo.EventSeat
+	values
+		(1, 1, 1, 1),
+		(1, 1, 2, 1),
+		(1, 1, 3, 1),
+		(1, 2, 2, 0),
+		(1, 2, 1, 0)

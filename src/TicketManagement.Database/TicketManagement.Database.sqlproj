@@ -61,6 +61,7 @@
     <Folder Include="ForeignKeys" />
     <Folder Include="Tables" />
     <Folder Include="Post" />
+    <Folder Include="StoredProcedures" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="ForeignKeys\FK_Venue_Layout.sql" />
@@ -69,7 +70,10 @@
     <Build Include="ForeignKeys\FK_Area_Seat.sql" />
     <Build Include="ForeignKeys\FK_Layout_Event.sql" />
     <Build Include="ForeignKeys\FK_Event_EventArea.sql" />
-    <Build Include="ForeignKeys\FK_Area_EventSeat.sql" />
+    <Build Include="ForeignKeys\FK_EventArea_EventSeat.sql" />
+    <Build Include="StoredProcedures\DeleteEvent.sql" />
+    <Build Include="StoredProcedures\InsertEvent.sql" />
+    <Build Include="StoredProcedures\UpdateEvent.sql" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="Tables\Event.sql" />
@@ -85,4 +89,7 @@
   <ItemGroup>
     <PostDeploy Include="Post\Script.PostDeployment.sql" />
   </ItemGroup>
+  <PropertyGroup>
+    <PostBuildEvent>xcopy /y "$(ProjectDir)$(OutDir)*.dacpac" "$(SolutionDir)\test\TicketManagement.IntegrationTests\TestDatabase"</PostBuildEvent>
+  </PropertyGroup>
 </Project>
