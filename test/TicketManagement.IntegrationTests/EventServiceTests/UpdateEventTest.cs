@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using FluentAssertions;
 using NUnit.Framework;
 using TicketManagement.BusinessLogic.Implementations;
@@ -39,7 +40,7 @@ namespace TicketManagement.IntegrationTests.EventServiceTests
         }
 
         [Test]
-        public void Update_ValidEvent_UpdatesEvent()
+        public async Task Update_ValidEvent_UpdatesEvent()
         {
             int id = 1;
 
@@ -53,7 +54,7 @@ namespace TicketManagement.IntegrationTests.EventServiceTests
                 EndDate = new DateTime(2023, 1, 1, 15, 0, 0),
             };
 
-            var actualEventBeforeUpdate = _eventService.GetById(id);
+            var actualEventBeforeUpdate = await _eventService.GetByIdAsync(id);
 
             actualEventBeforeUpdate.Should().BeEquivalentTo(expectedEventBeforeUpdate);
 
@@ -67,15 +68,15 @@ namespace TicketManagement.IntegrationTests.EventServiceTests
                 EndDate = new DateTime(2023, 1, 3),
             };
 
-            _eventService.Update(eventToUpdate);
+            await _eventService.UpdateAsync(eventToUpdate);
 
-            var actualEvent = _eventService.GetById(id);
+            var actualEvent = await _eventService.GetByIdAsync(id);
 
             actualEvent.Should().BeEquivalentTo(eventToUpdate);
         }
 
         [Test]
-        public void Update_ValidEvent_UpdatesAreas()
+        public async Task Update_ValidEvent_UpdatesAreas()
         {
             int id = 1;
 
@@ -104,7 +105,7 @@ namespace TicketManagement.IntegrationTests.EventServiceTests
                 EndDate = new DateTime(2023, 1, 3),
             };
 
-            _eventService.Update(eventToUpdate);
+            await _eventService.UpdateAsync(eventToUpdate);
 
             var actualEventAreas = _eventAreaService.GetAll().Where(a => a.EventId == id).ToList();
 
@@ -112,7 +113,7 @@ namespace TicketManagement.IntegrationTests.EventServiceTests
         }
 
         [Test]
-        public void Update_ValidEvent_UpdatesSeats()
+        public async Task Update_ValidEvent_UpdatesSeats()
         {
             int id = 1;
 
@@ -152,7 +153,7 @@ namespace TicketManagement.IntegrationTests.EventServiceTests
                 EndDate = new DateTime(2023, 1, 3),
             };
 
-            _eventService.Update(eventToUpdate);
+            await _eventService.UpdateAsync(eventToUpdate);
 
             var actualEventSeats = _eventAreaService.GetAll()
                 .Where(a => a.EventId == id)

@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.Linq;
+using System.Threading.Tasks;
 using TicketManagement.DataAccess.Entities;
 using TicketManagement.DataAccess.Interfaces;
 
@@ -16,42 +18,42 @@ namespace TicketManagement.DataAccess.Implementations
             _connectionString = connectionString ?? throw new ArgumentNullException(nameof(connectionString));
         }
 
-        public int Create(EventSeat item)
+        public async Task<int> CreateAsync(EventSeat item)
         {
             var query = "INSERT INTO EventSeat(EventAreaId, Row, Number, State) VALUES(@eventAreaId, @row, @number, @state); SELECT SCOPE_IDENTITY()";
 
-            using SqlConnection connection = new SqlConnection(_connectionString);
+            await using SqlConnection connection = new SqlConnection(_connectionString);
 
-            using SqlCommand command = new SqlCommand(query, connection);
+            await using SqlCommand command = new SqlCommand(query, connection);
 
             command.Parameters.AddWithValue("eventAreaId", item.EventAreaId);
             command.Parameters.AddWithValue("row", item.Row);
             command.Parameters.AddWithValue("number", item.Number);
             command.Parameters.AddWithValue("state", item.State);
 
-            connection.Open();
+            await connection.OpenAsync();
 
-            var id = Convert.ToInt32(command.ExecuteScalar());
+            var id = Convert.ToInt32(await command.ExecuteScalarAsync());
 
             return id;
         }
 
-        public void Delete(int id)
+        public async Task DeleteAsync(int id)
         {
             var query = "DELETE FROM EventSeat WHERE Id = @eventSeatId";
 
-            using SqlConnection connection = new SqlConnection(_connectionString);
+            await using SqlConnection connection = new SqlConnection(_connectionString);
 
-            using SqlCommand command = new SqlCommand(query, connection);
+            await using SqlCommand command = new SqlCommand(query, connection);
 
             command.Parameters.AddWithValue("eventSeatId", id);
 
-            connection.Open();
+            await connection.OpenAsync();
 
-            command.ExecuteNonQuery();
+            await command.ExecuteNonQueryAsync();
         }
 
-        public IEnumerable<EventSeat> GetAll()
+        public IQueryable<EventSeat> GetAll()
         {
             var query = "SELECT Id, EventAreaId, Row, Number, State FROM EventSeat";
 
@@ -63,34 +65,38 @@ namespace TicketManagement.DataAccess.Implementations
 
             using SqlDataReader reader = command.ExecuteReader();
 
+            var eventSeats = new List<EventSeat>();
+
             while (reader.Read())
             {
-                yield return new EventSeat
+                eventSeats.Add(new EventSeat
                 {
                     Id = reader.GetInt32("Id"),
                     EventAreaId = reader.GetInt32("EventAreaId"),
                     Row = reader.GetInt32("Row"),
                     Number = reader.GetInt32("Number"),
                     State = (EventSeatState)reader.GetInt32("State"),
-                };
+                });
             }
+
+            return eventSeats.AsQueryable();
         }
 
-        public EventSeat GetById(int id)
+        public async Task<EventSeat> GetByIdAsync(int id)
         {
             var query = "SELECT Id, EventAreaId, Row, Number, State FROM EventSeat WHERE Id = @id";
 
-            using SqlConnection connection = new SqlConnection(_connectionString);
+            await using SqlConnection connection = new SqlConnection(_connectionString);
 
-            using SqlCommand command = new SqlCommand(query, connection);
+            await using SqlCommand command = new SqlCommand(query, connection);
 
             command.Parameters.AddWithValue("@id", id);
 
-            connection.Open();
+            await connection.OpenAsync();
 
-            using SqlDataReader reader = command.ExecuteReader();
+            await using SqlDataReader reader = await command.ExecuteReaderAsync();
 
-            if (reader.Read())
+            if (await reader.ReadAsync())
             {
                 return new EventSeat
                 {
@@ -105,13 +111,13 @@ namespace TicketManagement.DataAccess.Implementations
             return null;
         }
 
-        public void Update(EventSeat item)
+        public async Task UpdateAsync(EventSeat item)
         {
             var query = "UPDATE EventSeat SET EventAreaId = @eventAreaId, Row = @row, Number = @number, State = @state WHERE Id = @eventSeatId";
 
-            using SqlConnection connection = new SqlConnection(_connectionString);
+            await using SqlConnection connection = new SqlConnection(_connectionString);
 
-            using SqlCommand command = new SqlCommand(query, connection);
+            await using SqlCommand command = new SqlCommand(query, connection);
 
             command.Parameters.AddWithValue("@eventSeatId", item.Id);
             command.Parameters.AddWithValue("@eventAreaId", item.EventAreaId);
@@ -119,9 +125,9 @@ namespace TicketManagement.DataAccess.Implementations
             command.Parameters.AddWithValue("@number", item.Number);
             command.Parameters.AddWithValue("@state", item.State);
 
-            connection.Open();
+            await connection.OpenAsync();
 
-            command.ExecuteNonQuery();
+            await command.ExecuteNonQueryAsync();
         }
     }
 }

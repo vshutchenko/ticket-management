@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using TicketManagement.BusinessLogic.Extensions;
 using TicketManagement.BusinessLogic.Interfaces;
 using TicketManagement.BusinessLogic.Validation;
@@ -24,23 +25,23 @@ namespace TicketManagement.BusinessLogic.Implementations
             return _eventAreaRepository.GetAll();
         }
 
-        public EventArea GetById(int id)
+        public async Task<EventArea> GetByIdAsync(int id)
         {
-            _eventAreaRepository.CheckIfIdExists(id);
+            await _eventAreaRepository.CheckIfIdExistsAsync(id);
 
-            return _eventAreaRepository.GetById(id);
+            return await _eventAreaRepository.GetByIdAsync(id);
         }
 
-        public void SetPrice(int id, decimal price)
+        public async Task SetPriceAsync(int id, decimal price)
         {
-            _eventAreaRepository.CheckIfIdExists(id);
+            await _eventAreaRepository.CheckIfIdExistsAsync(id);
 
             _priceValidator.Validate(price);
 
-            var area = _eventAreaRepository.GetById(id);
+            var area = await _eventAreaRepository.GetByIdAsync(id);
 
             area.Price = price;
-            _eventAreaRepository.Update(area);
+            await _eventAreaRepository.UpdateAsync(area);
         }
     }
 }

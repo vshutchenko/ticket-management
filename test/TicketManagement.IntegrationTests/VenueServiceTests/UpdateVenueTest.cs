@@ -1,4 +1,5 @@
-﻿using FluentAssertions;
+﻿using System.Threading.Tasks;
+using FluentAssertions;
 using NUnit.Framework;
 using TicketManagement.BusinessLogic.Implementations;
 using TicketManagement.BusinessLogic.Interfaces;
@@ -24,7 +25,7 @@ namespace TicketManagement.IntegrationTests.VenueServiceTests
         }
 
         [Test]
-        public void UpdateDescription_ValidVenue_UpdatesVenue()
+        public async Task UpdateDescription_ValidVenue_UpdatesVenue()
         {
             int id = 1;
 
@@ -36,7 +37,9 @@ namespace TicketManagement.IntegrationTests.VenueServiceTests
                 Phone = "123 45 678 90 12",
             };
 
-            _venueService.GetById(id).Should().BeEquivalentTo(venueBeforeUpdate);
+            var actualVenueBeforeUpdate = await _venueService.GetByIdAsync(id);
+
+            actualVenueBeforeUpdate.Should().BeEquivalentTo(venueBeforeUpdate);
 
             var venueToUpdate = new Venue
             {
@@ -46,13 +49,15 @@ namespace TicketManagement.IntegrationTests.VenueServiceTests
                 Phone = "123 45 678 90 12",
             };
 
-            _venueService.Update(venueToUpdate);
+            await _venueService.UpdateAsync(venueToUpdate);
 
-            _venueService.GetById(id).Should().BeEquivalentTo(venueToUpdate);
+            var actualVenueAfterUpdate = await _venueService.GetByIdAsync(id);
+
+            actualVenueAfterUpdate.Should().BeEquivalentTo(venueToUpdate);
         }
 
         [Test]
-        public void UpdateAddressAndPhone_ValidVenue_UpdatesVenue()
+        public async Task UpdateAddressAndPhone_ValidVenue_UpdatesVenue()
         {
             int id = 1;
 
@@ -64,7 +69,9 @@ namespace TicketManagement.IntegrationTests.VenueServiceTests
                 Phone = "123 45 678 90 12",
             };
 
-            _venueService.GetById(id).Should().BeEquivalentTo(venueBeforeUpdate);
+            var actualVenueBeforeUpdate = await _venueService.GetByIdAsync(id);
+
+            actualVenueBeforeUpdate.Should().BeEquivalentTo(venueBeforeUpdate);
 
             var venueToUpdate = new Venue
             {
@@ -74,9 +81,11 @@ namespace TicketManagement.IntegrationTests.VenueServiceTests
                 Phone = "111 11 678 11 12",
             };
 
-            _venueService.Update(venueToUpdate);
+            await _venueService.UpdateAsync(venueToUpdate);
 
-            _venueService.GetById(id).Should().BeEquivalentTo(venueToUpdate);
+            var actualVenueAfterUpdate = await _venueService.GetByIdAsync(id);
+
+            actualVenueAfterUpdate.Should().BeEquivalentTo(venueToUpdate);
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using FluentAssertions;
+﻿using System.Threading.Tasks;
+using FluentAssertions;
 using NUnit.Framework;
 using TicketManagement.BusinessLogic.Implementations;
 using TicketManagement.BusinessLogic.Interfaces;
@@ -24,7 +25,7 @@ namespace TicketManagement.IntegrationTests.AreaServiceTests
         }
 
         [Test]
-        public void Create_ValidArea_CreatesArea()
+        public async Task Create_ValidArea_CreatesArea()
         {
             var areaToCreate = new Area
             {
@@ -34,9 +35,11 @@ namespace TicketManagement.IntegrationTests.AreaServiceTests
                 LayoutId = 1,
             };
 
-            var id = _areaService.Create(areaToCreate);
+            var id = await _areaService.CreateAsync(areaToCreate);
 
-            _areaService.GetById(id).Should().BeEquivalentTo(areaToCreate, v => v.Excluding(v => v.Id));
+            var actualArea = await _areaService.GetByIdAsync(id);
+
+            actualArea.Should().BeEquivalentTo(areaToCreate, v => v.Excluding(v => v.Id));
         }
     }
 }

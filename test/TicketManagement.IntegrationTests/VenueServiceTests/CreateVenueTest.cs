@@ -1,4 +1,5 @@
-﻿using FluentAssertions;
+﻿using System.Threading.Tasks;
+using FluentAssertions;
 using NUnit.Framework;
 using TicketManagement.BusinessLogic.Implementations;
 using TicketManagement.BusinessLogic.Interfaces;
@@ -24,7 +25,7 @@ namespace TicketManagement.IntegrationTests.VenueServiceTests
         }
 
         [Test]
-        public void Create_ValidVenue_CreatesVenue()
+        public async Task Create_ValidVenue_CreatesVenue()
         {
             var venueToCreate = new Venue
             {
@@ -33,9 +34,11 @@ namespace TicketManagement.IntegrationTests.VenueServiceTests
                 Phone = "880055535335",
             };
 
-            var id = _venueService.Create(venueToCreate);
+            var id = await _venueService.CreateAsync(venueToCreate);
 
-            _venueService.GetById(id).Should().BeEquivalentTo(venueToCreate, v => v.Excluding(v => v.Id));
+            var actualVenue = await _venueService.GetByIdAsync(id);
+
+            actualVenue.Should().BeEquivalentTo(venueToCreate, v => v.Excluding(v => v.Id));
         }
     }
 }

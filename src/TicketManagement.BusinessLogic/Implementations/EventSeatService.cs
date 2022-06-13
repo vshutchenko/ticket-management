@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using TicketManagement.BusinessLogic.Extensions;
 using TicketManagement.BusinessLogic.Interfaces;
-using TicketManagement.BusinessLogic.Validation;
 using TicketManagement.DataAccess.Entities;
 using TicketManagement.DataAccess.Interfaces;
 
@@ -22,21 +22,21 @@ namespace TicketManagement.BusinessLogic.Implementations
             return _eventSeatRepository.GetAll();
         }
 
-        public EventSeat GetById(int id)
+        public async Task<EventSeat> GetByIdAsync(int id)
         {
-            _eventSeatRepository.CheckIfIdExists(id);
+            await _eventSeatRepository.CheckIfIdExistsAsync(id);
 
-            return _eventSeatRepository.GetById(id);
+            return await _eventSeatRepository.GetByIdAsync(id);
         }
 
-        public void SetSeatState(int id, EventSeatState state)
+        public async Task SetSeatStateAsync(int id, EventSeatState state)
         {
-            _eventSeatRepository.CheckIfIdExists(id);
+            await _eventSeatRepository.CheckIfIdExistsAsync(id);
 
-            var seat = _eventSeatRepository.GetById(id);
+            var seat = await _eventSeatRepository.GetByIdAsync(id);
 
             seat.State = state;
-            _eventSeatRepository.Update(seat);
+            await _eventSeatRepository.UpdateAsync(seat);
         }
     }
 }

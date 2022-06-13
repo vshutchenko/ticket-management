@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using FluentAssertions;
 using NUnit.Framework;
 using TicketManagement.BusinessLogic.Implementations;
@@ -39,7 +40,7 @@ namespace TicketManagement.IntegrationTests.EventServiceTests
         }
 
         [Test]
-        public void Create_ValidEvent_CreatesEvent()
+        public async Task Create_ValidEvent_CreatesEvent()
         {
             var eventToCreate = new Event
             {
@@ -51,15 +52,15 @@ namespace TicketManagement.IntegrationTests.EventServiceTests
                 EndDate = new DateTime(2023, 1, 3),
             };
 
-            var id = _eventService.Create(eventToCreate);
+            var id = await _eventService.CreateAsync(eventToCreate);
 
-            var actualEvent = _eventService.GetById(id);
+            var actualEvent = await _eventService.GetByIdAsync(id);
 
             actualEvent.Should().BeEquivalentTo(eventToCreate, opt => opt.Excluding(e => e.Id));
         }
 
         [Test]
-        public void Create_ValidEvent_CreatesAreas()
+        public async Task Create_ValidEvent_CreatesAreas()
         {
             var eventToCreate = new Event
             {
@@ -77,7 +78,7 @@ namespace TicketManagement.IntegrationTests.EventServiceTests
                 new EventArea { Id = 3, Description = "Second area of first layout", CoordX = 1, CoordY = 1, EventId = 2, Price = 0 },
             };
 
-            var id = _eventService.Create(eventToCreate);
+            var id = await _eventService.CreateAsync(eventToCreate);
 
             var actualEventAreas = _eventAreaService.GetAll().Where(a => a.EventId == id).ToList();
 
@@ -85,7 +86,7 @@ namespace TicketManagement.IntegrationTests.EventServiceTests
         }
 
         [Test]
-        public void Create_ValidEvent_CreatesSeats()
+        public async Task Create_ValidEvent_CreatesSeats()
         {
             var eventToCreate = new Event
             {
@@ -106,7 +107,7 @@ namespace TicketManagement.IntegrationTests.EventServiceTests
                 new EventSeat { Id = 11, EventAreaId = 3, Row = 1, Number = 1, State = EventSeatState.Available },
             };
 
-            var id = _eventService.Create(eventToCreate);
+            var id = await _eventService.CreateAsync(eventToCreate);
 
             List<EventSeat> actualEventSeats = _eventAreaService.GetAll()
                 .Where(a => a.EventId == id)

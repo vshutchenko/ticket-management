@@ -25,10 +25,10 @@ namespace TicketManagement.IntegrationTests.VenueServiceTests
         [TestCase(1)]
         public void Delete_VenueExists_DeletesVenue(int id)
         {
-            _venueService.Delete(id);
+            _venueService.DeleteAsync(id);
 
-            _venueService.Invoking(s => s.GetById(id))
-                .Should().Throw<ValidationException>()
+            _venueService.Invoking(s => s.GetByIdAsync(id))
+                .Should().ThrowAsync<ValidationException>()
                 .WithMessage("Entity was not found.");
         }
     }

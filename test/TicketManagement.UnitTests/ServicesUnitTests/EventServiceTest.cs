@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using FluentAssertions;
 using Moq;
 using NUnit.Framework;
@@ -44,8 +46,8 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
                 new Seat { Id = 1, Row = 1, Number = 1, AreaId = 1, },
             };
 
-            _seatRepositoryMock.Setup(x => x.GetAll()).Returns(seats);
-            _areaRepositoryMock.Setup(x => x.GetAll()).Returns(areas);
+            _seatRepositoryMock.Setup(x => x.GetAll()).Returns(seats.AsQueryable());
+            _areaRepositoryMock.Setup(x => x.GetAll()).Returns(areas.AsQueryable());
 
             var eventToCreate = new Event
             {
@@ -57,9 +59,9 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
                 EndDate = new DateTime(2023, 10, 11),
             };
 
-            _eventService.Create(eventToCreate);
+            _eventService.CreateAsync(eventToCreate);
 
-            _eventRepositoryMock.Verify(x => x.Create(eventToCreate), Times.Once);
+            _eventRepositoryMock.Verify(x => x.CreateAsync(eventToCreate), Times.Once);
         }
 
         [Test]
@@ -75,8 +77,8 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
                 new Seat { Id = 1, Row = 1, Number = 1, AreaId = 1, },
             };
 
-            _seatRepositoryMock.Setup(x => x.GetAll()).Returns(seats);
-            _areaRepositoryMock.Setup(x => x.GetAll()).Returns(areas);
+            _seatRepositoryMock.Setup(x => x.GetAll()).Returns(seats.AsQueryable());
+            _areaRepositoryMock.Setup(x => x.GetAll()).Returns(areas.AsQueryable());
 
             var eventToCreate = new Event
             {
@@ -88,8 +90,8 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
                 EndDate = new DateTime(2024, 1, 2),
             };
 
-            _eventService.Invoking(s => s.Create(eventToCreate))
-                .Should().Throw<ValidationException>()
+            _eventService.Invoking(s => s.CreateAsync(eventToCreate))
+                .Should().ThrowAsync<ValidationException>()
                 .WithMessage("Start date is in the past.");
         }
 
@@ -106,8 +108,8 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
                 new Seat { Id = 1, Row = 1, Number = 1, AreaId = 1, },
             };
 
-            _seatRepositoryMock.Setup(x => x.GetAll()).Returns(seats);
-            _areaRepositoryMock.Setup(x => x.GetAll()).Returns(areas);
+            _seatRepositoryMock.Setup(x => x.GetAll()).Returns(seats.AsQueryable());
+            _areaRepositoryMock.Setup(x => x.GetAll()).Returns(areas.AsQueryable());
 
             var eventToCreate = new Event
             {
@@ -119,8 +121,8 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
                 EndDate = new DateTime(2024, 1, 2),
             };
 
-            _eventService.Invoking(s => s.Create(eventToCreate))
-                .Should().Throw<ValidationException>()
+            _eventService.Invoking(s => s.CreateAsync(eventToCreate))
+                .Should().ThrowAsync<ValidationException>()
                 .WithMessage("End date is less than start date.");
         }
 
@@ -142,9 +144,9 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
                 new Event { Id = 1, Name = "Event 1", Descpription = "Description 1", LayoutId = 1, StartDate = new DateTime(2023, 1, 1), EndDate = new DateTime(2023, 1, 2) },
             };
 
-            _seatRepositoryMock.Setup(x => x.GetAll()).Returns(seats);
-            _areaRepositoryMock.Setup(x => x.GetAll()).Returns(areas);
-            _eventRepositoryMock.Setup(x => x.GetAll()).Returns(events);
+            _seatRepositoryMock.Setup(x => x.GetAll()).Returns(seats.AsQueryable());
+            _areaRepositoryMock.Setup(x => x.GetAll()).Returns(areas.AsQueryable());
+            _eventRepositoryMock.Setup(x => x.GetAll()).Returns(events.AsQueryable());
 
             var eventToCreate = new Event
             {
@@ -156,8 +158,8 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
                 EndDate = new DateTime(2023, 1, 2),
             };
 
-            _eventService.Invoking(s => s.Create(eventToCreate))
-                .Should().Throw<ValidationException>()
+            _eventService.Invoking(s => s.CreateAsync(eventToCreate))
+                .Should().ThrowAsync<ValidationException>()
                 .WithMessage("Event in the same layout and the same time is already exists.");
         }
 
@@ -169,8 +171,8 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
                 new Area { Id = 1, Description = "Area 1", CoordX = 1, CoordY = 1, LayoutId = 1 },
             };
 
-            _areaRepositoryMock.Setup(x => x.GetAll()).Returns(areas);
-            _seatRepositoryMock.Setup(x => x.GetAll()).Returns(new List<Seat>());
+            _areaRepositoryMock.Setup(x => x.GetAll()).Returns(areas.AsQueryable());
+            _seatRepositoryMock.Setup(x => x.GetAll()).Returns(new List<Seat>().AsQueryable());
 
             var eventToCreate = new Event
             {
@@ -182,16 +184,16 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
                 EndDate = new DateTime(2023, 1, 2),
             };
 
-            _eventService.Invoking(s => s.Create(eventToCreate))
-                .Should().Throw<ValidationException>()
+            _eventService.Invoking(s => s.CreateAsync(eventToCreate))
+                .Should().ThrowAsync<ValidationException>()
                 .WithMessage("There are no available seats in the layout.");
         }
 
         [Test]
         public void Create_NullEvent_ThrowsValidationException()
         {
-            _eventService.Invoking(s => s.Create(null))
-                .Should().Throw<ValidationException>()
+            _eventService.Invoking(s => s.CreateAsync(null))
+                .Should().ThrowAsync<ValidationException>()
                 .WithMessage("Event is null.");
         }
 
@@ -201,13 +203,14 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
             int id = 1;
 
             var @event = new Event { Id = 1, Name = "Event 1", Descpription = "Description 1", LayoutId = 1, StartDate = new DateTime(2023, 1, 1), EndDate = new DateTime(2023, 1, 2) };
+            var events = new List<Event> { @event };
 
-            _eventRepositoryMock.Setup(x => x.GetById(id)).Returns(@event);
-            _eventRepositoryMock.Setup(x => x.GetAll()).Returns(new List<Event> { @event });
+            _eventRepositoryMock.Setup(x => x.GetByIdAsync(id)).ReturnsAsync(@event);
+            _eventRepositoryMock.Setup(x => x.GetAll()).Returns(events.AsQueryable());
 
-            _eventService.Delete(id);
+            _eventService.DeleteAsync(id);
 
-            _eventRepositoryMock.Verify(x => x.Delete(id), Times.Once);
+            _eventRepositoryMock.Verify(x => x.DeleteAsync(id), Times.Once);
         }
 
         [Test]
@@ -225,11 +228,12 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
 
             int id = 1;
             var @event = new Event { Id = 1, Name = "Event 1", Descpription = "Description 1", LayoutId = 1, StartDate = new DateTime(2023, 1, 1), EndDate = new DateTime(2023, 1, 2) };
+            var events = new List<Event> { @event };
 
-            _areaRepositoryMock.Setup(x => x.GetAll()).Returns(areas);
-            _seatRepositoryMock.Setup(x => x.GetAll()).Returns(seats);
-            _eventRepositoryMock.Setup(x => x.GetById(id)).Returns(@event);
-            _eventRepositoryMock.Setup(x => x.GetAll()).Returns(new List<Event> { @event });
+            _areaRepositoryMock.Setup(x => x.GetAll()).Returns(areas.AsQueryable());
+            _seatRepositoryMock.Setup(x => x.GetAll()).Returns(seats.AsQueryable());
+            _eventRepositoryMock.Setup(x => x.GetByIdAsync(id)).ReturnsAsync(@event);
+            _eventRepositoryMock.Setup(x => x.GetAll()).Returns(events.AsQueryable());
 
             var eventToUpdate = new Event
             {
@@ -241,9 +245,9 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
                 EndDate = new DateTime(2024, 1, 2),
             };
 
-            _eventService.Update(eventToUpdate);
+            _eventService.UpdateAsync(eventToUpdate);
 
-            _eventRepositoryMock.Verify(x => x.Update(eventToUpdate), Times.Once);
+            _eventRepositoryMock.Verify(x => x.UpdateAsync(eventToUpdate), Times.Once);
         }
 
         [Test]
@@ -261,12 +265,13 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
 
             int id = 1;
             var @event = new Event { Id = 1, Name = "Event 1", Descpription = "Description 1", LayoutId = 1, StartDate = new DateTime(2023, 1, 1), EndDate = new DateTime(2023, 1, 2) };
+            var events = new List<Event> { @event };
 
-            _eventRepositoryMock.Setup(x => x.GetById(id)).Returns(@event);
-            _eventRepositoryMock.Setup(x => x.GetAll()).Returns(new List<Event> { @event });
+            _eventRepositoryMock.Setup(x => x.GetByIdAsync(id)).ReturnsAsync(@event);
+            _eventRepositoryMock.Setup(x => x.GetAll()).Returns(events.AsQueryable());
 
-            _seatRepositoryMock.Setup(x => x.GetAll()).Returns(seats);
-            _areaRepositoryMock.Setup(x => x.GetAll()).Returns(areas);
+            _seatRepositoryMock.Setup(x => x.GetAll()).Returns(seats.AsQueryable());
+            _areaRepositoryMock.Setup(x => x.GetAll()).Returns(areas.AsQueryable());
 
             var eventToUpdate = new Event
             {
@@ -278,8 +283,8 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
                 EndDate = new DateTime(2024, 1, 2),
             };
 
-            _eventService.Invoking(s => s.Update(eventToUpdate))
-                .Should().Throw<ValidationException>()
+            _eventService.Invoking(s => s.UpdateAsync(eventToUpdate))
+                .Should().ThrowAsync<ValidationException>()
                 .WithMessage("Start date is in the past.");
         }
 
@@ -298,12 +303,13 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
 
             int id = 1;
             var @event = new Event { Id = 1, Name = "Event 1", Descpription = "Description 1", LayoutId = 1, StartDate = new DateTime(2023, 1, 1), EndDate = new DateTime(2023, 1, 2) };
+            var events = new List<Event> { @event };
 
-            _eventRepositoryMock.Setup(x => x.GetById(id)).Returns(@event);
-            _eventRepositoryMock.Setup(x => x.GetAll()).Returns(new List<Event> { @event });
+            _eventRepositoryMock.Setup(x => x.GetByIdAsync(id)).ReturnsAsync(@event);
+            _eventRepositoryMock.Setup(x => x.GetAll()).Returns(events.AsQueryable());
 
-            _seatRepositoryMock.Setup(x => x.GetAll()).Returns(seats);
-            _areaRepositoryMock.Setup(x => x.GetAll()).Returns(areas);
+            _seatRepositoryMock.Setup(x => x.GetAll()).Returns(seats.AsQueryable());
+            _areaRepositoryMock.Setup(x => x.GetAll()).Returns(areas.AsQueryable());
 
             var eventToUpdate = new Event
             {
@@ -315,8 +321,8 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
                 EndDate = new DateTime(2024, 1, 2),
             };
 
-            _eventService.Invoking(s => s.Update(eventToUpdate))
-                .Should().Throw<ValidationException>()
+            _eventService.Invoking(s => s.UpdateAsync(eventToUpdate))
+                .Should().ThrowAsync<ValidationException>()
                 .WithMessage("End date is less than start date.");
         }
 
@@ -335,12 +341,13 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
 
             int id = 1;
             var @event = new Event { Id = 1, Name = "Event 1", Descpription = "Description 1", LayoutId = 1, StartDate = new DateTime(2023, 1, 1), EndDate = new DateTime(2023, 1, 2) };
+            var events = new List<Event> { @event };
 
-            _eventRepositoryMock.Setup(x => x.GetById(id)).Returns(@event);
-            _eventRepositoryMock.Setup(x => x.GetAll()).Returns(new List<Event> { @event });
+            _eventRepositoryMock.Setup(x => x.GetByIdAsync(id)).ReturnsAsync(@event);
+            _eventRepositoryMock.Setup(x => x.GetAll()).Returns(events.AsQueryable());
 
-            _areaRepositoryMock.Setup(x => x.GetAll()).Returns(areas);
-            _seatRepositoryMock.Setup(x => x.GetAll()).Returns(seats);
+            _areaRepositoryMock.Setup(x => x.GetAll()).Returns(areas.AsQueryable());
+            _seatRepositoryMock.Setup(x => x.GetAll()).Returns(seats.AsQueryable());
 
             var eventToUpdate = new Event
             {
@@ -352,8 +359,8 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
                 EndDate = new DateTime(2023, 1, 2),
             };
 
-            _eventService.Invoking(s => s.Update(eventToUpdate))
-                .Should().Throw<ValidationException>()
+            _eventService.Invoking(s => s.UpdateAsync(eventToUpdate))
+                .Should().ThrowAsync<ValidationException>()
                 .WithMessage("Event in the same layout and the same time is already exists.");
         }
 
@@ -367,12 +374,13 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
 
             int id = 1;
             var @event = new Event { Id = 1, Name = "Event 1", Descpription = "Description 1", LayoutId = 1, StartDate = new DateTime(2023, 1, 1), EndDate = new DateTime(2023, 1, 2) };
+            var events = new List<Event> { @event };
 
-            _eventRepositoryMock.Setup(x => x.GetById(id)).Returns(@event);
-            _eventRepositoryMock.Setup(x => x.GetAll()).Returns(new List<Event> { @event });
+            _eventRepositoryMock.Setup(x => x.GetByIdAsync(id)).ReturnsAsync(@event);
+            _eventRepositoryMock.Setup(x => x.GetAll()).Returns(events.AsQueryable());
 
-            _areaRepositoryMock.Setup(x => x.GetAll()).Returns(areas);
-            _seatRepositoryMock.Setup(x => x.GetAll()).Returns(new List<Seat>());
+            _areaRepositoryMock.Setup(x => x.GetAll()).Returns(areas.AsQueryable());
+            _seatRepositoryMock.Setup(x => x.GetAll()).Returns(new List<Seat>().AsQueryable());
 
             var eventToUpdate = new Event
             {
@@ -384,16 +392,16 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
                 EndDate = new DateTime(2023, 1, 2),
             };
 
-            _eventService.Invoking(s => s.Update(eventToUpdate))
-                .Should().Throw<ValidationException>()
+            _eventService.Invoking(s => s.UpdateAsync(eventToUpdate))
+                .Should().ThrowAsync<ValidationException>()
                 .WithMessage("There are no available seats in the layout.");
         }
 
         [Test]
         public void Update_NullEvent_ThrowsValidationException()
         {
-            _eventService.Invoking(s => s.Update(null))
-                .Should().Throw<ValidationException>()
+            _eventService.Invoking(s => s.UpdateAsync(null))
+                .Should().ThrowAsync<ValidationException>()
                 .WithMessage("Event is null.");
         }
 
@@ -407,20 +415,22 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
                 new Event { Id = 3, Name = "Event 3", Descpription = "Description 3", LayoutId = 2, StartDate = new DateTime(2023, 1, 3), EndDate = new DateTime(2023, 1, 5) },
             };
 
-            _eventRepositoryMock.Setup(x => x.GetAll()).Returns(events);
+            _eventRepositoryMock.Setup(x => x.GetAll()).Returns(events.AsQueryable());
 
             _eventService.GetAll().Should().BeEquivalentTo(events);
         }
 
         [Test]
-        public void GetById_EventExists_ReturnsEvent()
+        public async Task GetById_EventExists_ReturnsEvent()
         {
             int id = 1;
             var @event = new Event { Id = 1, Name = "New Event", Descpription = "Description 1", LayoutId = 1, StartDate = new DateTime(2023, 10, 10), EndDate = new DateTime(2023, 10, 11) };
 
-            _eventRepositoryMock.Setup(x => x.GetById(id)).Returns(@event);
+            _eventRepositoryMock.Setup(x => x.GetByIdAsync(id)).ReturnsAsync(@event);
 
-            _eventService.GetById(id).Should().BeEquivalentTo(@event);
+            var actualEvent = await _eventService.GetByIdAsync(id);
+
+            actualEvent.Should().BeEquivalentTo(@event);
         }
 
         [Test]
@@ -428,10 +438,10 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
         {
             int id = 1;
 
-            _eventRepositoryMock.Setup(x => x.GetById(id)).Returns<Event>(null);
+            _eventRepositoryMock.Setup(x => x.GetByIdAsync(id)).Returns<Event>(null);
 
-            _eventService.Invoking(s => s.GetById(id))
-                .Should().Throw<ValidationException>()
+            _eventService.Invoking(s => s.GetByIdAsync(id))
+                .Should().ThrowAsync<ValidationException>()
                 .WithMessage("Entity was not found.");
         }
     }

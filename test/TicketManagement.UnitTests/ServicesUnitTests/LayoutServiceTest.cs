@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using FluentAssertions;
 using Moq;
 using NUnit.Framework;
@@ -32,9 +33,9 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
         {
             var layoutToCreate = new Layout { Id = 1, Description = "New Layout", VenueId = 1, };
 
-            _layoutService.Create(layoutToCreate);
+            _layoutService.CreateAsync(layoutToCreate);
 
-            _layoutRepositoryMock.Verify(x => x.Create(layoutToCreate), Times.Once);
+            _layoutRepositoryMock.Verify(x => x.CreateAsync(layoutToCreate), Times.Once);
         }
 
         [Test]
@@ -45,20 +46,20 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
                 new Layout { Id = 1, Description = "Layout 1", VenueId = 1, },
             };
 
-            _layoutRepositoryMock.Setup(x => x.GetAll()).Returns(layouts);
+            _layoutRepositoryMock.Setup(x => x.GetAll()).Returns(layouts.AsQueryable());
 
             var layoutToCreate = new Layout { Id = 1, Description = "Layout 1", VenueId = 1, };
 
-            _layoutService.Invoking(s => s.Create(layoutToCreate))
-                .Should().Throw<ValidationException>()
+            _layoutService.Invoking(s => s.CreateAsync(layoutToCreate))
+                .Should().ThrowAsync<ValidationException>()
                 .WithMessage("The same layout is already exists in current venue.");
         }
 
         [Test]
         public void Create_NullLayout_ThrowsValidationException()
         {
-            _layoutService.Invoking(s => s.Create(null))
-                .Should().Throw<ValidationException>()
+            _layoutService.Invoking(s => s.CreateAsync(null))
+                .Should().ThrowAsync<ValidationException>()
                 .WithMessage("Layout is null.");
         }
 
@@ -69,11 +70,11 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
 
             int id = 1;
 
-            _layoutRepositoryMock.Setup(x => x.GetById(id)).Returns(layout);
+            _layoutRepositoryMock.Setup(x => x.GetByIdAsync(id)).ReturnsAsync(layout);
 
-            _layoutService.Delete(id);
+            _layoutService.DeleteAsync(id);
 
-            _layoutRepositoryMock.Verify(x => x.Delete(id), Times.Once);
+            _layoutRepositoryMock.Verify(x => x.DeleteAsync(id), Times.Once);
         }
 
         [Test]
@@ -86,12 +87,12 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
                 new Layout { Id = 3, Description = "Layout 3", VenueId = 2, },
             };
 
-            _layoutRepositoryMock.Setup(x => x.GetAll()).Returns(layouts);
+            _layoutRepositoryMock.Setup(x => x.GetAll()).Returns(layouts.AsQueryable());
 
             int notExistingId = 99;
 
-            _layoutService.Invoking(s => s.Delete(notExistingId))
-                .Should().Throw<ValidationException>()
+            _layoutService.Invoking(s => s.DeleteAsync(notExistingId))
+                .Should().ThrowAsync<ValidationException>()
                 .WithMessage("Entity was not found.");
         }
 
@@ -101,15 +102,16 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
             int id = 1;
 
             var layout = new Layout { Id = 1, Description = "Layout 1", VenueId = 1, };
+            var layouts = new List<Layout> { layout };
 
-            _layoutRepositoryMock.Setup(x => x.GetById(id)).Returns(layout);
-            _layoutRepositoryMock.Setup(x => x.GetAll()).Returns(new List<Layout> { layout });
+            _layoutRepositoryMock.Setup(x => x.GetByIdAsync(id)).ReturnsAsync(layout);
+            _layoutRepositoryMock.Setup(x => x.GetAll()).Returns(layouts.AsQueryable());
 
             var layoutToUpdate = new Layout { Id = 1, Description = "New Layout", VenueId = 1, };
 
-            _layoutService.Update(layoutToUpdate);
+            _layoutService.UpdateAsync(layoutToUpdate);
 
-            _layoutRepositoryMock.Verify(x => x.Update(layoutToUpdate), Times.Once);
+            _layoutRepositoryMock.Verify(x => x.UpdateAsync(layoutToUpdate), Times.Once);
         }
 
         [Test]
@@ -119,10 +121,10 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
 
             var layoutToUpdate = new Layout { Id = 1, Description = "New Layout", VenueId = 1, };
 
-            _layoutRepositoryMock.Setup(x => x.GetById(notExistingId)).Returns<Venue>(null);
+            _layoutRepositoryMock.Setup(x => x.GetByIdAsync(notExistingId)).Returns<Venue>(null);
 
-            _layoutService.Invoking(s => s.Update(layoutToUpdate))
-                .Should().Throw<ValidationException>()
+            _layoutService.Invoking(s => s.UpdateAsync(layoutToUpdate))
+                .Should().ThrowAsync<ValidationException>()
                 .WithMessage("Entity was not found.");
         }
 
@@ -137,22 +139,22 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
 
             int id = 2;
 
-            _layoutRepositoryMock.Setup(x => x.GetAll()).Returns(layouts);
+            _layoutRepositoryMock.Setup(x => x.GetAll()).Returns(layouts.AsQueryable());
 
-            _layoutRepositoryMock.Setup(x => x.GetById(id)).Returns(layouts.First(l => l.Id == id));
+            _layoutRepositoryMock.Setup(x => x.GetByIdAsync(id)).ReturnsAsync(layouts.First(l => l.Id == id));
 
             var layoutToUpdate = new Layout { Id = 2, Description = "Layout 1", VenueId = 1, };
 
-            _layoutService.Invoking(s => s.Update(layoutToUpdate))
-                .Should().Throw<ValidationException>()
+            _layoutService.Invoking(s => s.UpdateAsync(layoutToUpdate))
+                .Should().ThrowAsync<ValidationException>()
                 .WithMessage("The same layout is already exists in current venue.");
         }
 
         [Test]
         public void Update_NullLayout_ThrowsValidationException()
         {
-            _layoutService.Invoking(s => s.Update(null))
-                .Should().Throw<ValidationException>()
+            _layoutService.Invoking(s => s.UpdateAsync(null))
+                .Should().ThrowAsync<ValidationException>()
                 .WithMessage("Layout is null.");
         }
 
@@ -166,21 +168,23 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
                 new Layout { Id = 3, Description = "Layout 3", VenueId = 2, },
             };
 
-            _layoutRepositoryMock.Setup(x => x.GetAll()).Returns(layouts);
+            _layoutRepositoryMock.Setup(x => x.GetAll()).Returns(layouts.AsQueryable());
 
             _layoutService.GetAll().Should().BeEquivalentTo(layouts);
         }
 
         [Test]
-        public void GetById_LayoutExists_ReturnsLayout()
+        public async Task GetById_LayoutExists_ReturnsLayout()
         {
             int id = 1;
 
             var layout = new Layout { Id = 1, Description = "Layout 1", VenueId = 1, };
 
-            _layoutRepositoryMock.Setup(x => x.GetById(id)).Returns(layout);
+            _layoutRepositoryMock.Setup(x => x.GetByIdAsync(id)).ReturnsAsync(layout);
 
-            _layoutService.GetById(id).Should().BeEquivalentTo(layout);
+            var actualLayout = await _layoutService.GetByIdAsync(id);
+
+            actualLayout.Should().BeEquivalentTo(layout);
         }
 
         [Test]
@@ -188,10 +192,10 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
         {
             int id = 1;
 
-            _layoutRepositoryMock.Setup(x => x.GetById(id)).Returns<Layout>(null);
+            _layoutRepositoryMock.Setup(x => x.GetByIdAsync(id)).Returns<Layout>(null);
 
-            _layoutService.Invoking(s => s.GetById(id))
-                .Should().Throw<ValidationException>()
+            _layoutService.Invoking(s => s.GetByIdAsync(id))
+                .Should().ThrowAsync<ValidationException>()
                 .WithMessage("Entity was not found.");
         }
     }

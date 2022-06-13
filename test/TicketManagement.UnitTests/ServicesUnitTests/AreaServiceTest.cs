@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using FluentAssertions;
 using Moq;
 using NUnit.Framework;
@@ -31,9 +32,9 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
         {
             var areaToCreate = new Area { Id = 1, Description = "New Area", CoordX = 1, CoordY = 1, LayoutId = 3 };
 
-            _areaService.Create(areaToCreate);
+            _areaService.CreateAsync(areaToCreate);
 
-            _areaRepositoryMock.Verify(x => x.Create(areaToCreate), Times.Once);
+            _areaRepositoryMock.Verify(x => x.CreateAsync(areaToCreate), Times.Once);
         }
 
         [Test]
@@ -44,20 +45,20 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
                 new Area { Id = 1, Description = "Area 1", CoordX = 1, CoordY = 1, LayoutId = 1 },
             };
 
-            _areaRepositoryMock.Setup(x => x.GetAll()).Returns(areas);
+            _areaRepositoryMock.Setup(x => x.GetAll()).Returns(areas.AsQueryable());
 
             var areaToCreate = new Area { Description = "Area 1", CoordX = 2, CoordY = 2, LayoutId = 1 };
 
-            _areaService.Invoking(s => s.Create(areaToCreate))
-                .Should().Throw<ValidationException>()
+            _areaService.Invoking(s => s.CreateAsync(areaToCreate))
+                .Should().ThrowAsync<ValidationException>()
                 .WithMessage("Area description should be unique in the layout.");
         }
 
         [Test]
         public void Create_NullArea_ThrowsValidationException()
         {
-            _areaService.Invoking(s => s.Create(null))
-                .Should().Throw<ValidationException>()
+            _areaService.Invoking(s => s.CreateAsync(null))
+                .Should().ThrowAsync<ValidationException>()
                 .WithMessage("Area is null.");
         }
 
@@ -68,11 +69,11 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
 
             int id = 1;
 
-            _areaRepositoryMock.Setup(x => x.GetById(id)).Returns(area);
+            _areaRepositoryMock.Setup(x => x.GetByIdAsync(id)).ReturnsAsync(area);
 
-            _areaService.Delete(id);
+            _areaService.DeleteAsync(id);
 
-            _areaRepositoryMock.Verify(x => x.Delete(id), Times.Once);
+            _areaRepositoryMock.Verify(x => x.DeleteAsync(id), Times.Once);
         }
 
         [Test]
@@ -85,12 +86,12 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
                 new Area { Id = 3, Description = "Area 3", CoordX = 1, CoordY = 1, LayoutId = 2 },
             };
 
-            _areaRepositoryMock.Setup(x => x.GetAll()).Returns(areas);
+            _areaRepositoryMock.Setup(x => x.GetAll()).Returns(areas.AsQueryable());
 
             int notExistingId = 99;
 
-            _areaService.Invoking(s => s.Delete(notExistingId))
-                .Should().Throw<ValidationException>()
+            _areaService.Invoking(s => s.DeleteAsync(notExistingId))
+                .Should().ThrowAsync<ValidationException>()
                 .WithMessage("Entity was not found.");
         }
 
@@ -100,15 +101,16 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
             int id = 1;
 
             var area = new Area { Id = 1, Description = "Area 1", CoordX = 1, CoordY = 1, LayoutId = 1 };
+            var areas = new List<Area> { area };
 
-            _areaRepositoryMock.Setup(x => x.GetById(id)).Returns(area);
-            _areaRepositoryMock.Setup(x => x.GetAll()).Returns(new List<Area> { area });
+            _areaRepositoryMock.Setup(x => x.GetByIdAsync(id)).ReturnsAsync(area);
+            _areaRepositoryMock.Setup(x => x.GetAll()).Returns(areas.AsQueryable());
 
             var areaToUpdate = new Area { Id = 1, Description = "New Area", CoordX = 1, CoordY = 1, LayoutId = 4 };
 
-            _areaService.Update(areaToUpdate);
+            _areaService.UpdateAsync(areaToUpdate);
 
-            _areaRepositoryMock.Verify(x => x.Update(areaToUpdate), Times.Once);
+            _areaRepositoryMock.Verify(x => x.UpdateAsync(areaToUpdate), Times.Once);
         }
 
         [Test]
@@ -117,15 +119,16 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
             int id = 1;
 
             var area = new Area { Id = 1, Description = "Area 1", CoordX = 1, CoordY = 1, LayoutId = 1 };
+            var areas = new List<Area> { area };
 
-            _areaRepositoryMock.Setup(x => x.GetById(id)).Returns(area);
-            _areaRepositoryMock.Setup(x => x.GetAll()).Returns(new List<Area> { area });
+            _areaRepositoryMock.Setup(x => x.GetByIdAsync(id)).ReturnsAsync(area);
+            _areaRepositoryMock.Setup(x => x.GetAll()).Returns(areas.AsQueryable());
 
             var areaToUpdate = new Area { Id = 1, Description = "Area 1", CoordX = 2, CoordY = 2, LayoutId = 1 };
 
-            _areaService.Update(areaToUpdate);
+            _areaService.UpdateAsync(areaToUpdate);
 
-            _areaRepositoryMock.Verify(x => x.Update(areaToUpdate), Times.Once);
+            _areaRepositoryMock.Verify(x => x.UpdateAsync(areaToUpdate), Times.Once);
         }
 
         [Test]
@@ -135,10 +138,10 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
 
             var areaToUpdate = new Area { Id = 1, Description = "New Area", CoordX = 1, CoordY = 1, LayoutId = 4 };
 
-            _areaRepositoryMock.Setup(x => x.GetById(notExistingId)).Returns<Venue>(null);
+            _areaRepositoryMock.Setup(x => x.GetByIdAsync(notExistingId)).Returns<Venue>(null);
 
-            _areaService.Invoking(s => s.Update(areaToUpdate))
-                .Should().Throw<ValidationException>()
+            _areaService.Invoking(s => s.UpdateAsync(areaToUpdate))
+                .Should().ThrowAsync<ValidationException>()
                 .WithMessage("Entity was not found.");
         }
 
@@ -153,22 +156,22 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
 
             int id = 2;
 
-            _areaRepositoryMock.Setup(x => x.GetAll()).Returns(areas);
+            _areaRepositoryMock.Setup(x => x.GetAll()).Returns(areas.AsQueryable());
 
-            _areaRepositoryMock.Setup(x => x.GetById(id)).Returns(areas.First(a => a.Id == id));
+            _areaRepositoryMock.Setup(x => x.GetByIdAsync(id)).ReturnsAsync(areas.First(a => a.Id == id));
 
             var areaToUpdate = new Area { Id = 2, Description = "Area 1", CoordX = 1, CoordY = 1, LayoutId = 1 };
 
-            _areaService.Invoking(s => s.Update(areaToUpdate))
-                .Should().Throw<ValidationException>()
+            _areaService.Invoking(s => s.UpdateAsync(areaToUpdate))
+                .Should().ThrowAsync<ValidationException>()
                 .WithMessage("Area description should be unique in the layout.");
         }
 
         [Test]
         public void Update_NullArea_ThrowsValidationException()
         {
-            _areaService.Invoking(s => s.Update(null))
-                .Should().Throw<ValidationException>()
+            _areaService.Invoking(s => s.UpdateAsync(null))
+                .Should().ThrowAsync<ValidationException>()
                 .WithMessage("Area is null.");
         }
 
@@ -182,21 +185,22 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
                 new Area { Id = 3, Description = "Area 3", CoordX = 1, CoordY = 1, LayoutId = 2 },
             };
 
-            _areaRepositoryMock.Setup(x => x.GetAll()).Returns(areas);
+            _areaRepositoryMock.Setup(x => x.GetAll()).Returns(areas.AsQueryable());
 
             _areaService.GetAll().Should().BeEquivalentTo(areas);
         }
 
         [Test]
-        public void GetById_AreaExists_ReturnsArea()
+        public async Task GetById_AreaExists_ReturnsArea()
         {
             int id = 1;
 
             var area = new Area { Id = 1, Description = "Area 1", CoordX = 1, CoordY = 1, LayoutId = 1 };
 
-            _areaRepositoryMock.Setup(x => x.GetById(id)).Returns(area);
+            _areaRepositoryMock.Setup(x => x.GetByIdAsync(id)).ReturnsAsync(area);
 
-            _areaService.GetById(id).Should().BeEquivalentTo(area);
+            var actualArea = await _areaService.GetByIdAsync(id);
+            actualArea.Should().BeEquivalentTo(area);
         }
 
         [Test]
@@ -204,10 +208,10 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
         {
             int id = 1;
 
-            _areaRepositoryMock.Setup(x => x.GetById(id)).Returns<Area>(null);
+            _areaRepositoryMock.Setup(x => x.GetByIdAsync(id)).Returns<Area>(null);
 
-            _areaService.Invoking(s => s.GetById(id))
-                .Should().Throw<ValidationException>()
+            _areaService.Invoking(s => s.GetByIdAsync(id))
+                .Should().ThrowAsync<ValidationException>()
                 .WithMessage("Entity was not found.");
         }
     }

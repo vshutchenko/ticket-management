@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using TicketManagement.BusinessLogic.Extensions;
 using TicketManagement.BusinessLogic.Interfaces;
 using TicketManagement.BusinessLogic.Validation;
@@ -19,7 +20,7 @@ namespace TicketManagement.BusinessLogic.Implementations
             _eventValidator = eventValidator ?? throw new ArgumentNullException(nameof(eventValidator));
         }
 
-        public int Create(Event @event)
+        public Task<int> CreateAsync(Event @event)
         {
             if (@event is null)
             {
@@ -30,14 +31,14 @@ namespace TicketManagement.BusinessLogic.Implementations
 
             _eventValidator.Validate(@event);
 
-            return _eventRepository.Create(@event);
+            return _eventRepository.CreateAsync(@event);
         }
 
-        public void Delete(int id)
+        public async Task DeleteAsync(int id)
         {
-            _eventRepository.CheckIfIdExists(id);
+            await _eventRepository.CheckIfIdExistsAsync(id);
 
-            _eventRepository.Delete(id);
+            await _eventRepository.DeleteAsync(id);
         }
 
         public IEnumerable<Event> GetAll()
@@ -45,25 +46,25 @@ namespace TicketManagement.BusinessLogic.Implementations
             return _eventRepository.GetAll();
         }
 
-        public Event GetById(int id)
+        public async Task<Event> GetByIdAsync(int id)
         {
-            _eventRepository.CheckIfIdExists(id);
+            await _eventRepository.CheckIfIdExistsAsync(id);
 
-            return _eventRepository.GetById(id);
+            return await _eventRepository.GetByIdAsync(id);
         }
 
-        public void Update(Event @event)
+        public async Task UpdateAsync(Event @event)
         {
             if (@event is null)
             {
                 throw new ValidationException("Event is null.");
             }
 
-            _eventRepository.CheckIfIdExists(@event.Id);
+            await _eventRepository.CheckIfIdExistsAsync(@event.Id);
 
             _eventValidator.Validate(@event);
 
-            _eventRepository.Update(@event);
+            await _eventRepository.UpdateAsync(@event);
         }
     }
 }

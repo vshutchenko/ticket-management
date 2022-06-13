@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using TicketManagement.BusinessLogic.Extensions;
 using TicketManagement.BusinessLogic.Interfaces;
 using TicketManagement.BusinessLogic.Validation;
@@ -19,7 +20,7 @@ namespace TicketManagement.BusinessLogic.Implementations
             _layoutValidator = layoutValidator ?? throw new ArgumentNullException(nameof(layoutValidator));
         }
 
-        public int Create(Layout layout)
+        public Task<int> CreateAsync(Layout layout)
         {
             if (layout is null)
             {
@@ -30,14 +31,14 @@ namespace TicketManagement.BusinessLogic.Implementations
 
             _layoutValidator.Validate(layout);
 
-            return _layoutRepository.Create(layout);
+            return _layoutRepository.CreateAsync(layout);
         }
 
-        public void Delete(int id)
+        public async Task DeleteAsync(int id)
         {
-            _layoutRepository.CheckIfIdExists(id);
+            await _layoutRepository.CheckIfIdExistsAsync(id);
 
-            _layoutRepository.Delete(id);
+            await _layoutRepository.DeleteAsync(id);
         }
 
         public IEnumerable<Layout> GetAll()
@@ -45,25 +46,25 @@ namespace TicketManagement.BusinessLogic.Implementations
             return _layoutRepository.GetAll();
         }
 
-        public Layout GetById(int id)
+        public async Task<Layout> GetByIdAsync(int id)
         {
-            _layoutRepository.CheckIfIdExists(id);
+            await _layoutRepository.CheckIfIdExistsAsync(id);
 
-            return _layoutRepository.GetById(id);
+            return await _layoutRepository.GetByIdAsync(id);
         }
 
-        public void Update(Layout layout)
+        public async Task UpdateAsync(Layout layout)
         {
             if (layout is null)
             {
                 throw new ValidationException("Layout is null.");
             }
 
-            _layoutRepository.CheckIfIdExists(layout.Id);
+            await _layoutRepository.CheckIfIdExistsAsync(layout.Id);
 
             _layoutValidator.Validate(layout);
 
-            _layoutRepository.Update(layout);
+            await _layoutRepository.UpdateAsync(layout);
         }
     }
 }

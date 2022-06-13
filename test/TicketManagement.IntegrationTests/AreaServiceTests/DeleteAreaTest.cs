@@ -25,10 +25,10 @@ namespace TicketManagement.IntegrationTests.AreaServiceTests
         [TestCase(1)]
         public void Delete_AreaExists_DeletesArea(int id)
         {
-            _areaService.Delete(id);
+            _areaService.DeleteAsync(id);
 
-            _areaService.Invoking(s => s.GetById(id))
-                .Should().Throw<ValidationException>()
+            _areaService.Invoking(s => s.GetByIdAsync(id))
+                .Should().ThrowAsync<ValidationException>()
                 .WithMessage("Entity was not found.");
         }
     }

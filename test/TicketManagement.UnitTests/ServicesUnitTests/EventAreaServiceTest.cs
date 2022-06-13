@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using FluentAssertions;
 using Moq;
 using NUnit.Framework;
@@ -34,11 +36,11 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
 
             var eventArea = new EventArea { Id = 1, CoordX = 1, CoordY = 1, Description = "Area", EventId = 1, Price = 0 };
 
-            _eventAreaRepositoryMock.Setup(x => x.GetById(id)).Returns(eventArea);
+            _eventAreaRepositoryMock.Setup(x => x.GetByIdAsync(id)).ReturnsAsync(eventArea);
 
-            _eventAreaService.SetPrice(id, price);
+            _eventAreaService.SetPriceAsync(id, price);
 
-            _eventAreaRepositoryMock.Verify(x => x.Update(eventArea), Times.Once);
+            _eventAreaRepositoryMock.Verify(x => x.UpdateAsync(eventArea), Times.Once);
         }
 
         [Test]
@@ -49,10 +51,10 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
 
             var eventArea = new EventArea { Id = 1, CoordX = 1, CoordY = 1, Description = "Area", EventId = 1, Price = 0 };
 
-            _eventAreaRepositoryMock.Setup(x => x.GetById(id)).Returns(eventArea);
+            _eventAreaRepositoryMock.Setup(x => x.GetByIdAsync(id)).ReturnsAsync(eventArea);
 
-            _eventAreaService.Invoking(s => s.SetPrice(id, price))
-                .Should().Throw<ValidationException>()
+            _eventAreaService.Invoking(s => s.SetPriceAsync(id, price))
+                .Should().ThrowAsync<ValidationException>()
                 .WithMessage("Price is less than zero.");
         }
 
@@ -62,10 +64,10 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
             int id = 1;
             decimal price = 15;
 
-            _eventAreaRepositoryMock.Setup(x => x.GetById(id)).Returns<EventArea>(null);
+            _eventAreaRepositoryMock.Setup(x => x.GetByIdAsync(id)).Returns<EventArea>(null);
 
-            _eventAreaService.Invoking(s => s.SetPrice(id, price))
-                .Should().Throw<ValidationException>()
+            _eventAreaService.Invoking(s => s.SetPriceAsync(id, price))
+                .Should().ThrowAsync<ValidationException>()
                 .WithMessage("Entity was not found.");
         }
 
@@ -79,21 +81,23 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
                 new EventArea { Id = 3, Description = "Area 3", CoordX = 1, CoordY = 3, EventId = 1, Price = 1 },
             };
 
-            _eventAreaRepositoryMock.Setup(x => x.GetAll()).Returns(eventAreas);
+            _eventAreaRepositoryMock.Setup(x => x.GetAll()).Returns(eventAreas.AsQueryable());
 
             _eventAreaService.GetAll().Should().BeEquivalentTo(eventAreas);
         }
 
         [Test]
-        public void GetById_EventAreaExists_ReturnsEventArea()
+        public async Task GetById_EventAreaExists_ReturnsEventArea()
         {
             int id = 1;
 
             var eventArea = new EventArea { Id = 1, Description = "Area 1", CoordX = 1, CoordY = 1, EventId = 1, Price = 1 };
 
-            _eventAreaRepositoryMock.Setup(x => x.GetById(id)).Returns(eventArea);
+            _eventAreaRepositoryMock.Setup(x => x.GetByIdAsync(id)).ReturnsAsync(eventArea);
 
-            _eventAreaService.GetById(id).Should().BeEquivalentTo(eventArea);
+            var actualEventArea = await _eventAreaService.GetByIdAsync(id);
+
+            actualEventArea.Should().BeEquivalentTo(eventArea);
         }
 
         [Test]
@@ -101,10 +105,10 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
         {
             int id = 1;
 
-            _eventAreaRepositoryMock.Setup(x => x.GetById(id)).Returns<EventArea>(null);
+            _eventAreaRepositoryMock.Setup(x => x.GetByIdAsync(id)).Returns<EventArea>(null);
 
-            _eventAreaService.Invoking(s => s.GetById(id))
-                .Should().Throw<ValidationException>()
+            _eventAreaService.Invoking(s => s.GetByIdAsync(id))
+                .Should().ThrowAsync<ValidationException>()
                 .WithMessage("Entity was not found.");
         }
     }

@@ -1,4 +1,5 @@
-﻿using FluentAssertions;
+﻿using System.Threading.Tasks;
+using FluentAssertions;
 using NUnit.Framework;
 using TicketManagement.BusinessLogic.Implementations;
 using TicketManagement.BusinessLogic.Interfaces;
@@ -24,7 +25,7 @@ namespace TicketManagement.IntegrationTests.LayoutServiceTests
         }
 
         [Test]
-        public void Update_ValidLayout_UpdatesLayout()
+        public async Task Update_ValidLayout_UpdatesLayout()
         {
             int id = 1;
 
@@ -35,7 +36,9 @@ namespace TicketManagement.IntegrationTests.LayoutServiceTests
                 VenueId = 1,
             };
 
-            _layoutService.GetById(id).Should().BeEquivalentTo(layoutBeforeUpdate);
+            var actualLayoutBeforeUpdate = await _layoutService.GetByIdAsync(id);
+
+            actualLayoutBeforeUpdate.Should().BeEquivalentTo(layoutBeforeUpdate);
 
             var layoutToUpdate = new Layout
             {
@@ -44,9 +47,11 @@ namespace TicketManagement.IntegrationTests.LayoutServiceTests
                 VenueId = 1,
             };
 
-            _layoutService.Update(layoutToUpdate);
+            await _layoutService.UpdateAsync(layoutToUpdate);
 
-            _layoutService.GetById(id).Should().BeEquivalentTo(layoutToUpdate);
+            var layoutAfterUpdate = await _layoutService.GetByIdAsync(id);
+
+            layoutAfterUpdate.Should().BeEquivalentTo(layoutToUpdate);
         }
     }
 }

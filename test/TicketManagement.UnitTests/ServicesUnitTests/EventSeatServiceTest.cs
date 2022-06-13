@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using FluentAssertions;
 using Moq;
 using NUnit.Framework;
@@ -30,11 +32,11 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
 
             var eventSeat = new EventSeat { Id = 1, EventAreaId = 1, Number = 1, Row = 1, State = EventSeatState.Available };
 
-            _eventSeatRepositoryMock.Setup(x => x.GetById(id)).Returns(eventSeat);
+            _eventSeatRepositoryMock.Setup(x => x.GetByIdAsync(id)).ReturnsAsync(eventSeat);
 
-            _eventSeatService.SetSeatState(id, EventSeatState.Ordered);
+            _eventSeatService.SetSeatStateAsync(id, EventSeatState.Ordered);
 
-            _eventSeatRepositoryMock.Verify(x => x.Update(eventSeat), Times.Once);
+            _eventSeatRepositoryMock.Verify(x => x.UpdateAsync(eventSeat), Times.Once);
         }
 
         [Test]
@@ -42,10 +44,10 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
         {
             int notExistingId = 1;
 
-            _eventSeatRepositoryMock.Setup(x => x.GetById(notExistingId)).Returns<EventSeat>(null);
+            _eventSeatRepositoryMock.Setup(x => x.GetByIdAsync(notExistingId)).Returns<EventSeat>(null);
 
-            _eventSeatService.Invoking(s => s.SetSeatState(notExistingId, EventSeatState.Ordered))
-                .Should().Throw<ValidationException>()
+            _eventSeatService.Invoking(s => s.SetSeatStateAsync(notExistingId, EventSeatState.Ordered))
+                .Should().ThrowAsync<ValidationException>()
                 .WithMessage("Entity was not found.");
         }
 
@@ -59,21 +61,23 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
                 new EventSeat { Id = 2, EventAreaId = 1, Row = 1, Number = 3, State = EventSeatState.Ordered },
             };
 
-            _eventSeatRepositoryMock.Setup(x => x.GetAll()).Returns(eventSeats);
+            _eventSeatRepositoryMock.Setup(x => x.GetAll()).Returns(eventSeats.AsQueryable());
 
             _eventSeatService.GetAll().Should().BeEquivalentTo(eventSeats);
         }
 
         [Test]
-        public void GetById_EventSeatExists_ReturnsEventSeat()
+        public async Task GetById_EventSeatExists_ReturnsEventSeat()
         {
             int id = 1;
 
             var eventSeat = new EventSeat { Id = 1, EventAreaId = 1, Row = 1, Number = 1, State = EventSeatState.Available };
 
-            _eventSeatRepositoryMock.Setup(x => x.GetById(id)).Returns(eventSeat);
+            _eventSeatRepositoryMock.Setup(x => x.GetByIdAsync(id)).ReturnsAsync(eventSeat);
 
-            _eventSeatService.GetById(id).Should().BeEquivalentTo(eventSeat);
+            var actualEventSeat = await _eventSeatService.GetByIdAsync(id);
+
+            actualEventSeat.Should().BeEquivalentTo(eventSeat);
         }
 
         [Test]
@@ -81,10 +85,10 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
         {
             int id = 1;
 
-            _eventSeatRepositoryMock.Setup(x => x.GetById(id)).Returns<Layout>(null);
+            _eventSeatRepositoryMock.Setup(x => x.GetByIdAsync(id)).Returns<Layout>(null);
 
-            _eventSeatService.Invoking(s => s.GetById(id))
-                .Should().Throw<ValidationException>()
+            _eventSeatService.Invoking(s => s.GetByIdAsync(id))
+                .Should().ThrowAsync<ValidationException>()
                 .WithMessage("Entity was not found.");
         }
     }

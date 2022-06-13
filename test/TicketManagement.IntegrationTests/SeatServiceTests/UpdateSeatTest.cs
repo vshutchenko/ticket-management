@@ -1,4 +1,5 @@
-﻿using FluentAssertions;
+﻿using System.Threading.Tasks;
+using FluentAssertions;
 using NUnit.Framework;
 using TicketManagement.BusinessLogic.Implementations;
 using TicketManagement.BusinessLogic.Interfaces;
@@ -24,7 +25,7 @@ namespace TicketManagement.IntegrationTests.SeatServiceTests
         }
 
         [Test]
-        public void Update_ValidSeat_UpdatesSeat()
+        public async Task Update_ValidSeat_UpdatesSeat()
         {
             int id = 1;
 
@@ -36,7 +37,9 @@ namespace TicketManagement.IntegrationTests.SeatServiceTests
                 AreaId = 1,
             };
 
-            _seatService.GetById(id).Should().BeEquivalentTo(seatBeforeUpdate);
+            var actualSeatBeforeUpdate = await _seatService.GetByIdAsync(id);
+
+            actualSeatBeforeUpdate.Should().BeEquivalentTo(seatBeforeUpdate);
 
             var seatToUpdate = new Seat
             {
@@ -46,9 +49,11 @@ namespace TicketManagement.IntegrationTests.SeatServiceTests
                 Number = 6,
             };
 
-            _seatService.Update(seatToUpdate);
+            await _seatService.UpdateAsync(seatToUpdate);
 
-            _seatService.GetById(id).Should().BeEquivalentTo(seatToUpdate);
+            var actualSeatAfterUpdate = await _seatService.GetByIdAsync(id);
+
+            actualSeatAfterUpdate.Should().BeEquivalentTo(seatToUpdate);
         }
     }
 }

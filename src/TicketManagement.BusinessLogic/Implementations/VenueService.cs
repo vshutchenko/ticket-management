@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using TicketManagement.BusinessLogic.Extensions;
 using TicketManagement.BusinessLogic.Interfaces;
 using TicketManagement.BusinessLogic.Validation;
@@ -19,7 +20,7 @@ namespace TicketManagement.BusinessLogic.Implementations
             _venueValidator = venueValidator ?? throw new ArgumentNullException(nameof(venueValidator));
         }
 
-        public int Create(Venue venue)
+        public Task<int> CreateAsync(Venue venue)
         {
             if (venue is null)
             {
@@ -30,14 +31,14 @@ namespace TicketManagement.BusinessLogic.Implementations
 
             _venueValidator.Validate(venue);
 
-            return _venueRepository.Create(venue);
+            return _venueRepository.CreateAsync(venue);
         }
 
-        public void Delete(int id)
+        public async Task DeleteAsync(int id)
         {
-            _venueRepository.CheckIfIdExists(id);
+            await _venueRepository.CheckIfIdExistsAsync(id);
 
-            _venueRepository.Delete(id);
+            await _venueRepository.DeleteAsync(id);
         }
 
         public IEnumerable<Venue> GetAll()
@@ -45,25 +46,25 @@ namespace TicketManagement.BusinessLogic.Implementations
             return _venueRepository.GetAll();
         }
 
-        public Venue GetById(int id)
+        public async Task<Venue> GetByIdAsync(int id)
         {
-            _venueRepository.CheckIfIdExists(id);
+            await _venueRepository.CheckIfIdExistsAsync(id);
 
-            return _venueRepository.GetById(id);
+            return await _venueRepository.GetByIdAsync(id);
         }
 
-        public void Update(Venue venue)
+        public async Task UpdateAsync(Venue venue)
         {
             if (venue is null)
             {
                 throw new ValidationException("Venue is null.");
             }
 
-            _venueRepository.CheckIfIdExists(venue.Id);
+            await _venueRepository.CheckIfIdExistsAsync(venue.Id);
 
             _venueValidator.Validate(venue);
 
-            _venueRepository.Update(venue);
+            await _venueRepository.UpdateAsync(venue);
         }
     }
 }

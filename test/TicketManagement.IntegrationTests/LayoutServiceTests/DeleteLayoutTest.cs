@@ -25,10 +25,10 @@ namespace TicketManagement.IntegrationTests.LayoutServiceTests
         [TestCase(1)]
         public void Delete_LayoutExists_DeletesLayout(int id)
         {
-            _layoutService.Delete(id);
+            _layoutService.DeleteAsync(id);
 
-            _layoutService.Invoking(s => s.GetById(id))
-                .Should().Throw<ValidationException>()
+            _layoutService.Invoking(s => s.GetByIdAsync(id))
+                .Should().ThrowAsync<ValidationException>()
                 .WithMessage("Entity was not found.");
         }
     }

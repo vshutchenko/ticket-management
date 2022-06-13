@@ -1,4 +1,5 @@
-﻿using FluentAssertions;
+﻿using System.Threading.Tasks;
+using FluentAssertions;
 using NUnit.Framework;
 using TicketManagement.BusinessLogic.Implementations;
 using TicketManagement.BusinessLogic.Interfaces;
@@ -22,19 +23,23 @@ namespace TicketManagement.IntegrationTests.EventAreaServiceTests
         }
 
         [Test]
-        public void SetPrice_ValidPrice_SetsPrice()
+        public async Task SetPrice_ValidPrice_SetsPrice()
         {
             int id = 1;
 
             decimal priceBeforeUpdate = 15;
 
-            _eventAreaService.GetById(id).Price.Should().Be(priceBeforeUpdate);
+            var eventAreaBeforeUpdate = await _eventAreaService.GetByIdAsync(id);
+
+            eventAreaBeforeUpdate.Price.Should().Be(priceBeforeUpdate);
 
             decimal priceToUpdate = 10;
 
-            _eventAreaService.SetPrice(id, priceToUpdate);
+            await _eventAreaService.SetPriceAsync(id, priceToUpdate);
 
-            _eventAreaService.GetById(id).Price.Should().Be(priceToUpdate);
+            var eventAreaAfterUpdate = await _eventAreaService.GetByIdAsync(id);
+
+            eventAreaAfterUpdate.Price.Should().Be(priceToUpdate);
         }
     }
 }

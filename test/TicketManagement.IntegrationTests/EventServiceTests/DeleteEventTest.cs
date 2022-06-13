@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using System.Threading.Tasks;
 using FluentAssertions;
 using NUnit.Framework;
 using TicketManagement.BusinessLogic.Implementations;
@@ -36,24 +37,24 @@ namespace TicketManagement.IntegrationTests.EventServiceTests
         }
 
         [Test]
-        public void Delete_EventExists_DeletesEvent()
+        public async Task Delete_EventExists_DeletesEvent()
         {
             int id = 1;
 
-            _eventService.Delete(id);
+            await _eventService.DeleteAsync(id);
 
-            _eventService.Invoking(s => s.GetById(id))
-                .Should().Throw<ValidationException>()
+            await _eventService.Invoking(s => s.GetByIdAsync(id))
+                .Should().ThrowAsync<ValidationException>()
                 .WithMessage("Entity was not found.");
         }
 
         [Test]
-        public void Delete_EventExists_DeletesAreas()
+        public async Task Delete_EventExists_DeletesAreas()
         {
             int id = 1;
             int expectedEventAreasCount = 0;
 
-            _eventService.Delete(id);
+            await _eventService.DeleteAsync(id);
 
             var actualEventAreasCount = _eventAreaService
                 .GetAll()
@@ -63,12 +64,12 @@ namespace TicketManagement.IntegrationTests.EventServiceTests
         }
 
         [Test]
-        public void Delete_EventExists_DeletesSeats()
+        public async Task Delete_EventExists_DeletesSeats()
         {
             int id = 1;
             int expectedEventSeatsCount = 0;
 
-            _eventService.Delete(id);
+            await _eventService.DeleteAsync(id);
 
             var actualEventSeatsCount = _eventAreaService
                 .GetAll()

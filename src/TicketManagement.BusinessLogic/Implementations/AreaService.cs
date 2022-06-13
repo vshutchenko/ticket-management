@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 using TicketManagement.BusinessLogic.Extensions;
 using TicketManagement.BusinessLogic.Interfaces;
 using TicketManagement.BusinessLogic.Validation;
@@ -23,7 +24,7 @@ namespace TicketManagement.BusinessLogic.Implementations
             _areaValidator = areaValidator ?? throw new ArgumentNullException(nameof(areaValidator));
         }
 
-        public int Create(Area area)
+        public Task<int> CreateAsync(Area area)
         {
             if (area is null)
             {
@@ -34,14 +35,14 @@ namespace TicketManagement.BusinessLogic.Implementations
 
             _areaValidator.Validate(area);
 
-            return _areaRepository.Create(area);
+            return _areaRepository.CreateAsync(area);
         }
 
-        public void Delete(int id)
+        public async Task DeleteAsync(int id)
         {
-            _areaRepository.CheckIfIdExists(id);
+            await _areaRepository.CheckIfIdExistsAsync(id);
 
-            _areaRepository.Delete(id);
+            await _areaRepository.DeleteAsync(id);
         }
 
         public IEnumerable<Area> GetAll()
@@ -49,25 +50,25 @@ namespace TicketManagement.BusinessLogic.Implementations
             return _areaRepository.GetAll();
         }
 
-        public Area GetById(int id)
+        public async Task<Area> GetByIdAsync(int id)
         {
-            _areaRepository.CheckIfIdExists(id);
+            await _areaRepository.CheckIfIdExistsAsync(id);
 
-            return _areaRepository.GetById(id);
+            return await _areaRepository.GetByIdAsync(id);
         }
 
-        public void Update(Area area)
+        public async Task UpdateAsync(Area area)
         {
             if (area is null)
             {
                 throw new ValidationException("Area is null.");
             }
 
-            _areaRepository.CheckIfIdExists(area.Id);
+            await _areaRepository.CheckIfIdExistsAsync(area.Id);
 
             _areaValidator.Validate(area);
 
-            _areaRepository.Update(area);
+            await _areaRepository.UpdateAsync(area);
         }
     }
 }

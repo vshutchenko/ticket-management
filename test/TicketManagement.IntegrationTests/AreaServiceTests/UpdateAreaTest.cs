@@ -1,4 +1,5 @@
-﻿using FluentAssertions;
+﻿using System.Threading.Tasks;
+using FluentAssertions;
 using NUnit.Framework;
 using TicketManagement.BusinessLogic.Implementations;
 using TicketManagement.BusinessLogic.Interfaces;
@@ -24,7 +25,7 @@ namespace TicketManagement.IntegrationTests.AreaServiceTests
         }
 
         [Test]
-        public void UpdateDescription_ValidArea_UpdatesArea()
+        public async Task UpdateDescription_ValidArea_UpdatesArea()
         {
             int id = 1;
 
@@ -37,7 +38,9 @@ namespace TicketManagement.IntegrationTests.AreaServiceTests
                 LayoutId = 1,
             };
 
-            _areaService.GetById(id).Should().BeEquivalentTo(areaBeforeUpdate);
+            var actualAreaBeforeUpdate = await _areaService.GetByIdAsync(id);
+
+            actualAreaBeforeUpdate.Should().BeEquivalentTo(areaBeforeUpdate);
 
             var areaToUpdate = new Area
             {
@@ -48,13 +51,15 @@ namespace TicketManagement.IntegrationTests.AreaServiceTests
                 LayoutId = 1,
             };
 
-            _areaService.Update(areaToUpdate);
+            await _areaService.UpdateAsync(areaToUpdate);
 
-            _areaService.GetById(id).Should().BeEquivalentTo(areaToUpdate);
+            var actualAreaAfterUpdate = await _areaService.GetByIdAsync(id);
+
+            actualAreaAfterUpdate.Should().BeEquivalentTo(areaToUpdate);
         }
 
         [Test]
-        public void UpdateCoordinates_ValidArea_UpdatesArea()
+        public async Task UpdateCoordinates_ValidArea_UpdatesArea()
         {
             int id = 1;
 
@@ -67,7 +72,9 @@ namespace TicketManagement.IntegrationTests.AreaServiceTests
                 LayoutId = 1,
             };
 
-            _areaService.GetById(id).Should().BeEquivalentTo(areaBeforeUpdate);
+            var actualAreaBeforeUpdate = await _areaService.GetByIdAsync(id);
+
+            actualAreaBeforeUpdate.Should().BeEquivalentTo(areaBeforeUpdate);
 
             var areaToUpdate = new Area
             {
@@ -78,9 +85,11 @@ namespace TicketManagement.IntegrationTests.AreaServiceTests
                 LayoutId = 1,
             };
 
-            _areaService.Update(areaToUpdate);
+            await _areaService.UpdateAsync(areaToUpdate);
 
-            _areaService.GetById(id).Should().BeEquivalentTo(areaToUpdate);
+            var actualAreaAfterUpdate = await _areaService.GetByIdAsync(id);
+
+            actualAreaAfterUpdate.Should().BeEquivalentTo(areaToUpdate);
         }
     }
 }

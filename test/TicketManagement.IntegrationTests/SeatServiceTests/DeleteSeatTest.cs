@@ -26,10 +26,10 @@ namespace TicketManagement.IntegrationTests.SeatServiceTests
         [TestCase(1)]
         public void Delete_SeatExists_DeletesSeat(int id)
         {
-            _seatService.Delete(id);
+            _seatService.DeleteAsync(id);
 
-            _seatService.Invoking(s => s.GetById(id))
-                .Should().Throw<ValidationException>()
+            _seatService.Invoking(s => s.GetByIdAsync(id))
+                .Should().ThrowAsync<ValidationException>()
                 .WithMessage("Entity was not found.");
         }
     }

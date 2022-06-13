@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.Linq;
+using System.Threading.Tasks;
 using TicketManagement.DataAccess.Entities;
 using TicketManagement.DataAccess.Interfaces;
 
@@ -16,42 +18,42 @@ namespace TicketManagement.DataAccess.Implementations
             _connectionString = connectionString ?? throw new ArgumentNullException(nameof(connectionString));
         }
 
-        public int Create(Area item)
+        public async Task<int> CreateAsync(Area item)
         {
             var query = "INSERT INTO Area(LayoutId, Description, CoordX, CoordY) VALUES(@layoutId, @description, @coordX, @coordY); SELECT SCOPE_IDENTITY()";
 
-            using SqlConnection connection = new SqlConnection(_connectionString);
+            await using SqlConnection connection = new SqlConnection(_connectionString);
 
-            using SqlCommand command = new SqlCommand(query, connection);
+            await using SqlCommand command = new SqlCommand(query, connection);
 
             command.Parameters.AddWithValue("@layoutId", item.LayoutId);
             command.Parameters.AddWithValue("@description", item.Description);
             command.Parameters.AddWithValue("@coordX", item.CoordX);
             command.Parameters.AddWithValue("@coordY", item.CoordY);
 
-            connection.Open();
+            await connection.OpenAsync();
 
-            var id = Convert.ToInt32(command.ExecuteScalar());
+            var id = Convert.ToInt32(await command.ExecuteScalarAsync());
 
             return id;
         }
 
-        public void Delete(int id)
+        public async Task DeleteAsync(int id)
         {
             var query = "DELETE FROM Area WHERE Id = @areaId";
 
-            using SqlConnection connection = new SqlConnection(_connectionString);
+            await using SqlConnection connection = new SqlConnection(_connectionString);
 
-            using SqlCommand command = new SqlCommand(query, connection);
+            await using SqlCommand command = new SqlCommand(query, connection);
 
             command.Parameters.AddWithValue("@areaId", id);
 
-            connection.Open();
+            await connection.OpenAsync();
 
-            command.ExecuteNonQuery();
+            await command.ExecuteNonQueryAsync();
         }
 
-        public IEnumerable<Area> GetAll()
+        public IQueryable<Area> GetAll()
         {
             var query = "SELECT Id, LayoutId, Description, CoordX, CoordY FROM Area";
 
@@ -63,34 +65,38 @@ namespace TicketManagement.DataAccess.Implementations
 
             using SqlDataReader reader = command.ExecuteReader();
 
+            var areas = new List<Area>();
+
             while (reader.Read())
             {
-                yield return new Area
+                areas.Add(new Area
                 {
                     Id = reader.GetInt32("Id"),
                     LayoutId = reader.GetInt32("LayoutId"),
                     Description = reader.GetString("Description"),
                     CoordX = reader.GetInt32("CoordX"),
                     CoordY = reader.GetInt32("CoordY"),
-                };
+                });
             }
+
+            return areas.AsQueryable();
         }
 
-        public Area GetById(int id)
+        public async Task<Area> GetByIdAsync(int id)
         {
             var query = "SELECT Id, LayoutId, Description, CoordX, CoordY FROM Area WHERE Id = @id";
 
-            using SqlConnection connection = new SqlConnection(_connectionString);
+            await using SqlConnection connection = new SqlConnection(_connectionString);
 
-            using SqlCommand command = new SqlCommand(query, connection);
+            await using SqlCommand command = new SqlCommand(query, connection);
 
             command.Parameters.AddWithValue("@id", id);
 
-            connection.Open();
+            await connection.OpenAsync();
 
-            using SqlDataReader reader = command.ExecuteReader();
+            await using SqlDataReader reader = await command.ExecuteReaderAsync();
 
-            if (reader.Read())
+            if (await reader.ReadAsync())
             {
                 return new Area
                 {
@@ -105,13 +111,13 @@ namespace TicketManagement.DataAccess.Implementations
             return null;
         }
 
-        public void Update(Area item)
+        public async Task UpdateAsync(Area item)
         {
             var query = "UPDATE Area SET LayoutId = @layoutId, Description = @description, CoordX = @coordX, CoordY = @coordY WHERE Id = @areaId";
 
-            using SqlConnection connection = new SqlConnection(_connectionString);
+            await using SqlConnection connection = new SqlConnection(_connectionString);
 
-            using SqlCommand command = new SqlCommand(query, connection);
+            await using SqlCommand command = new SqlCommand(query, connection);
 
             command.Parameters.AddWithValue("@areaId", item.Id);
             command.Parameters.AddWithValue("@layoutId", item.LayoutId);
@@ -119,9 +125,9 @@ namespace TicketManagement.DataAccess.Implementations
             command.Parameters.AddWithValue("@coordX", item.CoordX);
             command.Parameters.AddWithValue("@coordY", item.CoordY);
 
-            connection.Open();
+            await connection.OpenAsync();
 
-            command.ExecuteNonQuery();
+            await command.ExecuteNonQueryAsync();
         }
     }
 }

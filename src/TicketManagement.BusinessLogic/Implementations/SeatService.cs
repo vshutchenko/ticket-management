@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using TicketManagement.BusinessLogic.Extensions;
 using TicketManagement.BusinessLogic.Interfaces;
 using TicketManagement.BusinessLogic.Validation;
@@ -19,7 +20,7 @@ namespace TicketManagement.BusinessLogic.Implementations
             _seatValidator = seatValidator ?? throw new ArgumentNullException(nameof(seatValidator));
         }
 
-        public int Create(Seat seat)
+        public Task<int> CreateAsync(Seat seat)
         {
             if (seat is null)
             {
@@ -30,14 +31,14 @@ namespace TicketManagement.BusinessLogic.Implementations
 
             _seatValidator.Validate(seat);
 
-            return _seatRepository.Create(seat);
+            return _seatRepository.CreateAsync(seat);
         }
 
-        public void Delete(int id)
+        public async Task DeleteAsync(int id)
         {
-            _seatRepository.CheckIfIdExists(id);
+            await _seatRepository.CheckIfIdExistsAsync(id);
 
-            _seatRepository.Delete(id);
+            await _seatRepository.DeleteAsync(id);
         }
 
         public IEnumerable<Seat> GetAll()
@@ -45,25 +46,25 @@ namespace TicketManagement.BusinessLogic.Implementations
             return _seatRepository.GetAll();
         }
 
-        public Seat GetById(int id)
+        public async Task<Seat> GetByIdAsync(int id)
         {
-            _seatRepository.CheckIfIdExists(id);
+            await _seatRepository.CheckIfIdExistsAsync(id);
 
-            return _seatRepository.GetById(id);
+            return await _seatRepository.GetByIdAsync(id);
         }
 
-        public void Update(Seat seat)
+        public async Task UpdateAsync(Seat seat)
         {
             if (seat is null)
             {
                 throw new ValidationException("Seat is null.");
             }
 
-            _seatRepository.CheckIfIdExists(seat.Id);
+            await _seatRepository.CheckIfIdExistsAsync(seat.Id);
 
             _seatValidator.Validate(seat);
 
-            _seatRepository.Update(seat);
+            await _seatRepository.UpdateAsync(seat);
         }
     }
 }

@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.Linq;
+using System.Threading.Tasks;
 using TicketManagement.DataAccess.Entities;
 using TicketManagement.DataAccess.Interfaces;
 
@@ -16,40 +18,40 @@ namespace TicketManagement.DataAccess.Implementations
             _connectionString = connectionString ?? throw new ArgumentNullException(nameof(connectionString));
         }
 
-        public int Create(Layout item)
+        public async Task<int> CreateAsync(Layout item)
         {
             var query = "INSERT INTO Layout(Description, VenueId) VALUES(@description, @venueId); SELECT SCOPE_IDENTITY()";
 
-            using SqlConnection connection = new SqlConnection(_connectionString);
+            await using SqlConnection connection = new SqlConnection(_connectionString);
 
-            using SqlCommand command = new SqlCommand(query, connection);
+            await using SqlCommand command = new SqlCommand(query, connection);
 
             command.Parameters.AddWithValue("@description", item.Description);
             command.Parameters.AddWithValue("@venueId", item.VenueId);
 
-            connection.Open();
+            await connection.OpenAsync();
 
-            var id = Convert.ToInt32(command.ExecuteScalar());
+            var id = Convert.ToInt32(await command.ExecuteScalarAsync());
 
             return id;
         }
 
-        public void Delete(int id)
+        public async Task DeleteAsync(int id)
         {
             var query = "DELETE FROM Layout WHERE Id = @layoutId";
 
-            using SqlConnection connection = new SqlConnection(_connectionString);
+            await using SqlConnection connection = new SqlConnection(_connectionString);
 
-            using SqlCommand command = new SqlCommand(query, connection);
+            await using SqlCommand command = new SqlCommand(query, connection);
 
             command.Parameters.AddWithValue("@layoutId", id);
 
-            connection.Open();
+            await connection.OpenAsync();
 
-            command.ExecuteNonQuery();
+            await command.ExecuteNonQueryAsync();
         }
 
-        public IEnumerable<Layout> GetAll()
+        public IQueryable<Layout> GetAll()
         {
             var query = "SELECT Id, Description, VenueId FROM Layout";
 
@@ -61,32 +63,36 @@ namespace TicketManagement.DataAccess.Implementations
 
             using SqlDataReader reader = command.ExecuteReader();
 
+            var layouts = new List<Layout>();
+
             while (reader.Read())
             {
-                yield return new Layout
+                layouts.Add(new Layout
                 {
                     Id = reader.GetInt32("Id"),
                     Description = reader.GetString("Description"),
                     VenueId = reader.GetInt32("VenueId"),
-                };
+                });
             }
+
+            return layouts.AsQueryable();
         }
 
-        public Layout GetById(int id)
+        public async Task<Layout> GetByIdAsync(int id)
         {
             var query = "SELECT Id, Description, VenueId FROM Layout WHERE Id = @id";
 
-            using SqlConnection connection = new SqlConnection(_connectionString);
+            await using SqlConnection connection = new SqlConnection(_connectionString);
 
-            using SqlCommand command = new SqlCommand(query, connection);
+            await using SqlCommand command = new SqlCommand(query, connection);
 
             command.Parameters.AddWithValue("@id", id);
 
-            connection.Open();
+            await connection.OpenAsync();
 
-            using SqlDataReader reader = command.ExecuteReader();
+            await using SqlDataReader reader = command.ExecuteReader();
 
-            if (reader.Read())
+            if (await reader.ReadAsync())
             {
                 return new Layout
                 {
@@ -99,21 +105,21 @@ namespace TicketManagement.DataAccess.Implementations
             return null;
         }
 
-        public void Update(Layout item)
+        public async Task UpdateAsync(Layout item)
         {
             var query = "UPDATE Layout SET Description = @description, VenueId = @venueId WHERE Id = @layoutId";
 
-            using SqlConnection connection = new SqlConnection(_connectionString);
+            await using SqlConnection connection = new SqlConnection(_connectionString);
 
-            using SqlCommand command = new SqlCommand(query, connection);
+            await using SqlCommand command = new SqlCommand(query, connection);
 
             command.Parameters.AddWithValue("@layoutId", item.Id);
             command.Parameters.AddWithValue("@description", item.Description);
             command.Parameters.AddWithValue("@venueId", item.VenueId);
 
-            connection.Open();
+            await connection.OpenAsync();
 
-            command.ExecuteNonQuery();
+            await command.ExecuteNonQueryAsync();
         }
     }
 }

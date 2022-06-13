@@ -1,4 +1,5 @@
-﻿using FluentAssertions;
+﻿using System.Threading.Tasks;
+using FluentAssertions;
 using NUnit.Framework;
 using TicketManagement.BusinessLogic.Implementations;
 using TicketManagement.BusinessLogic.Interfaces;
@@ -24,7 +25,7 @@ namespace TicketManagement.IntegrationTests.LayoutServiceTests
         }
 
         [Test]
-        public void Create_ValidLayout_CreatesLayout()
+        public async Task Create_ValidLayout_CreatesLayout()
         {
             var layoutToCreate = new Layout
             {
@@ -32,9 +33,11 @@ namespace TicketManagement.IntegrationTests.LayoutServiceTests
                  VenueId = 2,
             };
 
-            var id = _layoutService.Create(layoutToCreate);
+            var id = await _layoutService.CreateAsync(layoutToCreate);
 
-            _layoutService.GetById(id).Should().BeEquivalentTo(layoutToCreate, v => v.Excluding(v => v.Id));
+            var actualLayout = await _layoutService.GetByIdAsync(id);
+
+            actualLayout.Should().BeEquivalentTo(layoutToCreate, v => v.Excluding(v => v.Id));
         }
     }
 }

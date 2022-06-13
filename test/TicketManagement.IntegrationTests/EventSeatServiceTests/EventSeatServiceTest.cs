@@ -1,4 +1,5 @@
-﻿using FluentAssertions;
+﻿using System.Threading.Tasks;
+using FluentAssertions;
 using NUnit.Framework;
 using TicketManagement.BusinessLogic.Implementations;
 using TicketManagement.BusinessLogic.Interfaces;
@@ -22,19 +23,23 @@ namespace TicketManagement.IntegrationTests.EventSeatServiceTests
         }
 
         [Test]
-        public void SetSeatState_ValidState_SetsState()
+        public async Task SetSeatState_ValidState_SetsState()
         {
             int id = 1;
 
             EventSeatState stateBeforeUpdate = EventSeatState.Ordered;
 
-            _eventSeatService.GetById(id).State.Should().Be(stateBeforeUpdate);
+            var actualSeatBeforeUpdate = await _eventSeatService.GetByIdAsync(id);
+
+            actualSeatBeforeUpdate.State.Should().Be(stateBeforeUpdate);
 
             EventSeatState stateToUpdate = EventSeatState.Available;
 
-            _eventSeatService.SetSeatState(id, stateToUpdate);
+            await _eventSeatService.SetSeatStateAsync(id, stateToUpdate);
 
-            _eventSeatService.GetById(id).State.Should().Be(stateToUpdate);
+            var actualSeatAfterUpdate = await _eventSeatService.GetByIdAsync(id);
+
+            actualSeatAfterUpdate.State.Should().Be(stateToUpdate);
         }
     }
 }

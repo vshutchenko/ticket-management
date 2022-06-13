@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using TicketManagement.DataAccess.Entities;
 
 namespace TicketManagement.BusinessLogic.Interfaces
@@ -6,9 +7,9 @@ namespace TicketManagement.BusinessLogic.Interfaces
     public interface IAreaService
     {
         IEnumerable<Area> GetAll();
-        Area GetById(int id);
-        int Create(Area area);
-        void Update(Area area);
-        void Delete(int id);
+        Task<Area> GetByIdAsync(int id);
+        Task<int> CreateAsync(Area area);
+        Task UpdateAsync(Area area);
+        Task DeleteAsync(int id);
     }
 }
