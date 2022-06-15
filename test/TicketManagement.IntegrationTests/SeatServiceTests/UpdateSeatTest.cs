@@ -5,7 +5,7 @@ using TicketManagement.BusinessLogic.Implementations;
 using TicketManagement.BusinessLogic.Interfaces;
 using TicketManagement.BusinessLogic.Validation;
 using TicketManagement.DataAccess.Entities;
-using TicketManagement.DataAccess.Implementations;
+using TicketManagement.DataAccess.SqlClientImplementations;
 
 namespace TicketManagement.IntegrationTests.SeatServiceTests
 {
