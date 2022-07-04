@@ -1,0 +1,78 @@
+﻿@using System.Globalization
+@using System.Security.Claims
+@using TicketManagement.WebApplication.Models.Event
+@using TicketManagement.WebApplication.Models.EventSeat;
+@model EventDetailsViewModel
+
+<div>
+    <h4>@Localizer["Event"]</h4>
+    <img src="@Model.ImageUrl" width=300 height=300 style="object-fit: contain; object-position: left;" />
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Name)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Name)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Description)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Description)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.StartDate)
+        </dt>
+        <dd class="col-sm-10">
+            @Model.StartDate.ToLocalTime().ToString("g", CultureInfo.CurrentCulture)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.EndDate)
+        </dt>
+        <dd class="col-sm-10">
+            @Model.StartDate.ToLocalTime().ToString("g", CultureInfo.CurrentCulture)
+        </dd>
+    </dl>
+</div>
+<form method="post" asp-controller="Purchase" asp-action="PurchaseSeats" asp-antiforgery="true">
+    <input type="hidden" name="UserId" value="@User.FindFirst("id")!.Value" />
+    <input type="hidden" name="EventName" value="@Model.Name" />
+    <input type="hidden" name="EventId" value="@Model.Id" />
+    @foreach (var area in Model.Areas)
+    {
+        var rows = Model.Seats.Where(s => s.EventAreaId == area.Id).GroupBy(s => s.Row);
+        <h5>@area.Description</h5>
+        <table>
+            @foreach (var row in rows)
+            {
+                <tr>
+                    @foreach (var seat in row.OrderBy(s => s.Number))
+                    {
+                        if (seat.State == EventSeatState.Available)
+                        {
+                            <td>
+                                <div class="seat" style="background-color:lightgreen">
+                                    <p>@seat.Row:@seat.Number</p>
+                                    <input type="checkbox" name="SeatIds" value="@seat.Id" />
+                                </div>
+                            </td>
+                        }
+                        else
+                        {
+                            <td>
+                                <div class="seat" style="background-color:red">
+                                    <p>@seat.Row:@seat.Number</p>
+                                </div>
+                            </td>
+                        }
+                    }
+                </tr>
+            }
+        </table>
+    }
+
+    <input value="@Localizer["Submit"]" type="submit" />
+</form>
+
+<a asp-action="Index">@Localizer["Back to list"]</a>

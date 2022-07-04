@@ -16,3 +16,13 @@ html {
 body {
   margin-bottom: 60px;
 }
+
+.seat {
+    width: 45px;
+    height: 45px;
+    background-color: lightgray;
+    border-radius: 5px;
+    text-align: center;
+    font-weight: bold;
+    color: white;
+}

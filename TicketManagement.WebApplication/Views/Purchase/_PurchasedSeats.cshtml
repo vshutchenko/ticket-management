@@ -1,0 +1,46 @@
+﻿@using System.Globalization
+@using TicketManagement.WebApplication.Models.Purchase
+@model List<PurchaseViewModel>
+@inject IViewLocalizer Localizer
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Description)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.StartDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.EndDate)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Description)
+                </td>
+                <td>
+                    @item.StartDate.ToLocalTime().ToString("g", CultureInfo.CurrentCulture)
+                </td>
+                <td>
+                    @item.EndDate.ToLocalTime().ToString("g", CultureInfo.CurrentCulture)
+                </td>
+                <td>
+                    <a asp-action="Details" asp-route-id="@item.Id">@Localizer["Details"]</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

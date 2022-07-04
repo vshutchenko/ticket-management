@@ -1,0 +1,17 @@
+﻿@using TicketManagement.WebApplication.Models.Purchase
+@model List<PurchaseViewModel>
+
+@foreach (var p in @Model)
+{
+    foreach (var s in p.PurchasedSeats)
+    {
+        <p>@p.Id</p>
+        <p>Event: @s.Event!.Name</p>
+        <p>Venue: @s.Venue!.Description</p>
+        <p>Layout: @s.Layout!.Description</p>
+        <p>Area: @s.Area!.Description</p>
+        <p>@s.Seat!.Row:@s.Seat.Number</p>
+    }
+    <h5>Total price: @p.Price</h5>
+    <hr />
+}
