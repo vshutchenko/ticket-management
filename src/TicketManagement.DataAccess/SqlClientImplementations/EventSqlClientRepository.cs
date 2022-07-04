@@ -29,7 +29,7 @@ namespace TicketManagement.DataAccess.SqlClientImplementations
 
             command.Parameters.Add(new SqlParameter("@eventId", SqlDbType.Int) { Direction = ParameterDirection.Output });
             command.Parameters.AddWithValue("@name", @event.Name);
-            command.Parameters.AddWithValue("@description", @event.Descpription);
+            command.Parameters.AddWithValue("@description", @event.Description);
             command.Parameters.AddWithValue("@layoutId", @event.LayoutId);
             command.Parameters.AddWithValue("@startDate", @event.StartDate);
             command.Parameters.AddWithValue("@endDate", @event.EndDate);
@@ -77,7 +77,7 @@ namespace TicketManagement.DataAccess.SqlClientImplementations
                 {
                     Id = reader.GetInt32("Id"),
                     Name = reader.GetString("Name"),
-                    Descpription = reader.GetString("Description"),
+                    Description = reader.GetString("Description"),
                     LayoutId = reader.GetInt32("LayoutId"),
                     StartDate = reader.GetDateTime("StartDate"),
                     EndDate = reader.GetDateTime("EndDate"),
@@ -107,7 +107,7 @@ namespace TicketManagement.DataAccess.SqlClientImplementations
                 {
                     Id = reader.GetInt32("Id"),
                     Name = reader.GetString("Name"),
-                    Descpription = reader.GetString("Description"),
+                    Description = reader.GetString("Description"),
                     LayoutId = reader.GetInt32("LayoutId"),
                     StartDate = reader.GetDateTime("StartDate"),
                     EndDate = reader.GetDateTime("EndDate"),
@@ -128,7 +128,7 @@ namespace TicketManagement.DataAccess.SqlClientImplementations
 
             command.Parameters.AddWithValue("@eventId", @event.Id);
             command.Parameters.AddWithValue("@name", @event.Name);
-            command.Parameters.AddWithValue("@description", @event.Descpription);
+            command.Parameters.AddWithValue("@description", @event.Description);
             command.Parameters.AddWithValue("@layoutId", @event.LayoutId);
             command.Parameters.AddWithValue("@startDate", @event.StartDate);
             command.Parameters.AddWithValue("@endDate", @event.EndDate);

@@ -1,12 +1,11 @@
-﻿using System;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using TicketManagement.DataAccess.Data;
 using TicketManagement.DataAccess.Entities;
 
 namespace TicketManagement.DataAccess.EntityFrameworkImplementations
 {
-    public class TicketManagementContext : IdentityDbContext<IdentityUser>
+    public class TicketManagementContext : IdentityDbContext<User>
     {
         public TicketManagementContext(DbContextOptions<TicketManagementContext> options)
             : base(options)
@@ -26,5 +25,8 @@ namespace TicketManagement.DataAccess.EntityFrameworkImplementations
         public DbSet<EventArea> EventAreas { get; set; }
 
         public DbSet<EventSeat> EventSeats { get; set; }
+
+        public DbSet<Purchase> Purchases { get; set; }
+        public DbSet<PurchasedSeat> PurchasedSeats { get; set; }
     }
 }

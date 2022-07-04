@@ -28,7 +28,7 @@ namespace TicketManagement.DataAccess.EntityFrameworkImplementations
             {
                 idParam,
                 new SqlParameter("@name", item.Name),
-                new SqlParameter("@description", item.Descpription),
+                new SqlParameter("@description", item.Description),
                 new SqlParameter("@layoutId", item.LayoutId),
                 new SqlParameter("@startDate", item.StartDate),
                 new SqlParameter("@endDate", item.EndDate),
@@ -68,7 +68,7 @@ namespace TicketManagement.DataAccess.EntityFrameworkImplementations
             {
                 new SqlParameter("@eventId", item.Id),
                 new SqlParameter("@name", item.Name),
-                new SqlParameter("@description", item.Descpription),
+                new SqlParameter("@description", item.Description),
                 new SqlParameter("@layoutId", item.LayoutId),
                 new SqlParameter("@startDate", item.StartDate),
                 new SqlParameter("@endDate", item.EndDate),
