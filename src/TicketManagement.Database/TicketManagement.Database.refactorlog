@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Operations Version="1.0" xmlns="http://schemas.microsoft.com/sqlserver/dac/Serialization/2012/02">
+  <Operation Name="Rename Refactor" Key="7aea1786-216e-45bd-85d6-b3345eb7aba5" ChangeDateTime="06/25/2022 01:44:29">
+    <Property Name="ElementName" Value="[dbo].[AspNetUsers].[Language]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[AspNetUsers]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="CultureName" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="c1259adf-d145-44c8-9d0f-464af45aafe3" ChangeDateTime="06/25/2022 01:45:03">
+    <Property Name="ElementName" Value="[dbo].[AspNetUsers].[TimeZone]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[AspNetUsers]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="TimeZoneId" />
+  </Operation>
+</Operations>

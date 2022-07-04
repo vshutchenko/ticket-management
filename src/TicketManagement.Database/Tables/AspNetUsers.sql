@@ -1,6 +1,6 @@
 ﻿CREATE TABLE [dbo].[AspNetUsers] (
     [Id]                   NVARCHAR (450)     NOT NULL,
-    [UserName]             NVARCHAR (256)     NULL,
+    [UserName]             NVARCHAR(256)     NULL,
     [NormalizedUserName]   NVARCHAR (256)     NULL,
     [Email]                NVARCHAR (256)     NULL,
     [NormalizedEmail]      NVARCHAR (256)     NULL,
@@ -13,7 +13,12 @@
     [TwoFactorEnabled]     BIT                NOT NULL,
     [LockoutEnd]           DATETIMEOFFSET (7) NULL,
     [LockoutEnabled]       BIT                NOT NULL,
-    [AccessFailedCount]    INT                NOT NULL
+    [AccessFailedCount]    INT                NOT NULL, 
+    [FirstName] NVARCHAR(256) NOT NULL, 
+    [LastName] NVARCHAR(256) NOT NULL, 
+    [CultureName] NVARCHAR(10) NOT NULL, 
+    [Balance] DECIMAL NOT NULL, 
+    [TimeZoneId] NVARCHAR(256) NOT NULL
 );
 GO
 ALTER TABLE [dbo].[AspNetUsers]
