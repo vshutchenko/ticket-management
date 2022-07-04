@@ -1,15 +1,17 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using TicketManagement.DataAccess.Entities;
+using TicketManagement.BusinessLogic.Models;
 
 namespace TicketManagement.BusinessLogic.Interfaces
 {
     public interface IEventService
     {
-        IEnumerable<Event> GetAll();
-        Task<Event> GetByIdAsync(int id);
-        Task<int> CreateAsync(Event @event);
-        Task UpdateAsync(Event @event);
+        IEnumerable<EventModel> GetAll();
+        Task<EventModel> GetByIdAsync(int id);
+        Task<int> CreateAsync(EventModel eventModel);
+        Task UpdateAsync(EventModel eventModel);
         Task DeleteAsync(int id);
+        int Count();
+        IEnumerable<EventModel> Get(int limit, int offset);
     }
 }

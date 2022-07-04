@@ -1,15 +1,17 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using TicketManagement.DataAccess.Entities;
+using TicketManagement.BusinessLogic.Models;
 
 namespace TicketManagement.BusinessLogic.Interfaces
 {
-    internal interface IVenueService
+    public interface IVenueService
     {
-        IEnumerable<Venue> GetAll();
-        Task<Venue> GetByIdAsync(int id);
-        Task<int> CreateAsync(Venue venue);
-        Task UpdateAsync(Venue venue);
+        IEnumerable<VenueModel> GetAll();
+        Task<VenueModel> GetByIdAsync(int id);
+        Task<int> CreateAsync(VenueModel venueModel);
+        Task UpdateAsync(VenueModel venueModel);
         Task DeleteAsync(int id);
+        int Count();
+        IEnumerable<VenueModel> Get(int limit, int offset);
     }
 }

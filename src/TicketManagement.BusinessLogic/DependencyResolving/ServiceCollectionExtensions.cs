@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using TicketManagement.BusinessLogic.Implementations;
 using TicketManagement.BusinessLogic.Interfaces;
 using TicketManagement.BusinessLogic.Validation;
@@ -13,9 +12,6 @@ namespace TicketManagement.BusinessLogic.DependencyResolving
         public static IServiceCollection AddEntityFrameworkServices(this IServiceCollection services, string connectionString)
         {
             services.AddEntityFrameworkRepositories(connectionString);
-
-            services.AddScoped<SignInManager<IdentityUser>, SignInManager<IdentityUser>>();
-            services.AddScoped<UserManager<IdentityUser>, UserManager<IdentityUser>>();
 
             services.AddScoped<IValidator<Area>, AreaValidator>();
             services.AddScoped<IValidator<decimal>, PriceValidator>();
@@ -31,6 +27,9 @@ namespace TicketManagement.BusinessLogic.DependencyResolving
             services.AddScoped<ILayoutService, LayoutService>();
             services.AddScoped<ISeatService, SeatService>();
             services.AddScoped<IVenueService, VenueService>();
+
+            services.AddScoped<IIdentityService, IdentityService>();
+            services.AddScoped<IPurchaseService, PurchaseService>();
 
             return services;
         }

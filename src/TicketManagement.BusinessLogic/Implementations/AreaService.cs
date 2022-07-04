@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
+using AutoMapper;
 using TicketManagement.BusinessLogic.Extensions;
 using TicketManagement.BusinessLogic.Interfaces;
+using TicketManagement.BusinessLogic.Models;
 using TicketManagement.BusinessLogic.Validation;
 using TicketManagement.DataAccess.Entities;
 using TicketManagement.DataAccess.Interfaces;
@@ -17,21 +20,24 @@ namespace TicketManagement.BusinessLogic.Implementations
     {
         private readonly IRepository<Area> _areaRepository;
         private readonly IValidator<Area> _areaValidator;
+        private readonly IMapper _mapper;
 
-        public AreaService(IRepository<Area> areaRepository, IValidator<Area> areaValidator)
+        public AreaService(IRepository<Area> areaRepository, IValidator<Area> areaValidator, IMapper mapper)
         {
             _areaRepository = areaRepository ?? throw new ArgumentNullException(nameof(areaRepository));
             _areaValidator = areaValidator ?? throw new ArgumentNullException(nameof(areaValidator));
+            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
 
-        public Task<int> CreateAsync(Area area)
+        public Task<int> CreateAsync(AreaModel areaModel)
         {
-            if (area is null)
+            if (areaModel is null)
             {
                 throw new ValidationException("Area is null.");
             }
 
-            area.Id = 0;
+            areaModel.Id = 0;
+            var area = _mapper.Map<Area>(areaModel);
 
             _areaValidator.Validate(area);
 
@@ -45,26 +51,34 @@ namespace TicketManagement.BusinessLogic.Implementations
             await _areaRepository.DeleteAsync(id);
         }
 
-        public IEnumerable<Area> GetAll()
+        public IEnumerable<AreaModel> GetAll()
         {
-            return _areaRepository.GetAll();
+            var models = _areaRepository.GetAll().Select(a => _mapper.Map<AreaModel>(a));
+
+            return models;
         }
 
-        public async Task<Area> GetByIdAsync(int id)
+        public async Task<AreaModel> GetByIdAsync(int id)
         {
             await _areaRepository.CheckIfIdExistsAsync(id);
 
-            return await _areaRepository.GetByIdAsync(id);
+            var area = await _areaRepository.GetByIdAsync(id);
+
+            var model = _mapper.Map<AreaModel>(area);
+
+            return model;
         }
 
-        public async Task UpdateAsync(Area area)
+        public async Task UpdateAsync(AreaModel areaModel)
         {
-            if (area is null)
+            if (areaModel is null)
             {
                 throw new ValidationException("Area is null.");
             }
 
-            await _areaRepository.CheckIfIdExistsAsync(area.Id);
+            await _areaRepository.CheckIfIdExistsAsync(areaModel.Id);
+
+            var area = _mapper.Map<Area>(areaModel);
 
             _areaValidator.Validate(area);
 

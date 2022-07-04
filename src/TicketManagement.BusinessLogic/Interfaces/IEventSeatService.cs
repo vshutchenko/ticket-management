@@ -1,13 +1,15 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
-using TicketManagement.DataAccess.Entities;
+using TicketManagement.BusinessLogic.Models;
 
 namespace TicketManagement.BusinessLogic.Interfaces
 {
     public interface IEventSeatService
     {
-        IEnumerable<EventSeat> GetAll();
-        Task<EventSeat> GetByIdAsync(int id);
-        Task SetSeatStateAsync(int id, EventSeatState state);
+        IEnumerable<EventSeatModel> GetAll();
+        Task<EventSeatModel> GetByIdAsync(int id);
+        IEnumerable<EventSeatModel> GetByEventAreaId(int eventAreaId);
+        Task SetSeatStateAsync(int id, EventSeatStateModel stateModel);
     }
 }
