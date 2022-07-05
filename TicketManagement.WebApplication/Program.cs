@@ -8,6 +8,7 @@ using TicketManagement.BusinessLogic.DependencyResolving;
 using TicketManagement.BusinessLogic.Interfaces;
 using TicketManagement.WebApplication.Filters;
 using TicketManagement.WebApplication.Infrastructure;
+using TicketManagement.WebApplication.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
 

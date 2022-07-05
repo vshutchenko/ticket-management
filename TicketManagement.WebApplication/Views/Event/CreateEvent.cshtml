@@ -1,0 +1,71 @@
+﻿@using TicketManagement.WebApplication.Models.Event
+@model CreateEventViewModel
+
+<h1>@Localizer["Create event"]</h1>
+<hr />
+
+<div>
+    <form asp-action="CreateEvent" asp-antiforgery="true">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <div class="w-25">
+            <div class="form-group">
+                @Html.LabelFor(model => model.Venues, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.DropDownList("Venue", Model.Venues as SelectList, new { id = "venue", @class = "form-select" })
+                </div>
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(model => model.Layouts, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.DropDownList("Layout", Model.Layouts as SelectList, new { id = "layout", @class = "form-select" })
+                </div>
+            </div>
+            <div class="form-group">
+                <label asp-for="Name" class="control-label"></label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Description" class="control-label"></label>
+                <input asp-for="Description" class="form-control" />
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="StartDate" class="form-label">Simple picker</label>
+                <div class="input-group" id="datetimepicker1" data-td-target-input="nearest" data-td-target-toggle="nearest">
+                    <input asp-for="StartDate" value="@DateTime.Now" id="datetimepicker1Input" type="text" class="form-control" data-td-target="#datetimepicker1" />
+                    <span class="input-group-text" data-td-target="#datetimepicker1" data-td-toggle="datetimepicker">
+                    </span>
+                </div>
+                <span asp-validation-for="StartDate" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="EndDate" class="form-label">Simple picker</label>
+                <div class="input-group" id="datetimepicker2" data-td-target-input="nearest"  data-td-target-toggle="nearest">
+                    <input asp-for="EndDate" value="@DateTime.Now" id="datetimepicker2Input" type="text" class="form-control" data-td-target="#datetimepicker2" />
+                    <span class="input-group-text" data-td-target="#datetimepicker2" data-td-toggle="datetimepicker">
+                    </span>
+                </div>
+                <span asp-validation-for="EndDate" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="ImageUrl" class="control-label"></label>
+                <input asp-for="ImageUrl" class="form-control" />
+                <span asp-validation-for="ImageUrl" class="text-danger"></span>
+            </div>
+
+            <div class="mt-2">
+                <input type="submit" value="@Localizer["Submit"]" class="btn btn-primary" />
+            </div>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+<script src="~/js/datepicker.js"></script>
+<script src="~/js/layoutList.js"></script>
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

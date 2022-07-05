@@ -17,5 +17,7 @@ namespace TicketManagement.BusinessLogic.Models
         public DateTime EndDate { get; set; }
 
         public string ImageUrl { get; set; }
+
+        public bool Published { get; set; }
     }
 }

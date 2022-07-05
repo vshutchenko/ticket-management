@@ -1,0 +1,94 @@
+﻿@using TicketManagement.WebApplication.Models.Event
+@model EditEventViewModel
+
+@using (Html.BeginForm("PublishEvent", "Event", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+{
+    @Html.AntiForgeryToken()
+
+<div class="form-horizontal">
+
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.Event!.Name, new { @class = "col-md-2 control-label" })
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.Event!.Name, new { htmlAttributes = new { @class = "form-control" } })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.Event!.Name, new { @class = "col-md-2 control-label" })
+        <div class="col-md-10">
+            @Html.DisplayFor(model => model.Event!.Name, new { htmlAttributes = new { @class = "form-control" } })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.Event!.Name, new { @class = "col-md-2 control-label" })
+        <div class="col-md-10">
+            @Html.DisplayFor(model => model.Event!.Name, new { htmlAttributes = new { @class = "form-control" } })
+        </div>
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(model => model.Event!.Description, new { @class = "col-md-2 control-label" })
+        <div class="col-md-10">
+            @Html.DisplayFor(model => model.Event!.Description, new { htmlAttributes = new { @class = "form-control" } })
+        </div>
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(model => model.Event!.StartDate, new { @class = "col-md-2 control-label" })
+        <div class="col-md-10">
+            @Html.DisplayFor(model => model.Event!.StartDate, new { htmlAttributes = new { @class = "form-control" } })
+        </div>
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(model => model.Event!.EndDate, new { @class = "col-md-2 control-label" })
+        <div class="col-md-10">
+            @Html.DisplayFor(model => model.Event!.EndDate, new { htmlAttributes = new { @class = "form-control" } })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.Event!.ImageUrl, new { @class = "col-md-2 control-label" })
+        <div class="col-md-10">
+            @Html.DisplayFor(model => model.Event!.ImageUrl, new { htmlAttributes = new { @class = "form-control" } })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @foreach (var item in Model.Areas)
+        {
+            <div class="col-md-offset-2 col-md-10">
+                <label>(@item.Description)</label>
+                <input type="number" class="form-control" id="price" name="areas[@item.Id]" value="@item.Price" />
+
+                @Html.ValidationMessageFor(model => model.Areas)
+            </div>
+        }
+    </div>
+
+    <div class="form-group">
+        <div class="col-md-offset-2 col-md-10">
+            <input type="submit" class="btn btn-default" value="@Localizer["Submit"]" />
+        </div>
+    </div>
+
+</div>
+}
+@section scripts{
+    <script type="text/javascript">
+        $(function () {
+            $('#venue').change(function()
+            {
+                var id = $(this).val();
+                $.ajax({
+                    type: 'GET',
+                    url: '@Url.Action("PartialLayoutList")?layoutId=' + id,
+                    success: function (data) {
+                        $('#layout').replaceWith(data);
+                    }
+                });
+            });
+        })
+    </script>
+}

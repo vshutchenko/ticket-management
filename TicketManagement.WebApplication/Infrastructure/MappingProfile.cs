@@ -15,6 +15,10 @@ namespace TicketManagement.WebApplication.Infrastructure
         {
             CreateMap<EventModel, EventViewModel>();
             CreateMap<EventModel, EventDetailsViewModel>();
+            CreateMap<CreateEventViewModel, EventModel>()
+                .ForMember(x => x.LayoutId, opt => opt.MapFrom(m => int.Parse(m.Layout)))
+                .ForSourceMember(m => m.Layouts, opt => opt.DoNotValidate())
+                .ForSourceMember(m => m.Venues, opt => opt.DoNotValidate());
 
             CreateMap<EventAreaModel, EventAreaViewModel>();
 

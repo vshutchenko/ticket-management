@@ -8,7 +8,7 @@ namespace TicketManagement.BusinessLogic.MappingConfig
     {
         public MappingProfile()
         {
-            CreateMap<Event, EventModel>();
+            CreateMap<Event, EventModel>().ReverseMap();
             CreateMap<Venue, VenueModel>();
             CreateMap<Layout, LayoutModel>();
             CreateMap<Area, AreaModel>();

@@ -51,9 +51,7 @@ namespace TicketManagement.WebApplication.Controllers
 
             await _identityService.UpdateUser(user);
 
-            ViewBag.Message = "The funds added to your account!";
-
-            return View("Success");
+            return RedirectToAction("AddFunds");
         }
 
         [HttpGet]
@@ -219,6 +217,7 @@ namespace TicketManagement.WebApplication.Controllers
                 new Claim(ClaimTypes.Email, user.Email),
                 new Claim("id", user.Id),
                 new Claim("timezoneId", user.TimeZoneId),
+                new Claim("culture", user.CultureName),
             };
 
             var roles = await _identityService.GetRolesAsync(user.Id);
@@ -235,6 +234,16 @@ namespace TicketManagement.WebApplication.Controllers
 
         private void SetCultureCookie(string culture)
         {
+            var cookieOptions = new CookieOptions
+            {
+                Path = "/",
+                Expires = DateTimeOffset.UtcNow.AddYears(1),
+            };
+
+            string timeZone = User.FindFirst("timezoneId") is null ? TimeZoneInfo.Local.Id : User.FindFirst("timezoneId")!.Value;
+
+            Response.Cookies.Append("timezoneId", timeZone, cookieOptions);
+
             Response.Cookies.Append(
                 CookieRequestCultureProvider.DefaultCookieName,
                 CookieRequestCultureProvider.MakeCookieValue(new RequestCulture(culture)),

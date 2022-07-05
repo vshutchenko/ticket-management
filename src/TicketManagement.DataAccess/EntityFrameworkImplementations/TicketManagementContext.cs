@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using TicketManagement.DataAccess.Data;
 using TicketManagement.DataAccess.Entities;
 
 namespace TicketManagement.DataAccess.EntityFrameworkImplementations

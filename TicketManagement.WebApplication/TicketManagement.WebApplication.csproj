@@ -26,4 +26,8 @@
     <ProjectReference Include="..\src\TicketManagement.BusinessLogic\TicketManagement.BusinessLogic.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\lib\jquery\" />
+  </ItemGroup>
+
 </Project>

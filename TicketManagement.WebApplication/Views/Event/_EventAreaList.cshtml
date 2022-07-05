@@ -1,0 +1,10 @@
+﻿@using System.Globalization
+@using TicketManagement.WebApplication.Models.EventArea
+@model IEnumerable<EventAreaViewModel>
+
+@foreach (var area in Model)
+{
+    <div>
+        <input type="number" asp-for="@area" />
+    </div>
+}

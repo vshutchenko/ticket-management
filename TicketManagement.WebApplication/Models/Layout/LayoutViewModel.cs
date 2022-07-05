@@ -1,6 +1,4 @@
-﻿using TicketManagement.WebApplication.Models.Venue;
-
-namespace TicketManagement.WebApplication.Models.Layout
+﻿namespace TicketManagement.WebApplication.Models.Layout
 {
     public class LayoutViewModel
     {

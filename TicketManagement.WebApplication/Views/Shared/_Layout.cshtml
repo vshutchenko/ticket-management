@@ -1,12 +1,14 @@
-﻿<!DOCTYPE html>
+﻿@using System.Security.Claims
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Ticket Management</title>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/lib/bootstrap/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/TicketManagement.WebApplication.styles.css" asp-append-version="true" />
+    <link href="~/lib/tempus-dominus/dist/css/tempus-dominus.css" rel="stylesheet" />
 </head>
 <body>
     <header>
@@ -25,9 +27,16 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-controller="Event" asp-action="Index">@Localizer["Events"]</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-controller="Home" asp-action="Index">@Localizer["Event management"]</a>
-                        </li>
+                        @if (@User.Identities.First().HasClaim(ClaimTypes.Role, "Event manager"))
+                        {
+                            <li class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">@Localizer["Event management"]</a>
+                                <div class="dropdown-menu dropdown-menu-right">
+                                    <a class="dropdown-item" asp-controller="Event" asp-action="CreateEvent">@Localizer["Create event"]</a>
+                                    <a class="dropdown-item" asp-controller="Event" asp-action="NotPublishedEvents">@Localizer["Not published events"]</a>
+                                </div>
+                            </li>
+                        }
                     </ul>
                     <partial name="_LoginPartial" />
                 </div>
@@ -40,9 +49,18 @@
         </main>
     </div>
 
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/lib/jquery/jquery.min.js"></script>
+
+    <script src="~/lib/bootstrap/js/bootstrap.min.js"></script>
+
+    <script src="~/lib/popper.js/umd/popper.min.js" crossorigin="anonymous"></script>
+
+    <script src="~/lib/tempus-dominus/dist/js/tempus-dominus.js"></script>
+
+    <script src="~/lib/tempus-dominus/dist/js/jQuery-provider.js"></script>
+ 
     <script src="~/js/site.js" asp-append-version="true"></script>
+
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

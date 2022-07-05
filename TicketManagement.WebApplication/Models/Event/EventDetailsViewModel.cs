@@ -17,10 +17,10 @@ namespace TicketManagement.WebApplication.Models.Event
         public int LayoutId { get; set; }
 
         [Display(Name = "Start date")]
-        public DateTime StartDate { get; set; }
+        public DateTime StartDate { get; set; } = DateTime.Now;
 
         [Display(Name = "End date")]
-        public DateTime EndDate { get; set; }
+        public DateTime EndDate { get; set; } = DateTime.Now;
 
         public string ImageUrl { get; set; } = string.Empty;
 

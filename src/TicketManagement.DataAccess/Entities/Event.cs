@@ -19,5 +19,7 @@ namespace TicketManagement.DataAccess.Entities
         public DateTime EndDate { get; set; }
 
         public string ImageUrl { get; set; }
+
+        public bool Published { get; set; }
     }
 }

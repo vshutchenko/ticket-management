@@ -30,7 +30,7 @@ insert into dbo.Seat
 --- Event
 insert into dbo.Event
 	values
-		('First event', 'First event description', 1, '2023-01-01 10:00:00', '2023-01-01 15:00:00', 'url')
+		('First event', 'First event description', 1, '2023-01-01 10:00:00', '2023-01-01 15:00:00', 'url', 1)
 
 
 --- EventArea

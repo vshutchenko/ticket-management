@@ -46,7 +46,7 @@ namespace TicketManagement.IntegrationTests.EventServiceTests
             {
                 Id = 2,
                 Name = "First Event",
-                Descpription = "Test description",
+                Description = "Test description",
                 LayoutId = 1,
                 StartDate = new DateTime(2023, 1, 2),
                 EndDate = new DateTime(2023, 1, 3),
@@ -66,7 +66,7 @@ namespace TicketManagement.IntegrationTests.EventServiceTests
             {
                 Id = 2,
                 Name = "First Event",
-                Descpription = "Test description",
+                Description = "Test description",
                 LayoutId = 1,
                 StartDate = new DateTime(2023, 1, 2),
                 EndDate = new DateTime(2023, 1, 3),
@@ -91,7 +91,7 @@ namespace TicketManagement.IntegrationTests.EventServiceTests
             var eventToCreate = new Event
             {
                 Name = "First Event",
-                Descpription = "Test description",
+                Description = "Test description",
                 LayoutId = 1,
                 StartDate = new DateTime(2023, 1, 2),
                 EndDate = new DateTime(2023, 1, 3),

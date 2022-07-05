@@ -1,8 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.UI;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using TicketManagement.DataAccess.Data;
 using TicketManagement.DataAccess.Entities;
 using TicketManagement.DataAccess.EntityFrameworkImplementations;
 using TicketManagement.DataAccess.Interfaces;

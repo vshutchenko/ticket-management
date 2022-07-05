@@ -14,6 +14,5 @@ namespace TicketManagement.WebApplication.Models.Purchase
         public EventSeatViewModel? Seat { get; set; }
         public LayoutViewModel? Layout { get; set; }
         public VenueViewModel? Venue { get; set; }
-        public decimal Price { get; set; }
     }
 }

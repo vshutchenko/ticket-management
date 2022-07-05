@@ -48,8 +48,8 @@ namespace TicketManagement.BusinessLogic.Validation
         {
             var eventInTheSameLayout = _eventRepository
                 .GetAll()
-                .FirstOrDefault(e => e.LayoutId == layoutId
-                    && (start.InRange(e.StartDate, e.EndDate) || end.InRange(e.StartDate, e.EndDate)));
+                .Where(e => e.LayoutId == layoutId).AsEnumerable()
+                .FirstOrDefault(e => start.InRange(e.StartDate, e.EndDate) || end.InRange(e.StartDate, e.EndDate));
 
             if (eventInTheSameLayout != null)
             {
@@ -61,7 +61,7 @@ namespace TicketManagement.BusinessLogic.Validation
         {
             var layoutAreas = _areaRepository.GetAll().Where(a => a.LayoutId == layoutId).ToList();
 
-            bool availableSeatsExist = _seatRepository.GetAll().Any(s => layoutAreas.Any(a => a.Id == s.AreaId));
+            bool availableSeatsExist = _seatRepository.GetAll().AsEnumerable().Any(s => layoutAreas.Any(a => a.Id == s.AreaId));
 
             if (!availableSeatsExist)
             {

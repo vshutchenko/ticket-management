@@ -53,7 +53,7 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
             {
                 Id = 1,
                 Name = "New Event",
-                Descpription = "Description 1",
+                Description = "Description 1",
                 LayoutId = 1,
                 StartDate = new DateTime(2023, 10, 10),
                 EndDate = new DateTime(2023, 10, 11),
@@ -84,7 +84,7 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
             {
                 Id = 1,
                 Name = "New Event",
-                Descpription = "Description",
+                Description = "Description",
                 LayoutId = 1,
                 StartDate = new DateTime(2021, 1, 1),
                 EndDate = new DateTime(2024, 1, 2),
@@ -115,7 +115,7 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
             {
                 Id = 1,
                 Name = "New Event",
-                Descpription = "Description",
+                Description = "Description",
                 LayoutId = 1,
                 StartDate = new DateTime(2025, 1, 1),
                 EndDate = new DateTime(2024, 1, 2),
@@ -141,7 +141,7 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
 
             var events = new List<Event>
             {
-                new Event { Id = 1, Name = "Event 1", Descpription = "Description 1", LayoutId = 1, StartDate = new DateTime(2023, 1, 1), EndDate = new DateTime(2023, 1, 2) },
+                new Event { Id = 1, Name = "Event 1", Description = "Description 1", LayoutId = 1, StartDate = new DateTime(2023, 1, 1), EndDate = new DateTime(2023, 1, 2) },
             };
 
             _seatRepositoryMock.Setup(x => x.GetAll()).Returns(seats.AsQueryable());
@@ -152,7 +152,7 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
             {
                 Id = 1,
                 Name = "New Event",
-                Descpription = "Description 1",
+                Description = "Description 1",
                 LayoutId = 1,
                 StartDate = new DateTime(2023, 1, 1),
                 EndDate = new DateTime(2023, 1, 2),
@@ -178,7 +178,7 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
             {
                 Id = 1,
                 Name = "New Event",
-                Descpription = "Description 1",
+                Description = "Description 1",
                 LayoutId = 3,
                 StartDate = new DateTime(2023, 1, 1),
                 EndDate = new DateTime(2023, 1, 2),
@@ -202,7 +202,7 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
         {
             int id = 1;
 
-            var @event = new Event { Id = 1, Name = "Event 1", Descpription = "Description 1", LayoutId = 1, StartDate = new DateTime(2023, 1, 1), EndDate = new DateTime(2023, 1, 2) };
+            var @event = new Event { Id = 1, Name = "Event 1", Description = "Description 1", LayoutId = 1, StartDate = new DateTime(2023, 1, 1), EndDate = new DateTime(2023, 1, 2) };
             var events = new List<Event> { @event };
 
             _eventRepositoryMock.Setup(x => x.GetByIdAsync(id)).ReturnsAsync(@event);
@@ -227,7 +227,7 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
             };
 
             int id = 1;
-            var @event = new Event { Id = 1, Name = "Event 1", Descpription = "Description 1", LayoutId = 1, StartDate = new DateTime(2023, 1, 1), EndDate = new DateTime(2023, 1, 2) };
+            var @event = new Event { Id = 1, Name = "Event 1", Description = "Description 1", LayoutId = 1, StartDate = new DateTime(2023, 1, 1), EndDate = new DateTime(2023, 1, 2) };
             var events = new List<Event> { @event };
 
             _areaRepositoryMock.Setup(x => x.GetAll()).Returns(areas.AsQueryable());
@@ -239,7 +239,7 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
             {
                 Id = 1,
                 Name = "Updated Event",
-                Descpription = "Description 1",
+                Description = "Description 1",
                 LayoutId = 1,
                 StartDate = new DateTime(2024, 1, 1),
                 EndDate = new DateTime(2024, 1, 2),
@@ -264,7 +264,7 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
             };
 
             int id = 1;
-            var @event = new Event { Id = 1, Name = "Event 1", Descpription = "Description 1", LayoutId = 1, StartDate = new DateTime(2023, 1, 1), EndDate = new DateTime(2023, 1, 2) };
+            var @event = new Event { Id = 1, Name = "Event 1", Description = "Description 1", LayoutId = 1, StartDate = new DateTime(2023, 1, 1), EndDate = new DateTime(2023, 1, 2) };
             var events = new List<Event> { @event };
 
             _eventRepositoryMock.Setup(x => x.GetByIdAsync(id)).ReturnsAsync(@event);
@@ -277,7 +277,7 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
             {
                 Id = 1,
                 Name = "New Event",
-                Descpription = "Description",
+                Description = "Description",
                 LayoutId = 1,
                 StartDate = new DateTime(2021, 1, 1),
                 EndDate = new DateTime(2024, 1, 2),
@@ -302,7 +302,7 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
             };
 
             int id = 1;
-            var @event = new Event { Id = 1, Name = "Event 1", Descpription = "Description 1", LayoutId = 1, StartDate = new DateTime(2023, 1, 1), EndDate = new DateTime(2023, 1, 2) };
+            var @event = new Event { Id = 1, Name = "Event 1", Description = "Description 1", LayoutId = 1, StartDate = new DateTime(2023, 1, 1), EndDate = new DateTime(2023, 1, 2) };
             var events = new List<Event> { @event };
 
             _eventRepositoryMock.Setup(x => x.GetByIdAsync(id)).ReturnsAsync(@event);
@@ -315,7 +315,7 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
             {
                 Id = 1,
                 Name = "New Event",
-                Descpription = "Description",
+                Description = "Description",
                 LayoutId = 1,
                 StartDate = new DateTime(2025, 1, 1),
                 EndDate = new DateTime(2024, 1, 2),
@@ -340,7 +340,7 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
             };
 
             int id = 1;
-            var @event = new Event { Id = 1, Name = "Event 1", Descpription = "Description 1", LayoutId = 1, StartDate = new DateTime(2023, 1, 1), EndDate = new DateTime(2023, 1, 2) };
+            var @event = new Event { Id = 1, Name = "Event 1", Description = "Description 1", LayoutId = 1, StartDate = new DateTime(2023, 1, 1), EndDate = new DateTime(2023, 1, 2) };
             var events = new List<Event> { @event };
 
             _eventRepositoryMock.Setup(x => x.GetByIdAsync(id)).ReturnsAsync(@event);
@@ -353,7 +353,7 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
             {
                 Id = 1,
                 Name = "New Event",
-                Descpription = "Description 1",
+                Description = "Description 1",
                 LayoutId = 1,
                 StartDate = new DateTime(2023, 1, 1),
                 EndDate = new DateTime(2023, 1, 2),
@@ -373,7 +373,7 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
             };
 
             int id = 1;
-            var @event = new Event { Id = 1, Name = "Event 1", Descpription = "Description 1", LayoutId = 1, StartDate = new DateTime(2023, 1, 1), EndDate = new DateTime(2023, 1, 2) };
+            var @event = new Event { Id = 1, Name = "Event 1", Description = "Description 1", LayoutId = 1, StartDate = new DateTime(2023, 1, 1), EndDate = new DateTime(2023, 1, 2) };
             var events = new List<Event> { @event };
 
             _eventRepositoryMock.Setup(x => x.GetByIdAsync(id)).ReturnsAsync(@event);
@@ -386,7 +386,7 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
             {
                 Id = 1,
                 Name = "New Event",
-                Descpription = "Description 1",
+                Description = "Description 1",
                 LayoutId = 3,
                 StartDate = new DateTime(2023, 1, 1),
                 EndDate = new DateTime(2023, 1, 2),
@@ -410,9 +410,9 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
         {
             var events = new List<Event>
             {
-                new Event { Id = 1, Name = "Event 1", Descpription = "Description 1", LayoutId = 1, StartDate = new DateTime(2023, 1, 1), EndDate = new DateTime(2023, 1, 2) },
-                new Event { Id = 2, Name = "Event 2", Descpription = "Description 2", LayoutId = 2, StartDate = new DateTime(2023, 2, 2, 10, 0, 0), EndDate = new DateTime(2023, 2, 2, 15, 0, 0) },
-                new Event { Id = 3, Name = "Event 3", Descpription = "Description 3", LayoutId = 2, StartDate = new DateTime(2023, 1, 3), EndDate = new DateTime(2023, 1, 5) },
+                new Event { Id = 1, Name = "Event 1", Description = "Description 1", LayoutId = 1, StartDate = new DateTime(2023, 1, 1), EndDate = new DateTime(2023, 1, 2) },
+                new Event { Id = 2, Name = "Event 2", Description = "Description 2", LayoutId = 2, StartDate = new DateTime(2023, 2, 2, 10, 0, 0), EndDate = new DateTime(2023, 2, 2, 15, 0, 0) },
+                new Event { Id = 3, Name = "Event 3", Description = "Description 3", LayoutId = 2, StartDate = new DateTime(2023, 1, 3), EndDate = new DateTime(2023, 1, 5) },
             };
 
             _eventRepositoryMock.Setup(x => x.GetAll()).Returns(events.AsQueryable());
@@ -424,7 +424,7 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
         public async Task GetById_EventExists_ReturnsEvent()
         {
             int id = 1;
-            var @event = new Event { Id = 1, Name = "New Event", Descpription = "Description 1", LayoutId = 1, StartDate = new DateTime(2023, 10, 10), EndDate = new DateTime(2023, 10, 11) };
+            var @event = new Event { Id = 1, Name = "New Event", Description = "Description 1", LayoutId = 1, StartDate = new DateTime(2023, 10, 10), EndDate = new DateTime(2023, 10, 11) };
 
             _eventRepositoryMock.Setup(x => x.GetByIdAsync(id)).ReturnsAsync(@event);
 
