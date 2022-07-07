@@ -16,12 +16,16 @@ namespace TicketManagement.BusinessLogic.Implementations
     {
         private readonly IRepository<Event> _eventRepository;
         private readonly IValidator<Event> _eventValidator;
+        private readonly IEventAreaService _eventAreaService;
+        private readonly IEventSeatService _eventSeatService;
         private readonly IMapper _mapper;
 
-        public EventService(IRepository<Event> eventRepository, IValidator<Event> eventValidator, IMapper mapper)
+        public EventService(IRepository<Event> eventRepository, IValidator<Event> eventValidator, IEventSeatService eventSeatService, IEventAreaService eventAreaService, IMapper mapper)
         {
             _eventRepository = eventRepository ?? throw new ArgumentNullException(nameof(eventRepository));
             _eventValidator = eventValidator ?? throw new ArgumentNullException(nameof(eventValidator));
+            _eventAreaService = eventAreaService ?? throw new ArgumentNullException(nameof(eventAreaService));
+            _eventSeatService = eventSeatService ?? throw new ArgumentNullException(nameof(eventSeatService));
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
 
@@ -44,6 +48,16 @@ namespace TicketManagement.BusinessLogic.Implementations
         public async Task DeleteAsync(int id)
         {
             await _eventRepository.CheckIfIdExistsAsync(id);
+
+            var seats = _eventAreaService
+                .GetByEventId(id)
+                .SelectMany(a => _eventSeatService.GetByEventAreaId(a.Id))
+                .ToList();
+
+            if (seats.Any(s => s.State == EventSeatStateModel.Ordered))
+            {
+                throw new ValidationException("Event cannot be deleted because some seats has already been purchased.");
+            }
 
             await _eventRepository.DeleteAsync(id);
         }
@@ -89,10 +103,10 @@ namespace TicketManagement.BusinessLogic.Implementations
             return _eventRepository.GetAll().Count();
         }
 
-        public IEnumerable<EventModel> Get(int limit, int offset)
+        public IEnumerable<EventModel> GetPage(int page, int pageSize)
         {
             var models = _eventRepository.GetAll()
-                .Take(limit).Skip(offset)
+                .Skip((page - 1) * pageSize).Take(pageSize)
                 .Select(e => _mapper.Map<EventModel>(e))
                 .ToList();
 

@@ -12,6 +12,6 @@ namespace TicketManagement.BusinessLogic.Interfaces
         Task UpdateAsync(EventModel eventModel);
         Task DeleteAsync(int id);
         int Count();
-        IEnumerable<EventModel> Get(int limit, int offset);
+        IEnumerable<EventModel> GetPage(int page, int pageSize);
     }
 }

@@ -16,10 +16,13 @@ namespace TicketManagement.WebApplication.Models.Event
         public string Description { get; set; } = string.Empty;
 
         public string Layout { get; set; } = string.Empty;
+
         public string Venue { get; set; } = string.Empty;
 
+        [Display(Name = "Layout")]
         public SelectList? Layouts { get; set; }
 
+        [Display(Name = "Venue")]
         public SelectList? Venues { get; set; }
 
         [Display(Name = "Start date")]
@@ -29,6 +32,8 @@ namespace TicketManagement.WebApplication.Models.Event
         public DateTime EndDate { get; set; }
 
         [Display(Name = "Image link")]
-        public string ImageUrl { get; set; } = string.Empty;
+        public string? ImageUrl { get; set; }
+
+        public bool Published { get; set; }
     }
 }

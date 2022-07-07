@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Claims;
-using System.Text;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Identity;
@@ -105,7 +101,7 @@ namespace TicketManagement.BusinessLogic.Implementations
             return roles;
         }
 
-        public async Task CreateAsync(UserModel userModel, string password)
+        public async Task CreateUserAsync(UserModel userModel, string password)
         {
             User existingUser = await _userManager.FindByEmailAsync(userModel.Email);
 

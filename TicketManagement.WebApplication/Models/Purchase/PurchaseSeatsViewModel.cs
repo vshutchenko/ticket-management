@@ -2,9 +2,9 @@
 using TicketManagement.WebApplication.Models.EventArea;
 using TicketManagement.WebApplication.Models.EventSeat;
 
-namespace TicketManagement.WebApplication.Models.Event
+namespace TicketManagement.WebApplication.Models.Purchase
 {
-    public class EventDetailsViewModel
+    public class PurchaseSeatsViewModel
     {
         public int Id { get; set; }
 

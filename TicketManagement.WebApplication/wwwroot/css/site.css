@@ -18,8 +18,8 @@ body {
 }
 
 .seat {
-    width: 45px;
-    height: 45px;
+    width: 55px;
+    height: 55px;
     background-color: lightgray;
     border-radius: 5px;
     text-align: center;

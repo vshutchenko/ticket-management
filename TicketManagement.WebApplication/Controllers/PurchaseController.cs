@@ -1,5 +1,6 @@
 ﻿using System.Security.Claims;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TicketManagement.BusinessLogic.Interfaces;
 using TicketManagement.BusinessLogic.Models;
@@ -14,18 +15,40 @@ namespace TicketManagement.WebApplication.Controllers
 {
     public class PurchaseController : Controller
     {
-        private readonly IPurchaseService _purchaseService;
+        private readonly IEventService _eventService;
+        private readonly IEventAreaService _eventAreaService;
         private readonly IEventSeatService _eventSeatService;
+        private readonly IPurchaseService _purchaseService;
         private readonly IMapper _mapper;
 
-        public PurchaseController(IPurchaseService purchaseService, IEventSeatService eventSeatService, IMapper mapper)
+        public PurchaseController(IEventService eventService, IEventAreaService eventAreaService, IEventSeatService eventSeatService, IPurchaseService purchaseService, IMapper mapper)
         {
-            _purchaseService = purchaseService;
+            _eventService = eventService;
+            _eventAreaService = eventAreaService;
             _eventSeatService = eventSeatService;
+            _purchaseService = purchaseService;
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
 
+        [HttpGet]
+        [Authorize(Roles ="Event manager,User")]
+        public async Task<IActionResult> PurchaseSeats(int id)
+        {
+            var eventVM = _mapper.Map<PurchaseSeatsViewModel>(await _eventService.GetByIdAsync(id));
+
+            foreach (var area in _eventAreaService.GetByEventId(id))
+            {
+                var areaVM = _mapper.Map<EventAreaViewModel>(area);
+                var seatsVM = _eventSeatService.GetByEventAreaId(areaVM.Id).Select(s => _mapper.Map<EventSeatViewModel>(s)).ToList();
+                eventVM.Seats.AddRange(seatsVM);
+                eventVM.Areas.Add(areaVM);
+            }
+
+            return View(eventVM);
+        }
+
         [HttpPost]
+        [Authorize(Roles = "User")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> PurchaseSeats(CreatePurchaseViewModel model)
         {
@@ -45,6 +68,7 @@ namespace TicketManagement.WebApplication.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "User")]
         public async Task<IActionResult> PurchaseHistory(
             [FromServices] IEventService eventService,
             [FromServices] IVenueService venueService,

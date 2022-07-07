@@ -120,6 +120,9 @@
   <data name="Create" xml:space="preserve">
     <value>Создать</value>
   </data>
+  <data name="Create event" xml:space="preserve">
+    <value>Создать событие</value>
+  </data>
   <data name="List of events" xml:space="preserve">
     <value>Список событий</value>
   </data>

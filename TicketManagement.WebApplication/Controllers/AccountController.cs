@@ -193,7 +193,7 @@ namespace TicketManagement.WebApplication.Controllers
         {
             var user = _mapper.Map<UserModel>(model);
 
-            await _identityService.CreateAsync(user, model.Password);
+            await _identityService.CreateUserAsync(user, model.Password);
             await AuthenticateAsync(model.Email, model.Password);
 
             return RedirectToAction("Index", "Home");

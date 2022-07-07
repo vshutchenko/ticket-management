@@ -4,22 +4,22 @@ new tempusDominus.TempusDominus(document.getElementById('datetimepicker1'), {
     localization: {
         locale: culture,
     },
+    display: { components: { seconds: false } },
     restrictions:
     {
         minDate: Date()
-    },
-    display: { components: { seconds: false } },
+    }, 
 })
 
 new tempusDominus.TempusDominus(document.getElementById('datetimepicker2'), {
     localization: {
         locale: culture,
     },
+    display: { components: { seconds: false } },
     restrictions:
     {
         minDate: Date()
     },
-    display: { components: { seconds: false } }
 })
 
 function getCookie(name) {

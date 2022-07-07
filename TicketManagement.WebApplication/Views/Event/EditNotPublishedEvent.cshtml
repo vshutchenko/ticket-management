@@ -1,0 +1,64 @@
+﻿@using System.Globalization
+@using TicketManagement.WebApplication.Models.Event
+@model EditEventViewModel
+
+<form asp-action="EditNotPublishedEvent" asp-antiforgery="true" method="post">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <div class="w-25">
+        <div class="form-group">
+            @if (Model.Event!.ImageUrl != null)
+            {
+                <img src="@Model.Event!.ImageUrl" width=300 height=300 style="object-fit: contain; object-position: left;" />
+            }
+
+            <input type="hidden" asp-for="Event!.Id" value="@Model.Event!.Id" />
+            <input type="hidden" asp-for="Event!.Published" value="true" />
+            <input type="hidden" asp-for="Event!.Layout" value="@Model.Event!.Layout" />
+            <input type="hidden" asp-for="Event!.Name" value="@Model.Event!.Name" />
+            <input type="hidden" asp-for="Event!.Description" value="@Model.Event!.Description" />
+            <input type="hidden" asp-for="Event!.StartDate" value="@Model.Event!.StartDate" />
+            <input type="hidden" asp-for="Event!.EndDate" value="@Model.Event!.EndDate" />
+
+            <h5>@Html.DisplayNameFor(modelItem => @Model.Event!.Name)</h5>
+            <div>@Html.DisplayFor(modelItem => @Model.Event!.Name)</div>
+
+            <h5>@Html.DisplayNameFor(modelItem => @Model.Event!.Description)</h5>
+            <div>@Html.DisplayFor(modelItem => @Model.Event!.Description)</div>
+            
+            <h5>@Html.DisplayNameFor(modelItem => @Model.Event!.StartDate)</h5>
+            <p>@User.GetLocalTime(@Model.Event!.StartDate).ToString("g", CultureInfo.CurrentCulture)</p>
+            
+            <h5>@Html.DisplayNameFor(modelItem => @Model.Event!.EndDate)</h5>
+            <p>@User.GetLocalTime(@Model.Event!.EndDate).ToString("g", CultureInfo.CurrentCulture)</p>
+        </div>
+
+        <div class="form-group">
+            @{
+                for (var i = 0; i < Model.Areas.Count(); i++)
+                {
+
+                    <label asp-for="@Model.Areas[i].Description"></label>
+                    <input type="hidden" asp-for="@Model.Areas[i].Id" />
+                    <input asp-for="@Model.Areas[i].Price" class="price form-control" lang="en" />
+
+                    <span asp-validation-for="@Model.Areas[i].Price" class="text-danger"></span>
+                }
+            }
+        </div>
+
+        <div class="mt-2">
+            <input type="submit" value="@Localizer["Submit"]" class="btn btn-primary" />
+        </div>
+    </div>
+</form>
+@section scripts{
+<script>
+        $('.price').mask("##.00", {
+      reverse: true
+    });
+
+</script>
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

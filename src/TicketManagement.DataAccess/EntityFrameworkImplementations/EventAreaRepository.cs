@@ -28,9 +28,13 @@ namespace TicketManagement.DataAccess.EntityFrameworkImplementations
 
         public async Task DeleteAsync(int id)
         {
-            _context.Remove(id);
+            var entity = _context.EventAreas.FirstOrDefault(a => a.Id == id);
 
-            await _context.SaveChangesAsync();
+            if (entity != null)
+            {
+                _context.Remove(entity);
+                await _context.SaveChangesAsync();
+            }
         }
 
         public IQueryable<EventArea> GetAll()

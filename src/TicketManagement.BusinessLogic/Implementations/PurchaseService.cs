@@ -99,6 +99,11 @@ namespace TicketManagement.BusinessLogic.Implementations
 
         private async Task CheckSeatsAsync(IEnumerable<int> seatIds)
         {
+            if (!seatIds.Any())
+            {
+                throw new ValidationException($"No seats choosen.");
+            }
+
             foreach (var id in seatIds)
             {
                 var seat = await _eventSeatService.GetByIdAsync(id);

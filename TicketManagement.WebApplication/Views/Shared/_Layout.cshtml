@@ -9,6 +9,9 @@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/TicketManagement.WebApplication.styles.css" asp-append-version="true" />
     <link href="~/lib/tempus-dominus/dist/css/tempus-dominus.css" rel="stylesheet" />
+
+    <script src="~/lib/font-awesome/js/fontawesome.min.js"></script>
+    <script src="~/lib/font-awesome/js/solid.min.js"></script>
 </head>
 <body>
     <header>
@@ -27,16 +30,6 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-controller="Event" asp-action="Index">@Localizer["Events"]</a>
                         </li>
-                        @if (@User.Identities.First().HasClaim(ClaimTypes.Role, "Event manager"))
-                        {
-                            <li class="nav-item dropdown">
-                                <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">@Localizer["Event management"]</a>
-                                <div class="dropdown-menu dropdown-menu-right">
-                                    <a class="dropdown-item" asp-controller="Event" asp-action="CreateEvent">@Localizer["Create event"]</a>
-                                    <a class="dropdown-item" asp-controller="Event" asp-action="NotPublishedEvents">@Localizer["Not published events"]</a>
-                                </div>
-                            </li>
-                        }
                     </ul>
                     <partial name="_LoginPartial" />
                 </div>
@@ -50,6 +43,8 @@
     </div>
 
     <script src="~/lib/jquery/jquery.min.js"></script>
+
+    <script src="~/lib/jquery.mask/jquery.mask.min.js"></script>
 
     <script src="~/lib/bootstrap/js/bootstrap.min.js"></script>
 

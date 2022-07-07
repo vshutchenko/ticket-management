@@ -8,7 +8,7 @@ using TicketManagement.BusinessLogic.DependencyResolving;
 using TicketManagement.BusinessLogic.Interfaces;
 using TicketManagement.WebApplication.Filters;
 using TicketManagement.WebApplication.Infrastructure;
-using TicketManagement.WebApplication.Middlewares;
+using TicketManagement.WebApplication.ModelBinders;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -38,6 +38,7 @@ builder.Services.AddLocalization(options => options.ResourcesPath = "Resources")
 
 builder.Services.AddControllersWithViews(options =>
 {
+    options.ModelBinderProviders.Insert(0, new InvariantDecimalModelBinderProvider());
     options.Filters.Add(typeof(ValidationExceptionFilter));
 })
     .AddRazorRuntimeCompilation()

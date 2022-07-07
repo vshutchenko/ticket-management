@@ -1,5 +1,4 @@
 ﻿@using System.Globalization
-@using System.Security.Claims
 @using TicketManagement.WebApplication.Models.Event
 @model IEnumerable<EventViewModel>
 
@@ -18,6 +17,12 @@
             <th>
                 @Html.DisplayNameFor(model => model.EndDate)
             </th>
+            @if (User.IsEventManager())
+            {
+                <th>
+                    @Html.DisplayNameFor(model => model.Published)
+                </th>
+            }
             <th></th>
         </tr>
     </thead>
@@ -32,16 +37,25 @@
                     @Html.DisplayFor(modelItem => item.Description)
                 </td>
                 <td>
-                    @item.StartDate.ToLocalTime().ToString("g", CultureInfo.CurrentCulture)
+                    @User.GetLocalTime(@item.StartDate).ToString("g", CultureInfo.CurrentCulture)
                 </td>
                 <td>
-                    @item.EndDate.ToLocalTime().ToString("g", CultureInfo.CurrentCulture)
+                    @User.GetLocalTime(@item.EndDate).ToString("g", CultureInfo.CurrentCulture)
                 </td>
+                @if (User.IsEventManager())
+                {
+                    <th>
+                        @Html.DisplayFor(modelItem => item.Published)
+                    </th>
+                }
                 <td>
-                    <a asp-action="Details" asp-route-id="@item.Id">@Localizer["Details"]</a>
-                    @if (User.Identities.First().HasClaim(ClaimTypes.Role, "Event manager"))
+                    <a class="btn btn-success" asp-controller="Purchase" asp-action="PurchaseSeats" asp-route-id="@item.Id">@Localizer["Details"]</a>
+
+                    @if (User.IsEventManager())
                     {
-                        <a asp-action="EditEvent" asp-route-id="@item.Id">@Localizer["Edit"]</a>
+                        <a class="btn btn-primary" asp-action="EditEvent" asp-route-id="@item.Id">@Localizer["Edit"]</a>
+                        <a class="btn btn-danger" asp-action="DeleteEvent" asp-route-id="@item.Id" onclick="return confirm('Are sure wants to delete?');" >@Localizer["Delete"]</a>
+
                     }
                 </td>
             </tr>

@@ -117,16 +117,10 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Event management" xml:space="preserve">
-    <value>Кіраванне падзеямі</value>
-  </data>
   <data name="Events" xml:space="preserve">
     <value>Падзеі</value>
   </data>
   <data name="Home" xml:space="preserve">
     <value>Галоўная</value>
-  </data>
-  <data name="Venue management" xml:space="preserve">
-    <value>Кіраванне лакацыямі</value>
   </data>
 </root>

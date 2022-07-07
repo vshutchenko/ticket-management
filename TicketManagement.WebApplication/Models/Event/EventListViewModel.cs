@@ -2,13 +2,7 @@
 {
     public class EventListViewModel
     {
-        public EventListViewModel(IEnumerable<EventViewModel> events, PagingInfo pagingInfo)
-        {
-            Events = events ?? throw new ArgumentNullException(nameof(events));
-            PagingInfo = pagingInfo ?? throw new ArgumentNullException(nameof(pagingInfo));
-        }
-
-        public IEnumerable<EventViewModel> Events { get; set; }
-        public PagingInfo PagingInfo { get; set; }
+        public List<EventViewModel> Events { get; set; } = new List<EventViewModel>();
+        public PagingInfo? PagingInfo { get; set; }
     }
 }

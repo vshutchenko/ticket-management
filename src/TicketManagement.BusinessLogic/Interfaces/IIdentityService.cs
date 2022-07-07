@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Security.Claims;
 using System.Threading.Tasks;
 using TicketManagement.BusinessLogic.Models;
 
@@ -12,7 +11,7 @@ namespace TicketManagement.BusinessLogic.Interfaces
         Task<UserModel> GetUserAsync(string userId);
         Task<IList<string>> GetRolesAsync(string userId);
         Task<UserModel> AuthenticateAsync(string email, string password);
-        Task CreateAsync(UserModel userModel, string password);
+        Task CreateUserAsync(UserModel userModel, string password);
         Task AssignRole(string userId, string role);
         Task SeedInitialData();
     }

@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using TicketManagement.WebApplication.Models.EventArea;
+﻿using TicketManagement.WebApplication.Models.EventArea;
 
 namespace TicketManagement.WebApplication.Models.Event
 {

@@ -19,6 +19,7 @@ namespace TicketManagement.WebApplication.Models.Event
                 Venue = venueId.ToString(),
                 Layouts = new SelectList(layouts, "Id", "Description"),
                 Venues = new SelectList(venues, "Id", "Description"),
+                Published = @event.Published,
             };
         }
     }

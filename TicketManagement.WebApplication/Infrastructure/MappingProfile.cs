@@ -5,6 +5,7 @@ using TicketManagement.WebApplication.Models.Event;
 using TicketManagement.WebApplication.Models.EventArea;
 using TicketManagement.WebApplication.Models.EventSeat;
 using TicketManagement.WebApplication.Models.Layout;
+using TicketManagement.WebApplication.Models.Purchase;
 using TicketManagement.WebApplication.Models.Venue;
 
 namespace TicketManagement.WebApplication.Infrastructure
@@ -14,11 +15,13 @@ namespace TicketManagement.WebApplication.Infrastructure
         public MappingProfile()
         {
             CreateMap<EventModel, EventViewModel>();
-            CreateMap<EventModel, EventDetailsViewModel>();
+            CreateMap<EventModel, PurchaseSeatsViewModel>();
             CreateMap<CreateEventViewModel, EventModel>()
                 .ForMember(x => x.LayoutId, opt => opt.MapFrom(m => int.Parse(m.Layout)))
                 .ForSourceMember(m => m.Layouts, opt => opt.DoNotValidate())
                 .ForSourceMember(m => m.Venues, opt => opt.DoNotValidate());
+
+            CreateMap<EventModel, CreateEventViewModel>();
 
             CreateMap<EventAreaModel, EventAreaViewModel>();
 
@@ -28,7 +31,9 @@ namespace TicketManagement.WebApplication.Infrastructure
 
             CreateMap<VenueModel, VenueViewModel>();
 
-            CreateMap<CreatePurchaseViewModel, PurchaseModel>();
+            CreateMap<CreatePurchaseViewModel, PurchaseModel>()
+                .ForMember(p => p.Id, opt => opt.Ignore());
+
             CreateMap<EditUserViewModel, UserModel>()
                 .ForSourceMember(m => m.Cultures, opt => opt.DoNotValidate())
                 .ForSourceMember(m => m.TimeZones, opt => opt.DoNotValidate());

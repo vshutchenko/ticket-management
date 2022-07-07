@@ -9,41 +9,44 @@
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
         <div class="w-25">
             <div class="form-group">
-                @Html.LabelFor(model => model.Venues, htmlAttributes: new { @class = "control-label col-md-2" })
-                <div class="col-md-10">
-                    @Html.DropDownList("Venue", Model.Venues as SelectList, new { id = "venue", @class = "form-select" })
-                </div>
+                <label asp-for="Venues" class="control-label"></label>
+                <select id="venue" asp-for="Venue" asp-items="Model.Venues" class="form-select" ></select>
             </div>
+
             <div class="form-group">
-                @Html.LabelFor(model => model.Layouts, htmlAttributes: new { @class = "control-label col-md-2" })
-                <div class="col-md-10">
-                    @Html.DropDownList("Layout", Model.Layouts as SelectList, new { id = "layout", @class = "form-select" })
-                </div>
+                <label asp-for="Layouts" class="control-label"></label>
+                <select id="layout" asp-for="Layout" asp-items="Model.Layouts" class="form-select" ></select>
             </div>
+
             <div class="form-group">
                 <label asp-for="Name" class="control-label"></label>
                 <input asp-for="Name" class="form-control" />
                 <span asp-validation-for="Name" class="text-danger"></span>
             </div>
+
             <div class="form-group">
                 <label asp-for="Description" class="control-label"></label>
                 <input asp-for="Description" class="form-control" />
                 <span asp-validation-for="Description" class="text-danger"></span>
             </div>
+
             <div class="form-group">
-                <label asp-for="StartDate" class="form-label">Simple picker</label>
+                <label asp-for="StartDate" class="form-label"></label>
                 <div class="input-group" id="datetimepicker1" data-td-target-input="nearest" data-td-target-toggle="nearest">
                     <input asp-for="StartDate" value="@DateTime.Now" id="datetimepicker1Input" type="text" class="form-control" data-td-target="#datetimepicker1" />
                     <span class="input-group-text" data-td-target="#datetimepicker1" data-td-toggle="datetimepicker">
+                    <span class='fa-solid fa-calendar'></span>
                     </span>
                 </div>
                 <span asp-validation-for="StartDate" class="text-danger"></span>
             </div>
+
             <div class="form-group">
-                <label asp-for="EndDate" class="form-label">Simple picker</label>
+                <label asp-for="EndDate" class="form-label"></label>
                 <div class="input-group" id="datetimepicker2" data-td-target-input="nearest"  data-td-target-toggle="nearest">
                     <input asp-for="EndDate" value="@DateTime.Now" id="datetimepicker2Input" type="text" class="form-control" data-td-target="#datetimepicker2" />
                     <span class="input-group-text" data-td-target="#datetimepicker2" data-td-toggle="datetimepicker">
+                    <span class='fa-solid fa-calendar'></span>
                     </span>
                 </div>
                 <span asp-validation-for="EndDate" class="text-danger"></span>
@@ -64,7 +67,20 @@
 
 @section Scripts {
 <script src="~/js/datepicker.js"></script>
-<script src="~/js/layoutList.js"></script>
+<script>
+        $(function () {
+    $('#venue').change(function () {
+        var id = $(this).val();
+        $.ajax({
+            type: 'GET',
+            url: '@Url.Action("PartialLayoutList")?venueId=' + id,
+            success: function (data) {
+                $('#layout').replaceWith(data);
+            }
+        });
+    });
+})
+        </script>
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }

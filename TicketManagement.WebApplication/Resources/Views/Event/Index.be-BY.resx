@@ -120,6 +120,9 @@
   <data name="Create" xml:space="preserve">
     <value>Стварыць</value>
   </data>
+  <data name="Create event" xml:space="preserve">
+    <value>Стварыць падзею</value>
+  </data>
   <data name="List of events" xml:space="preserve">
     <value>Спіс падзей</value>
   </data>
