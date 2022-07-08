@@ -117,22 +117,94 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Are you sure you want to delete this event?" xml:space="preserve">
-    <value>Вы ўпэўненыя, што хочаце выдаліць гэтую падзею?</value>
+  <data name="Area description should be unique in the layout." xml:space="preserve">
+    <value>Апісанне зоны павінна быць унікальным для лакацыі.</value>
   </data>
-  <data name="Close" xml:space="preserve">
-    <value>Закрыць</value>
+  <data name="Area is null." xml:space="preserve">
+    <value>Зона не знойдзена.</value>
   </data>
-  <data name="Delete" xml:space="preserve">
-    <value>Выдаліць</value>
+  <data name="Cannot change password." xml:space="preserve">
+    <value>Немагчыма змяніць пароль.</value>
   </data>
-  <data name="Delete confirmation" xml:space="preserve">
-    <value>Пацвердзіць выдаленне</value>
+  <data name="Cannot create user." xml:space="preserve">
+    <value>Немагчыма стварыць карыстальніка.</value>
   </data>
-  <data name="Details" xml:space="preserve">
-    <value>Падрабязней</value>
+  <data name="Cannot update user." xml:space="preserve">
+    <value>Немагчыма абнавіць карыстальніка.</value>
   </data>
-  <data name="Edit" xml:space="preserve">
-    <value>Рэдагаваць</value>
+  <data name="End date is less than start date." xml:space="preserve">
+    <value>Дата заканчэння меншая за дату пачатку.</value>
+  </data>
+  <data name="Entity was not found." xml:space="preserve">
+    <value>Аб'ект не знойдзены.</value>
+  </data>
+  <data name="Event cannot be deleted because some seats has already been purchased." xml:space="preserve">
+    <value>Падзея не можа быць выдаленая, бо некаторыя месцы ўжо былі набыты.</value>
+  </data>
+  <data name="Event in the same layout and the same time is already exists." xml:space="preserve">
+    <value>У дадзенай лакацыі ўжо існуе падзея ў абраны час.</value>
+  </data>
+  <data name="Event is null." xml:space="preserve">
+    <value>Падзея не знойдзена.</value>
+  </data>
+  <data name="Layout is null." xml:space="preserve">
+    <value>Лакацыя не знойдзена.</value>
+  </data>
+  <data name="No seats chosen." xml:space="preserve">
+    <value>Месцы не былі абраныя.</value>
+  </data>
+  <data name="Not valid current password." xml:space="preserve">
+    <value>Няправільны сучасны пароль.</value>
+  </data>
+  <data name="One or more seats have already been ordered." xml:space="preserve">
+    <value>Адно ці больш месцаў ужо былі замоўленыя.</value>
+  </data>
+  <data name="Price is less than zero." xml:space="preserve">
+    <value>Кошт меншы за нуль.</value>
+  </data>
+  <data name="Role was not found." xml:space="preserve">
+    <value>Роля не знойдзена.</value>
+  </data>
+  <data name="Seat is null." xml:space="preserve">
+    <value>Месца не знойдзена.</value>
+  </data>
+  <data name="Seat with same row and number is already exists in the area." xml:space="preserve">
+    <value>Месца з такім самым нумарам ужо існуе ў абранай зоне.</value>
+  </data>
+  <data name="Some seats have already been ordered." xml:space="preserve">
+    <value>Некаторыя месцы ўжо былі набыты.</value>
+  </data>
+  <data name="Start date is in the past." xml:space="preserve">
+    <value>Дата пачатку знаходзіцца ў мінулым.</value>
+  </data>
+  <data name="The same layout is already exists in current venue." xml:space="preserve">
+    <value>Дадзеная лакацыя ўжо існуе ў месцы правядзення.</value>
+  </data>
+  <data name="There are no available seats in the layout." xml:space="preserve">
+    <value>У дадзенай лакацыі няма даступных месцаў.</value>
+  </data>
+  <data name="User already exists." xml:space="preserve">
+    <value>Карыстальнік ужо існуе.</value>
+  </data>
+  <data name="User was not found." xml:space="preserve">
+    <value>Карыстальнік не знойдзены.</value>
+  </data>
+  <data name="User with such email does not exists." xml:space="preserve">
+    <value>Карыстальнік з такой поштай не існуе.</value>
+  </data>
+  <data name="Validation error" xml:space="preserve">
+    <value>Памылка валідацыі</value>
+  </data>
+  <data name="Venue is null." xml:space="preserve">
+    <value>Месца правядзення не знойдзена.</value>
+  </data>
+  <data name="Venue with same description is already exists." xml:space="preserve">
+    <value>Месца правядзення з такім апісаннем ужо існуе.</value>
+  </data>
+  <data name="Wrong password." xml:space="preserve">
+    <value>Няправільны пароль.</value>
+  </data>
+  <data name="Your account has insufficient funds." xml:space="preserve">
+    <value>На вашым акаўнце недастаткова сродкаў.</value>
   </data>
 </root>

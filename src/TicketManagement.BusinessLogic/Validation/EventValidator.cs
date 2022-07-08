@@ -86,7 +86,7 @@ namespace TicketManagement.BusinessLogic.Validation
                 .Where(a => a.EventId == eventId).Select(a => a.Id).ToList();
 
             bool allSeatsAvailable = _eventSeatRepository.GetAll().AsEnumerable()
-                .Where(s => eventAreasIds.Contains(s.Id))
+                .Where(s => eventAreasIds.Contains(s.EventAreaId))
                 .All(s => s.State == EventSeatState.Available);
 
             if (!allSeatsAvailable)

@@ -2,6 +2,8 @@
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
+using Microsoft.Extensions.Localization;
+using TicketManagement.BusinessLogic.Validation;
 
 namespace TicketManagement.WebApplication.Filters
 {
@@ -9,6 +11,11 @@ namespace TicketManagement.WebApplication.Filters
     {
         public void OnException(ExceptionContext context)
         {
+            if (context.Exception.GetType() != typeof(ValidationException))
+            {
+                return;
+            }
+
             context.ExceptionHandled = true;
 
             var viewData = new ViewDataDictionary(new EmptyModelMetadataProvider(), context.ModelState);

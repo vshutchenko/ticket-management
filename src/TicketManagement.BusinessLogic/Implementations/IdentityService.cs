@@ -140,7 +140,7 @@ namespace TicketManagement.BusinessLogic.Implementations
 
             if (!result.Succeeded)
             {
-                throw new ValidationException("Invalid role.");
+                throw new ValidationException("Role was not found.");
             }
         }
 

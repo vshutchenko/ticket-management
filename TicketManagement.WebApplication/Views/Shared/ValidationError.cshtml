@@ -4,6 +4,6 @@
 
 <div class="alert alert-danger">
     <h1>@Localizer["Validation error"]</h1>
-    <h3>@ViewData["ValidationError"]</h3>
+    <h3>@Localizer[ViewData["ValidationError"]!.ToString()!]</h3>
 </div>
 

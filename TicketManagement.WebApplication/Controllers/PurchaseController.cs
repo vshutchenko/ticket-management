@@ -64,16 +64,14 @@ namespace TicketManagement.WebApplication.Controllers
 
             await _purchaseService.PurchaseSeatAsync(purchase);
 
-            return View();
+            return RedirectToAction("PurchaseHistory", "Purchase");
         }
 
         [HttpGet]
         [Authorize(Roles = "User")]
         public async Task<IActionResult> PurchaseHistory(
-            [FromServices] IEventService eventService,
             [FromServices] IVenueService venueService,
-            [FromServices] ILayoutService layoutService,
-            [FromServices] IEventAreaService eventAreaService)
+            [FromServices] ILayoutService layoutService)
         {
             var userId = User.FindFirstValue("id");
 
@@ -88,8 +86,8 @@ namespace TicketManagement.WebApplication.Controllers
                 foreach (var id in purchase.SeatIds)
                 {
                     var seat = _mapper.Map<EventSeatViewModel>(await _eventSeatService.GetByIdAsync(id));
-                    var area = _mapper.Map<EventAreaViewModel>(await eventAreaService.GetByIdAsync(seat.EventAreaId));
-                    var @event = _mapper.Map<EventViewModel>(await eventService.GetByIdAsync(area.EventId));
+                    var area = _mapper.Map<EventAreaViewModel>(await _eventAreaService.GetByIdAsync(seat.EventAreaId));
+                    var @event = _mapper.Map<EventViewModel>(await _eventService.GetByIdAsync(area.EventId));
                     var layout = _mapper.Map<LayoutViewModel>(await layoutService.GetByIdAsync(@event.LayoutId));
                     var venue = _mapper.Map<VenueViewModel>(await venueService.GetByIdAsync(layout.VenueId));
 

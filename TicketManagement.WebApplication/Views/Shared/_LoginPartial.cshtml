@@ -9,8 +9,11 @@
             <div class="dropdown-menu dropdown-menu-right">
                 <a class="dropdown-item" asp-controller="Account" asp-action="EditUser" asp-route-userId="@User.FindFirst("id")!.Value">@Localizer["Edit profile"]</a>
                 <a class="dropdown-item" asp-controller="Account" asp-action="ChangePassword">@Localizer["Change password"]</a>
-                <a class="dropdown-item" asp-controller="Purchase" asp-action="PurchaseHistory">@Localizer["Purchase history"]</a>
-                <a class="dropdown-item" asp-controller="Account" asp-action="AddFunds">@Localizer["Add funds"]</a>
+                @if (@User.IsUser())
+                {
+                    <a class="dropdown-item" asp-controller="Purchase" asp-action="PurchaseHistory">@Localizer["Purchase history"]</a>
+                    <a class="dropdown-item" asp-controller="Account" asp-action="AddFunds">@Localizer["Add funds"]</a>
+                }
                 <div class="dropdown-divider"></div>
                 <a class="dropdown-item" asp-controller="Account" asp-action="Logout">@Localizer["Logout"]</a>
             </div>

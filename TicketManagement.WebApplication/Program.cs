@@ -39,7 +39,7 @@ builder.Services.AddLocalization(options => options.ResourcesPath = "Resources")
 builder.Services.AddControllersWithViews(options =>
 {
     options.ModelBinderProviders.Insert(0, new InvariantDecimalModelBinderProvider());
-    options.Filters.Add(typeof(ValidationExceptionFilter));
+    options.Filters.Add<ValidationExceptionFilter>();
 })
     .AddRazorRuntimeCompilation()
     .AddDataAnnotationsLocalization()
@@ -89,7 +89,7 @@ app.UseRequestLocalization(app.Services.GetRequiredService<IOptions<RequestLocal
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+    pattern: "{controller=Event}/{action=Index}");
 app.MapRazorPages();
 
 app.Run();

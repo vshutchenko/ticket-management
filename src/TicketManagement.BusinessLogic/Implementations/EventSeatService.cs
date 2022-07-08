@@ -14,11 +14,13 @@ namespace TicketManagement.BusinessLogic.Implementations
     internal class EventSeatService : IEventSeatService
     {
         private readonly IRepository<EventSeat> _eventSeatRepository;
+        private readonly IRepository<EventArea> _eventAreaRepository;
         private readonly IMapper _mapper;
 
-        public EventSeatService(IRepository<EventSeat> eventSeatRepository, IMapper mapper)
+        public EventSeatService(IRepository<EventSeat> eventSeatRepository, IRepository<EventArea> eventAreaRepository, IMapper mapper)
         {
             _eventSeatRepository = eventSeatRepository ?? throw new ArgumentNullException(nameof(eventSeatRepository));
+            _eventAreaRepository = eventAreaRepository ?? throw new ArgumentNullException(nameof(eventAreaRepository));
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
 
@@ -56,7 +58,8 @@ namespace TicketManagement.BusinessLogic.Implementations
 
         public IEnumerable<EventSeatModel> GetByEventAreaId(int eventAreaId)
         {
-            // add throwing if area not found
+            Task.Run(async () => await _eventAreaRepository.GetByIdAsync(eventAreaId));
+
             var models = _eventSeatRepository.GetAll()
                 .Where(s => s.EventAreaId == eventAreaId)
                 .Select(s => _mapper.Map<EventSeatModel>(s))

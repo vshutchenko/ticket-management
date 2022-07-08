@@ -15,12 +15,14 @@ namespace TicketManagement.BusinessLogic.Implementations
     internal class EventAreaService : IEventAreaService
     {
         private readonly IRepository<EventArea> _eventAreaRepository;
+        private readonly IRepository<Event> _eventRepository;
         private readonly IValidator<decimal> _priceValidator;
         private readonly IMapper _mapper;
 
-        public EventAreaService(IRepository<EventArea> eventAreaRepository, IValidator<decimal> priceValidator, IMapper mapper)
+        public EventAreaService(IRepository<EventArea> eventAreaRepository, IRepository<Event> eventRepository, IValidator<decimal> priceValidator, IMapper mapper)
         {
             _eventAreaRepository = eventAreaRepository ?? throw new ArgumentNullException(nameof(eventAreaRepository));
+            _eventRepository = eventRepository ?? throw new ArgumentNullException(nameof(eventRepository));
             _priceValidator = priceValidator ?? throw new ArgumentNullException(nameof(priceValidator));
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
@@ -36,7 +38,8 @@ namespace TicketManagement.BusinessLogic.Implementations
 
         public IEnumerable<EventAreaModel> GetByEventId(int eventId)
         {
-            // add throwing if event not found
+            Task.Run(async () => await _eventRepository.GetByIdAsync(eventId));
+
             var models = _eventAreaRepository.GetAll()
                 .Where(a => a.EventId == eventId)
                 .Select(a => _mapper.Map<EventAreaModel>(a))

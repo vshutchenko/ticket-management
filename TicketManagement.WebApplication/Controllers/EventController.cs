@@ -20,7 +20,6 @@ namespace TicketManagement.WebApplication.Controllers
         private readonly ILayoutService _layoutService;
         private readonly IVenueService _venueService;
         private readonly IMapper _mapper;
-        private readonly int _pageSize = 10;
 
         public EventController(
             IEventService eventService,
@@ -39,18 +38,12 @@ namespace TicketManagement.WebApplication.Controllers
         [HttpGet]
         public IActionResult Index(int page = 1)
         {
-            var eventsCount = _eventService.Count();
-
-            var eventsVM = _eventService
-                .GetPage(page, _pageSize)
+            var eventsVM = _eventService.GetAll()
+                .Where(e => e.Published)
                 .Select(e => _mapper.Map<EventViewModel>(e))
                 .ToList();
 
-            var pagingInfo = new PagingInfo(eventsCount, _pageSize, page);
-
-            var listVM = new EventListViewModel { Events = eventsVM, PagingInfo = pagingInfo };
-
-            return View(listVM);
+            return View(eventsVM);
         }
 
         [HttpGet]

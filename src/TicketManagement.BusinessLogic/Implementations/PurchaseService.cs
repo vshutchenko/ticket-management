@@ -74,7 +74,7 @@ namespace TicketManagement.BusinessLogic.Implementations
                 var purchaseModel = _mapper.Map<PurchaseModel>(p);
                 purchaseModel.SeatIds = _purchasedSeatRepository.GetAll()
                     .Where(s => s.PurchaseId == p.Id)
-                    .Select(s => s.Id).ToList();
+                    .Select(s => s.EventSeatId).ToList();
 
                 models.Add(purchaseModel);
             }
@@ -101,17 +101,16 @@ namespace TicketManagement.BusinessLogic.Implementations
         {
             if (!seatIds.Any())
             {
-                throw new ValidationException($"No seats choosen.");
+                throw new ValidationException($"No seats chosen.");
             }
 
             foreach (var id in seatIds)
             {
                 var seat = await _eventSeatService.GetByIdAsync(id);
-                var area = await _eventAreaRepository.GetByIdAsync(seat.EventAreaId);
 
                 if (seat.State != EventSeatStateModel.Available)
                 {
-                    throw new ValidationException($"Seat {seat.Number} in the {seat.Row} row in the {area.Description} is already ordered.");
+                    throw new ValidationException($"One or more seats have already been ordered.");
                 }
             }
         }

@@ -28,6 +28,7 @@ namespace TicketManagement.WebApplication.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "User")]
         public async Task<IActionResult> AddFunds()
         {
             var userId = User.FindFirstValue("id");
@@ -40,6 +41,7 @@ namespace TicketManagement.WebApplication.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "User")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> AddFunds(decimal amount)
         {
@@ -152,7 +154,7 @@ namespace TicketManagement.WebApplication.Controllers
         {
             await AuthenticateAsync(model.Email, model.Password);
 
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction("Index", "Event");
         }
 
         [HttpGet]
@@ -196,7 +198,7 @@ namespace TicketManagement.WebApplication.Controllers
             await _identityService.CreateUserAsync(user, model.Password);
             await AuthenticateAsync(model.Email, model.Password);
 
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction("Index", "Event");
         }
 
         private async Task AuthenticateAsync(string email, string password)

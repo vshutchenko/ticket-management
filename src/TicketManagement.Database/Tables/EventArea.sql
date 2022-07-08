@@ -5,5 +5,5 @@
 	[Description] nvarchar(200) NOT NULL,
 	[CoordX] int NOT NULL,
 	[CoordY] int NOT NULL,
-	[Price] decimal NOT NULL
+	[Price] decimal(16, 2) NOT NULL
 )

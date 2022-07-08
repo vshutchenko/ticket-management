@@ -6,25 +6,31 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.Event!.Name)
+                @Localizer["Event"]
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Venue!.Description)
+                @Localizer["Start date"]
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Layout!.Description)
+                @Localizer["End date"]
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Area!.Description)
+                @Localizer["Venue"]
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Seat!.Row)
+                @Localizer["Layout"]
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Seat!.Number)
+                @Localizer["Area"]
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Area!.Price)
+                @Localizer["Row"]
+            </th>
+            <th>
+                @Localizer["Number"]
+            </th>
+            <th>
+                @Localizer["Price"]
             </th>
         </tr>
     </thead>
@@ -33,25 +39,31 @@
         {
             <tr>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Event!.Name)
+                    @item.Event!.Name
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Venue!.Description)
+                    @User.GetLocalTime(@item.Event!.StartDate).ToString("g")
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Layout!.Description)
+                    @User.GetLocalTime(@item.Event!.EndDate).ToString("g")
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Area!.Description)
+                    @item.Venue!.Description
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Seat!.Row)
+                    @item.Layout!.Description
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Seat!.Number)
+                    @item.Area!.Description
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Area!.Price)
+                    @item.Seat!.Row
+                </td>
+                <td>
+                    @item.Seat!.Number
+                </td>
+                <td>
+                    @item.Area!.Price.ToString("c")
                 </td>
             </tr>
         }

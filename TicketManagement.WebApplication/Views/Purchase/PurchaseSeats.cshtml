@@ -5,13 +5,17 @@
 @using TicketManagement.WebApplication.Models.Purchase
 @model PurchaseSeatsViewModel
 
+<h1>@Localizer["Purchase seats"]</h1>
+<hr />
+
+
 <div>
-    <h4>@Localizer["Event"]</h4>
     @if(@Model.ImageUrl != null && @Model.ImageUrl != string.Empty)
     {
         <img src="@Model.ImageUrl" width=300 height=300 style="object-fit: contain; object-position: left;" />
+        <hr />
     }
-    <hr />
+    
     <dl class="row">
         <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Name)
@@ -77,5 +81,5 @@
         </table>
     }
 
-    <input class="btn btn-primary mt-5" value="@Localizer["Submit"]" type="submit" />
+    <input class="btn btn-primary mt-5" value="@Localizer["Buy"]" type="submit" />
 </form>

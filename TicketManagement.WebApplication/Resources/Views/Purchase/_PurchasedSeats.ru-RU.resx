@@ -117,22 +117,31 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Are you sure you want to delete this event?" xml:space="preserve">
-    <value>Вы ўпэўненыя, што хочаце выдаліць гэтую падзею?</value>
+  <data name="Area" xml:space="preserve">
+    <value>Зона</value>
   </data>
-  <data name="Close" xml:space="preserve">
-    <value>Закрыць</value>
+  <data name="End date" xml:space="preserve">
+    <value>Конец</value>
   </data>
-  <data name="Delete" xml:space="preserve">
-    <value>Выдаліць</value>
+  <data name="Event" xml:space="preserve">
+    <value>Событие</value>
   </data>
-  <data name="Delete confirmation" xml:space="preserve">
-    <value>Пацвердзіць выдаленне</value>
+  <data name="Layout" xml:space="preserve">
+    <value>Локация</value>
   </data>
-  <data name="Details" xml:space="preserve">
-    <value>Падрабязней</value>
+  <data name="Number" xml:space="preserve">
+    <value>Номер</value>
   </data>
-  <data name="Edit" xml:space="preserve">
-    <value>Рэдагаваць</value>
+  <data name="Price" xml:space="preserve">
+    <value>Стоимость</value>
+  </data>
+  <data name="Row" xml:space="preserve">
+    <value>Ряд</value>
+  </data>
+  <data name="Start date" xml:space="preserve">
+    <value>Начало</value>
+  </data>
+  <data name="Venue" xml:space="preserve">
+    <value>Место проведения</value>
   </data>
 </root>

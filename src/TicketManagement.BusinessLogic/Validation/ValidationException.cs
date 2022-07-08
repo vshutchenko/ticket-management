@@ -7,11 +7,8 @@ namespace TicketManagement.BusinessLogic.Validation
     [Serializable]
     public class ValidationException : Exception
     {
-        private readonly List<string> _errors;
-
         public ValidationException()
         {
-            _errors = new List<string>();
         }
 
         public ValidationException(string message)
