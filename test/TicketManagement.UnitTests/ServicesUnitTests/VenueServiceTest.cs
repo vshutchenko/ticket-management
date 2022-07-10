@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using FluentAssertions;
 using Moq;
 using NUnit.Framework;
@@ -17,23 +18,24 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
     {
         private Mock<IRepository<Venue>> _venueRepositoryMock;
         private IVenueService _venueService;
+        private Mock<IMapper> _mapperMock;
 
         [SetUp]
         public void SetUp()
         {
             _venueRepositoryMock = new Mock<IRepository<Venue>>();
+            _mapperMock = new Mock<IMapper>();
 
             var venueValidator = new VenueValidator(_venueRepositoryMock.Object);
-
-            _venueService = new VenueService(_venueRepositoryMock.Object, venueValidator);
+            _venueService = new VenueService(_venueRepositoryMock.Object, venueValidator, _mapperMock.Object);
         }
 
         [Test]
-        public void Create_ValidVenue_CreatesVenue()
+        public Task Create_ValidVenue_CreatesVenue()
         {
             var venueToCreate = new Venue { Id = 1, Description = "New Venue", Address = "New Addres", Phone = "111 222 333 444" };
-
-            _venueService.CreateAsync(venueToCreate);
+              
+            await _venueService.CreateAsync(venueToCreate);
 
             _venueRepositoryMock.Verify(x => x.CreateAsync(venueToCreate), Times.Once);
         }

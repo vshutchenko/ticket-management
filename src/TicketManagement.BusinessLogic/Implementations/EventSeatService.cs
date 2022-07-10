@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
-using TicketManagement.BusinessLogic.Extensions;
 using TicketManagement.BusinessLogic.Interfaces;
 using TicketManagement.BusinessLogic.Models;
+using TicketManagement.BusinessLogic.Validation;
 using TicketManagement.DataAccess.Entities;
 using TicketManagement.DataAccess.Interfaces;
 
@@ -35,7 +35,7 @@ namespace TicketManagement.BusinessLogic.Implementations
 
         public async Task<EventSeatModel> GetByIdAsync(int id)
         {
-            await _eventSeatRepository.CheckIfIdExistsAsync(id);
+            await ValidateEventSeatExistsAsync(id);
 
             var seat = await _eventSeatRepository.GetByIdAsync(id);
 
@@ -46,7 +46,7 @@ namespace TicketManagement.BusinessLogic.Implementations
 
         public async Task SetSeatStateAsync(int id, EventSeatStateModel stateModel)
         {
-            await _eventSeatRepository.CheckIfIdExistsAsync(id);
+            await ValidateEventSeatExistsAsync(id);
 
             var seat = await _eventSeatRepository.GetByIdAsync(id);
 
@@ -58,7 +58,7 @@ namespace TicketManagement.BusinessLogic.Implementations
 
         public IEnumerable<EventSeatModel> GetByEventAreaId(int eventAreaId)
         {
-            Task.Run(async () => await _eventAreaRepository.GetByIdAsync(eventAreaId));
+            Task.Run(async () => await ValidateEventAreaExistsAsync(eventAreaId));
 
             var models = _eventSeatRepository.GetAll()
                 .Where(s => s.EventAreaId == eventAreaId)
@@ -66,6 +66,26 @@ namespace TicketManagement.BusinessLogic.Implementations
                 .ToList();
 
             return models;
+        }
+
+        private async Task ValidateEventSeatExistsAsync(int id)
+        {
+            var eventSeat = await _eventSeatRepository.GetByIdAsync(id);
+
+            if (eventSeat is null)
+            {
+                throw new ValidationException("Entity was not found.");
+            }
+        }
+
+        private async Task ValidateEventAreaExistsAsync(int id)
+        {
+            var eventArea = await _eventAreaRepository.GetByIdAsync(id);
+
+            if (eventArea is null)
+            {
+                throw new ValidationException("Entity was not found.");
+            }
         }
     }
 }

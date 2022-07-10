@@ -4,7 +4,6 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using AutoMapper;
-using TicketManagement.BusinessLogic.Extensions;
 using TicketManagement.BusinessLogic.Interfaces;
 using TicketManagement.BusinessLogic.Models;
 using TicketManagement.BusinessLogic.Validation;
@@ -46,7 +45,7 @@ namespace TicketManagement.BusinessLogic.Implementations
 
         public async Task DeleteAsync(int id)
         {
-            await _areaRepository.CheckIfIdExistsAsync(id);
+            await ValidateAreaExistsAsync(id);
 
             await _areaRepository.DeleteAsync(id);
         }
@@ -60,7 +59,7 @@ namespace TicketManagement.BusinessLogic.Implementations
 
         public async Task<AreaModel> GetByIdAsync(int id)
         {
-            await _areaRepository.CheckIfIdExistsAsync(id);
+            await ValidateAreaExistsAsync(id);
 
             var area = await _areaRepository.GetByIdAsync(id);
 
@@ -76,13 +75,23 @@ namespace TicketManagement.BusinessLogic.Implementations
                 throw new ValidationException("Area is null.");
             }
 
-            await _areaRepository.CheckIfIdExistsAsync(areaModel.Id);
+            await ValidateAreaExistsAsync(areaModel.Id);
 
             var area = _mapper.Map<Area>(areaModel);
 
             _areaValidator.Validate(area);
 
             await _areaRepository.UpdateAsync(area);
+        }
+
+        private async Task ValidateAreaExistsAsync(int id)
+        {
+            var area = await _areaRepository.GetByIdAsync(id);
+
+            if (area is null)
+            {
+                throw new ValidationException("Entity was not found.");
+            }
         }
     }
 }

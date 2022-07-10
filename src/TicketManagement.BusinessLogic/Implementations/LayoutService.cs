@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
-using TicketManagement.BusinessLogic.Extensions;
 using TicketManagement.BusinessLogic.Interfaces;
 using TicketManagement.BusinessLogic.Models;
 using TicketManagement.BusinessLogic.Validation;
@@ -43,7 +42,7 @@ namespace TicketManagement.BusinessLogic.Implementations
 
         public async Task DeleteAsync(int id)
         {
-            await _layoutRepository.CheckIfIdExistsAsync(id);
+            await ValidateLayoutExistsAsync(id);
 
             await _layoutRepository.DeleteAsync(id);
         }
@@ -57,7 +56,7 @@ namespace TicketManagement.BusinessLogic.Implementations
 
         public async Task<LayoutModel> GetByIdAsync(int id)
         {
-            await _layoutRepository.CheckIfIdExistsAsync(id);
+            await ValidateLayoutExistsAsync(id);
 
             var layout = await _layoutRepository.GetByIdAsync(id);
 
@@ -73,13 +72,23 @@ namespace TicketManagement.BusinessLogic.Implementations
                 throw new ValidationException("Layout is null.");
             }
 
-            await _layoutRepository.CheckIfIdExistsAsync(layoutModel.Id);
+            await ValidateLayoutExistsAsync(layoutModel.Id);
 
             var layout = _mapper.Map<Layout>(layoutModel);
 
             _layoutValidator.Validate(layout);
 
             await _layoutRepository.UpdateAsync(layout);
+        }
+
+        private async Task ValidateLayoutExistsAsync(int id)
+        {
+            var layout = await _layoutRepository.GetByIdAsync(id);
+
+            if (layout is null)
+            {
+                throw new ValidationException("Entity was not found.");
+            }
         }
     }
 }

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
-using TicketManagement.BusinessLogic.Extensions;
 using TicketManagement.BusinessLogic.Interfaces;
 using TicketManagement.BusinessLogic.Models;
 using TicketManagement.BusinessLogic.Validation;
@@ -38,7 +37,7 @@ namespace TicketManagement.BusinessLogic.Implementations
 
         public IEnumerable<EventAreaModel> GetByEventId(int eventId)
         {
-            Task.Run(async () => await _eventRepository.GetByIdAsync(eventId));
+            Task.Run(async () => await ValidateEventExistsAsync(eventId));
 
             var models = _eventAreaRepository.GetAll()
                 .Where(a => a.EventId == eventId)
@@ -50,7 +49,7 @@ namespace TicketManagement.BusinessLogic.Implementations
 
         public async Task<EventAreaModel> GetByIdAsync(int id)
         {
-            await _eventAreaRepository.CheckIfIdExistsAsync(id);
+            await ValidateEventAreaExistsAsync(id);
 
             var eventArea = await _eventAreaRepository.GetByIdAsync(id);
 
@@ -61,7 +60,7 @@ namespace TicketManagement.BusinessLogic.Implementations
 
         public async Task SetPriceAsync(int id, decimal price)
         {
-            await _eventAreaRepository.CheckIfIdExistsAsync(id);
+            await ValidateEventAreaExistsAsync(id);
 
             _priceValidator.Validate(price);
 
@@ -69,6 +68,26 @@ namespace TicketManagement.BusinessLogic.Implementations
 
             area.Price = price;
             await _eventAreaRepository.UpdateAsync(area);
+        }
+
+        private async Task ValidateEventAreaExistsAsync(int id)
+        {
+            var eventArea = await _eventAreaRepository.GetByIdAsync(id);
+
+            if (eventArea is null)
+            {
+                throw new ValidationException("Entity was not found.");
+            }
+        }
+
+        private async Task ValidateEventExistsAsync(int id)
+        {
+            var @event = await _eventRepository.GetByIdAsync(id);
+
+            if (@event is null)
+            {
+                throw new ValidationException("Entity was not found.");
+            }
         }
     }
 }

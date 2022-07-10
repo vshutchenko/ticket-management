@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
-using TicketManagement.BusinessLogic.Extensions;
 using TicketManagement.BusinessLogic.Interfaces;
 using TicketManagement.BusinessLogic.Models;
 using TicketManagement.BusinessLogic.Validation;
@@ -43,7 +42,7 @@ namespace TicketManagement.BusinessLogic.Implementations
 
         public async Task DeleteAsync(int id)
         {
-            await _venueRepository.CheckIfIdExistsAsync(id);
+            await ValidateVenueExistsAsync(id);
 
             await _venueRepository.DeleteAsync(id);
         }
@@ -57,7 +56,7 @@ namespace TicketManagement.BusinessLogic.Implementations
 
         public async Task<VenueModel> GetByIdAsync(int id)
         {
-            await _venueRepository.CheckIfIdExistsAsync(id);
+            await ValidateVenueExistsAsync(id);
 
             var venue = await _venueRepository.GetByIdAsync(id);
 
@@ -73,7 +72,7 @@ namespace TicketManagement.BusinessLogic.Implementations
                 throw new ValidationException("Venue is null.");
             }
 
-            await _venueRepository.CheckIfIdExistsAsync(venueModel.Id);
+            await ValidateVenueExistsAsync(venueModel.Id);
 
             var venue = _mapper.Map<Venue>(venueModel);
 
@@ -93,6 +92,16 @@ namespace TicketManagement.BusinessLogic.Implementations
                 Select(v => _mapper.Map<VenueModel>(v));
 
             return models;
+        }
+
+        private async Task ValidateVenueExistsAsync(int id)
+        {
+            var venue = await _venueRepository.GetByIdAsync(id);
+
+            if (venue is null)
+            {
+                throw new ValidationException("Entity was not found.");
+            }
         }
     }
 }
