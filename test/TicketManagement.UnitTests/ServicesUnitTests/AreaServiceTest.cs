@@ -27,7 +27,7 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
             _areaRepositoryMock = new Mock<IRepository<Area>>();
             _mapperMock = new Mock<IMapper>();
 
-            AreaValidator areaValidator = new AreaValidator(_areaRepositoryMock.Object);
+            var areaValidator = new AreaValidator(_areaRepositoryMock.Object);
             _areaService = new AreaService(_areaRepositoryMock.Object, areaValidator, _mapperMock.Object);
         }
 
@@ -35,8 +35,8 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
         public async Task Create_ValidArea_CreatesArea()
         {
             // Arrange
-            AreaModel areaToCreate = new AreaModel { Id = 1, Description = "New Area", CoordX = 1, CoordY = 1, LayoutId = 3 };
-            Area mappedArea = new Area { Id = 1, Description = "New Area", CoordX = 1, CoordY = 1, LayoutId = 3 };
+            var areaToCreate = new AreaModel { Id = 1, Description = "New Area", CoordX = 1, CoordY = 1, LayoutId = 3 };
+            var mappedArea = new Area { Id = 1, Description = "New Area", CoordX = 1, CoordY = 1, LayoutId = 3 };
 
             _mapperMock.Setup(m => m.Map<Area>(areaToCreate)).Returns(mappedArea);
 
@@ -51,20 +51,20 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
         public async Task Create_AreaWithSameDescriptionExists_ThrowsValidationException()
         {
             // Arrange
-            List<Area> areas = new List<Area>
+            var areas = new List<Area>
             {
                 new Area { Id = 1, Description = "Area 1", CoordX = 1, CoordY = 1, LayoutId = 1 },
             };
 
             _areaRepositoryMock.Setup(x => x.GetAll()).Returns(areas.AsQueryable());
 
-            AreaModel areaToCreate = new AreaModel { Description = "Area 1", CoordX = 2, CoordY = 2, LayoutId = 1 };
-            Area mappedArea = new Area { Description = "Area 1", CoordX = 2, CoordY = 2, LayoutId = 1 };
+            var areaToCreate = new AreaModel { Description = "Area 1", CoordX = 2, CoordY = 2, LayoutId = 1 };
+            var mappedArea = new Area { Description = "Area 1", CoordX = 2, CoordY = 2, LayoutId = 1 };
 
             _mapperMock.Setup(m => m.Map<Area>(areaToCreate)).Returns(mappedArea);
 
             // Act
-            System.Func<Task<int>> creatingArea = _areaService.Invoking(s => s.CreateAsync(areaToCreate));
+            var creatingArea = _areaService.Invoking(s => s.CreateAsync(areaToCreate));
 
             // Assert
             await creatingArea.Should().ThrowAsync<ValidationException>()
@@ -78,7 +78,7 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
             AreaModel nullArea = null;
 
             // Act
-            System.Func<Task<int>> creatingArea = _areaService.Invoking(s => s.CreateAsync(nullArea));
+            var creatingArea = _areaService.Invoking(s => s.CreateAsync(nullArea));
 
             // Assert
             await creatingArea.Should().ThrowAsync<ValidationException>()
@@ -89,9 +89,9 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
         public async Task Delete_AreaExists_DeletesArea()
         {
             // Arrange
-            Area area = new Area { Id = 1, Description = "Area 1", CoordX = 1, CoordY = 1, LayoutId = 1 };
+            var area = new Area { Id = 1, Description = "Area 1", CoordX = 1, CoordY = 1, LayoutId = 1 };
 
-            int id = 1;
+            var id = 1;
 
             _areaRepositoryMock.Setup(x => x.GetByIdAsync(id)).ReturnsAsync(area);
 
@@ -106,7 +106,7 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
         public async Task Delete_AreaNotFound_ThrowsValidationException()
         {
             // Arrange
-            List<Area> areas = new List<Area>
+            var areas = new List<Area>
             {
                 new Area { Id = 1, Description = "Area 1", CoordX = 1, CoordY = 1, LayoutId = 1 },
                 new Area { Id = 2, Description = "Area 2", CoordX = 1, CoordY = 2, LayoutId = 1 },
@@ -115,10 +115,10 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
 
             _areaRepositoryMock.Setup(x => x.GetAll()).Returns(areas.AsQueryable());
 
-            int notExistingId = 99;
+            var notExistingId = 99;
 
             // Act
-            System.Func<Task> deletingArea = _areaService.Invoking(s => s.DeleteAsync(notExistingId));
+            var deletingArea = _areaService.Invoking(s => s.DeleteAsync(notExistingId));
 
             // Assert
             await deletingArea.Should().ThrowAsync<ValidationException>()
@@ -129,17 +129,17 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
         public async Task UpdateDescription_ValidArea_UpdatesArea()
         {
             // Arrange
-            int id = 1;
+            var id = 1;
 
-            Area area = new Area { Id = 1, Description = "Area 1", CoordX = 1, CoordY = 1, LayoutId = 1 };
-            List<Area> areas = new List<Area> { area };
+            var area = new Area { Id = 1, Description = "Area 1", CoordX = 1, CoordY = 1, LayoutId = 1 };
+            var areas = new List<Area> { area };
 
             _areaRepositoryMock.Setup(x => x.GetByIdAsync(id)).ReturnsAsync(area);
             _areaRepositoryMock.Setup(x => x.GetAll()).Returns(areas.AsQueryable());
 
-            AreaModel areaToUpdate = new AreaModel { Id = 1, Description = "New Area", CoordX = 1, CoordY = 1, LayoutId = 4 };
+            var areaToUpdate = new AreaModel { Id = 1, Description = "New Area", CoordX = 1, CoordY = 1, LayoutId = 4 };
 
-            Area mappedArea = new Area { Id = 1, Description = "New Area", CoordX = 1, CoordY = 1, LayoutId = 4 };
+            var mappedArea = new Area { Id = 1, Description = "New Area", CoordX = 1, CoordY = 1, LayoutId = 4 };
 
             _mapperMock.Setup(m => m.Map<Area>(areaToUpdate)).Returns(mappedArea);
 
@@ -154,17 +154,17 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
         public async Task UpdateCoordinates_ValidArea_UpdatesArea()
         {
             // Arrange
-            int id = 1;
+            var id = 1;
 
-            Area area = new Area { Id = 1, Description = "Area 1", CoordX = 1, CoordY = 1, LayoutId = 1 };
-            List<Area> areas = new List<Area> { area };
+            var area = new Area { Id = 1, Description = "Area 1", CoordX = 1, CoordY = 1, LayoutId = 1 };
+            var areas = new List<Area> { area };
 
             _areaRepositoryMock.Setup(x => x.GetByIdAsync(id)).ReturnsAsync(area);
             _areaRepositoryMock.Setup(x => x.GetAll()).Returns(areas.AsQueryable());
 
-            AreaModel areaToUpdate = new AreaModel { Id = 1, Description = "Area 1", CoordX = 2, CoordY = 2, LayoutId = 1 };
+            var areaToUpdate = new AreaModel { Id = 1, Description = "Area 1", CoordX = 2, CoordY = 2, LayoutId = 1 };
 
-            Area mappedArea = new Area { Id = 1, Description = "Area 1", CoordX = 2, CoordY = 2, LayoutId = 1 };
+            var mappedArea = new Area { Id = 1, Description = "Area 1", CoordX = 2, CoordY = 2, LayoutId = 1 };
 
             _mapperMock.Setup(m => m.Map<Area>(areaToUpdate)).Returns(mappedArea);
 
@@ -179,18 +179,18 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
         public async Task Update_AreaNotFound_ThrowsValidationException()
         {
             // Arrange
-            int notExistingId = 1;
+            var notExistingId = 1;
 
-            AreaModel areaToUpdate = new AreaModel { Id = 1, Description = "New Area", CoordX = 1, CoordY = 1, LayoutId = 4 };
+            var areaToUpdate = new AreaModel { Id = 1, Description = "New Area", CoordX = 1, CoordY = 1, LayoutId = 4 };
 
-            Area mappedArea = new Area { Id = 1, Description = "New Area", CoordX = 1, CoordY = 1, LayoutId = 4 };
+            var mappedArea = new Area { Id = 1, Description = "New Area", CoordX = 1, CoordY = 1, LayoutId = 4 };
 
             _mapperMock.Setup(m => m.Map<Area>(areaToUpdate)).Returns(mappedArea);
 
             _areaRepositoryMock.Setup(x => x.GetByIdAsync(notExistingId)).ReturnsAsync(default(Area));
 
             // Act
-            System.Func<Task> updatingArea = _areaService.Invoking(s => s.UpdateAsync(areaToUpdate));
+            var updatingArea = _areaService.Invoking(s => s.UpdateAsync(areaToUpdate));
 
             // Assert
             await updatingArea
@@ -202,26 +202,26 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
         public async Task Update_AreaWithSameDescriptionExists_ThrowsValidationException()
         {
             // Arrange
-            List<Area> areas = new List<Area>
+            var areas = new List<Area>
             {
                 new Area { Id = 1, Description = "Area 1", CoordX = 1, CoordY = 1, LayoutId = 1 },
                 new Area { Id = 2, Description = "Area 2", CoordX = 1, CoordY = 2, LayoutId = 1 },
             };
 
-            int id = 2;
+            var id = 2;
 
             _areaRepositoryMock.Setup(x => x.GetAll()).Returns(areas.AsQueryable());
 
             _areaRepositoryMock.Setup(x => x.GetByIdAsync(id)).ReturnsAsync(areas.First(a => a.Id == id));
 
-            AreaModel areaToUpdate = new AreaModel { Id = 2, Description = "Area 1", CoordX = 1, CoordY = 1, LayoutId = 1 };
+            var areaToUpdate = new AreaModel { Id = 2, Description = "Area 1", CoordX = 1, CoordY = 1, LayoutId = 1 };
 
-            Area mappedArea = new Area { Id = 2, Description = "Area 1", CoordX = 1, CoordY = 1, LayoutId = 1 };
+            var mappedArea = new Area { Id = 2, Description = "Area 1", CoordX = 1, CoordY = 1, LayoutId = 1 };
 
             _mapperMock.Setup(m => m.Map<Area>(areaToUpdate)).Returns(mappedArea);
 
             // Act
-            System.Func<Task> updatingArea = _areaService.Invoking(s => s.UpdateAsync(areaToUpdate));
+            var updatingArea = _areaService.Invoking(s => s.UpdateAsync(areaToUpdate));
 
             // Assert
             await updatingArea
@@ -236,7 +236,7 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
             AreaModel nullArea = null;
 
             // Act
-            System.Func<Task> updatingArea = _areaService.Invoking(s => s.UpdateAsync(nullArea));
+            var updatingArea = _areaService.Invoking(s => s.UpdateAsync(nullArea));
 
             // Assert
             await updatingArea.Should().ThrowAsync<ValidationException>()
@@ -247,21 +247,21 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
         public void GetAll_AreaListNotEmpty_ReturnsAreaList()
         {
             // Arrange
-            List<Area> areas = new List<Area>
+            var areas = new List<Area>
             {
                 new Area { Id = 1, Description = "Area 1", CoordX = 1, CoordY = 1, LayoutId = 1 },
                 new Area { Id = 2, Description = "Area 2", CoordX = 1, CoordY = 2, LayoutId = 1 },
                 new Area { Id = 3, Description = "Area 3", CoordX = 1, CoordY = 1, LayoutId = 2 },
             };
 
-            List<AreaModel> mappedAreas = new List<AreaModel>
+            var mappedAreas = new List<AreaModel>
             {
                 new AreaModel { Id = 1, Description = "Area 1", CoordX = 1, CoordY = 1, LayoutId = 1 },
                 new AreaModel { Id = 2, Description = "Area 2", CoordX = 1, CoordY = 2, LayoutId = 1 },
                 new AreaModel { Id = 3, Description = "Area 3", CoordX = 1, CoordY = 1, LayoutId = 2 },
             };
 
-            for (int i = 0; i < areas.Count; i++)
+            for (var i = 0; i < areas.Count; i++)
             {
                 _mapperMock.Setup(m => m.Map<AreaModel>(areas[i])).Returns(mappedAreas[i]);
             }
@@ -269,7 +269,7 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
             _areaRepositoryMock.Setup(x => x.GetAll()).Returns(areas.AsQueryable());
 
             // Act
-            IEnumerable<AreaModel> actualAreas = _areaService.GetAll();
+            var actualAreas = _areaService.GetAll();
 
             // Assert
             actualAreas.Should().BeEquivalentTo(mappedAreas);
@@ -279,17 +279,17 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
         public async Task GetById_AreaExists_ReturnsArea()
         {
             // Arrange
-            int id = 1;
+            var id = 1;
 
-            Area area = new Area { Id = 1, Description = "Area 1", CoordX = 1, CoordY = 1, LayoutId = 1 };
-            AreaModel mappedArea = new AreaModel { Id = 1, Description = "Area 1", CoordX = 1, CoordY = 1, LayoutId = 1 };
+            var area = new Area { Id = 1, Description = "Area 1", CoordX = 1, CoordY = 1, LayoutId = 1 };
+            var mappedArea = new AreaModel { Id = 1, Description = "Area 1", CoordX = 1, CoordY = 1, LayoutId = 1 };
 
             _areaRepositoryMock.Setup(x => x.GetByIdAsync(id)).ReturnsAsync(area);
 
             _mapperMock.Setup(m => m.Map<AreaModel>(area)).Returns(mappedArea);
 
             // Act
-            AreaModel actualArea = await _areaService.GetByIdAsync(id);
+            var actualArea = await _areaService.GetByIdAsync(id);
 
             // Assert
             actualArea.Should().BeEquivalentTo(mappedArea);
@@ -299,12 +299,12 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
         public async Task GetById_AreaNotFound_ReturnsNull()
         {
             // Arrange
-            int id = 1;
+            var id = 1;
 
             _areaRepositoryMock.Setup(x => x.GetByIdAsync(id)).ReturnsAsync(default(Area));
 
             // Act
-            System.Func<Task<AreaModel>> gettingArea = _areaService.Invoking(s => s.GetByIdAsync(id));
+            var gettingArea = _areaService.Invoking(s => s.GetByIdAsync(id));
 
             // Assert
             await gettingArea.Should().ThrowAsync<ValidationException>()

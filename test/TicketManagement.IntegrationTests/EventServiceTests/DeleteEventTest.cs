@@ -18,17 +18,17 @@ namespace TicketManagement.IntegrationTests.EventServiceTests
         [SetUp]
         public void CreateServices()
         {
-            string connectionString = new TestDatabase().ConnectionString;
+            var connectionString = new TestDatabase().ConnectionString;
 
-            EventSqlClientRepository eventRepo = new EventSqlClientRepository(connectionString);
-            AreaSqlClientRepository areaRepo = new AreaSqlClientRepository(connectionString);
-            SeatSqlClientRepository seatRepo = new SeatSqlClientRepository(connectionString);
+            var eventRepo = new EventSqlClientRepository(connectionString);
+            var areaRepo = new AreaSqlClientRepository(connectionString);
+            var seatRepo = new SeatSqlClientRepository(connectionString);
 
-            EventAreaSqlClientRepository eventAreaRepo = new EventAreaSqlClientRepository(connectionString);
-            EventSeatSqlClientRepository eventSeatRepo = new EventSeatSqlClientRepository(connectionString);
+            var eventAreaRepo = new EventAreaSqlClientRepository(connectionString);
+            var eventSeatRepo = new EventSeatSqlClientRepository(connectionString);
 
-            EventValidator eventValidationService = new EventValidator(eventRepo, seatRepo, areaRepo);
-            PriceValidator priceValidationService = new PriceValidator();
+            var eventValidationService = new EventValidator(eventRepo, seatRepo, areaRepo);
+            var priceValidationService = new PriceValidator();
 
             _eventService = new EventService(eventRepo, eventValidationService);
 
@@ -39,7 +39,7 @@ namespace TicketManagement.IntegrationTests.EventServiceTests
         [Test]
         public async Task Delete_EventExists_DeletesEvent()
         {
-            int id = 1;
+            var id = 1;
 
             await _eventService.DeleteAsync(id);
 
@@ -51,12 +51,12 @@ namespace TicketManagement.IntegrationTests.EventServiceTests
         [Test]
         public async Task Delete_EventExists_DeletesAreas()
         {
-            int id = 1;
-            int expectedEventAreasCount = 0;
+            var id = 1;
+            var expectedEventAreasCount = 0;
 
             await _eventService.DeleteAsync(id);
 
-            int actualEventAreasCount = _eventAreaService
+            var actualEventAreasCount = _eventAreaService
                 .GetAll()
                 .Count(a => a.EventId == id);
 
@@ -66,12 +66,12 @@ namespace TicketManagement.IntegrationTests.EventServiceTests
         [Test]
         public async Task Delete_EventExists_DeletesSeats()
         {
-            int id = 1;
-            int expectedEventSeatsCount = 0;
+            var id = 1;
+            var expectedEventSeatsCount = 0;
 
             await _eventService.DeleteAsync(id);
 
-            int actualEventSeatsCount = _eventAreaService
+            var actualEventSeatsCount = _eventAreaService
                 .GetAll()
                 .Where(a => a.EventId == id)
                 .Sum(a => _eventSeatService.GetAll().Count(s => s.EventAreaId == a.Id));

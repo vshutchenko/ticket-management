@@ -36,7 +36,7 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
             _eventSeatServiceMock = new Mock<IEventSeatService>();
             _mapperMock = new Mock<IMapper>();
 
-            EventValidator eventValidator = new EventValidator(_eventRepositoryMock.Object, _seatRepositoryMock.Object, _areaRepositoryMock.Object);
+            var eventValidator = new EventValidator(_eventRepositoryMock.Object, _seatRepositoryMock.Object, _areaRepositoryMock.Object);
 
             _eventService = new EventService(_eventRepositoryMock.Object, eventValidator, _eventSeatServiceMock.Object, _eventAreaServiceMock.Object, _mapperMock.Object);
         }
@@ -45,12 +45,12 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
         public async Task Create_ValidEvent_CreatesEvent()
         {
             // Arrange
-            List<Area> areas = new List<Area>
+            var areas = new List<Area>
             {
                 new Area { Id = 1, Description = "Area 1", CoordX = 1, CoordY = 1, LayoutId = 1 },
             };
 
-            List<Seat> seats = new List<Seat>
+            var seats = new List<Seat>
             {
                 new Seat { Id = 1, Row = 1, Number = 1, AreaId = 1, },
             };
@@ -58,7 +58,7 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
             _seatRepositoryMock.Setup(x => x.GetAll()).Returns(seats.AsQueryable());
             _areaRepositoryMock.Setup(x => x.GetAll()).Returns(areas.AsQueryable());
 
-            EventModel eventToCreate = new EventModel
+            var eventToCreate = new EventModel
             {
                 Id = 1,
                 Name = "New Event",
@@ -68,7 +68,7 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
                 EndDate = new DateTime(2023, 10, 11),
             };
 
-            Event mappedEventToCreate = new Event
+            var mappedEventToCreate = new Event
             {
                 Id = 1,
                 Name = "New Event",
@@ -91,12 +91,12 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
         public async Task Create_EventInThePast_ThrowsValidationException()
         {
             // Arrange
-            List<Area> areas = new List<Area>
+            var areas = new List<Area>
             {
                 new Area { Id = 1, Description = "Area 1", CoordX = 1, CoordY = 1, LayoutId = 1 },
             };
 
-            List<Seat> seats = new List<Seat>
+            var seats = new List<Seat>
             {
                 new Seat { Id = 1, Row = 1, Number = 1, AreaId = 1, },
             };
@@ -104,7 +104,7 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
             _seatRepositoryMock.Setup(x => x.GetAll()).Returns(seats.AsQueryable());
             _areaRepositoryMock.Setup(x => x.GetAll()).Returns(areas.AsQueryable());
 
-            EventModel eventToCreate = new EventModel
+            var eventToCreate = new EventModel
             {
                 Id = 1,
                 Name = "New Event",
@@ -114,7 +114,7 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
                 EndDate = new DateTime(2024, 1, 2),
             };
 
-            Event mappedEventToCreate = new Event
+            var mappedEventToCreate = new Event
             {
                 Id = 1,
                 Name = "New Event",
@@ -127,7 +127,7 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
             _mapperMock.Setup(m => m.Map<Event>(eventToCreate)).Returns(mappedEventToCreate);
 
             // Act
-            Func<Task<int>> creatingEvent = _eventService.Invoking(s => s.CreateAsync(eventToCreate));
+            var creatingEvent = _eventService.Invoking(s => s.CreateAsync(eventToCreate));
 
             // Assert
             await creatingEvent
@@ -139,12 +139,12 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
         public async Task Create_InvalidStartDate_ThrowsValidationException()
         {
             // Arrange
-            List<Area> areas = new List<Area>
+            var areas = new List<Area>
             {
                 new Area { Id = 1, Description = "Area 1", CoordX = 1, CoordY = 1, LayoutId = 1 },
             };
 
-            List<Seat> seats = new List<Seat>
+            var seats = new List<Seat>
             {
                 new Seat { Id = 1, Row = 1, Number = 1, AreaId = 1, },
             };
@@ -152,7 +152,7 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
             _seatRepositoryMock.Setup(x => x.GetAll()).Returns(seats.AsQueryable());
             _areaRepositoryMock.Setup(x => x.GetAll()).Returns(areas.AsQueryable());
 
-            EventModel eventToCreate = new EventModel
+            var eventToCreate = new EventModel
             {
                 Id = 1,
                 Name = "New Event",
@@ -162,7 +162,7 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
                 EndDate = new DateTime(2024, 1, 2),
             };
 
-            Event mappedEventToCreate = new Event
+            var mappedEventToCreate = new Event
             {
                 Id = 1,
                 Name = "New Event",
@@ -175,7 +175,7 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
             _mapperMock.Setup(m => m.Map<Event>(eventToCreate)).Returns(mappedEventToCreate);
 
             // Act
-            Func<Task<int>> creatingEvent = _eventService.Invoking(s => s.CreateAsync(eventToCreate));
+            var creatingEvent = _eventService.Invoking(s => s.CreateAsync(eventToCreate));
 
             // Assert
             await creatingEvent
@@ -187,17 +187,17 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
         public async Task Create_EventInTheSameLayoutExists_ThrowsValidationException()
         {
             // Arrange
-            List<Area> areas = new List<Area>
+            var areas = new List<Area>
             {
                 new Area { Id = 1, Description = "Area 1", CoordX = 1, CoordY = 1, LayoutId = 1 },
             };
 
-            List<Seat> seats = new List<Seat>
+            var seats = new List<Seat>
             {
                 new Seat { Id = 1, Row = 1, Number = 1, AreaId = 1, },
             };
 
-            List<Event> events = new List<Event>
+            var events = new List<Event>
             {
                 new Event { Id = 1, Name = "Event 1", Description = "Description 1", LayoutId = 1, StartDate = new DateTime(2023, 1, 1), EndDate = new DateTime(2023, 1, 2) },
             };
@@ -206,7 +206,7 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
             _areaRepositoryMock.Setup(x => x.GetAll()).Returns(areas.AsQueryable());
             _eventRepositoryMock.Setup(x => x.GetAll()).Returns(events.AsQueryable());
 
-            EventModel eventToCreate = new EventModel
+            var eventToCreate = new EventModel
             {
                 Name = "New Event",
                 Description = "Description 1",
@@ -215,7 +215,7 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
                 EndDate = new DateTime(2023, 1, 2),
             };
 
-            Event mappedEventToCreate = new Event
+            var mappedEventToCreate = new Event
             {
                 Name = "New Event",
                 Description = "Description 1",
@@ -227,7 +227,7 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
             _mapperMock.Setup(m => m.Map<Event>(eventToCreate)).Returns(mappedEventToCreate);
 
             // Act
-            Func<Task<int>> creatingEvent = _eventService.Invoking(s => s.CreateAsync(eventToCreate));
+            var creatingEvent = _eventService.Invoking(s => s.CreateAsync(eventToCreate));
 
             // Assert
             await creatingEvent
@@ -239,7 +239,7 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
         public async Task Create_NoAvailableSeats_ThrowsValidationException()
         {
             // Arrange
-            List<Area> areas = new List<Area>
+            var areas = new List<Area>
             {
                 new Area { Id = 1, Description = "Area 1", CoordX = 1, CoordY = 1, LayoutId = 1 },
             };
@@ -247,7 +247,7 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
             _areaRepositoryMock.Setup(x => x.GetAll()).Returns(areas.AsQueryable());
             _seatRepositoryMock.Setup(x => x.GetAll()).Returns(new List<Seat>().AsQueryable());
 
-            EventModel eventToCreate = new EventModel
+            var eventToCreate = new EventModel
             {
                 Id = 1,
                 Name = "New Event",
@@ -257,7 +257,7 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
                 EndDate = new DateTime(2023, 1, 2),
             };
 
-            Event mappedEventToCreate = new Event
+            var mappedEventToCreate = new Event
             {
                 Id = 1,
                 Name = "New Event",
@@ -270,7 +270,7 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
             _mapperMock.Setup(m => m.Map<Event>(eventToCreate)).Returns(mappedEventToCreate);
 
             // Act
-            Func<Task<int>> creatingEvent = _eventService.Invoking(s => s.CreateAsync(eventToCreate));
+            var creatingEvent = _eventService.Invoking(s => s.CreateAsync(eventToCreate));
 
             // Assert
             await creatingEvent
@@ -285,7 +285,7 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
             EventModel nullEvent = null;
 
             // Act
-            Func<Task<int>> creratingEvent = _eventService.Invoking(s => s.CreateAsync(nullEvent));
+            var creratingEvent = _eventService.Invoking(s => s.CreateAsync(nullEvent));
 
             // Assert
             await creratingEvent
@@ -297,10 +297,10 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
         public async Task Delete_EventExists_DeletesEvent()
         {
             // Arrange
-            int id = 1;
+            var id = 1;
 
-            Event @event = new Event { Id = 1, Name = "Event 1", Description = "Description 1", LayoutId = 1, StartDate = new DateTime(2023, 1, 1), EndDate = new DateTime(2023, 1, 2) };
-            List<Event> events = new List<Event> { @event };
+            var @event = new Event { Id = 1, Name = "Event 1", Description = "Description 1", LayoutId = 1, StartDate = new DateTime(2023, 1, 1), EndDate = new DateTime(2023, 1, 2) };
+            var events = new List<Event> { @event };
 
             _eventRepositoryMock.Setup(x => x.GetByIdAsync(id)).ReturnsAsync(@event);
             _eventRepositoryMock.Setup(x => x.GetAll()).Returns(events.AsQueryable());
@@ -316,31 +316,31 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
         public async Task Delete_EventSeatOrdered_ThrowsValidationException()
         {
             // Arrange
-            List<Area> areas = new List<Area>
+            var areas = new List<Area>
             {
                 new Area { Id = 1, Description = "Area 1", CoordX = 1, CoordY = 1, LayoutId = 1 },
             };
 
-            List<Seat> seats = new List<Seat>
+            var seats = new List<Seat>
             {
                 new Seat { Id = 1, Row = 1, Number = 1, AreaId = 1, },
             };
 
-            List<EventAreaModel> eventAreas = new List<EventAreaModel>
+            var eventAreas = new List<EventAreaModel>
             {
                 new EventAreaModel { Id = 1, Description = "EventArea 1", CoordX = 1, CoordY = 1, EventId = 1, Price = 15 },
             };
 
-            List<EventSeatModel> eventSeats = new List<EventSeatModel>
+            var eventSeats = new List<EventSeatModel>
             {
                 new EventSeatModel { Id = 1, Row = 1, Number = 1, EventAreaId = 1, State = EventSeatStateModel.Available },
                 new EventSeatModel { Id = 2, Row = 1, Number = 2, EventAreaId = 1, State = EventSeatStateModel.Ordered },
             };
 
-            int id = 1;
+            var id = 1;
 
-            Event @event = new Event { Id = 1, Name = "Event 1", Description = "Description 1", LayoutId = 1, StartDate = new DateTime(2023, 1, 1), EndDate = new DateTime(2023, 1, 2) };
-            List<Event> events = new List<Event> { @event };
+            var @event = new Event { Id = 1, Name = "Event 1", Description = "Description 1", LayoutId = 1, StartDate = new DateTime(2023, 1, 1), EndDate = new DateTime(2023, 1, 2) };
+            var events = new List<Event> { @event };
 
             _areaRepositoryMock.Setup(x => x.GetAll()).Returns(areas.AsQueryable());
             _seatRepositoryMock.Setup(x => x.GetAll()).Returns(seats.AsQueryable());
@@ -349,14 +349,14 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
 
             _eventAreaServiceMock.Setup(x => x.GetByEventId(id)).Returns(eventAreas);
 
-            foreach (EventAreaModel area in eventAreas)
+            foreach (var area in eventAreas)
             {
                 _eventSeatServiceMock.Setup(x => x.GetByEventAreaId(area.Id))
                     .Returns(eventSeats.Where(s => s.EventAreaId == area.Id));
             }
 
             // Act
-            Func<Task> deletingEvent = _eventService.Invoking(s => s.DeleteAsync(id));
+            var deletingEvent = _eventService.Invoking(s => s.DeleteAsync(id));
 
             await deletingEvent
                 .Should().ThrowAsync<ValidationException>()
@@ -367,29 +367,29 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
         public async Task Update_ValidEvent_UpdatesEvent()
         {
             // Arrange
-            List<Area> areas = new List<Area>
+            var areas = new List<Area>
             {
                 new Area { Id = 1, Description = "Area 1", CoordX = 1, CoordY = 1, LayoutId = 1 },
             };
 
-            List<Seat> seats = new List<Seat>
+            var seats = new List<Seat>
             {
                 new Seat { Id = 1, Row = 1, Number = 1, AreaId = 1, },
             };
 
-            List<EventAreaModel> eventAreas = new List<EventAreaModel>
+            var eventAreas = new List<EventAreaModel>
             {
                 new EventAreaModel { Id = 1, Description = "EventArea 1", CoordX = 1, CoordY = 1, EventId = 1, Price = 15 },
             };
 
-            List<EventSeatModel> eventSeats = new List<EventSeatModel>
+            var eventSeats = new List<EventSeatModel>
             {
                 new EventSeatModel { Id = 1, Row = 1, Number = 1, EventAreaId = 1, State = EventSeatStateModel.Available },
             };
 
-            int id = 1;
-            Event @event = new Event { Id = 1, Name = "Event 1", Description = "Description 1", LayoutId = 1, StartDate = new DateTime(2023, 1, 1), EndDate = new DateTime(2023, 1, 2) };
-            List<Event> events = new List<Event> { @event };
+            var id = 1;
+            var @event = new Event { Id = 1, Name = "Event 1", Description = "Description 1", LayoutId = 1, StartDate = new DateTime(2023, 1, 1), EndDate = new DateTime(2023, 1, 2) };
+            var events = new List<Event> { @event };
 
             _areaRepositoryMock.Setup(x => x.GetAll()).Returns(areas.AsQueryable());
             _seatRepositoryMock.Setup(x => x.GetAll()).Returns(seats.AsQueryable());
@@ -398,13 +398,13 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
 
             _eventAreaServiceMock.Setup(x => x.GetByEventId(id)).Returns(eventAreas);
 
-            foreach (EventAreaModel area in eventAreas)
+            foreach (var area in eventAreas)
             {
                 _eventSeatServiceMock.Setup(x => x.GetByEventAreaId(area.Id))
                     .Returns(eventSeats.Where(s => s.EventAreaId == area.Id));
             }
 
-            EventModel eventToUpdate = new EventModel
+            var eventToUpdate = new EventModel
             {
                 Id = 1,
                 Name = "Updated Event",
@@ -414,7 +414,7 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
                 EndDate = new DateTime(2024, 1, 2),
             };
 
-            Event mappedEventToUpdate = new Event
+            var mappedEventToUpdate = new Event
             {
                 Id = 1,
                 Name = "Updated Event",
@@ -437,30 +437,30 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
         public async Task Update_EventSeatOrdered_ThrowsValidationException()
         {
             // Arrange
-            List<Area> areas = new List<Area>
+            var areas = new List<Area>
             {
                 new Area { Id = 1, Description = "Area 1", CoordX = 1, CoordY = 1, LayoutId = 1 },
             };
 
-            List<Seat> seats = new List<Seat>
+            var seats = new List<Seat>
             {
                 new Seat { Id = 1, Row = 1, Number = 1, AreaId = 1, },
             };
 
-            List<EventAreaModel> eventAreas = new List<EventAreaModel>
+            var eventAreas = new List<EventAreaModel>
             {
                 new EventAreaModel { Id = 1, Description = "EventArea 1", CoordX = 1, CoordY = 1, EventId = 1, Price = 15 },
             };
 
-            List<EventSeatModel> eventSeats = new List<EventSeatModel>
+            var eventSeats = new List<EventSeatModel>
             {
                 new EventSeatModel { Id = 1, Row = 1, Number = 1, EventAreaId = 1, State = EventSeatStateModel.Available },
                 new EventSeatModel { Id = 2, Row = 1, Number = 2, EventAreaId = 1, State = EventSeatStateModel.Ordered },
             };
 
-            int id = 1;
-            Event @event = new Event { Id = 1, Name = "Event 1", Description = "Description 1", LayoutId = 1, StartDate = new DateTime(2023, 1, 1), EndDate = new DateTime(2023, 1, 2) };
-            List<Event> events = new List<Event> { @event };
+            var id = 1;
+            var @event = new Event { Id = 1, Name = "Event 1", Description = "Description 1", LayoutId = 1, StartDate = new DateTime(2023, 1, 1), EndDate = new DateTime(2023, 1, 2) };
+            var events = new List<Event> { @event };
 
             _areaRepositoryMock.Setup(x => x.GetAll()).Returns(areas.AsQueryable());
             _seatRepositoryMock.Setup(x => x.GetAll()).Returns(seats.AsQueryable());
@@ -469,13 +469,13 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
 
             _eventAreaServiceMock.Setup(x => x.GetByEventId(id)).Returns(eventAreas);
 
-            foreach (EventAreaModel area in eventAreas)
+            foreach (var area in eventAreas)
             {
                 _eventSeatServiceMock.Setup(x => x.GetByEventAreaId(area.Id))
                     .Returns(eventSeats.Where(s => s.EventAreaId == area.Id));
             }
 
-            EventModel eventToUpdate = new EventModel
+            var eventToUpdate = new EventModel
             {
                 Id = 1,
                 Name = "Updated Event",
@@ -485,7 +485,7 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
                 EndDate = new DateTime(2024, 1, 2),
             };
 
-            Event mappedEventToUpdate = new Event
+            var mappedEventToUpdate = new Event
             {
                 Id = 1,
                 Name = "Updated Event",
@@ -498,7 +498,7 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
             _mapperMock.Setup(m => m.Map<Event>(eventToUpdate)).Returns(mappedEventToUpdate);
 
             // Act
-            Func<Task> updatingEvent = _eventService.Invoking(s => s.UpdateAsync(eventToUpdate));
+            var updatingEvent = _eventService.Invoking(s => s.UpdateAsync(eventToUpdate));
 
             // Assert
             await updatingEvent
@@ -510,29 +510,29 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
         public async Task Update_EventInThePast_ThrowsValidationException()
         {
             // Arrange
-            List<Area> areas = new List<Area>
+            var areas = new List<Area>
             {
                 new Area { Id = 1, Description = "Area 1", CoordX = 1, CoordY = 1, LayoutId = 1 },
             };
 
-            List<Seat> seats = new List<Seat>
+            var seats = new List<Seat>
             {
                 new Seat { Id = 1, Row = 1, Number = 1, AreaId = 1, },
             };
 
-            List<EventAreaModel> eventAreas = new List<EventAreaModel>
+            var eventAreas = new List<EventAreaModel>
             {
                 new EventAreaModel { Id = 1, Description = "EventArea 1", CoordX = 1, CoordY = 1, EventId = 1, Price = 15 },
             };
 
-            List<EventSeatModel> eventSeats = new List<EventSeatModel>
+            var eventSeats = new List<EventSeatModel>
             {
                 new EventSeatModel { Id = 1, Row = 1, Number = 1, EventAreaId = 1, State = EventSeatStateModel.Available },
             };
 
-            int id = 1;
-            Event @event = new Event { Id = 1, Name = "Event 1", Description = "Description 1", LayoutId = 1, StartDate = new DateTime(2023, 1, 1), EndDate = new DateTime(2023, 1, 2) };
-            List<Event> events = new List<Event> { @event };
+            var id = 1;
+            var @event = new Event { Id = 1, Name = "Event 1", Description = "Description 1", LayoutId = 1, StartDate = new DateTime(2023, 1, 1), EndDate = new DateTime(2023, 1, 2) };
+            var events = new List<Event> { @event };
 
             _eventRepositoryMock.Setup(x => x.GetByIdAsync(id)).ReturnsAsync(@event);
             _eventRepositoryMock.Setup(x => x.GetAll()).Returns(events.AsQueryable());
@@ -542,13 +542,13 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
 
             _eventAreaServiceMock.Setup(x => x.GetByEventId(id)).Returns(eventAreas);
 
-            foreach (EventAreaModel area in eventAreas)
+            foreach (var area in eventAreas)
             {
                 _eventSeatServiceMock.Setup(x => x.GetByEventAreaId(area.Id))
                     .Returns(eventSeats.Where(s => s.EventAreaId == area.Id));
             }
 
-            EventModel eventToUpdate = new EventModel
+            var eventToUpdate = new EventModel
             {
                 Id = 1,
                 Name = "New Event",
@@ -558,7 +558,7 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
                 EndDate = new DateTime(2024, 1, 2),
             };
 
-            Event mappedEventToUpdate = new Event
+            var mappedEventToUpdate = new Event
             {
                 Id = 1,
                 Name = "New Event",
@@ -571,7 +571,7 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
             _mapperMock.Setup(m => m.Map<Event>(eventToUpdate)).Returns(mappedEventToUpdate);
 
             // Act
-            Func<Task> updatingEvent = _eventService.Invoking(s => s.UpdateAsync(eventToUpdate));
+            var updatingEvent = _eventService.Invoking(s => s.UpdateAsync(eventToUpdate));
 
             // Assert
             await updatingEvent
@@ -583,29 +583,29 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
         public async Task Update_InvalidStartDate_ThrowsValidationException()
         {
             // Arrange
-            List<Area> areas = new List<Area>
+            var areas = new List<Area>
             {
                 new Area { Id = 1, Description = "Area 1", CoordX = 1, CoordY = 1, LayoutId = 1 },
             };
 
-            List<Seat> seats = new List<Seat>
+            var seats = new List<Seat>
             {
                 new Seat { Id = 1, Row = 1, Number = 1, AreaId = 1, },
             };
 
-            List<EventAreaModel> eventAreas = new List<EventAreaModel>
+            var eventAreas = new List<EventAreaModel>
             {
                 new EventAreaModel { Id = 1, Description = "EventArea 1", CoordX = 1, CoordY = 1, EventId = 1, Price = 15 },
             };
 
-            List<EventSeatModel> eventSeats = new List<EventSeatModel>
+            var eventSeats = new List<EventSeatModel>
             {
                 new EventSeatModel { Id = 1, Row = 1, Number = 1, EventAreaId = 1, State = EventSeatStateModel.Available },
             };
 
-            int id = 1;
-            Event @event = new Event { Id = 1, Name = "Event 1", Description = "Description 1", LayoutId = 1, StartDate = new DateTime(2023, 1, 1), EndDate = new DateTime(2023, 1, 2) };
-            List<Event> events = new List<Event> { @event };
+            var id = 1;
+            var @event = new Event { Id = 1, Name = "Event 1", Description = "Description 1", LayoutId = 1, StartDate = new DateTime(2023, 1, 1), EndDate = new DateTime(2023, 1, 2) };
+            var events = new List<Event> { @event };
 
             _eventRepositoryMock.Setup(x => x.GetByIdAsync(id)).ReturnsAsync(@event);
             _eventRepositoryMock.Setup(x => x.GetAll()).Returns(events.AsQueryable());
@@ -615,13 +615,13 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
 
             _eventAreaServiceMock.Setup(x => x.GetByEventId(id)).Returns(eventAreas);
 
-            foreach (EventAreaModel area in eventAreas)
+            foreach (var area in eventAreas)
             {
                 _eventSeatServiceMock.Setup(x => x.GetByEventAreaId(area.Id))
                     .Returns(eventSeats.Where(s => s.EventAreaId == area.Id));
             }
 
-            EventModel eventToUpdate = new EventModel
+            var eventToUpdate = new EventModel
             {
                 Id = 1,
                 Name = "New Event",
@@ -631,7 +631,7 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
                 EndDate = new DateTime(2024, 1, 2),
             };
 
-            Event mappedEventToUpdate = new Event
+            var mappedEventToUpdate = new Event
             {
                 Id = 1,
                 Name = "New Event",
@@ -644,7 +644,7 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
             _mapperMock.Setup(m => m.Map<Event>(eventToUpdate)).Returns(mappedEventToUpdate);
 
             // Act
-            Func<Task> updatingEvent = _eventService.Invoking(s => s.UpdateAsync(eventToUpdate));
+            var updatingEvent = _eventService.Invoking(s => s.UpdateAsync(eventToUpdate));
 
             // Assert
             await updatingEvent
@@ -656,28 +656,28 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
         public async Task Update_EventInTheSameLayoutAlreadyExists_ThrowsValidationException()
         {
             // Arrange
-            List<Area> areas = new List<Area>
+            var areas = new List<Area>
             {
                 new Area { Id = 1, Description = "Area 1", CoordX = 1, CoordY = 1, LayoutId = 1 },
             };
 
-            List<Seat> seats = new List<Seat>
+            var seats = new List<Seat>
             {
                 new Seat { Id = 1, Row = 1, Number = 1, AreaId = 1, },
             };
 
-            List<EventAreaModel> eventAreas = new List<EventAreaModel>
+            var eventAreas = new List<EventAreaModel>
             {
                 new EventAreaModel { Id = 1, Description = "EventArea 1", CoordX = 1, CoordY = 1, EventId = 1, Price = 15 },
             };
 
-            List<EventSeatModel> eventSeats = new List<EventSeatModel>
+            var eventSeats = new List<EventSeatModel>
             {
                 new EventSeatModel { Id = 1, Row = 1, Number = 1, EventAreaId = 1, State = EventSeatStateModel.Available },
             };
 
-            int id = 2;
-            List<Event> events = new List<Event>
+            var id = 2;
+            var events = new List<Event>
             {
                 new Event { Id = 1, Name = "Event 1", Description = "Description 1", LayoutId = 1, StartDate = new DateTime(2023, 1, 1), EndDate = new DateTime(2023, 1, 2) },
                 new Event { Id = 2, Name = "Event 2", Description = "Description 2", LayoutId = 1, StartDate = new DateTime(2024, 1, 1), EndDate = new DateTime(2024, 1, 2) },
@@ -691,13 +691,13 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
 
             _eventAreaServiceMock.Setup(x => x.GetByEventId(id)).Returns(eventAreas);
 
-            foreach (EventAreaModel area in eventAreas)
+            foreach (var area in eventAreas)
             {
                 _eventSeatServiceMock.Setup(x => x.GetByEventAreaId(area.Id))
                     .Returns(eventSeats.Where(s => s.EventAreaId == area.Id));
             }
 
-            EventModel eventToUpdate = new EventModel
+            var eventToUpdate = new EventModel
             {
                 Id = 2,
                 Name = "Updated Event",
@@ -707,7 +707,7 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
                 EndDate = new DateTime(2023, 1, 2),
             };
 
-            Event mappedEventToUpdate = new Event
+            var mappedEventToUpdate = new Event
             {
                 Id = 2,
                 Name = "Updated Event",
@@ -720,7 +720,7 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
             _mapperMock.Setup(m => m.Map<Event>(eventToUpdate)).Returns(mappedEventToUpdate);
 
             // Act
-            Func<Task> updaingEvent = _eventService.Invoking(s => s.UpdateAsync(eventToUpdate));
+            var updaingEvent = _eventService.Invoking(s => s.UpdateAsync(eventToUpdate));
 
             // Assert
             await updaingEvent
@@ -732,24 +732,24 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
         public async Task Update_NoAvailableSeats_ThrowsValidationException()
         {
             // Arrange
-            List<Area> areas = new List<Area>
+            var areas = new List<Area>
             {
                 new Area { Id = 1, Description = "Area 1", CoordX = 1, CoordY = 1, LayoutId = 1 },
             };
 
-            List<EventAreaModel> eventAreas = new List<EventAreaModel>
+            var eventAreas = new List<EventAreaModel>
             {
                 new EventAreaModel { Id = 1, Description = "EventArea 1", CoordX = 1, CoordY = 1, EventId = 1, Price = 15 },
             };
 
-            List<EventSeatModel> eventSeats = new List<EventSeatModel>
+            var eventSeats = new List<EventSeatModel>
             {
                 new EventSeatModel { Id = 1, Row = 1, Number = 1, EventAreaId = 1, State = EventSeatStateModel.Available },
             };
 
-            int id = 1;
-            Event @event = new Event { Id = 1, Name = "Event 1", Description = "Description 1", LayoutId = 1, StartDate = new DateTime(2023, 1, 1), EndDate = new DateTime(2023, 1, 2) };
-            List<Event> events = new List<Event> { @event };
+            var id = 1;
+            var @event = new Event { Id = 1, Name = "Event 1", Description = "Description 1", LayoutId = 1, StartDate = new DateTime(2023, 1, 1), EndDate = new DateTime(2023, 1, 2) };
+            var events = new List<Event> { @event };
 
             _eventRepositoryMock.Setup(x => x.GetByIdAsync(id)).ReturnsAsync(@event);
             _eventRepositoryMock.Setup(x => x.GetAll()).Returns(events.AsQueryable());
@@ -759,13 +759,13 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
 
             _eventAreaServiceMock.Setup(x => x.GetByEventId(id)).Returns(eventAreas);
 
-            foreach (EventAreaModel area in eventAreas)
+            foreach (var area in eventAreas)
             {
                 _eventSeatServiceMock.Setup(x => x.GetByEventAreaId(area.Id))
                     .Returns(eventSeats.Where(s => s.EventAreaId == area.Id));
             }
 
-            EventModel eventToUpdate = new EventModel
+            var eventToUpdate = new EventModel
             {
                 Id = 1,
                 Name = "New Event",
@@ -775,7 +775,7 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
                 EndDate = new DateTime(2023, 1, 2),
             };
 
-            Event mappedEventToUpdate = new Event
+            var mappedEventToUpdate = new Event
             {
                 Id = 1,
                 Name = "New Event",
@@ -788,7 +788,7 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
             _mapperMock.Setup(m => m.Map<Event>(eventToUpdate)).Returns(mappedEventToUpdate);
 
             // Act
-            Func<Task> updatingEvent = _eventService.Invoking(s => s.UpdateAsync(eventToUpdate));
+            var updatingEvent = _eventService.Invoking(s => s.UpdateAsync(eventToUpdate));
 
             // Assert
             await updatingEvent
@@ -803,7 +803,7 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
             EventModel nullEvent = null;
 
             // Act
-            Func<Task> updatingEvent = _eventService.Invoking(s => s.UpdateAsync(nullEvent));
+            var updatingEvent = _eventService.Invoking(s => s.UpdateAsync(nullEvent));
 
             // Assert
             await updatingEvent
@@ -815,21 +815,21 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
         public void GetAll_EventListNotEmpty_ReturnsEventList()
         {
             // Arrange
-            List<Event> events = new List<Event>
+            var events = new List<Event>
             {
                 new Event { Id = 1, Name = "Event 1", Description = "Description 1", LayoutId = 1, StartDate = new DateTime(2023, 1, 1), EndDate = new DateTime(2023, 1, 2) },
                 new Event { Id = 2, Name = "Event 2", Description = "Description 2", LayoutId = 2, StartDate = new DateTime(2023, 2, 2, 10, 0, 0), EndDate = new DateTime(2023, 2, 2, 15, 0, 0) },
                 new Event { Id = 3, Name = "Event 3", Description = "Description 3", LayoutId = 2, StartDate = new DateTime(2023, 1, 3), EndDate = new DateTime(2023, 1, 5) },
             };
 
-            List<EventModel> mappedEvents = new List<EventModel>
+            var mappedEvents = new List<EventModel>
             {
                 new EventModel { Id = 1, Name = "Event 1", Description = "Description 1", LayoutId = 1, StartDate = new DateTime(2023, 1, 1), EndDate = new DateTime(2023, 1, 2) },
                 new EventModel { Id = 2, Name = "Event 2", Description = "Description 2", LayoutId = 2, StartDate = new DateTime(2023, 2, 2, 10, 0, 0), EndDate = new DateTime(2023, 2, 2, 15, 0, 0) },
                 new EventModel { Id = 3, Name = "Event 3", Description = "Description 3", LayoutId = 2, StartDate = new DateTime(2023, 1, 3), EndDate = new DateTime(2023, 1, 5) },
             };
 
-            for (int i = 0; i < events.Count; i++)
+            for (var i = 0; i < events.Count; i++)
             {
                 _mapperMock.Setup(m => m.Map<EventModel>(events[i])).Returns(mappedEvents[i]);
             }
@@ -837,7 +837,7 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
             _eventRepositoryMock.Setup(x => x.GetAll()).Returns(events.AsQueryable());
 
             // Act
-            IEnumerable<EventModel> actualEvents = _eventService.GetAll();
+            var actualEvents = _eventService.GetAll();
 
             // Assert
             actualEvents.Should().BeEquivalentTo(mappedEvents);
@@ -847,16 +847,16 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
         public async Task GetById_EventExists_ReturnsEvent()
         {
             // Arrange
-            int id = 1;
-            Event @event = new Event { Id = 1, Name = "New Event", Description = "Description 1", LayoutId = 1, StartDate = new DateTime(2023, 10, 10), EndDate = new DateTime(2023, 10, 11) };
-            EventModel mappedEvent = new EventModel { Id = 1, Name = "New Event", Description = "Description 1", LayoutId = 1, StartDate = new DateTime(2023, 10, 10), EndDate = new DateTime(2023, 10, 11) };
+            var id = 1;
+            var @event = new Event { Id = 1, Name = "New Event", Description = "Description 1", LayoutId = 1, StartDate = new DateTime(2023, 10, 10), EndDate = new DateTime(2023, 10, 11) };
+            var mappedEvent = new EventModel { Id = 1, Name = "New Event", Description = "Description 1", LayoutId = 1, StartDate = new DateTime(2023, 10, 10), EndDate = new DateTime(2023, 10, 11) };
 
             _mapperMock.Setup(m => m.Map<EventModel>(@event)).Returns(mappedEvent);
 
             _eventRepositoryMock.Setup(x => x.GetByIdAsync(id)).ReturnsAsync(@event);
 
             // Act
-            EventModel actualEvent = await _eventService.GetByIdAsync(id);
+            var actualEvent = await _eventService.GetByIdAsync(id);
 
             // Assert
             actualEvent.Should().BeEquivalentTo(@event);
@@ -866,12 +866,12 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
         public async Task GetById_InvalidId_ThrowsValidationException()
         {
             // Arrange
-            int id = 1;
+            var id = 1;
 
             _eventRepositoryMock.Setup(x => x.GetByIdAsync(id)).ReturnsAsync(default(Event));
 
             // Act
-            Func<Task<EventModel>> gettingById = _eventService.Invoking(s => s.GetByIdAsync(id));
+            var gettingById = _eventService.Invoking(s => s.GetByIdAsync(id));
 
             // Assert
             await gettingById

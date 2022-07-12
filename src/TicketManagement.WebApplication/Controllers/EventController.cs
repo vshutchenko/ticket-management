@@ -38,7 +38,7 @@ namespace TicketManagement.WebApplication.Controllers
         [HttpGet]
         public IActionResult Index(int page = 1)
         {
-            List<EventViewModel>? eventsVM = _eventService.GetAll()
+            var eventsVM = _eventService.GetAll()
                 .Where(e => e.Published)
                 .Select(e => _mapper.Map<EventViewModel>(e))
                 .ToList();
@@ -49,7 +49,7 @@ namespace TicketManagement.WebApplication.Controllers
         [HttpGet]
         public IActionResult NotPublishedEvents()
         {
-            List<EventViewModel>? eventsVM = _eventService.GetAll()
+            var eventsVM = _eventService.GetAll()
                 .Where(e => !e.Published)
                 .Select(e => _mapper.Map<EventViewModel>(e))
                 .ToList();
@@ -61,7 +61,7 @@ namespace TicketManagement.WebApplication.Controllers
         [Authorize(Roles = "Event manager")]
         public PartialViewResult PartialLayoutList(int venueId)
         {
-            List<LayoutViewModel>? layouts = _layoutService.GetAll()
+            var layouts = _layoutService.GetAll()
                 .Where(l => l.VenueId == venueId)
                 .Select(l => _mapper.Map<LayoutViewModel>(l))
                 .ToList();
@@ -73,16 +73,16 @@ namespace TicketManagement.WebApplication.Controllers
         [Authorize(Roles = "Event manager")]
         public IActionResult CreateEvent()
         {
-            List<VenueViewModel>? venues = _venueService.GetAll()
+            var venues = _venueService.GetAll()
                 .Select(v => _mapper.Map<VenueViewModel>(v))
                 .ToList();
 
-            List<LayoutViewModel>? layouts = _layoutService.GetAll()
+            var layouts = _layoutService.GetAll()
                 .Where(l => l.VenueId == venues.First().Id)
                 .Select(l => _mapper.Map<LayoutViewModel>(l))
                 .ToList();
 
-            CreateEventViewModel? model = new CreateEventViewModel
+            var model = new CreateEventViewModel
             {
                 Layouts = new SelectList(layouts, "Id", "Description"),
                 Venues = new SelectList(venues, "Id", "Description"),
@@ -96,12 +96,12 @@ namespace TicketManagement.WebApplication.Controllers
         [Authorize(Roles = "Event manager")]
         public async Task<IActionResult> CreateEvent(CreateEventViewModel createModel)
         {
-            EventModel? @event = _mapper.Map<EventModel>(createModel);
+            var @event = _mapper.Map<EventModel>(createModel);
 
             @event.StartDate = User.GetUtcTime(@event.StartDate);
             @event.EndDate = User.GetUtcTime(@event.EndDate);
 
-            int id = await _eventService.CreateAsync(@event);
+            var id = await _eventService.CreateAsync(@event);
 
             return RedirectToAction("EditEvent", new { id = id } );
         }
@@ -110,21 +110,21 @@ namespace TicketManagement.WebApplication.Controllers
         [Authorize(Roles = "Event manager")]
         public async Task<IActionResult> EditEvent(int id)
         {
-            EventModel? @event = await _eventService.GetByIdAsync(id);
+            var @event = await _eventService.GetByIdAsync(id);
 
             List<VenueModel>? venues = _venueService.GetAll().ToList();
             List<LayoutModel>? layouts = _layoutService.GetAll().ToList();
 
-            LayoutModel? selectedLayout = layouts.First(l => l.Id == @event.LayoutId);
-            VenueModel? selectedVenue = venues.First(v => v.Id == selectedLayout.VenueId);
+            var selectedLayout = layouts.First(l => l.Id == @event.LayoutId);
+            var selectedVenue = venues.First(v => v.Id == selectedLayout.VenueId);
 
-            CreateEventViewModel? eventVM = @event.Create(layouts.Where(l => l.VenueId == selectedVenue.Id).ToList(), selectedLayout.Id, venues, selectedVenue.Id);
+            var eventVM = @event.Create(layouts.Where(l => l.VenueId == selectedVenue.Id).ToList(), selectedLayout.Id, venues, selectedVenue.Id);
 
-            List<EventAreaViewModel>? areasVM = _eventAreaService.GetByEventId(id)
+            var areasVM = _eventAreaService.GetByEventId(id)
                 .Select(a => _mapper.Map<EventAreaViewModel>(a))
                 .ToList();
 
-            EditEventViewModel? editEventVM = new EditEventViewModel
+            var editEventVM = new EditEventViewModel
             {
                 Event = eventVM,
                 Areas = areasVM,
@@ -140,12 +140,12 @@ namespace TicketManagement.WebApplication.Controllers
         [Authorize(Roles = "Event manager")]
         public async Task<IActionResult> EditNotPublishedEvent(EditEventViewModel model)
         {
-            foreach (EventAreaViewModel? item in model.Areas)
+            foreach (var item in model.Areas)
             {
                 await _eventAreaService.SetPriceAsync(item.Id, item.Price);
             }
 
-            EventModel? @event = _mapper.Map<EventModel>(model.Event);
+            var @event = _mapper.Map<EventModel>(model.Event);
 
             @event.StartDate = User.GetUtcTime(@event.StartDate);
             @event.EndDate = User.GetUtcTime(@event.EndDate);
@@ -160,7 +160,7 @@ namespace TicketManagement.WebApplication.Controllers
         [Authorize(Roles = "Event manager")]
         public async Task<IActionResult> EditPublishedEvent(EditEventViewModel model)
         {
-            EventModel? @event = _mapper.Map<EventModel>(model.Event);
+            var @event = _mapper.Map<EventModel>(model.Event);
 
             @event.StartDate = User.GetUtcTime(@event.StartDate);
             @event.EndDate = User.GetUtcTime(@event.EndDate);

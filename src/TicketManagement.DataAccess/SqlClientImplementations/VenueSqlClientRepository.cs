@@ -20,11 +20,11 @@ namespace TicketManagement.DataAccess.SqlClientImplementations
 
         public async Task<int> CreateAsync(Venue item)
         {
-            string query = "INSERT INTO Venue(Description, Address, Phone) VALUES(@description, @address, @phone); SELECT SCOPE_IDENTITY()";
+            var query = "INSERT INTO Venue(Description, Address, Phone) VALUES(@description, @address, @phone); SELECT SCOPE_IDENTITY()";
 
-            await using SqlConnection connection = new SqlConnection(_connectionString);
+            await using var connection = new SqlConnection(_connectionString);
 
-            await using SqlCommand command = new SqlCommand(query, connection);
+            await using var command = new SqlCommand(query, connection);
 
             command.Parameters.AddWithValue("@description", item.Description);
             command.Parameters.AddWithValue("@address", item.Address);
@@ -32,18 +32,18 @@ namespace TicketManagement.DataAccess.SqlClientImplementations
 
             await connection.OpenAsync();
 
-            int id = Convert.ToInt32(await command.ExecuteScalarAsync());
+            var id = Convert.ToInt32(await command.ExecuteScalarAsync());
 
             return id;
         }
 
         public async Task DeleteAsync(int id)
         {
-            string query = "DELETE FROM Venue WHERE Id = @venueId";
+            var query = "DELETE FROM Venue WHERE Id = @venueId";
 
-            await using SqlConnection connection = new SqlConnection(_connectionString);
+            await using var connection = new SqlConnection(_connectionString);
 
-            await using SqlCommand command = new SqlCommand(query, connection);
+            await using var command = new SqlCommand(query, connection);
 
             command.Parameters.AddWithValue("@venueId", id);
 
@@ -54,17 +54,17 @@ namespace TicketManagement.DataAccess.SqlClientImplementations
 
         public IQueryable<Venue> GetAll()
         {
-            string query = "SELECT Id, Description, Address, Phone FROM Venue";
+            var query = "SELECT Id, Description, Address, Phone FROM Venue";
 
-            using SqlConnection connection = new SqlConnection(_connectionString);
+            using var connection = new SqlConnection(_connectionString);
 
-            using SqlCommand command = new SqlCommand(query, connection);
+            using var command = new SqlCommand(query, connection);
 
             connection.Open();
 
-            using SqlDataReader reader = command.ExecuteReader();
+            using var reader = command.ExecuteReader();
 
-            List<Venue> venues = new List<Venue>();
+            var venues = new List<Venue>();
 
             while (reader.Read())
             {
@@ -82,17 +82,17 @@ namespace TicketManagement.DataAccess.SqlClientImplementations
 
         public async Task<Venue> GetByIdAsync(int id)
         {
-            string query = "SELECT Id, Description, Address, Phone FROM Venue WHERE Id = @id";
+            var query = "SELECT Id, Description, Address, Phone FROM Venue WHERE Id = @id";
 
-            await using SqlConnection connection = new SqlConnection(_connectionString);
+            await using var connection = new SqlConnection(_connectionString);
 
-            await using SqlCommand command = new SqlCommand(query, connection);
+            await using var command = new SqlCommand(query, connection);
 
             command.Parameters.AddWithValue("id", id);
 
             await connection.OpenAsync();
 
-            await using SqlDataReader reader = await command.ExecuteReaderAsync();
+            await using var reader = await command.ExecuteReaderAsync();
 
             if (await reader.ReadAsync())
             {
@@ -110,11 +110,11 @@ namespace TicketManagement.DataAccess.SqlClientImplementations
 
         public async Task UpdateAsync(Venue item)
         {
-            string query = "UPDATE Venue SET Description = @description, Address = @address, Phone = @phone WHERE Id = @venueId";
+            var query = "UPDATE Venue SET Description = @description, Address = @address, Phone = @phone WHERE Id = @venueId";
 
-            await using SqlConnection connection = new SqlConnection(_connectionString);
+            await using var connection = new SqlConnection(_connectionString);
 
-            await using SqlCommand command = new SqlCommand(query, connection);
+            await using var command = new SqlCommand(query, connection);
 
             command.Parameters.AddWithValue("@venueId", item.Id);
             command.Parameters.AddWithValue("@description", item.Description);

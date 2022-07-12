@@ -27,7 +27,7 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
             _seatRepositoryMock = new Mock<IRepository<Seat>>();
             _mapperMock = new Mock<IMapper>();
 
-            SeatValidator seatValidator = new SeatValidator(_seatRepositoryMock.Object);
+            var seatValidator = new SeatValidator(_seatRepositoryMock.Object);
 
             _seatService = new SeatService(_seatRepositoryMock.Object, seatValidator, _mapperMock.Object);
         }
@@ -36,9 +36,9 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
         public async Task Create_ValidSeat_CreatesSeat()
         {
             // Arrange
-            SeatModel seatToCreate = new SeatModel { Id = 1, Row = 1, Number = 4, AreaId = 1, };
+            var seatToCreate = new SeatModel { Id = 1, Row = 1, Number = 4, AreaId = 1, };
 
-            Seat mappedSeat = new Seat { Id = 1, Row = 1, Number = 4, AreaId = 1, };
+            var mappedSeat = new Seat { Id = 1, Row = 1, Number = 4, AreaId = 1, };
 
             _mapperMock.Setup(m => m.Map<Seat>(seatToCreate)).Returns(mappedSeat);
 
@@ -53,21 +53,21 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
         public async Task Create_SeatWithSameRowAndNumberExists_ThrowsValidationException()
         {
             // Arrange
-            List<Seat> seats = new List<Seat>
+            var seats = new List<Seat>
             {
                 new Seat { Id = 1, Row = 1, Number = 1, AreaId = 1, },
             };
 
             _seatRepositoryMock.Setup(x => x.GetAll()).Returns(seats.AsQueryable());
 
-            SeatModel seatToCreate = new SeatModel { Row = 1, Number = 1, AreaId = 1, };
+            var seatToCreate = new SeatModel { Row = 1, Number = 1, AreaId = 1, };
 
-            Seat mappedSeat = new Seat { Row = 1, Number = 1, AreaId = 1, };
+            var mappedSeat = new Seat { Row = 1, Number = 1, AreaId = 1, };
 
             _mapperMock.Setup(m => m.Map<Seat>(seatToCreate)).Returns(mappedSeat);
 
             // Act
-            System.Func<Task<int>> creatingSeat = _seatService.Invoking(s => s.CreateAsync(seatToCreate));
+            var creatingSeat = _seatService.Invoking(s => s.CreateAsync(seatToCreate));
 
             // Assert
             await creatingSeat
@@ -82,7 +82,7 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
             SeatModel nullSeat = null;
 
             // Act
-            System.Func<Task<int>> updatingSeat = _seatService.Invoking(s => s.CreateAsync(nullSeat));
+            var updatingSeat = _seatService.Invoking(s => s.CreateAsync(nullSeat));
 
             // Assert
             await updatingSeat
@@ -94,9 +94,9 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
         public async Task Delete_SeatExists_DeletesSeat()
         {
             // Arrange
-            Seat seat = new Seat { Id = 1, Row = 1, Number = 1, AreaId = 1, };
+            var seat = new Seat { Id = 1, Row = 1, Number = 1, AreaId = 1, };
 
-            int id = 1;
+            var id = 1;
 
             _seatRepositoryMock.Setup(x => x.GetByIdAsync(id)).ReturnsAsync(seat);
 
@@ -111,7 +111,7 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
         public async Task Delete_SeatNotFound_ThrowsValidationException()
         {
             // Arrange
-            List<Seat> seats = new List<Seat>
+            var seats = new List<Seat>
             {
                 new Seat { Id = 1, Row = 1, Number = 1, AreaId = 1, },
                 new Seat { Id = 2, Row = 1, Number = 2, AreaId = 1, },
@@ -120,10 +120,10 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
 
             _seatRepositoryMock.Setup(x => x.GetAll()).Returns(seats.AsQueryable());
 
-            int notExistingId = 99;
+            var notExistingId = 99;
 
             // Act
-            System.Func<Task> deletingSeat = _seatService.Invoking(s => s.DeleteAsync(notExistingId));
+            var deletingSeat = _seatService.Invoking(s => s.DeleteAsync(notExistingId));
 
             // Assert
             await deletingSeat
@@ -135,17 +135,17 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
         public async Task Update_ValidSeat_UpdatesSeat()
         {
             // Arrange
-            int id = 1;
+            var id = 1;
 
-            Seat seat = new Seat { Id = 1, Row = 1, Number = 1, AreaId = 1, };
-            List<Seat> seats = new List<Seat> { seat };
+            var seat = new Seat { Id = 1, Row = 1, Number = 1, AreaId = 1, };
+            var seats = new List<Seat> { seat };
 
             _seatRepositoryMock.Setup(x => x.GetByIdAsync(id)).ReturnsAsync(seat);
             _seatRepositoryMock.Setup(x => x.GetAll()).Returns(seats.AsQueryable());
 
-            SeatModel seatToUpdate = new SeatModel { Id = 1, Row = 2, Number = 2, AreaId = 1, };
+            var seatToUpdate = new SeatModel { Id = 1, Row = 2, Number = 2, AreaId = 1, };
 
-            Seat mappedSeat = new Seat { Id = 1, Row = 2, Number = 2, AreaId = 1, };
+            var mappedSeat = new Seat { Id = 1, Row = 2, Number = 2, AreaId = 1, };
 
             _mapperMock.Setup(m => m.Map<Seat>(seatToUpdate)).Returns(mappedSeat);
 
@@ -160,14 +160,14 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
         public async Task Update_SeatNotFound_ThrowsValidationException()
         {
             // Arrange
-            int notExistingId = 1;
+            var notExistingId = 1;
 
-            SeatModel seatToUpdate = new SeatModel { Id = 1, Row = 2, Number = 2, AreaId = 1, };
+            var seatToUpdate = new SeatModel { Id = 1, Row = 2, Number = 2, AreaId = 1, };
 
             _seatRepositoryMock.Setup(x => x.GetByIdAsync(notExistingId)).ReturnsAsync(default(Seat));
 
             // Act
-            System.Func<Task> updatingSeat = _seatService.Invoking(s => s.UpdateAsync(seatToUpdate));
+            var updatingSeat = _seatService.Invoking(s => s.UpdateAsync(seatToUpdate));
 
             // Assert
             await updatingSeat
@@ -179,26 +179,26 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
         public async Task Update_SeatWithSameRowAndNumberExists_ThrowsValidationException()
         {
             // Arrange
-            List<Seat> seats = new List<Seat>
+            var seats = new List<Seat>
             {
                 new Seat { Id = 1, Row = 1, Number = 1, AreaId = 1, },
                 new Seat { Id = 2, Row = 2, Number = 2, AreaId = 2, },
             };
 
-            int id = 2;
+            var id = 2;
 
             _seatRepositoryMock.Setup(x => x.GetAll()).Returns(seats.AsQueryable());
 
             _seatRepositoryMock.Setup(x => x.GetByIdAsync(id)).ReturnsAsync(seats.First(s => s.Id == id));
 
-            SeatModel seatToUpdate = new SeatModel { Id = 2, Row = 1, Number = 1, AreaId = 1, };
+            var seatToUpdate = new SeatModel { Id = 2, Row = 1, Number = 1, AreaId = 1, };
 
-            Seat mappedSeat = new Seat { Id = 2, Row = 1, Number = 1, AreaId = 1, };
+            var mappedSeat = new Seat { Id = 2, Row = 1, Number = 1, AreaId = 1, };
 
             _mapperMock.Setup(m => m.Map<Seat>(seatToUpdate)).Returns(mappedSeat);
 
             // Act
-            System.Func<Task> updatingSeat = _seatService.Invoking(s => s.UpdateAsync(seatToUpdate));
+            var updatingSeat = _seatService.Invoking(s => s.UpdateAsync(seatToUpdate));
 
             // Assert
             await updatingSeat
@@ -213,7 +213,7 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
             SeatModel nullSeat = null;
 
             // Act
-            System.Func<Task> updatingSeat = _seatService.Invoking(s => s.UpdateAsync(nullSeat));
+            var updatingSeat = _seatService.Invoking(s => s.UpdateAsync(nullSeat));
 
             // Assert
             await updatingSeat
@@ -225,21 +225,21 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
         public void GetAll_SeatListNotEmpty_ReturnsSeatList()
         {
             // Arrange
-            List<Seat> seats = new List<Seat>
+            var seats = new List<Seat>
             {
                 new Seat { Id = 1, Row = 1, Number = 1, AreaId = 1, },
                 new Seat { Id = 2, Row = 1, Number = 2, AreaId = 1, },
                 new Seat { Id = 3, Row = 1, Number = 3, AreaId = 1, },
             };
 
-            List<SeatModel> mappedSeats = new List<SeatModel>
+            var mappedSeats = new List<SeatModel>
             {
                 new SeatModel { Id = 1, Row = 1, Number = 1, AreaId = 1, },
                 new SeatModel { Id = 2, Row = 1, Number = 2, AreaId = 1, },
                 new SeatModel { Id = 3, Row = 1, Number = 3, AreaId = 1, },
             };
 
-            for (int i = 0; i < seats.Count; i++)
+            for (var i = 0; i < seats.Count; i++)
             {
                 _mapperMock.Setup(m => m.Map<SeatModel>(seats[i])).Returns(mappedSeats[i]);
             }
@@ -247,7 +247,7 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
             _seatRepositoryMock.Setup(x => x.GetAll()).Returns(seats.AsQueryable());
 
             // Act
-            IEnumerable<SeatModel> actualSeats = _seatService.GetAll();
+            var actualSeats = _seatService.GetAll();
 
             // Assert
             actualSeats.Should().BeEquivalentTo(seats);
@@ -257,17 +257,17 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
         public async Task GetById_SeatExists_ReturnsSeat()
         {
             // Arrange
-            int id = 1;
+            var id = 1;
 
-            Seat seat = new Seat { Id = 1, Row = 1, Number = 1, AreaId = 1, };
-            SeatModel mappedSeat = new SeatModel { Id = 1, Row = 1, Number = 1, AreaId = 1, };
+            var seat = new Seat { Id = 1, Row = 1, Number = 1, AreaId = 1, };
+            var mappedSeat = new SeatModel { Id = 1, Row = 1, Number = 1, AreaId = 1, };
 
             _mapperMock.Setup(m => m.Map<SeatModel>(seat)).Returns(mappedSeat);
 
             _seatRepositoryMock.Setup(x => x.GetByIdAsync(id)).ReturnsAsync(seat);
 
             // Act
-            SeatModel actualSeat = await _seatService.GetByIdAsync(id);
+            var actualSeat = await _seatService.GetByIdAsync(id);
 
             // Assert
             actualSeat.Should().BeEquivalentTo(seat);
@@ -277,12 +277,12 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
         public async Task GetById_SeatNotFound_ThrowsValidationException()
         {
             // Arrange
-            int id = 1;
+            var id = 1;
 
             _seatRepositoryMock.Setup(x => x.GetByIdAsync(id)).ReturnsAsync(default(Seat));
 
             // Act
-            System.Func<Task<SeatModel>> gettingById = _seatService.Invoking(s => s.GetByIdAsync(id));
+            var gettingById = _seatService.Invoking(s => s.GetByIdAsync(id));
 
             // Assert
             await gettingById

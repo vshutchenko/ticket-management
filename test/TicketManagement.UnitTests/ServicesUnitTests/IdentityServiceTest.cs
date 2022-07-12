@@ -31,10 +31,10 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
         [SetUp]
         public void SetUp()
         {
-            Mock<IUserStore<User>> userStoreMock = new Mock<IUserStore<User>>();
+            var userStoreMock = new Mock<IUserStore<User>>();
             _userManagerMock = new Mock<UserManager<User>>(userStoreMock.Object, null, null, null, null, null, null, null, null);
 
-            Mock<IRoleStore<IdentityRole>> roleStoreMock = new Mock<IRoleStore<IdentityRole>>();
+            var roleStoreMock = new Mock<IRoleStore<IdentityRole>>();
             _roleManagerMock = new Mock<RoleManager<IdentityRole>>(roleStoreMock.Object, null, null, null, null);
 
             _signInManagerMock = new Mock<SignInManager<User>>(_userManagerMock.Object,
@@ -53,8 +53,8 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
         public async Task UpdateUserAsync_ValidParameters_UpdatesUser()
         {
             // Arrange
-            User user = new User { Id = "13fd42af-6a64-4022-bed4-8c7507cb67b9", Email = "user1@gmail.com" };
-            UserModel userModel = new UserModel { Id = "13fd42af-6a64-4022-bed4-8c7507cb67b9", Email = "user1@gmail.com" };
+            var user = new User { Id = "13fd42af-6a64-4022-bed4-8c7507cb67b9", Email = "user1@gmail.com" };
+            var userModel = new UserModel { Id = "13fd42af-6a64-4022-bed4-8c7507cb67b9", Email = "user1@gmail.com" };
 
             _userManagerMock.Setup(x => x.FindByIdAsync(user.Id)).ReturnsAsync(user);
             _userManagerMock.Setup(x => x.FindByEmailAsync(user.Email)).ReturnsAsync(default(User));
@@ -71,13 +71,13 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
         public async Task UpdateUserAsync_UserNotFound_ThrowsValidationException()
         {
             // Arrange
-            User user = new User { Id = "13fd42af-6a64-4022-bed4-8c7507cb67b9", Email = "user1@gmail.com" };
-            UserModel userModel = new UserModel { Id = "13fd42af-6a64-4022-bed4-8c7507cb67b9", Email = "user1@gmail.com" };
+            var user = new User { Id = "13fd42af-6a64-4022-bed4-8c7507cb67b9", Email = "user1@gmail.com" };
+            var userModel = new UserModel { Id = "13fd42af-6a64-4022-bed4-8c7507cb67b9", Email = "user1@gmail.com" };
 
             _userManagerMock.Setup(x => x.FindByIdAsync(user.Id)).ReturnsAsync(default(User));
 
             // Act
-            System.Func<Task> updatingUser = _identityService.Invoking(s => s.UpdateUserAsync(userModel));
+            var updatingUser = _identityService.Invoking(s => s.UpdateUserAsync(userModel));
 
             // Assert
             await updatingUser
@@ -89,17 +89,17 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
         public async Task UpdateUserAsync_EmailIsAlreadyTaken_ThrowsValidationException()
         {
             // Arrange
-            User user = new User { Id = "13fd42af-6a64-4022-bed4-8c7507cb67b9", Email = "user1@gmail.com" };
-            UserModel userToUpdate = new UserModel { Id = "13fd42af-6a64-4022-bed4-8c7507cb67b9", Email = "newMail@gmail.com" };
+            var user = new User { Id = "13fd42af-6a64-4022-bed4-8c7507cb67b9", Email = "user1@gmail.com" };
+            var userToUpdate = new UserModel { Id = "13fd42af-6a64-4022-bed4-8c7507cb67b9", Email = "newMail@gmail.com" };
 
-            User newUserWithExistingEmail = new User { Id = "22fd42af-6a64-4022-bed4-8c7507cb67b9", Email = "newMail@gmail.com" };
+            var newUserWithExistingEmail = new User { Id = "22fd42af-6a64-4022-bed4-8c7507cb67b9", Email = "newMail@gmail.com" };
 
             _userManagerMock.Setup(x => x.FindByIdAsync(user.Id)).ReturnsAsync(user);
             _userManagerMock.Setup(x => x.FindByEmailAsync(userToUpdate.Email)).ReturnsAsync(newUserWithExistingEmail);
             _userManagerMock.Setup(x => x.UpdateAsync(It.IsAny<User>())).ReturnsAsync(IdentityResult.Failed());
 
             // Act
-            System.Func<Task> updatingUser = _identityService.Invoking(s => s.UpdateUserAsync(userToUpdate));
+            var updatingUser = _identityService.Invoking(s => s.UpdateUserAsync(userToUpdate));
 
             // Assert
             await updatingUser

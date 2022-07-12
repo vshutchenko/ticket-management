@@ -31,7 +31,7 @@ namespace TicketManagement.BusinessLogic.Implementations
                 throw new ValidationException("Venue is null.");
             }
 
-            Venue venue = _mapper.Map<Venue>(venueModel);
+            var venue = _mapper.Map<Venue>(venueModel);
 
             _venueValidator.Validate(venue);
 
@@ -47,7 +47,7 @@ namespace TicketManagement.BusinessLogic.Implementations
 
         public IEnumerable<VenueModel> GetAll()
         {
-            IQueryable<VenueModel> models = _venueRepository.GetAll().Select(v => _mapper.Map<VenueModel>(v));
+            var models = _venueRepository.GetAll().Select(v => _mapper.Map<VenueModel>(v));
 
             return models;
         }
@@ -56,9 +56,9 @@ namespace TicketManagement.BusinessLogic.Implementations
         {
             await ValidateVenueExistsAsync(id);
 
-            Venue venue = await _venueRepository.GetByIdAsync(id);
+            var venue = await _venueRepository.GetByIdAsync(id);
 
-            VenueModel model = _mapper.Map<VenueModel>(venue);
+            var model = _mapper.Map<VenueModel>(venue);
 
             return model;
         }
@@ -72,7 +72,7 @@ namespace TicketManagement.BusinessLogic.Implementations
 
             await ValidateVenueExistsAsync(venueModel.Id);
 
-            Venue venue = _mapper.Map<Venue>(venueModel);
+            var venue = _mapper.Map<Venue>(venueModel);
 
             _venueValidator.Validate(venue);
 
@@ -81,7 +81,7 @@ namespace TicketManagement.BusinessLogic.Implementations
 
         private async Task ValidateVenueExistsAsync(int id)
         {
-            Venue venue = await _venueRepository.GetByIdAsync(id);
+            var venue = await _venueRepository.GetByIdAsync(id);
 
             if (venue is null)
             {

@@ -20,11 +20,11 @@ namespace TicketManagement.DataAccess.SqlClientImplementations
 
         public async Task<int> CreateAsync(EventArea item)
         {
-            string query = "INSERT INTO EventArea(EventId, Description, CoordX, CoordY, Price) VALUES(@eventId, @description, @coordX, @coordY, @price); SELECT SCOPE_IDENTITY()";
+            var query = "INSERT INTO EventArea(EventId, Description, CoordX, CoordY, Price) VALUES(@eventId, @description, @coordX, @coordY, @price); SELECT SCOPE_IDENTITY()";
 
-            await using SqlConnection connection = new SqlConnection(_connectionString);
+            await using var connection = new SqlConnection(_connectionString);
 
-            await using SqlCommand command = new SqlCommand(query, connection);
+            await using var command = new SqlCommand(query, connection);
 
             command.Parameters.AddWithValue("@eventId", item.EventId);
             command.Parameters.AddWithValue("@description", item.Description);
@@ -34,18 +34,18 @@ namespace TicketManagement.DataAccess.SqlClientImplementations
 
             await connection.OpenAsync();
 
-            int id = Convert.ToInt32(await command.ExecuteScalarAsync());
+            var id = Convert.ToInt32(await command.ExecuteScalarAsync());
 
             return id;
         }
 
         public async Task DeleteAsync(int id)
         {
-            string query = "DELETE FROM EventArea WHERE Id = @eventAreaId";
+            var query = "DELETE FROM EventArea WHERE Id = @eventAreaId";
 
-            await using SqlConnection connection = new SqlConnection(_connectionString);
+            await using var connection = new SqlConnection(_connectionString);
 
-            await using SqlCommand command = new SqlCommand(query, connection);
+            await using var command = new SqlCommand(query, connection);
 
             command.Parameters.AddWithValue("@eventAreaId", id);
 
@@ -56,17 +56,17 @@ namespace TicketManagement.DataAccess.SqlClientImplementations
 
         public IQueryable<EventArea> GetAll()
         {
-            string query = "SELECT Id, EventId, Description, CoordX, CoordY, Price FROM EventArea";
+            var query = "SELECT Id, EventId, Description, CoordX, CoordY, Price FROM EventArea";
 
-            using SqlConnection connection = new SqlConnection(_connectionString);
+            using var connection = new SqlConnection(_connectionString);
 
-            using SqlCommand command = new SqlCommand(query, connection);
+            using var command = new SqlCommand(query, connection);
 
             connection.Open();
 
-            using SqlDataReader reader = command.ExecuteReader();
+            using var reader = command.ExecuteReader();
 
-            List<EventArea> eventAreas = new List<EventArea>();
+            var eventAreas = new List<EventArea>();
 
             while (reader.Read())
             {
@@ -86,17 +86,17 @@ namespace TicketManagement.DataAccess.SqlClientImplementations
 
         public async Task<EventArea> GetByIdAsync(int id)
         {
-            string query = "SELECT Id, EventId, Description, CoordX, CoordY, Price FROM EventArea WHERE Id = @id";
+            var query = "SELECT Id, EventId, Description, CoordX, CoordY, Price FROM EventArea WHERE Id = @id";
 
-            await using SqlConnection connection = new SqlConnection(_connectionString);
+            await using var connection = new SqlConnection(_connectionString);
 
-            await using SqlCommand command = new SqlCommand(query, connection);
+            await using var command = new SqlCommand(query, connection);
 
             command.Parameters.AddWithValue("@id", id);
 
             await connection.OpenAsync();
 
-            await using SqlDataReader reader = await command.ExecuteReaderAsync();
+            await using var reader = await command.ExecuteReaderAsync();
 
             if (await reader.ReadAsync())
             {
@@ -116,11 +116,11 @@ namespace TicketManagement.DataAccess.SqlClientImplementations
 
         public async Task UpdateAsync(EventArea item)
         {
-            string query = "UPDATE EventArea SET EventId = @eventId, Description = @description, CoordX = @coordX, CoordY = @coordY, Price = @price  WHERE Id = @eventAreaId";
+            var query = "UPDATE EventArea SET EventId = @eventId, Description = @description, CoordX = @coordX, CoordY = @coordY, Price = @price  WHERE Id = @eventAreaId";
 
-            await using SqlConnection connection = new SqlConnection(_connectionString);
+            await using var connection = new SqlConnection(_connectionString);
 
-            await using SqlCommand command = new SqlCommand(query, connection);
+            await using var command = new SqlCommand(query, connection);
 
             command.Parameters.AddWithValue("@eventAreaId", item.Id);
             command.Parameters.AddWithValue("@eventId", item.EventId);

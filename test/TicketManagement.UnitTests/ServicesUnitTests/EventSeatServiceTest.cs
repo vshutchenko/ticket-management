@@ -36,9 +36,9 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
         public async Task SetSeatState_ValidParameters_SetsState()
         {
             // Arrange
-            int id = 1;
+            var id = 1;
 
-            EventSeat eventSeat = new EventSeat { Id = 1, EventAreaId = 1, Number = 1, Row = 1, State = EventSeatState.Available };
+            var eventSeat = new EventSeat { Id = 1, EventAreaId = 1, Number = 1, Row = 1, State = EventSeatState.Available };
 
             _eventSeatRepositoryMock.Setup(x => x.GetByIdAsync(id)).ReturnsAsync(eventSeat);
 
@@ -53,12 +53,12 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
         public async Task SetSeatState_SeatNotFound_ThrowsValidationException()
         {
             // Arrange
-            int notExistingId = 1;
+            var notExistingId = 1;
 
             _eventSeatRepositoryMock.Setup(x => x.GetByIdAsync(notExistingId)).ReturnsAsync(default(EventSeat));
 
             // Act
-            System.Func<Task> settingState = _eventSeatService.Invoking(s => s.SetSeatStateAsync(notExistingId, EventSeatStateModel.Ordered));
+            var settingState = _eventSeatService.Invoking(s => s.SetSeatStateAsync(notExistingId, EventSeatStateModel.Ordered));
 
             // Assert
             await settingState
@@ -70,21 +70,21 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
         public void GetAll_EventSeatListNotEmpty_ReturnsEventSeatList()
         {
             // Arrange
-            List<EventSeat> eventSeats = new List<EventSeat>
+            var eventSeats = new List<EventSeat>
             {
                 new EventSeat { Id = 1, EventAreaId = 1, Row = 1, Number = 1, State = EventSeatState.Available },
                 new EventSeat { Id = 2, EventAreaId = 1, Row = 1, Number = 2, State = EventSeatState.Available },
                 new EventSeat { Id = 2, EventAreaId = 1, Row = 1, Number = 3, State = EventSeatState.Ordered },
             };
 
-            List<EventSeatModel> mappedEventSeats = new List<EventSeatModel>
+            var mappedEventSeats = new List<EventSeatModel>
             {
                 new EventSeatModel { Id = 1, EventAreaId = 1, Row = 1, Number = 1, State = EventSeatStateModel.Available },
                 new EventSeatModel { Id = 2, EventAreaId = 1, Row = 1, Number = 2, State = EventSeatStateModel.Available },
                 new EventSeatModel { Id = 2, EventAreaId = 1, Row = 1, Number = 3, State = EventSeatStateModel.Ordered },
             };
 
-            for (int i = 0; i < eventSeats.Count; i++)
+            for (var i = 0; i < eventSeats.Count; i++)
             {
                 _mapperMock.Setup(m => m.Map<EventSeatModel>(eventSeats[i])).Returns(mappedEventSeats[i]);
             }
@@ -92,7 +92,7 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
             _eventSeatRepositoryMock.Setup(x => x.GetAll()).Returns(eventSeats.AsQueryable());
 
             // Act
-            IEnumerable<EventSeatModel> actualSeats = _eventSeatService.GetAll();
+            var actualSeats = _eventSeatService.GetAll();
 
             // Assert
             actualSeats.Should().BeEquivalentTo(eventSeats);
@@ -102,22 +102,22 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
         public void GetByEventAreaId_EventSeatListNotEmpty_ReturnsEventSeatList()
         {
             // Arrange
-            List<EventSeat> eventSeats = new List<EventSeat>
+            var eventSeats = new List<EventSeat>
             {
                 new EventSeat { Id = 1, EventAreaId = 1, Row = 1, Number = 1, State = EventSeatState.Available },
                 new EventSeat { Id = 2, EventAreaId = 1, Row = 1, Number = 2, State = EventSeatState.Available },
                 new EventSeat { Id = 2, EventAreaId = 1, Row = 1, Number = 3, State = EventSeatState.Ordered },
             };
 
-            List<EventSeatModel> mappedEventSeats = new List<EventSeatModel>
+            var mappedEventSeats = new List<EventSeatModel>
             {
                 new EventSeatModel { Id = 1, EventAreaId = 1, Row = 1, Number = 1, State = EventSeatStateModel.Available },
                 new EventSeatModel { Id = 2, EventAreaId = 1, Row = 1, Number = 2, State = EventSeatStateModel.Available },
                 new EventSeatModel { Id = 2, EventAreaId = 1, Row = 1, Number = 3, State = EventSeatStateModel.Ordered },
             };
 
-            int id = 1;
-            List<EventArea> eventAreas = new List<EventArea>
+            var id = 1;
+            var eventAreas = new List<EventArea>
             {
                 new EventArea { Id = 1, Description = "Area 1", CoordX = 1, CoordY = 1, EventId = 1, Price = 1 },
             };
@@ -125,13 +125,13 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
             _eventAreaRepositoryMock.Setup(x => x.GetAll()).Returns(eventAreas.AsQueryable());
             _eventSeatRepositoryMock.Setup(x => x.GetAll()).Returns(eventSeats.AsQueryable());
 
-            for (int i = 0; i < eventSeats.Count; i++)
+            for (var i = 0; i < eventSeats.Count; i++)
             {
                 _mapperMock.Setup(m => m.Map<EventSeatModel>(eventSeats[i])).Returns(mappedEventSeats[i]);
             }
 
             // Act
-            IEnumerable<EventSeatModel> actualSeats = _eventSeatService.GetByEventAreaId(id);
+            var actualSeats = _eventSeatService.GetByEventAreaId(id);
 
             // Assert
             actualSeats.Should().BeEquivalentTo(mappedEventSeats);
@@ -141,32 +141,32 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
         public void GetByEventAreaId_EventAreaNotFound_ThrowsValidationException()
         {
             // Arrange
-            List<EventSeat> eventSeats = new List<EventSeat>
+            var eventSeats = new List<EventSeat>
             {
                 new EventSeat { Id = 1, EventAreaId = 1, Row = 1, Number = 1, State = EventSeatState.Available },
                 new EventSeat { Id = 2, EventAreaId = 1, Row = 1, Number = 2, State = EventSeatState.Available },
                 new EventSeat { Id = 2, EventAreaId = 1, Row = 1, Number = 3, State = EventSeatState.Ordered },
             };
 
-            List<EventSeatModel> mappedEventSeats = new List<EventSeatModel>
+            var mappedEventSeats = new List<EventSeatModel>
             {
                 new EventSeatModel { Id = 1, EventAreaId = 1, Row = 1, Number = 1, State = EventSeatStateModel.Available },
                 new EventSeatModel { Id = 2, EventAreaId = 1, Row = 1, Number = 2, State = EventSeatStateModel.Available },
                 new EventSeatModel { Id = 2, EventAreaId = 1, Row = 1, Number = 3, State = EventSeatStateModel.Ordered },
             };
 
-            int id = 99;
+            var id = 99;
 
             _eventAreaRepositoryMock.Setup(x => x.GetByIdAsync(id)).ReturnsAsync(default(EventArea));
             _eventSeatRepositoryMock.Setup(x => x.GetAll()).Returns(eventSeats.AsQueryable());
 
-            for (int i = 0; i < eventSeats.Count; i++)
+            for (var i = 0; i < eventSeats.Count; i++)
             {
                 _mapperMock.Setup(m => m.Map<EventSeatModel>(eventSeats[i])).Returns(mappedEventSeats[i]);
             }
 
             // Act
-            System.Func<IEnumerable<EventSeatModel>> gettingById = _eventSeatService.Invoking(s => s.GetByEventAreaId(id));
+            var gettingById = _eventSeatService.Invoking(s => s.GetByEventAreaId(id));
 
             // Assert
             gettingById
@@ -178,17 +178,17 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
         public async Task GetById_EventSeatExists_ReturnsEventSeat()
         {
             // Arrange
-            int id = 1;
+            var id = 1;
 
-            EventSeat eventSeat = new EventSeat { Id = 1, EventAreaId = 1, Row = 1, Number = 1, State = EventSeatState.Available };
-            EventSeatModel mappedEventSeat = new EventSeatModel { Id = 1, EventAreaId = 1, Row = 1, Number = 1, State = EventSeatStateModel.Available };
+            var eventSeat = new EventSeat { Id = 1, EventAreaId = 1, Row = 1, Number = 1, State = EventSeatState.Available };
+            var mappedEventSeat = new EventSeatModel { Id = 1, EventAreaId = 1, Row = 1, Number = 1, State = EventSeatStateModel.Available };
 
             _mapperMock.Setup(m => m.Map<EventSeatModel>(eventSeat)).Returns(mappedEventSeat);
 
             _eventSeatRepositoryMock.Setup(x => x.GetByIdAsync(id)).ReturnsAsync(eventSeat);
 
             // Act
-            EventSeatModel actualEventSeat = await _eventSeatService.GetByIdAsync(id);
+            var actualEventSeat = await _eventSeatService.GetByIdAsync(id);
 
             // Assert
             actualEventSeat.Should().BeEquivalentTo(eventSeat);
@@ -198,12 +198,12 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
         public async Task GetById_EventSeatNotFound_ThrowsValidationException()
         {
             // Arrange
-            int id = 1;
+            var id = 1;
 
             _eventSeatRepositoryMock.Setup(x => x.GetByIdAsync(id)).ReturnsAsync(default(EventSeat));
 
             // Act
-            System.Func<Task<EventSeatModel>> gettingById = _eventSeatService.Invoking(s => s.GetByIdAsync(id));
+            var gettingById = _eventSeatService.Invoking(s => s.GetByIdAsync(id));
 
             // Assert
             await gettingById

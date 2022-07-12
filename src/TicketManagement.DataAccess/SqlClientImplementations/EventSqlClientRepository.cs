@@ -20,9 +20,9 @@ namespace TicketManagement.DataAccess.SqlClientImplementations
 
         public async Task<int> CreateAsync(Event @event)
         {
-            await using SqlConnection connection = new SqlConnection(_connectionString);
+            await using var connection = new SqlConnection(_connectionString);
 
-            await using SqlCommand command = new SqlCommand("InsertEvent", connection)
+            await using var command = new SqlCommand("InsertEvent", connection)
             {
                 CommandType = CommandType.StoredProcedure,
             };
@@ -43,9 +43,9 @@ namespace TicketManagement.DataAccess.SqlClientImplementations
 
         public async Task DeleteAsync(int id)
         {
-            await using SqlConnection connection = new SqlConnection(_connectionString);
+            await using var connection = new SqlConnection(_connectionString);
 
-            await using SqlCommand command = new SqlCommand("DeleteEvent", connection)
+            await using var command = new SqlCommand("DeleteEvent", connection)
             {
                 CommandType = CommandType.StoredProcedure,
             };
@@ -59,17 +59,17 @@ namespace TicketManagement.DataAccess.SqlClientImplementations
 
         public IQueryable<Event> GetAll()
         {
-            string query = "SELECT Id, Name, Description, LayoutId, StartDate, EndDate FROM Event";
+            var query = "SELECT Id, Name, Description, LayoutId, StartDate, EndDate FROM Event";
 
-            using SqlConnection connection = new SqlConnection(_connectionString);
+            using var connection = new SqlConnection(_connectionString);
 
-            using SqlCommand command = new SqlCommand(query, connection);
+            using var command = new SqlCommand(query, connection);
 
             connection.Open();
 
-            using SqlDataReader reader = command.ExecuteReader();
+            using var reader = command.ExecuteReader();
 
-            List<Event> events = new List<Event>();
+            var events = new List<Event>();
 
             while (reader.Read())
             {
@@ -89,17 +89,17 @@ namespace TicketManagement.DataAccess.SqlClientImplementations
 
         public async Task<Event> GetByIdAsync(int id)
         {
-            string query = "SELECT Id, Name, Description, LayoutId, StartDate, EndDate FROM Event WHERE Id = @id";
+            var query = "SELECT Id, Name, Description, LayoutId, StartDate, EndDate FROM Event WHERE Id = @id";
 
-            await using SqlConnection connection = new SqlConnection(_connectionString);
+            await using var connection = new SqlConnection(_connectionString);
 
-            await using SqlCommand command = new SqlCommand(query, connection);
+            await using var command = new SqlCommand(query, connection);
 
             command.Parameters.AddWithValue("@id", id);
 
             await connection.OpenAsync();
 
-            await using SqlDataReader reader = await command.ExecuteReaderAsync();
+            await using var reader = await command.ExecuteReaderAsync();
 
             if (await reader.ReadAsync())
             {
@@ -119,9 +119,9 @@ namespace TicketManagement.DataAccess.SqlClientImplementations
 
         public async Task UpdateAsync(Event @event)
         {
-            await using SqlConnection connection = new SqlConnection(_connectionString);
+            await using var connection = new SqlConnection(_connectionString);
 
-            await using SqlCommand command = new SqlCommand("UpdateEvent", connection)
+            await using var command = new SqlCommand("UpdateEvent", connection)
             {
                 CommandType = CommandType.StoredProcedure,
             };

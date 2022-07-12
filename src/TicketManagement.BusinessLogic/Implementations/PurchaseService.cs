@@ -36,7 +36,7 @@ namespace TicketManagement.BusinessLogic.Implementations
         {
             await CheckSeatsAsync(model.SeatIds);
 
-            Purchase purchase = new Purchase
+            var purchase = new Purchase
             {
                 EventId = model.EventId,
                 UserId = model.UserId,
@@ -45,13 +45,13 @@ namespace TicketManagement.BusinessLogic.Implementations
 
             await MakePayment(purchase.UserId, purchase.Price);
 
-            int purchaseId = await _purchaseRepository.CreateAsync(purchase);
+            var purchaseId = await _purchaseRepository.CreateAsync(purchase);
 
-            foreach (int id in model.SeatIds)
+            foreach (var id in model.SeatIds)
             {
                 await _eventSeatService.SetSeatStateAsync(id, EventSeatStateModel.Ordered);
 
-                PurchasedSeat purchasedSeat = new PurchasedSeat { EventSeatId = id, PurchaseId = purchaseId };
+                var purchasedSeat = new PurchasedSeat { EventSeatId = id, PurchaseId = purchaseId };
 
                 await _purchasedSeatRepository.CreateAsync(purchasedSeat);
             }
@@ -59,13 +59,13 @@ namespace TicketManagement.BusinessLogic.Implementations
 
         public IEnumerable<PurchaseModel> GetByUserId(string userId)
         {
-            List<Purchase> purchases = _purchaseRepository.GetAll().Where(p => p.UserId == userId).ToList();
+            var purchases = _purchaseRepository.GetAll().Where(p => p.UserId == userId).ToList();
 
-            List<PurchaseModel> models = new List<PurchaseModel>();
+            var models = new List<PurchaseModel>();
 
-            foreach (Purchase p in purchases)
+            foreach (var p in purchases)
             {
-                PurchaseModel purchaseModel = new PurchaseModel
+                var purchaseModel = new PurchaseModel
                 {
                     Id = p.Id,
                     EventId = p.EventId,
@@ -85,12 +85,12 @@ namespace TicketManagement.BusinessLogic.Implementations
 
         public IEnumerable<EventSeatModel> GetByPurchaseId(int purchaseId)
         {
-            List<int> purchasedSeatIds = _purchasedSeatRepository.GetAll()
+            var purchasedSeatIds = _purchasedSeatRepository.GetAll()
                 .Where(ps => ps.PurchaseId == purchaseId)
                 .Select(ps => ps.EventSeatId)
                 .ToList();
 
-            List<EventSeatModel> eventSeats = _eventSeatService.GetAll()
+            var eventSeats = _eventSeatService.GetAll()
                 .Where(s => purchasedSeatIds.Contains(s.Id))
                 .ToList();
 
@@ -104,9 +104,9 @@ namespace TicketManagement.BusinessLogic.Implementations
                 throw new ValidationException($"No seats chosen.");
             }
 
-            foreach (int id in seatIds)
+            foreach (var id in seatIds)
             {
-                EventSeatModel seat = await _eventSeatService.GetByIdAsync(id);
+                var seat = await _eventSeatService.GetByIdAsync(id);
 
                 if (seat.State != EventSeatStateModel.Available)
                 {
@@ -119,10 +119,10 @@ namespace TicketManagement.BusinessLogic.Implementations
         {
             decimal totalPrice = 0;
 
-            foreach (int id in seatIds)
+            foreach (var id in seatIds)
             {
-                EventSeatModel seat = await _eventSeatService.GetByIdAsync(id);
-                EventAreaModel area = await _eventAreaService.GetByIdAsync(seat.EventAreaId);
+                var seat = await _eventSeatService.GetByIdAsync(id);
+                var area = await _eventAreaService.GetByIdAsync(seat.EventAreaId);
 
                 totalPrice += area.Price;
             }
@@ -132,7 +132,7 @@ namespace TicketManagement.BusinessLogic.Implementations
 
         private async Task MakePayment(string userId, decimal price)
         {
-            User user = await _userManager.FindByIdAsync(userId);
+            var user = await _userManager.FindByIdAsync(userId);
 
             if (user is null)
             {

@@ -16,10 +16,10 @@ namespace TicketManagement.IntegrationTests.LayoutServiceTests
         [OneTimeSetUp]
         public void CreateServices()
         {
-            string connectionString = new TestDatabase().ConnectionString;
+            var connectionString = new TestDatabase().ConnectionString;
 
-            LayoutSqlClientRepository layoutRepo = new LayoutSqlClientRepository(connectionString);
-            LayoutValidator layoutValidator = new LayoutValidator(layoutRepo);
+            var layoutRepo = new LayoutSqlClientRepository(connectionString);
+            var layoutValidator = new LayoutValidator(layoutRepo);
 
             _layoutService = new LayoutService(layoutRepo, layoutValidator);
         }
@@ -27,20 +27,20 @@ namespace TicketManagement.IntegrationTests.LayoutServiceTests
         [Test]
         public async Task Update_ValidLayout_UpdatesLayout()
         {
-            int id = 1;
+            var id = 1;
 
-            Layout layoutBeforeUpdate = new Layout
+            var layoutBeforeUpdate = new Layout
             {
                 Id = id,
                 Description = "First layout",
                 VenueId = 1,
             };
 
-            BusinessLogic.Models.LayoutModel actualLayoutBeforeUpdate = await _layoutService.GetByIdAsync(id);
+            var actualLayoutBeforeUpdate = await _layoutService.GetByIdAsync(id);
 
             actualLayoutBeforeUpdate.Should().BeEquivalentTo(layoutBeforeUpdate);
 
-            Layout layoutToUpdate = new Layout
+            var layoutToUpdate = new Layout
             {
                 Id = id,
                 Description = "Test layout 1",
@@ -49,7 +49,7 @@ namespace TicketManagement.IntegrationTests.LayoutServiceTests
 
             await _layoutService.UpdateAsync(layoutToUpdate);
 
-            BusinessLogic.Models.LayoutModel layoutAfterUpdate = await _layoutService.GetByIdAsync(id);
+            var layoutAfterUpdate = await _layoutService.GetByIdAsync(id);
 
             layoutAfterUpdate.Should().BeEquivalentTo(layoutToUpdate);
         }

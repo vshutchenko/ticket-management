@@ -49,10 +49,10 @@ namespace TicketManagement.BusinessLogic.Validation
 
         private void ValidateAvailableLayout(int eventId, int layoutId, DateTime start, DateTime end)
         {
-            System.Collections.Generic.List<Event> eventsInTheSameLayout = _eventRepository.GetAll()
+            var eventsInTheSameLayout = _eventRepository.GetAll()
                 .Where(e => e.LayoutId == layoutId && e.Id != eventId).ToList();
 
-            Event eventInTheSameDate = eventsInTheSameLayout
+            var eventInTheSameDate = eventsInTheSameLayout
                 .FirstOrDefault(e => start.InRange(e.StartDate, e.EndDate) || end.InRange(e.StartDate, e.EndDate));
 
             if (eventInTheSameDate != null)
@@ -63,9 +63,9 @@ namespace TicketManagement.BusinessLogic.Validation
 
         private void ValidateAvailableSeats(int layoutId)
         {
-            System.Collections.Generic.List<Area> layoutAreas = _areaRepository.GetAll().Where(a => a.LayoutId == layoutId).ToList();
+            var layoutAreas = _areaRepository.GetAll().Where(a => a.LayoutId == layoutId).ToList();
 
-            bool availableSeatsExist = _seatRepository.GetAll().AsEnumerable().Any(s => layoutAreas.Any(a => a.Id == s.AreaId));
+            var availableSeatsExist = _seatRepository.GetAll().AsEnumerable().Any(s => layoutAreas.Any(a => a.Id == s.AreaId));
 
             if (!availableSeatsExist)
             {

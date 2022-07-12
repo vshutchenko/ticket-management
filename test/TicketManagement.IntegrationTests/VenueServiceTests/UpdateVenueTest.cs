@@ -16,10 +16,10 @@ namespace TicketManagement.IntegrationTests.VenueServiceTests
         [SetUp]
         public void CreateServices()
         {
-            string connectionString = new TestDatabase().ConnectionString;
+            var connectionString = new TestDatabase().ConnectionString;
 
-            VenueSqlClientRepository venueRepo = new VenueSqlClientRepository(connectionString);
-            VenueValidator venueValidator = new VenueValidator(venueRepo);
+            var venueRepo = new VenueSqlClientRepository(connectionString);
+            var venueValidator = new VenueValidator(venueRepo);
 
             _venueService = new VenueService(venueRepo, venueValidator);
         }
@@ -27,9 +27,9 @@ namespace TicketManagement.IntegrationTests.VenueServiceTests
         [Test]
         public async Task UpdateDescription_ValidVenue_UpdatesVenue()
         {
-            int id = 1;
+            var id = 1;
 
-            Venue venueBeforeUpdate = new Venue
+            var venueBeforeUpdate = new Venue
             {
                 Id = id,
                 Description = "First venue",
@@ -37,11 +37,11 @@ namespace TicketManagement.IntegrationTests.VenueServiceTests
                 Phone = "123 45 678 90 12",
             };
 
-            BusinessLogic.Models.VenueModel actualVenueBeforeUpdate = await _venueService.GetByIdAsync(id);
+            var actualVenueBeforeUpdate = await _venueService.GetByIdAsync(id);
 
             actualVenueBeforeUpdate.Should().BeEquivalentTo(venueBeforeUpdate);
 
-            Venue venueToUpdate = new Venue
+            var venueToUpdate = new Venue
             {
                 Id = id,
                 Description = "Test venue 1",
@@ -51,7 +51,7 @@ namespace TicketManagement.IntegrationTests.VenueServiceTests
 
             await _venueService.UpdateAsync(venueToUpdate);
 
-            BusinessLogic.Models.VenueModel actualVenueAfterUpdate = await _venueService.GetByIdAsync(id);
+            var actualVenueAfterUpdate = await _venueService.GetByIdAsync(id);
 
             actualVenueAfterUpdate.Should().BeEquivalentTo(venueToUpdate);
         }
@@ -59,9 +59,9 @@ namespace TicketManagement.IntegrationTests.VenueServiceTests
         [Test]
         public async Task UpdateAddressAndPhone_ValidVenue_UpdatesVenue()
         {
-            int id = 1;
+            var id = 1;
 
-            Venue venueBeforeUpdate = new Venue
+            var venueBeforeUpdate = new Venue
             {
                 Id = id,
                 Description = "First venue",
@@ -69,11 +69,11 @@ namespace TicketManagement.IntegrationTests.VenueServiceTests
                 Phone = "123 45 678 90 12",
             };
 
-            BusinessLogic.Models.VenueModel actualVenueBeforeUpdate = await _venueService.GetByIdAsync(id);
+            var actualVenueBeforeUpdate = await _venueService.GetByIdAsync(id);
 
             actualVenueBeforeUpdate.Should().BeEquivalentTo(venueBeforeUpdate);
 
-            Venue venueToUpdate = new Venue
+            var venueToUpdate = new Venue
             {
                 Id = id,
                 Description = "First venue",
@@ -83,7 +83,7 @@ namespace TicketManagement.IntegrationTests.VenueServiceTests
 
             await _venueService.UpdateAsync(venueToUpdate);
 
-            BusinessLogic.Models.VenueModel actualVenueAfterUpdate = await _venueService.GetByIdAsync(id);
+            var actualVenueAfterUpdate = await _venueService.GetByIdAsync(id);
 
             actualVenueAfterUpdate.Should().BeEquivalentTo(venueToUpdate);
         }

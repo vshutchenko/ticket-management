@@ -26,7 +26,7 @@ namespace TicketManagement.BusinessLogic.Implementations
 
         public IEnumerable<EventSeatModel> GetAll()
         {
-            List<EventSeatModel> models = _eventSeatRepository.GetAll()
+            var models = _eventSeatRepository.GetAll()
                 .Select(s => _mapper.Map<EventSeatModel>(s))
                 .ToList();
 
@@ -37,9 +37,9 @@ namespace TicketManagement.BusinessLogic.Implementations
         {
             await ValidateEventSeatExistsAsync(id);
 
-            EventSeat seat = await _eventSeatRepository.GetByIdAsync(id);
+            var seat = await _eventSeatRepository.GetByIdAsync(id);
 
-            EventSeatModel model = _mapper.Map<EventSeatModel>(seat);
+            var model = _mapper.Map<EventSeatModel>(seat);
 
             return model;
         }
@@ -48,9 +48,9 @@ namespace TicketManagement.BusinessLogic.Implementations
         {
             await ValidateEventSeatExistsAsync(id);
 
-            EventSeat seat = await _eventSeatRepository.GetByIdAsync(id);
+            var seat = await _eventSeatRepository.GetByIdAsync(id);
 
-            EventSeatState state = _mapper.Map<EventSeatState>(stateModel);
+            var state = _mapper.Map<EventSeatState>(stateModel);
 
             seat.State = state;
             await _eventSeatRepository.UpdateAsync(seat);
@@ -60,7 +60,7 @@ namespace TicketManagement.BusinessLogic.Implementations
         {
             ValidateEventAreaExists(eventAreaId);
 
-            List<EventSeatModel> models = _eventSeatRepository.GetAll()
+            var models = _eventSeatRepository.GetAll()
                 .Where(s => s.EventAreaId == eventAreaId)
                 .Select(s => _mapper.Map<EventSeatModel>(s))
                 .ToList();
@@ -70,7 +70,7 @@ namespace TicketManagement.BusinessLogic.Implementations
 
         private async Task ValidateEventSeatExistsAsync(int id)
         {
-            EventSeat eventSeat = await _eventSeatRepository.GetByIdAsync(id);
+            var eventSeat = await _eventSeatRepository.GetByIdAsync(id);
 
             if (eventSeat is null)
             {
@@ -80,7 +80,7 @@ namespace TicketManagement.BusinessLogic.Implementations
 
         private void ValidateEventAreaExists(int id)
         {
-            EventArea eventArea = _eventAreaRepository.GetAll().FirstOrDefault(e => e.Id == id);
+            var eventArea = _eventAreaRepository.GetAll().FirstOrDefault(e => e.Id == id);
 
             if (eventArea is null)
             {

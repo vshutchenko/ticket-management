@@ -27,7 +27,7 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
         [SetUp]
         public void SetUp()
         {
-            Mock<IUserStore<User>> store = new Mock<IUserStore<User>>();
+            var store = new Mock<IUserStore<User>>();
             _userManagerMock = new Mock<UserManager<User>>(store.Object, null, null, null, null, null, null, null, null);
 
             _purchaseRepositoryMock = new Mock<IRepository<Purchase>>();
@@ -47,21 +47,21 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
         public async Task PurchaseSeatAsync_ValidParameters_PurchasesSeatAsync()
         {
             // Arrange
-            PurchaseModel purchase = new PurchaseModel { EventId = 1, UserId = "13fd42af-6a64-4022-bed4-8c7507cb67b9", SeatIds = new List<int> { 1, 2, 3 } };
+            var purchase = new PurchaseModel { EventId = 1, UserId = "13fd42af-6a64-4022-bed4-8c7507cb67b9", SeatIds = new List<int> { 1, 2, 3 } };
 
-            List<EventSeatModel> seats = new List<EventSeatModel>
+            var seats = new List<EventSeatModel>
             {
                 new EventSeatModel { Id = 1, EventAreaId = 1, Row = 1, Number = 1, State = EventSeatStateModel.Available },
                 new EventSeatModel { Id = 2, EventAreaId = 1, Row = 1, Number = 2, State = EventSeatStateModel.Available },
                 new EventSeatModel { Id = 3, EventAreaId = 1, Row = 2, Number = 1, State = EventSeatStateModel.Available },
             };
 
-            int areaId = 1;
-            EventAreaModel area = new EventAreaModel { Id = 1, CoordX = 1, CoordY = 2, EventId = 1, Description = "Description", Price = 15 };
+            var areaId = 1;
+            var area = new EventAreaModel { Id = 1, CoordX = 1, CoordY = 2, EventId = 1, Description = "Description", Price = 15 };
 
-            User user = new User { Email = "user1@gmail.com", Balance = 100 };
+            var user = new User { Email = "user1@gmail.com", Balance = 100 };
 
-            for (int i = 0; i < seats.Count; i++)
+            for (var i = 0; i < seats.Count; i++)
             {
                 _eventSeatServiceMock.Setup(x => x.GetByIdAsync(seats[i].Id)).ReturnsAsync(seats[i]);
             }
@@ -69,7 +69,7 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
             _eventAreaServiceMock.Setup(x => x.GetByIdAsync(areaId)).ReturnsAsync(area);
             _userManagerMock.Setup(x => x.FindByIdAsync(purchase.UserId)).ReturnsAsync(user);
 
-            int purchaseId = 1;
+            var purchaseId = 1;
             _purchaseRepositoryMock.Setup(x => x.CreateAsync(It.IsAny<Purchase>())).ReturnsAsync(purchaseId);
 
             // Act
@@ -84,21 +84,21 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
         public async Task PurchaseSeatAsync_UnsufficientFunds_ThrowsValidationException()
         {
             // Arrange
-            PurchaseModel purchase = new PurchaseModel { EventId = 1, UserId = "13fd42af-6a64-4022-bed4-8c7507cb67b9", SeatIds = new List<int> { 1, 2, 3 } };
+            var purchase = new PurchaseModel { EventId = 1, UserId = "13fd42af-6a64-4022-bed4-8c7507cb67b9", SeatIds = new List<int> { 1, 2, 3 } };
 
-            List<EventSeatModel> seats = new List<EventSeatModel>
+            var seats = new List<EventSeatModel>
             {
                 new EventSeatModel { Id = 1, EventAreaId = 1, Row = 1, Number = 1, State = EventSeatStateModel.Available },
                 new EventSeatModel { Id = 2, EventAreaId = 1, Row = 1, Number = 2, State = EventSeatStateModel.Available },
                 new EventSeatModel { Id = 3, EventAreaId = 1, Row = 2, Number = 1, State = EventSeatStateModel.Available },
             };
 
-            int areaId = 1;
-            EventAreaModel area = new EventAreaModel { Id = 1, CoordX = 1, CoordY = 2, EventId = 1, Description = "Description", Price = 15 };
+            var areaId = 1;
+            var area = new EventAreaModel { Id = 1, CoordX = 1, CoordY = 2, EventId = 1, Description = "Description", Price = 15 };
 
-            User user = new User { Email = "user1@gmail.com", Balance = 0 };
+            var user = new User { Email = "user1@gmail.com", Balance = 0 };
 
-            for (int i = 0; i < seats.Count; i++)
+            for (var i = 0; i < seats.Count; i++)
             {
                 _eventSeatServiceMock.Setup(x => x.GetByIdAsync(seats[i].Id)).ReturnsAsync(seats[i]);
             }
@@ -106,11 +106,11 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
             _eventAreaServiceMock.Setup(x => x.GetByIdAsync(areaId)).ReturnsAsync(area);
             _userManagerMock.Setup(x => x.FindByIdAsync(purchase.UserId)).ReturnsAsync(user);
 
-            int purchaseId = 1;
+            var purchaseId = 1;
             _purchaseRepositoryMock.Setup(x => x.CreateAsync(It.IsAny<Purchase>())).ReturnsAsync(purchaseId);
 
             // Act
-            System.Func<Task> purchasing = _purchaseService.Invoking(s => s.PurchaseSeatAsync(purchase));
+            var purchasing = _purchaseService.Invoking(s => s.PurchaseSeatAsync(purchase));
 
             // Assert
             await purchasing
@@ -122,21 +122,21 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
         public async Task PurchaseSeatAsync_NoSeatsChosen_ThrowsValidationException()
         {
             // Arrange
-            PurchaseModel purchase = new PurchaseModel { EventId = 1, UserId = "13fd42af-6a64-4022-bed4-8c7507cb67b9", SeatIds = new List<int>() };
+            var purchase = new PurchaseModel { EventId = 1, UserId = "13fd42af-6a64-4022-bed4-8c7507cb67b9", SeatIds = new List<int>() };
 
-            List<EventSeatModel> seats = new List<EventSeatModel>
+            var seats = new List<EventSeatModel>
             {
                 new EventSeatModel { Id = 1, EventAreaId = 1, Row = 1, Number = 1, State = EventSeatStateModel.Available },
                 new EventSeatModel { Id = 2, EventAreaId = 1, Row = 1, Number = 2, State = EventSeatStateModel.Available },
                 new EventSeatModel { Id = 3, EventAreaId = 1, Row = 2, Number = 1, State = EventSeatStateModel.Available },
             };
 
-            int areaId = 1;
-            EventAreaModel area = new EventAreaModel { Id = 1, CoordX = 1, CoordY = 2, EventId = 1, Description = "Description", Price = 15 };
+            var areaId = 1;
+            var area = new EventAreaModel { Id = 1, CoordX = 1, CoordY = 2, EventId = 1, Description = "Description", Price = 15 };
 
-            User user = new User { Email = "user1@gmail.com", Balance = 100 };
+            var user = new User { Email = "user1@gmail.com", Balance = 100 };
 
-            for (int i = 0; i < seats.Count; i++)
+            for (var i = 0; i < seats.Count; i++)
             {
                 _eventSeatServiceMock.Setup(x => x.GetByIdAsync(seats[i].Id)).ReturnsAsync(seats[i]);
             }
@@ -144,11 +144,11 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
             _eventAreaServiceMock.Setup(x => x.GetByIdAsync(areaId)).ReturnsAsync(area);
             _userManagerMock.Setup(x => x.FindByIdAsync(purchase.UserId)).ReturnsAsync(user);
 
-            int purchaseId = 1;
+            var purchaseId = 1;
             _purchaseRepositoryMock.Setup(x => x.CreateAsync(It.IsAny<Purchase>())).ReturnsAsync(purchaseId);
 
             // Act
-            System.Func<Task> purchasing = _purchaseService.Invoking(s => s.PurchaseSeatAsync(purchase));
+            var purchasing = _purchaseService.Invoking(s => s.PurchaseSeatAsync(purchase));
 
             // Assert
             await purchasing
@@ -160,22 +160,22 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
         public async Task PurchaseSeatAsync_OneSeatAlreadyOrdered_ThrowsValidationException()
         {
             // Arrange
-            PurchaseModel purchase = new PurchaseModel { EventId = 1, UserId = "13fd42af-6a64-4022-bed4-8c7507cb67b9", SeatIds = new List<int> { 1, 2, 3 } };
+            var purchase = new PurchaseModel { EventId = 1, UserId = "13fd42af-6a64-4022-bed4-8c7507cb67b9", SeatIds = new List<int> { 1, 2, 3 } };
 
-            List<EventSeatModel> seats = new List<EventSeatModel>
+            var seats = new List<EventSeatModel>
             {
                 new EventSeatModel { Id = 1, EventAreaId = 1, Row = 1, Number = 1, State = EventSeatStateModel.Available },
                 new EventSeatModel { Id = 2, EventAreaId = 1, Row = 1, Number = 2, State = EventSeatStateModel.Available },
                 new EventSeatModel { Id = 3, EventAreaId = 1, Row = 2, Number = 1, State = EventSeatStateModel.Ordered },
             };
 
-            for (int i = 0; i < seats.Count; i++)
+            for (var i = 0; i < seats.Count; i++)
             {
                 _eventSeatServiceMock.Setup(x => x.GetByIdAsync(seats[i].Id)).ReturnsAsync(seats[i]);
             }
 
             // Act
-            System.Func<Task> purchasing = _purchaseService.Invoking(s => s.PurchaseSeatAsync(purchase));
+            var purchasing = _purchaseService.Invoking(s => s.PurchaseSeatAsync(purchase));
 
             // Assert
             await purchasing
@@ -187,19 +187,19 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
         public void GetByUserId_UserExists_ReturnsPurchases()
         {
             // Arrange
-            string userId = "13fd42af-6a64-4022-bed4-8c7507cb67b9";
+            var userId = "13fd42af-6a64-4022-bed4-8c7507cb67b9";
 
-            List<Purchase> purchases = new List<Purchase>
+            var purchases = new List<Purchase>
             {
                 new Purchase { Id = 1, EventId = 1, UserId = "13fd42af-6a64-4022-bed4-8c7507cb67b9", Price = 120 },
             };
 
-            List<PurchaseModel> expectedPurchases = new List<PurchaseModel>
+            var expectedPurchases = new List<PurchaseModel>
             {
                 new PurchaseModel { Id = 1, EventId = 1, UserId = "13fd42af-6a64-4022-bed4-8c7507cb67b9", Price = 120, SeatIds = new List<int> { 1, 2, 3 } },
             };
 
-            List<PurchasedSeat> seats = new List<PurchasedSeat>
+            var seats = new List<PurchasedSeat>
             {
                 new PurchasedSeat { Id = 1, EventSeatId = 1, PurchaseId = 1 },
                 new PurchasedSeat { Id = 2, EventSeatId = 2, PurchaseId = 1 },
@@ -211,7 +211,7 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
             _purchasedSeatRepositoryMock.Setup(x => x.GetAll()).Returns(seats.AsQueryable());
 
             // Act
-            IEnumerable<PurchaseModel> actualUser = _purchaseService.GetByUserId(userId);
+            var actualUser = _purchaseService.GetByUserId(userId);
 
             // Assert
             actualUser.Should().BeEquivalentTo(expectedPurchases);
@@ -221,16 +221,16 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
         public void GetByPurchaseId_PurchaseExists_ReturnsPurchasedSeats()
         {
             // Arrange
-            int purchaseId = 1;
+            var purchaseId = 1;
 
-            List<PurchasedSeat> purchasedSeats = new List<PurchasedSeat>
+            var purchasedSeats = new List<PurchasedSeat>
             {
                 new PurchasedSeat { Id = 1, EventSeatId = 1, PurchaseId = 1 },
                 new PurchasedSeat { Id = 2, EventSeatId = 2, PurchaseId = 1 },
                 new PurchasedSeat { Id = 3, EventSeatId = 3, PurchaseId = 1 },
             };
 
-            List<EventSeatModel> seats = new List<EventSeatModel>
+            var seats = new List<EventSeatModel>
             {
                 new EventSeatModel { Id = 1, EventAreaId = 1, Row = 1, Number = 1, State = EventSeatStateModel.Ordered },
                 new EventSeatModel { Id = 2, EventAreaId = 1, Row = 1, Number = 2, State = EventSeatStateModel.Ordered },
@@ -241,7 +241,7 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
             _eventSeatServiceMock.Setup(x => x.GetAll()).Returns(seats.AsQueryable());
 
             // Act
-            IEnumerable<EventSeatModel> actualSeaats = _purchaseService.GetByPurchaseId(purchaseId);
+            var actualSeaats = _purchaseService.GetByPurchaseId(purchaseId);
 
             // Assert
             actualSeaats.Should().BeEquivalentTo(seats);

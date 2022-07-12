@@ -20,11 +20,11 @@ namespace TicketManagement.DataAccess.SqlClientImplementations
 
         public async Task<int> CreateAsync(Seat item)
         {
-            string query = "INSERT INTO Seat(AreaId, Row, Number) VALUES(@areaId, @row, @number); SELECT SCOPE_IDENTITY()";
+            var query = "INSERT INTO Seat(AreaId, Row, Number) VALUES(@areaId, @row, @number); SELECT SCOPE_IDENTITY()";
 
-            await using SqlConnection connection = new SqlConnection(_connectionString);
+            await using var connection = new SqlConnection(_connectionString);
 
-            await using SqlCommand command = new SqlCommand(query, connection);
+            await using var command = new SqlCommand(query, connection);
 
             command.Parameters.AddWithValue("@areaId", item.AreaId);
             command.Parameters.AddWithValue("@row", item.Row);
@@ -32,18 +32,18 @@ namespace TicketManagement.DataAccess.SqlClientImplementations
 
             await connection.OpenAsync();
 
-            int id = Convert.ToInt32(await command.ExecuteScalarAsync());
+            var id = Convert.ToInt32(await command.ExecuteScalarAsync());
 
             return id;
         }
 
         public async Task DeleteAsync(int id)
         {
-            string query = "DELETE FROM Seat WHERE Id = @seatId";
+            var query = "DELETE FROM Seat WHERE Id = @seatId";
 
-            await using SqlConnection connection = new SqlConnection(_connectionString);
+            await using var connection = new SqlConnection(_connectionString);
 
-            await using SqlCommand command = new SqlCommand(query, connection);
+            await using var command = new SqlCommand(query, connection);
 
             command.Parameters.AddWithValue("@seatId", id);
 
@@ -54,17 +54,17 @@ namespace TicketManagement.DataAccess.SqlClientImplementations
 
         public IQueryable<Seat> GetAll()
         {
-            string query = "SELECT Id, AreaId, Row, Number FROM Seat";
+            var query = "SELECT Id, AreaId, Row, Number FROM Seat";
 
-            using SqlConnection connection = new SqlConnection(_connectionString);
+            using var connection = new SqlConnection(_connectionString);
 
-            using SqlCommand command = new SqlCommand(query, connection);
+            using var command = new SqlCommand(query, connection);
 
             connection.Open();
 
-            using SqlDataReader reader = command.ExecuteReader();
+            using var reader = command.ExecuteReader();
 
-            List<Seat> seats = new List<Seat>();
+            var seats = new List<Seat>();
 
             while (reader.Read())
             {
@@ -82,17 +82,17 @@ namespace TicketManagement.DataAccess.SqlClientImplementations
 
         public async Task<Seat> GetByIdAsync(int id)
         {
-            string query = "SELECT Id, AreaId, Row, Number FROM Seat WHERE Id = @id";
+            var query = "SELECT Id, AreaId, Row, Number FROM Seat WHERE Id = @id";
 
-            await using SqlConnection connection = new SqlConnection(_connectionString);
+            await using var connection = new SqlConnection(_connectionString);
 
-            await using SqlCommand command = new SqlCommand(query, connection);
+            await using var command = new SqlCommand(query, connection);
 
             command.Parameters.AddWithValue("@id", id);
 
             await connection.OpenAsync();
 
-            await using SqlDataReader reader = await command.ExecuteReaderAsync();
+            await using var reader = await command.ExecuteReaderAsync();
 
             if (await reader.ReadAsync())
             {
@@ -110,11 +110,11 @@ namespace TicketManagement.DataAccess.SqlClientImplementations
 
         public async Task UpdateAsync(Seat item)
         {
-            string query = "UPDATE Seat SET AreaId = @areaId, Row = @row, Number = @number WHERE Id = @seatId";
+            var query = "UPDATE Seat SET AreaId = @areaId, Row = @row, Number = @number WHERE Id = @seatId";
 
-            await using SqlConnection connection = new SqlConnection(_connectionString);
+            await using var connection = new SqlConnection(_connectionString);
 
-            await using SqlCommand command = new SqlCommand(query, connection);
+            await using var command = new SqlCommand(query, connection);
 
             command.Parameters.AddWithValue("@seatId", item.Id);
             command.Parameters.AddWithValue("@areaId", item.AreaId);

@@ -28,7 +28,7 @@ namespace TicketManagement.BusinessLogic.Implementations
 
         public IEnumerable<EventAreaModel> GetAll()
         {
-            List<EventAreaModel> models = _eventAreaRepository.GetAll()
+            var models = _eventAreaRepository.GetAll()
                 .Select(a => _mapper.Map<EventAreaModel>(a))
                 .ToList();
 
@@ -39,7 +39,7 @@ namespace TicketManagement.BusinessLogic.Implementations
         {
             ValidateEventExists(eventId);
 
-            List<EventAreaModel> models = _eventAreaRepository.GetAll()
+            var models = _eventAreaRepository.GetAll()
                 .Where(a => a.EventId == eventId)
                 .Select(a => _mapper.Map<EventAreaModel>(a))
                 .ToList();
@@ -51,9 +51,9 @@ namespace TicketManagement.BusinessLogic.Implementations
         {
             ValidateEventAreaExists(id);
 
-            EventArea eventArea = await _eventAreaRepository.GetByIdAsync(id);
+            var eventArea = await _eventAreaRepository.GetByIdAsync(id);
 
-            EventAreaModel model = _mapper.Map<EventAreaModel>(eventArea);
+            var model = _mapper.Map<EventAreaModel>(eventArea);
 
             return model;
         }
@@ -64,7 +64,7 @@ namespace TicketManagement.BusinessLogic.Implementations
 
             _priceValidator.Validate(price);
 
-            EventArea area = await _eventAreaRepository.GetByIdAsync(id);
+            var area = await _eventAreaRepository.GetByIdAsync(id);
 
             area.Price = price;
             await _eventAreaRepository.UpdateAsync(area);
@@ -72,7 +72,7 @@ namespace TicketManagement.BusinessLogic.Implementations
 
         private void ValidateEventAreaExists(int id)
         {
-            EventArea eventArea = _eventAreaRepository.GetAll().FirstOrDefault(a => a.Id == id);
+            var eventArea = _eventAreaRepository.GetAll().FirstOrDefault(a => a.Id == id);
 
             if (eventArea is null)
             {
@@ -82,7 +82,7 @@ namespace TicketManagement.BusinessLogic.Implementations
 
         private void ValidateEventExists(int id)
         {
-            Event @event = _eventRepository.GetAll().FirstOrDefault(e => e.Id == id);
+            var @event = _eventRepository.GetAll().FirstOrDefault(e => e.Id == id);
 
             if (@event is null)
             {

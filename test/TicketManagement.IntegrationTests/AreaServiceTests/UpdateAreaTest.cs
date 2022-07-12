@@ -16,10 +16,10 @@ namespace TicketManagement.IntegrationTests.AreaServiceTests
         [SetUp]
         public void CreateServices()
         {
-            string connectionString = new TestDatabase().ConnectionString;
+            var connectionString = new TestDatabase().ConnectionString;
 
-            AreaSqlClientRepository areaRepo = new AreaSqlClientRepository(connectionString);
-            AreaValidator areaValidator = new AreaValidator(areaRepo);
+            var areaRepo = new AreaSqlClientRepository(connectionString);
+            var areaValidator = new AreaValidator(areaRepo);
 
             _areaService = new AreaService(areaRepo, areaValidator);
         }
@@ -27,9 +27,9 @@ namespace TicketManagement.IntegrationTests.AreaServiceTests
         [Test]
         public async Task UpdateDescription_ValidArea_UpdatesArea()
         {
-            int id = 1;
+            var id = 1;
 
-            Area areaBeforeUpdate = new Area
+            var areaBeforeUpdate = new Area
             {
                 Id = id,
                 Description = "First area of first layout",
@@ -38,11 +38,11 @@ namespace TicketManagement.IntegrationTests.AreaServiceTests
                 LayoutId = 1,
             };
 
-            BusinessLogic.Models.AreaModel actualAreaBeforeUpdate = await _areaService.GetByIdAsync(id);
+            var actualAreaBeforeUpdate = await _areaService.GetByIdAsync(id);
 
             actualAreaBeforeUpdate.Should().BeEquivalentTo(areaBeforeUpdate);
 
-            Area areaToUpdate = new Area
+            var areaToUpdate = new Area
             {
                 Id = id,
                 Description = "Test area 1",
@@ -53,7 +53,7 @@ namespace TicketManagement.IntegrationTests.AreaServiceTests
 
             await _areaService.UpdateAsync(areaToUpdate);
 
-            BusinessLogic.Models.AreaModel actualAreaAfterUpdate = await _areaService.GetByIdAsync(id);
+            var actualAreaAfterUpdate = await _areaService.GetByIdAsync(id);
 
             actualAreaAfterUpdate.Should().BeEquivalentTo(areaToUpdate);
         }
@@ -61,9 +61,9 @@ namespace TicketManagement.IntegrationTests.AreaServiceTests
         [Test]
         public async Task UpdateCoordinates_ValidArea_UpdatesArea()
         {
-            int id = 1;
+            var id = 1;
 
-            Area areaBeforeUpdate = new Area
+            var areaBeforeUpdate = new Area
             {
                 Id = id,
                 Description = "First area of first layout",
@@ -72,11 +72,11 @@ namespace TicketManagement.IntegrationTests.AreaServiceTests
                 LayoutId = 1,
             };
 
-            BusinessLogic.Models.AreaModel actualAreaBeforeUpdate = await _areaService.GetByIdAsync(id);
+            var actualAreaBeforeUpdate = await _areaService.GetByIdAsync(id);
 
             actualAreaBeforeUpdate.Should().BeEquivalentTo(areaBeforeUpdate);
 
-            Area areaToUpdate = new Area
+            var areaToUpdate = new Area
             {
                 Id = id,
                 Description = "First area of first layout",
@@ -87,7 +87,7 @@ namespace TicketManagement.IntegrationTests.AreaServiceTests
 
             await _areaService.UpdateAsync(areaToUpdate);
 
-            BusinessLogic.Models.AreaModel actualAreaAfterUpdate = await _areaService.GetByIdAsync(id);
+            var actualAreaAfterUpdate = await _areaService.GetByIdAsync(id);
 
             actualAreaAfterUpdate.Should().BeEquivalentTo(areaToUpdate);
         }

@@ -20,7 +20,7 @@ namespace TicketManagement.DataAccess.EntityFrameworkImplementations
 
         public async Task<int> CreateAsync(PurchasedSeat item)
         {
-            Microsoft.EntityFrameworkCore.ChangeTracking.EntityEntry<PurchasedSeat> entityEntry = await _context.AddAsync(item);
+            var entityEntry = await _context.AddAsync(item);
 
             await _context.SaveChangesAsync();
 
@@ -29,7 +29,7 @@ namespace TicketManagement.DataAccess.EntityFrameworkImplementations
 
         public async Task DeleteAsync(int id)
         {
-            PurchasedSeat entity = _context.PurchasedSeats.FirstOrDefault(s => s.Id == id);
+            var entity = _context.PurchasedSeats.FirstOrDefault(s => s.Id == id);
 
             if (entity != null)
             {

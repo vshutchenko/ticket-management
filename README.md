@@ -7,7 +7,13 @@ This project represents an application for ticket management. The project has th
     - User - has ability to see information about events and purchase seats on events. Each user can modify his profile information and see his purchase history. 
     - Event Manager - has ability to create, update and delete events.
 - Localization. Supported languages: English, Russian, Belarussian.
-- 
 ### Testing
 The solution contains unit and integration tests. To run integration tests you need to specify connection string in the appsettings.json file in the TicketManagement.IntegrationTests folder.
 
+### Login information
+##### Event Manager:
+- login: eventManager@gmail.com
+- password: Password123#
+##### User:
+- login: user1@gmail.com
+- password: Password123#

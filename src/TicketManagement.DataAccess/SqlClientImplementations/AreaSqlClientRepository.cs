@@ -20,11 +20,11 @@ namespace TicketManagement.DataAccess.SqlClientImplementations
 
         public async Task<int> CreateAsync(Area item)
         {
-            string query = "INSERT INTO Area(LayoutId, Description, CoordX, CoordY) VALUES(@layoutId, @description, @coordX, @coordY); SELECT SCOPE_IDENTITY()";
+            var query = "INSERT INTO Area(LayoutId, Description, CoordX, CoordY) VALUES(@layoutId, @description, @coordX, @coordY); SELECT SCOPE_IDENTITY()";
 
-            await using SqlConnection connection = new SqlConnection(_connectionString);
+            await using var connection = new SqlConnection(_connectionString);
 
-            await using SqlCommand command = new SqlCommand(query, connection);
+            await using var command = new SqlCommand(query, connection);
 
             command.Parameters.AddWithValue("@layoutId", item.LayoutId);
             command.Parameters.AddWithValue("@description", item.Description);
@@ -33,18 +33,18 @@ namespace TicketManagement.DataAccess.SqlClientImplementations
 
             await connection.OpenAsync();
 
-            int id = Convert.ToInt32(await command.ExecuteScalarAsync());
+            var id = Convert.ToInt32(await command.ExecuteScalarAsync());
 
             return id;
         }
 
         public async Task DeleteAsync(int id)
         {
-            string query = "DELETE FROM Area WHERE Id = @areaId";
+            var query = "DELETE FROM Area WHERE Id = @areaId";
 
-            await using SqlConnection connection = new SqlConnection(_connectionString);
+            await using var connection = new SqlConnection(_connectionString);
 
-            await using SqlCommand command = new SqlCommand(query, connection);
+            await using var command = new SqlCommand(query, connection);
 
             command.Parameters.AddWithValue("@areaId", id);
 
@@ -55,17 +55,17 @@ namespace TicketManagement.DataAccess.SqlClientImplementations
 
         public IQueryable<Area> GetAll()
         {
-            string query = "SELECT Id, LayoutId, Description, CoordX, CoordY FROM Area";
+            var query = "SELECT Id, LayoutId, Description, CoordX, CoordY FROM Area";
 
-            using SqlConnection connection = new SqlConnection(_connectionString);
+            using var connection = new SqlConnection(_connectionString);
 
-            using SqlCommand command = new SqlCommand(query, connection);
+            using var command = new SqlCommand(query, connection);
 
             connection.Open();
 
-            using SqlDataReader reader = command.ExecuteReader();
+            using var reader = command.ExecuteReader();
 
-            List<Area> areas = new List<Area>();
+            var areas = new List<Area>();
 
             while (reader.Read())
             {
@@ -84,17 +84,17 @@ namespace TicketManagement.DataAccess.SqlClientImplementations
 
         public async Task<Area> GetByIdAsync(int id)
         {
-            string query = "SELECT Id, LayoutId, Description, CoordX, CoordY FROM Area WHERE Id = @id";
+            var query = "SELECT Id, LayoutId, Description, CoordX, CoordY FROM Area WHERE Id = @id";
 
-            await using SqlConnection connection = new SqlConnection(_connectionString);
+            await using var connection = new SqlConnection(_connectionString);
 
-            await using SqlCommand command = new SqlCommand(query, connection);
+            await using var command = new SqlCommand(query, connection);
 
             command.Parameters.AddWithValue("@id", id);
 
             await connection.OpenAsync();
 
-            await using SqlDataReader reader = await command.ExecuteReaderAsync();
+            await using var reader = await command.ExecuteReaderAsync();
 
             if (await reader.ReadAsync())
             {
@@ -113,11 +113,11 @@ namespace TicketManagement.DataAccess.SqlClientImplementations
 
         public async Task UpdateAsync(Area item)
         {
-            string query = "UPDATE Area SET LayoutId = @layoutId, Description = @description, CoordX = @coordX, CoordY = @coordY WHERE Id = @areaId";
+            var query = "UPDATE Area SET LayoutId = @layoutId, Description = @description, CoordX = @coordX, CoordY = @coordY WHERE Id = @areaId";
 
-            await using SqlConnection connection = new SqlConnection(_connectionString);
+            await using var connection = new SqlConnection(_connectionString);
 
-            await using SqlCommand command = new SqlCommand(query, connection);
+            await using var command = new SqlCommand(query, connection);
 
             command.Parameters.AddWithValue("@areaId", item.Id);
             command.Parameters.AddWithValue("@layoutId", item.LayoutId);

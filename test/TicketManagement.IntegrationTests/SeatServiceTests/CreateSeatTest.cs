@@ -16,10 +16,10 @@ namespace TicketManagement.IntegrationTests.SeatServiceTests
         [OneTimeSetUp]
         public void CreateServices()
         {
-            string connectionString = new TestDatabase().ConnectionString;
+            var connectionString = new TestDatabase().ConnectionString;
 
-            SeatSqlClientRepository seatRepo = new SeatSqlClientRepository(connectionString);
-            SeatValidator seatValidator = new SeatValidator(seatRepo);
+            var seatRepo = new SeatSqlClientRepository(connectionString);
+            var seatValidator = new SeatValidator(seatRepo);
 
             _seatService = new SeatService(seatRepo, seatValidator);
         }
@@ -27,7 +27,7 @@ namespace TicketManagement.IntegrationTests.SeatServiceTests
         [Test]
         public async Task Create_ValidSeat_CreatesSeat()
         {
-            Seat seatToCreate = new Seat
+            var seatToCreate = new Seat
             {
                 AreaId = 3,
                 Row = 1,

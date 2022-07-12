@@ -35,7 +35,7 @@ namespace TicketManagement.BusinessLogic.Implementations
                 throw new ValidationException("Event is null.");
             }
 
-            Event @event = _mapper.Map<Event>(eventModel);
+            var @event = _mapper.Map<Event>(eventModel);
 
             _eventValidator.Validate(@event);
 
@@ -46,7 +46,7 @@ namespace TicketManagement.BusinessLogic.Implementations
         {
             await ValidateEventExistsAsync(id);
 
-            bool orderedSeatsExist = _eventAreaService
+            var orderedSeatsExist = _eventAreaService
                 .GetByEventId(id)
                 .SelectMany(a => _eventSeatService.GetByEventAreaId(a.Id))
                 .Any(s => s.State == EventSeatStateModel.Ordered);
@@ -61,7 +61,7 @@ namespace TicketManagement.BusinessLogic.Implementations
 
         public IEnumerable<EventModel> GetAll()
         {
-            List<EventModel> models = _eventRepository.GetAll()
+            var models = _eventRepository.GetAll()
                 .Select(e => _mapper.Map<EventModel>(e))
                 .ToList();
 
@@ -72,9 +72,9 @@ namespace TicketManagement.BusinessLogic.Implementations
         {
             await ValidateEventExistsAsync(id);
 
-            Event @event = await _eventRepository.GetByIdAsync(id);
+            var @event = await _eventRepository.GetByIdAsync(id);
 
-            EventModel model = _mapper.Map<EventModel>(@event);
+            var model = _mapper.Map<EventModel>(@event);
 
             return model;
         }
@@ -86,7 +86,7 @@ namespace TicketManagement.BusinessLogic.Implementations
                 throw new ValidationException("Event is null.");
             }
 
-            bool orderedSeatsExist = _eventAreaService
+            var orderedSeatsExist = _eventAreaService
                 .GetByEventId(eventModel.Id)
                 .SelectMany(a => _eventSeatService.GetByEventAreaId(a.Id))
                 .Any(s => s.State == EventSeatStateModel.Ordered);
@@ -98,7 +98,7 @@ namespace TicketManagement.BusinessLogic.Implementations
 
             await ValidateEventExistsAsync(eventModel.Id);
 
-            Event @event = _mapper.Map<Event>(eventModel);
+            var @event = _mapper.Map<Event>(eventModel);
 
             _eventValidator.Validate(@event);
 
@@ -107,7 +107,7 @@ namespace TicketManagement.BusinessLogic.Implementations
 
         private async Task ValidateEventExistsAsync(int id)
         {
-            Event @event = await _eventRepository.GetByIdAsync(id);
+            var @event = await _eventRepository.GetByIdAsync(id);
 
             if (@event is null)
             {

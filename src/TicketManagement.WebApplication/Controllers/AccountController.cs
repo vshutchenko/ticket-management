@@ -31,9 +31,9 @@ namespace TicketManagement.WebApplication.Controllers
         [Authorize(Roles = "User")]
         public async Task<IActionResult> AddFunds()
         {
-            string? userId = User.FindFirstValue("id");
+            var userId = User.FindFirstValue("id");
 
-            UserModel? user = await _identityService.GetUserAsync(userId);
+            var user = await _identityService.GetUserAsync(userId);
 
             ViewBag.Balance = user.Balance;
 
@@ -45,13 +45,13 @@ namespace TicketManagement.WebApplication.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> AddFunds(decimal amount)
         {
-            string? userId = User.FindFirstValue("id");
+            var userId = User.FindFirstValue("id");
 
-            UserModel? user = await _identityService.GetUserAsync(userId);
+            var user = await _identityService.GetUserAsync(userId);
 
             user.Balance += amount;
 
-            await _identityService.UpdateUser(user);
+            await _identityService.UpdateUserAsync(user);
 
             return RedirectToAction("AddFunds");
         }
@@ -66,9 +66,9 @@ namespace TicketManagement.WebApplication.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ChangePassword(ChangePasswordViewModel model)
         {
-            string? userId = User.FindFirstValue("id");
+            var userId = User.FindFirstValue("id");
 
-            await _identityService.ChangePassword(userId, model.CurrentPassword, model.NewPassword);
+            await _identityService.ChangePasswordAsync(userId, model.CurrentPassword, model.NewPassword);
 
             ViewBag.Message = "Profile information was successfully updated!";
 
@@ -78,7 +78,7 @@ namespace TicketManagement.WebApplication.Controllers
         [HttpGet]
         public async Task<IActionResult> EditUser(string userId)
         {
-            List<SelectListItem>? cultures = _locOptions.Value.SupportedCultures?
+            var cultures = _locOptions.Value.SupportedCultures?
                 .Select(c => new SelectListItem(c.DisplayName, c.Name))
                 .ToList();
 
@@ -87,14 +87,14 @@ namespace TicketManagement.WebApplication.Controllers
                 new SelectListItem { Text = CultureInfo.CurrentCulture.DisplayName.ToString(), Value = CultureInfo.CurrentCulture.Name },
             };
 
-            List<SelectListItem>? timeZones = TimeZoneInfo
+            var timeZones = TimeZoneInfo
                 .GetSystemTimeZones()
                 .Select(z => new SelectListItem(z.DisplayName, z.Id))
                 .ToList();
 
-            UserModel? user = await _identityService.GetUserAsync(userId);
+            var user = await _identityService.GetUserAsync(userId);
 
-            EditUserViewModel? viewModel = new EditUserViewModel
+            var viewModel = new EditUserViewModel
             {
                 Id = user.Id,
                 FirstName = user.FirstName,
@@ -114,9 +114,9 @@ namespace TicketManagement.WebApplication.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> EditUser(EditUserViewModel model)
         {
-            UserModel? user = _mapper.Map<UserModel>(model);
+            var user = _mapper.Map<UserModel>(model);
 
-            await _identityService.UpdateUser(user);
+            await _identityService.UpdateUserAsync(user);
 
             SetCultureCookie(model.CultureName);
             await SetClaimsAsync(user.Id);
@@ -161,7 +161,7 @@ namespace TicketManagement.WebApplication.Controllers
         [AllowAnonymous]
         public IActionResult Register()
         {
-            List<SelectListItem>? cultures = _locOptions.Value.SupportedCultures?
+            var cultures = _locOptions.Value.SupportedCultures?
                 .Select(c => new SelectListItem(c.DisplayName, c.Name))
                 .ToList();
 
@@ -172,14 +172,14 @@ namespace TicketManagement.WebApplication.Controllers
 
             cultures.First().Selected = true;
 
-            List<SelectListItem>? timeZones = TimeZoneInfo
+            var timeZones = TimeZoneInfo
                 .GetSystemTimeZones()
                 .Select(z => new SelectListItem(z.DisplayName, z.Id))
                 .ToList();
 
             timeZones.First().Selected = true;
 
-            RegisterViewModel? viewModel = new RegisterViewModel
+            var viewModel = new RegisterViewModel
             {
                 Cultures = cultures,
                 TimeZones = timeZones,
@@ -193,7 +193,7 @@ namespace TicketManagement.WebApplication.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> Register(RegisterViewModel model)
         {
-            UserModel? user = _mapper.Map<UserModel>(model);
+            var user = _mapper.Map<UserModel>(model);
 
             await _identityService.CreateUserAsync(user, model.Password);
             await AuthenticateAsync(model.Email, model.Password);
@@ -203,7 +203,7 @@ namespace TicketManagement.WebApplication.Controllers
 
         private async Task AuthenticateAsync(string email, string password)
         {
-            UserModel? user = await _identityService.AuthenticateAsync(email, password);
+            var user = await _identityService.AuthenticateAsync(email, password);
 
             await SetClaimsAsync(user.Id);
 
@@ -212,9 +212,9 @@ namespace TicketManagement.WebApplication.Controllers
 
         private async Task SetClaimsAsync(string userId)
         {
-            UserModel? user = await _identityService.GetUserAsync(userId);
+            var user = await _identityService.GetUserAsync(userId);
 
-            List<Claim>? claims = new List<Claim>
+            var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.Email, user.Email),
                 new Claim("id", user.Id),
@@ -228,7 +228,7 @@ namespace TicketManagement.WebApplication.Controllers
                 .Select(r => new Claim(ClaimTypes.Role, r))
                 .ToList());
 
-            ClaimsIdentity id = new ClaimsIdentity(claims, "ApplicationCookie", ClaimsIdentity.DefaultNameClaimType,
+            var id = new ClaimsIdentity(claims, "ApplicationCookie", ClaimsIdentity.DefaultNameClaimType,
                 ClaimsIdentity.DefaultRoleClaimType);
 
             await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(id));
@@ -236,13 +236,13 @@ namespace TicketManagement.WebApplication.Controllers
 
         private void SetCultureCookie(string culture)
         {
-            CookieOptions? cookieOptions = new CookieOptions
+            var cookieOptions = new CookieOptions
             {
                 Path = "/",
                 Expires = DateTimeOffset.UtcNow.AddYears(1),
             };
 
-            string timeZone = User.FindFirst("timezoneId") is null ? TimeZoneInfo.Local.Id : User.FindFirst("timezoneId")!.Value;
+            var timeZone = User.FindFirst("timezoneId") is null ? TimeZoneInfo.Local.Id : User.FindFirst("timezoneId")!.Value;
 
             Response.Cookies.Append("timezoneId", timeZone, cookieOptions);
 

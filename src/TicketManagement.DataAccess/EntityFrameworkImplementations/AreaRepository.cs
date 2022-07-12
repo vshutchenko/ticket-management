@@ -19,7 +19,7 @@ namespace TicketManagement.DataAccess.EntityFrameworkImplementations
 
         public async Task<int> CreateAsync(Area item)
         {
-            Microsoft.EntityFrameworkCore.ChangeTracking.EntityEntry<Area> entityEntry = await _context.AddAsync(item);
+            var entityEntry = await _context.AddAsync(item);
 
             await _context.SaveChangesAsync();
 
@@ -28,7 +28,7 @@ namespace TicketManagement.DataAccess.EntityFrameworkImplementations
 
         public async Task DeleteAsync(int id)
         {
-            Area entity = _context.Areas.FirstOrDefault(a => a.Id == id);
+            var entity = _context.Areas.FirstOrDefault(a => a.Id == id);
 
             if (entity != null)
             {

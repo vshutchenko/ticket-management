@@ -16,10 +16,10 @@ namespace TicketManagement.IntegrationTests.VenueServiceTests
         [OneTimeSetUp]
         public void CreateServices()
         {
-            string connectionString = new TestDatabase().ConnectionString;
+            var connectionString = new TestDatabase().ConnectionString;
 
-            VenueSqlClientRepository venueRepo = new VenueSqlClientRepository(connectionString);
-            VenueValidator venueValidator = new VenueValidator(venueRepo);
+            var venueRepo = new VenueSqlClientRepository(connectionString);
+            var venueValidator = new VenueValidator(venueRepo);
 
             _venueService = new VenueService(venueRepo, venueValidator);
         }
@@ -27,7 +27,7 @@ namespace TicketManagement.IntegrationTests.VenueServiceTests
         [Test]
         public async Task Create_ValidVenue_CreatesVenue()
         {
-            Venue venueToCreate = new Venue
+            var venueToCreate = new Venue
             {
                 Description = "Test venue 1",
                 Address = "Address 1-22",

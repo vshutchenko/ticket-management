@@ -21,7 +21,7 @@ namespace TicketManagement.BusinessLogic.Validation
                 throw new ValidationException("Area is null.");
             }
 
-            bool areaExists = _areaRepository
+            var areaExists = _areaRepository
                 .GetAll()
                 .Any(a => a.Id != item.Id && a.LayoutId == item.LayoutId && a.Description.Equals(item.Description, StringComparison.OrdinalIgnoreCase));
 

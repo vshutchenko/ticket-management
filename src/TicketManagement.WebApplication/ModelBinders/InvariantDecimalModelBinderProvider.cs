@@ -13,7 +13,7 @@ namespace TicketManagement.WebApplication.ModelBinders
 
             if (!context.Metadata.IsComplexType && (context.Metadata.ModelType == typeof(decimal) || context.Metadata.ModelType == typeof(decimal?)))
             {
-                ILoggerFactory loggerFactory = context.Services.GetRequiredService<ILoggerFactory>();
+                var loggerFactory = context.Services.GetRequiredService<ILoggerFactory>();
                 return new InvariantDecimalModelBinder(context.Metadata.ModelType, loggerFactory);
             }
 
