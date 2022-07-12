@@ -18,17 +18,17 @@ namespace TicketManagement.IntegrationTests.EventServiceTests
         [SetUp]
         public void CreateServices()
         {
-            var connectionString = new TestDatabase().ConnectionString;
+            string connectionString = new TestDatabase().ConnectionString;
 
-            var eventRepo = new EventSqlClientRepository(connectionString);
-            var areaRepo = new AreaSqlClientRepository(connectionString);
-            var seatRepo = new SeatSqlClientRepository(connectionString);
+            EventSqlClientRepository eventRepo = new EventSqlClientRepository(connectionString);
+            AreaSqlClientRepository areaRepo = new AreaSqlClientRepository(connectionString);
+            SeatSqlClientRepository seatRepo = new SeatSqlClientRepository(connectionString);
 
-            var eventAreaRepo = new EventAreaSqlClientRepository(connectionString);
-            var eventSeatRepo = new EventSeatSqlClientRepository(connectionString);
+            EventAreaSqlClientRepository eventAreaRepo = new EventAreaSqlClientRepository(connectionString);
+            EventSeatSqlClientRepository eventSeatRepo = new EventSeatSqlClientRepository(connectionString);
 
-            var eventValidationService = new EventValidator(eventRepo, seatRepo, areaRepo);
-            var priceValidationService = new PriceValidator();
+            EventValidator eventValidationService = new EventValidator(eventRepo, seatRepo, areaRepo);
+            PriceValidator priceValidationService = new PriceValidator();
 
             _eventService = new EventService(eventRepo, eventValidationService);
 
@@ -56,7 +56,7 @@ namespace TicketManagement.IntegrationTests.EventServiceTests
 
             await _eventService.DeleteAsync(id);
 
-            var actualEventAreasCount = _eventAreaService
+            int actualEventAreasCount = _eventAreaService
                 .GetAll()
                 .Count(a => a.EventId == id);
 
@@ -71,7 +71,7 @@ namespace TicketManagement.IntegrationTests.EventServiceTests
 
             await _eventService.DeleteAsync(id);
 
-            var actualEventSeatsCount = _eventAreaService
+            int actualEventSeatsCount = _eventAreaService
                 .GetAll()
                 .Where(a => a.EventId == id)
                 .Sum(a => _eventSeatService.GetAll().Count(s => s.EventAreaId == a.Id));

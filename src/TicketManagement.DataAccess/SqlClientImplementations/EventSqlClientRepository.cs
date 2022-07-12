@@ -59,7 +59,7 @@ namespace TicketManagement.DataAccess.SqlClientImplementations
 
         public IQueryable<Event> GetAll()
         {
-            var query = "SELECT Id, Name, Description, LayoutId, StartDate, EndDate FROM Event";
+            string query = "SELECT Id, Name, Description, LayoutId, StartDate, EndDate FROM Event";
 
             using SqlConnection connection = new SqlConnection(_connectionString);
 
@@ -69,7 +69,7 @@ namespace TicketManagement.DataAccess.SqlClientImplementations
 
             using SqlDataReader reader = command.ExecuteReader();
 
-            var events = new List<Event>();
+            List<Event> events = new List<Event>();
 
             while (reader.Read())
             {
@@ -89,7 +89,7 @@ namespace TicketManagement.DataAccess.SqlClientImplementations
 
         public async Task<Event> GetByIdAsync(int id)
         {
-            var query = "SELECT Id, Name, Description, LayoutId, StartDate, EndDate FROM Event WHERE Id = @id";
+            string query = "SELECT Id, Name, Description, LayoutId, StartDate, EndDate FROM Event WHERE Id = @id";
 
             await using SqlConnection connection = new SqlConnection(_connectionString);
 

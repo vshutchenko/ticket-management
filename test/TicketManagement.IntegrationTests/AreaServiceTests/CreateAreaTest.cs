@@ -16,10 +16,10 @@ namespace TicketManagement.IntegrationTests.AreaServiceTests
         [OneTimeSetUp]
         public void CreateServices()
         {
-            var connectionString = new TestDatabase().ConnectionString;
+            string connectionString = new TestDatabase().ConnectionString;
 
-            var areaRepo = new AreaSqlClientRepository(connectionString);
-            var areaValidator = new AreaValidator(areaRepo);
+            AreaSqlClientRepository areaRepo = new AreaSqlClientRepository(connectionString);
+            AreaValidator areaValidator = new AreaValidator(areaRepo);
 
             _areaService = new AreaService(areaRepo, areaValidator);
         }
@@ -27,7 +27,7 @@ namespace TicketManagement.IntegrationTests.AreaServiceTests
         [Test]
         public async Task Create_ValidArea_CreatesArea()
         {
-            var areaToCreate = new Area
+            Area areaToCreate = new Area
             {
                 Description = "Test area 1",
                 CoordX = 1,

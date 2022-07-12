@@ -16,10 +16,10 @@ namespace TicketManagement.IntegrationTests.LayoutServiceTests
         [OneTimeSetUp]
         public void CreateServices()
         {
-            var connectionString = new TestDatabase().ConnectionString;
+            string connectionString = new TestDatabase().ConnectionString;
 
-            var layoutRepo = new LayoutSqlClientRepository(connectionString);
-            var layoutValidator = new LayoutValidator(layoutRepo);
+            LayoutSqlClientRepository layoutRepo = new LayoutSqlClientRepository(connectionString);
+            LayoutValidator layoutValidator = new LayoutValidator(layoutRepo);
 
             _layoutService = new LayoutService(layoutRepo, layoutValidator);
         }
@@ -27,7 +27,7 @@ namespace TicketManagement.IntegrationTests.LayoutServiceTests
         [Test]
         public async Task Create_ValidLayout_CreatesLayout()
         {
-            var layoutToCreate = new Layout
+            Layout layoutToCreate = new Layout
             {
                  Description = "Test layout 1",
                  VenueId = 2,

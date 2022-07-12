@@ -16,10 +16,10 @@ namespace TicketManagement.IntegrationTests.SeatServiceTests
         [OneTimeSetUp]
         public void CreateServices()
         {
-            var connectionString = new TestDatabase().ConnectionString;
+            string connectionString = new TestDatabase().ConnectionString;
 
-            var seatRepo = new SeatSqlClientRepository(connectionString);
-            var seatValidator = new SeatValidator(seatRepo);
+            SeatSqlClientRepository seatRepo = new SeatSqlClientRepository(connectionString);
+            SeatValidator seatValidator = new SeatValidator(seatRepo);
 
             _seatService = new SeatService(seatRepo, seatValidator);
         }
@@ -29,7 +29,7 @@ namespace TicketManagement.IntegrationTests.SeatServiceTests
         {
             int id = 1;
 
-            var seatBeforeUpdate = new Seat
+            Seat seatBeforeUpdate = new Seat
             {
                 Id = id,
                 Row = 1,
@@ -37,11 +37,11 @@ namespace TicketManagement.IntegrationTests.SeatServiceTests
                 AreaId = 1,
             };
 
-            var actualSeatBeforeUpdate = await _seatService.GetByIdAsync(id);
+            BusinessLogic.Models.SeatModel actualSeatBeforeUpdate = await _seatService.GetByIdAsync(id);
 
             actualSeatBeforeUpdate.Should().BeEquivalentTo(seatBeforeUpdate);
 
-            var seatToUpdate = new Seat
+            Seat seatToUpdate = new Seat
             {
                 Id = id,
                 AreaId = 2,
@@ -51,7 +51,7 @@ namespace TicketManagement.IntegrationTests.SeatServiceTests
 
             await _seatService.UpdateAsync(seatToUpdate);
 
-            var actualSeatAfterUpdate = await _seatService.GetByIdAsync(id);
+            BusinessLogic.Models.SeatModel actualSeatAfterUpdate = await _seatService.GetByIdAsync(id);
 
             actualSeatAfterUpdate.Should().BeEquivalentTo(seatToUpdate);
         }

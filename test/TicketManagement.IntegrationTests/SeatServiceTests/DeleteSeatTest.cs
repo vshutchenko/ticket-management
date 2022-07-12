@@ -15,10 +15,10 @@ namespace TicketManagement.IntegrationTests.SeatServiceTests
         [OneTimeSetUp]
         public void CreateServices()
         {
-            var connectionString = new TestDatabase().ConnectionString;
+            string connectionString = new TestDatabase().ConnectionString;
 
-            var seatRepo = new SeatSqlClientRepository(connectionString);
-            var seatValidator = new SeatValidator(seatRepo);
+            SeatSqlClientRepository seatRepo = new SeatSqlClientRepository(connectionString);
+            SeatValidator seatValidator = new SeatValidator(seatRepo);
 
             _seatService = new SeatService(seatRepo, seatValidator);
         }

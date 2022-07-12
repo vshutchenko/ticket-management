@@ -31,9 +31,9 @@ namespace TicketManagement.WebApplication.Controllers
         [Authorize(Roles = "User")]
         public async Task<IActionResult> AddFunds()
         {
-            var userId = User.FindFirstValue("id");
+            string? userId = User.FindFirstValue("id");
 
-            var user = await _identityService.GetUserAsync(userId);
+            UserModel? user = await _identityService.GetUserAsync(userId);
 
             ViewBag.Balance = user.Balance;
 
@@ -45,9 +45,9 @@ namespace TicketManagement.WebApplication.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> AddFunds(decimal amount)
         {
-            var userId = User.FindFirstValue("id");
+            string? userId = User.FindFirstValue("id");
 
-            var user = await _identityService.GetUserAsync(userId);
+            UserModel? user = await _identityService.GetUserAsync(userId);
 
             user.Balance += amount;
 
@@ -66,7 +66,7 @@ namespace TicketManagement.WebApplication.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ChangePassword(ChangePasswordViewModel model)
         {
-            var userId = User.FindFirstValue("id");
+            string? userId = User.FindFirstValue("id");
 
             await _identityService.ChangePassword(userId, model.CurrentPassword, model.NewPassword);
 
@@ -78,7 +78,7 @@ namespace TicketManagement.WebApplication.Controllers
         [HttpGet]
         public async Task<IActionResult> EditUser(string userId)
         {
-            var cultures = _locOptions.Value.SupportedCultures?
+            List<SelectListItem>? cultures = _locOptions.Value.SupportedCultures?
                 .Select(c => new SelectListItem(c.DisplayName, c.Name))
                 .ToList();
 
@@ -87,14 +87,14 @@ namespace TicketManagement.WebApplication.Controllers
                 new SelectListItem { Text = CultureInfo.CurrentCulture.DisplayName.ToString(), Value = CultureInfo.CurrentCulture.Name },
             };
 
-            var timeZones = TimeZoneInfo
+            List<SelectListItem>? timeZones = TimeZoneInfo
                 .GetSystemTimeZones()
                 .Select(z => new SelectListItem(z.DisplayName, z.Id))
                 .ToList();
 
-            var user = await _identityService.GetUserAsync(userId);
+            UserModel? user = await _identityService.GetUserAsync(userId);
 
-            var viewModel = new EditUserViewModel
+            EditUserViewModel? viewModel = new EditUserViewModel
             {
                 Id = user.Id,
                 FirstName = user.FirstName,
@@ -114,7 +114,7 @@ namespace TicketManagement.WebApplication.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> EditUser(EditUserViewModel model)
         {
-            var user = _mapper.Map<UserModel>(model);
+            UserModel? user = _mapper.Map<UserModel>(model);
 
             await _identityService.UpdateUser(user);
 
@@ -161,7 +161,7 @@ namespace TicketManagement.WebApplication.Controllers
         [AllowAnonymous]
         public IActionResult Register()
         {
-            var cultures = _locOptions.Value.SupportedCultures?
+            List<SelectListItem>? cultures = _locOptions.Value.SupportedCultures?
                 .Select(c => new SelectListItem(c.DisplayName, c.Name))
                 .ToList();
 
@@ -172,14 +172,14 @@ namespace TicketManagement.WebApplication.Controllers
 
             cultures.First().Selected = true;
 
-            var timeZones = TimeZoneInfo
+            List<SelectListItem>? timeZones = TimeZoneInfo
                 .GetSystemTimeZones()
                 .Select(z => new SelectListItem(z.DisplayName, z.Id))
                 .ToList();
 
             timeZones.First().Selected = true;
 
-            var viewModel = new RegisterViewModel
+            RegisterViewModel? viewModel = new RegisterViewModel
             {
                 Cultures = cultures,
                 TimeZones = timeZones,
@@ -193,7 +193,7 @@ namespace TicketManagement.WebApplication.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> Register(RegisterViewModel model)
         {
-            var user = _mapper.Map<UserModel>(model);
+            UserModel? user = _mapper.Map<UserModel>(model);
 
             await _identityService.CreateUserAsync(user, model.Password);
             await AuthenticateAsync(model.Email, model.Password);
@@ -203,7 +203,7 @@ namespace TicketManagement.WebApplication.Controllers
 
         private async Task AuthenticateAsync(string email, string password)
         {
-            var user = await _identityService.AuthenticateAsync(email, password);
+            UserModel? user = await _identityService.AuthenticateAsync(email, password);
 
             await SetClaimsAsync(user.Id);
 
@@ -212,9 +212,9 @@ namespace TicketManagement.WebApplication.Controllers
 
         private async Task SetClaimsAsync(string userId)
         {
-            var user = await _identityService.GetUserAsync(userId);
+            UserModel? user = await _identityService.GetUserAsync(userId);
 
-            var claims = new List<Claim>
+            List<Claim>? claims = new List<Claim>
             {
                 new Claim(ClaimTypes.Email, user.Email),
                 new Claim("id", user.Id),
@@ -222,7 +222,7 @@ namespace TicketManagement.WebApplication.Controllers
                 new Claim("culture", user.CultureName),
             };
 
-            var roles = await _identityService.GetRolesAsync(user.Id);
+            IList<string>? roles = await _identityService.GetRolesAsync(user.Id);
 
             claims.AddRange(roles
                 .Select(r => new Claim(ClaimTypes.Role, r))
@@ -236,7 +236,7 @@ namespace TicketManagement.WebApplication.Controllers
 
         private void SetCultureCookie(string culture)
         {
-            var cookieOptions = new CookieOptions
+            CookieOptions? cookieOptions = new CookieOptions
             {
                 Path = "/",
                 Expires = DateTimeOffset.UtcNow.AddYears(1),

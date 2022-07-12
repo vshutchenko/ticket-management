@@ -21,17 +21,17 @@ namespace TicketManagement.IntegrationTests.EventServiceTests
         [SetUp]
         public void CreateServices()
         {
-            var connectionString = new TestDatabase().ConnectionString;
+            string connectionString = new TestDatabase().ConnectionString;
 
-            var eventRepo = new EventSqlClientRepository(connectionString);
-            var areaRepo = new AreaSqlClientRepository(connectionString);
-            var seatRepo = new SeatSqlClientRepository(connectionString);
+            EventSqlClientRepository eventRepo = new EventSqlClientRepository(connectionString);
+            AreaSqlClientRepository areaRepo = new AreaSqlClientRepository(connectionString);
+            SeatSqlClientRepository seatRepo = new SeatSqlClientRepository(connectionString);
 
-            var eventAreaRepo = new EventAreaSqlClientRepository(connectionString);
-            var eventSeatRepo = new EventSeatSqlClientRepository(connectionString);
+            EventAreaSqlClientRepository eventAreaRepo = new EventAreaSqlClientRepository(connectionString);
+            EventSeatSqlClientRepository eventSeatRepo = new EventSeatSqlClientRepository(connectionString);
 
-            var eventValidationService = new EventValidator(eventRepo, seatRepo, areaRepo);
-            var priceValidationService = new PriceValidator();
+            EventValidator eventValidationService = new EventValidator(eventRepo, seatRepo, areaRepo);
+            PriceValidator priceValidationService = new PriceValidator();
 
             _eventService = new EventService(eventRepo, eventValidationService);
 
@@ -42,7 +42,7 @@ namespace TicketManagement.IntegrationTests.EventServiceTests
         [Test]
         public async Task Create_ValidEvent_CreatesEvent()
         {
-            var eventToCreate = new Event
+            Event eventToCreate = new Event
             {
                 Id = 2,
                 Name = "First Event",
@@ -62,7 +62,7 @@ namespace TicketManagement.IntegrationTests.EventServiceTests
         [Test]
         public async Task Create_ValidEvent_CreatesAreas()
         {
-            var eventToCreate = new Event
+            Event eventToCreate = new Event
             {
                 Id = 2,
                 Name = "First Event",
@@ -72,7 +72,7 @@ namespace TicketManagement.IntegrationTests.EventServiceTests
                 EndDate = new DateTime(2023, 1, 3),
             };
 
-            var expectedEventAreas = new List<EventArea>
+            List<EventArea> expectedEventAreas = new List<EventArea>
             {
                 new EventArea { Id = 2, Description = "First area of first layout", CoordX = 1, CoordY = 1, EventId = 2, Price = 0 },
                 new EventArea { Id = 3, Description = "Second area of first layout", CoordX = 1, CoordY = 1, EventId = 2, Price = 0 },
@@ -80,7 +80,7 @@ namespace TicketManagement.IntegrationTests.EventServiceTests
 
             var id = await _eventService.CreateAsync(eventToCreate);
 
-            var actualEventAreas = _eventAreaService.GetAll().Where(a => a.EventId == id).ToList();
+            List<BusinessLogic.Models.EventAreaModel> actualEventAreas = _eventAreaService.GetAll().Where(a => a.EventId == id).ToList();
 
             actualEventAreas.Should().BeEquivalentTo(expectedEventAreas);
         }
@@ -88,7 +88,7 @@ namespace TicketManagement.IntegrationTests.EventServiceTests
         [Test]
         public async Task Create_ValidEvent_CreatesSeats()
         {
-            var eventToCreate = new Event
+            Event eventToCreate = new Event
             {
                 Name = "First Event",
                 Description = "Test description",
@@ -97,7 +97,7 @@ namespace TicketManagement.IntegrationTests.EventServiceTests
                 EndDate = new DateTime(2023, 1, 3),
             };
 
-            var expectedEventSeats = new List<EventSeat>
+            List<EventSeat> expectedEventSeats = new List<EventSeat>
             {
                 new EventSeat { Id = 6, EventAreaId = 2, Row = 1, Number = 1, State = EventSeatState.Available },
                 new EventSeat { Id = 7, EventAreaId = 2, Row = 1, Number = 2, State = EventSeatState.Available },

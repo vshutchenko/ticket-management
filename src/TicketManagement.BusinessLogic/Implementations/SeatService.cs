@@ -31,8 +31,7 @@ namespace TicketManagement.BusinessLogic.Implementations
                 throw new ValidationException("Seat is null.");
             }
 
-            seatModel.Id = 0;
-            var seat = _mapper.Map<Seat>(seatModel);
+            Seat seat = _mapper.Map<Seat>(seatModel);
 
             _seatValidator.Validate(seat);
 
@@ -48,7 +47,7 @@ namespace TicketManagement.BusinessLogic.Implementations
 
         public IEnumerable<SeatModel> GetAll()
         {
-            var models = _seatRepository.GetAll().Select(s => _mapper.Map<SeatModel>(s));
+            IQueryable<SeatModel> models = _seatRepository.GetAll().Select(s => _mapper.Map<SeatModel>(s));
 
             return models;
         }
@@ -57,9 +56,9 @@ namespace TicketManagement.BusinessLogic.Implementations
         {
             await ValidateSeatExistsAsync(id);
 
-            var seat = await _seatRepository.GetByIdAsync(id);
+            Seat seat = await _seatRepository.GetByIdAsync(id);
 
-            var model = _mapper.Map<SeatModel>(seat);
+            SeatModel model = _mapper.Map<SeatModel>(seat);
 
             return model;
         }
@@ -73,7 +72,7 @@ namespace TicketManagement.BusinessLogic.Implementations
 
             await ValidateSeatExistsAsync(seatModel.Id);
 
-            var seat = _mapper.Map<Seat>(seatModel);
+            Seat seat = _mapper.Map<Seat>(seatModel);
 
             _seatValidator.Validate(seat);
 
@@ -82,7 +81,7 @@ namespace TicketManagement.BusinessLogic.Implementations
 
         private async Task ValidateSeatExistsAsync(int id)
         {
-            var seat = await _seatRepository.GetByIdAsync(id);
+            Seat seat = await _seatRepository.GetByIdAsync(id);
 
             if (seat is null)
             {

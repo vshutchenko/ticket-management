@@ -21,17 +21,17 @@ namespace TicketManagement.IntegrationTests.EventServiceTests
         [SetUp]
         public void CreateServices()
         {
-            var connectionString = new TestDatabase().ConnectionString;
+            string connectionString = new TestDatabase().ConnectionString;
 
-            var eventRepo = new EventSqlClientRepository(connectionString);
-            var areaRepo = new AreaSqlClientRepository(connectionString);
-            var seatRepo = new SeatSqlClientRepository(connectionString);
+            EventSqlClientRepository eventRepo = new EventSqlClientRepository(connectionString);
+            AreaSqlClientRepository areaRepo = new AreaSqlClientRepository(connectionString);
+            SeatSqlClientRepository seatRepo = new SeatSqlClientRepository(connectionString);
 
-            var eventAreaRepo = new EventAreaSqlClientRepository(connectionString);
-            var eventSeatRepo = new EventSeatSqlClientRepository(connectionString);
+            EventAreaSqlClientRepository eventAreaRepo = new EventAreaSqlClientRepository(connectionString);
+            EventSeatSqlClientRepository eventSeatRepo = new EventSeatSqlClientRepository(connectionString);
 
-            var eventValidationService = new EventValidator(eventRepo, seatRepo, areaRepo);
-            var priceValidationService = new PriceValidator();
+            EventValidator eventValidationService = new EventValidator(eventRepo, seatRepo, areaRepo);
+            PriceValidator priceValidationService = new PriceValidator();
 
             _eventService = new EventService(eventRepo, eventValidationService);
 
@@ -44,7 +44,7 @@ namespace TicketManagement.IntegrationTests.EventServiceTests
         {
             int id = 1;
 
-            var expectedEventBeforeUpdate = new Event
+            Event expectedEventBeforeUpdate = new Event
             {
                 Id = id,
                 Name = "First event",
@@ -54,11 +54,11 @@ namespace TicketManagement.IntegrationTests.EventServiceTests
                 EndDate = new DateTime(2023, 1, 1, 15, 0, 0),
             };
 
-            var actualEventBeforeUpdate = await _eventService.GetByIdAsync(id);
+            BusinessLogic.Models.EventModel actualEventBeforeUpdate = await _eventService.GetByIdAsync(id);
 
             actualEventBeforeUpdate.Should().BeEquivalentTo(expectedEventBeforeUpdate);
 
-            var eventToUpdate = new Event
+            Event eventToUpdate = new Event
             {
                 Id = id,
                 Name = "First Updated Event",
@@ -70,7 +70,7 @@ namespace TicketManagement.IntegrationTests.EventServiceTests
 
             await _eventService.UpdateAsync(eventToUpdate);
 
-            var actualEvent = await _eventService.GetByIdAsync(id);
+            BusinessLogic.Models.EventModel actualEvent = await _eventService.GetByIdAsync(id);
 
             actualEvent.Should().BeEquivalentTo(eventToUpdate);
         }
@@ -80,22 +80,22 @@ namespace TicketManagement.IntegrationTests.EventServiceTests
         {
             int id = 1;
 
-            var expectedEventAreasBeforeUpdate = new List<EventArea>
+            List<EventArea> expectedEventAreasBeforeUpdate = new List<EventArea>
             {
                 new EventArea { Id = 1, Description = "Event area of first event", CoordX = 1, CoordY = 1, EventId = 1, Price = 15 },
             };
 
-            var actualEventAreasBeforeUpdate = _eventAreaService.GetAll().Where(a => a.EventId == id).ToList();
+            List<BusinessLogic.Models.EventAreaModel> actualEventAreasBeforeUpdate = _eventAreaService.GetAll().Where(a => a.EventId == id).ToList();
 
             actualEventAreasBeforeUpdate.Should().BeEquivalentTo(expectedEventAreasBeforeUpdate);
 
-            var expectedEventAreas = new List<EventArea>
+            List<EventArea> expectedEventAreas = new List<EventArea>
             {
                 new EventArea { Id = 2, Description = "First area of first layout", CoordX = 1, CoordY = 1, EventId = 1, Price = 0 },
                 new EventArea { Id = 3, Description = "Second area of first layout", CoordX = 1, CoordY = 1, EventId = 1, Price = 0 },
             };
 
-            var eventToUpdate = new Event
+            Event eventToUpdate = new Event
             {
                 Id = id,
                 Name = "First Updated Event",
@@ -107,7 +107,7 @@ namespace TicketManagement.IntegrationTests.EventServiceTests
 
             await _eventService.UpdateAsync(eventToUpdate);
 
-            var actualEventAreas = _eventAreaService.GetAll().Where(a => a.EventId == id).ToList();
+            List<BusinessLogic.Models.EventAreaModel> actualEventAreas = _eventAreaService.GetAll().Where(a => a.EventId == id).ToList();
 
             actualEventAreas.Should().BeEquivalentTo(expectedEventAreas);
         }
@@ -117,7 +117,7 @@ namespace TicketManagement.IntegrationTests.EventServiceTests
         {
             int id = 1;
 
-            var expectedEventSeatsBeforeUpdate = new List<EventSeat>
+            List<EventSeat> expectedEventSeatsBeforeUpdate = new List<EventSeat>
             {
                 new EventSeat { Id = 1, EventAreaId = 1, Row = 1, Number = 1, State = EventSeatState.Ordered },
                 new EventSeat { Id = 2, EventAreaId = 1, Row = 1, Number = 2, State = EventSeatState.Ordered },
@@ -126,14 +126,14 @@ namespace TicketManagement.IntegrationTests.EventServiceTests
                 new EventSeat { Id = 5, EventAreaId = 1, Row = 2, Number = 1, State = EventSeatState.Available },
             };
 
-            var actualEventSeatsBeforeUpdate = _eventAreaService.GetAll()
+            List<BusinessLogic.Models.EventSeatModel> actualEventSeatsBeforeUpdate = _eventAreaService.GetAll()
                 .Where(a => a.EventId == id)
                 .Join(_eventSeatService.GetAll(), a => a.Id, s => s.EventAreaId, (a, s) => s)
                 .ToList();
 
             actualEventSeatsBeforeUpdate.Should().BeEquivalentTo(expectedEventSeatsBeforeUpdate);
 
-            var expectedEventSeats = new List<EventSeat>
+            List<EventSeat> expectedEventSeats = new List<EventSeat>
             {
                 new EventSeat { Id = 6, EventAreaId = 2, Row = 1, Number = 1, State = EventSeatState.Available },
                 new EventSeat { Id = 7, EventAreaId = 2, Row = 1, Number = 2, State = EventSeatState.Available },
@@ -143,7 +143,7 @@ namespace TicketManagement.IntegrationTests.EventServiceTests
                 new EventSeat { Id = 11, EventAreaId = 3, Row = 1, Number = 1, State = EventSeatState.Available },
             };
 
-            var eventToUpdate = new Event
+            Event eventToUpdate = new Event
             {
                 Id = id,
                 Name = "First Updated Event",
@@ -155,7 +155,7 @@ namespace TicketManagement.IntegrationTests.EventServiceTests
 
             await _eventService.UpdateAsync(eventToUpdate);
 
-            var actualEventSeats = _eventAreaService.GetAll()
+            List<BusinessLogic.Models.EventSeatModel> actualEventSeats = _eventAreaService.GetAll()
                 .Where(a => a.EventId == id)
                 .Join(_eventSeatService.GetAll(), a => a.Id, s => s.EventAreaId, (a, s) => s)
                 .ToList();

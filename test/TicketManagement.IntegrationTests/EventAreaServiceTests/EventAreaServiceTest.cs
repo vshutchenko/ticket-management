@@ -15,9 +15,9 @@ namespace TicketManagement.IntegrationTests.EventAreaServiceTests
         [OneTimeSetUp]
         public void CreateServices()
         {
-            var connectionString = new TestDatabase().ConnectionString;
+            string connectionString = new TestDatabase().ConnectionString;
 
-            var eventareaRepo = new EventAreaSqlClientRepository(connectionString);
+            EventAreaSqlClientRepository eventareaRepo = new EventAreaSqlClientRepository(connectionString);
 
             _eventAreaService = new EventAreaService(eventareaRepo, new PriceValidator());
         }
@@ -29,7 +29,7 @@ namespace TicketManagement.IntegrationTests.EventAreaServiceTests
 
             decimal priceBeforeUpdate = 15;
 
-            var eventAreaBeforeUpdate = await _eventAreaService.GetByIdAsync(id);
+            BusinessLogic.Models.EventAreaModel eventAreaBeforeUpdate = await _eventAreaService.GetByIdAsync(id);
 
             eventAreaBeforeUpdate.Price.Should().Be(priceBeforeUpdate);
 
@@ -37,7 +37,7 @@ namespace TicketManagement.IntegrationTests.EventAreaServiceTests
 
             await _eventAreaService.SetPriceAsync(id, priceToUpdate);
 
-            var eventAreaAfterUpdate = await _eventAreaService.GetByIdAsync(id);
+            BusinessLogic.Models.EventAreaModel eventAreaAfterUpdate = await _eventAreaService.GetByIdAsync(id);
 
             eventAreaAfterUpdate.Price.Should().Be(priceToUpdate);
         }

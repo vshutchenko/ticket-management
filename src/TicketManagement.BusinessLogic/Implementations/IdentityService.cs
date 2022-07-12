@@ -24,13 +24,20 @@ namespace TicketManagement.BusinessLogic.Implementations
             _mapper = mapper;
         }
 
-        public async Task UpdateUser(UserModel user)
+        public async Task UpdateUserAsync(UserModel user)
         {
             User existingUser = await _userManager.FindByIdAsync(user.Id);
 
             if (existingUser == null)
             {
                 throw new ValidationException("User was not found.");
+            }
+
+            User userWithSameEmail = await _userManager.FindByEmailAsync(user.Email);
+
+            if (userWithSameEmail != null && userWithSameEmail.Id != existingUser.Id)
+            {
+                throw new ValidationException("This email is already taken.");
             }
 
             existingUser.Email = user.Email;
@@ -41,7 +48,7 @@ namespace TicketManagement.BusinessLogic.Implementations
             existingUser.CultureName = user.CultureName;
             existingUser.Balance = user.Balance;
 
-            var result = await _userManager.UpdateAsync(existingUser);
+            IdentityResult result = await _userManager.UpdateAsync(existingUser);
 
             if (!result.Succeeded)
             {
@@ -49,7 +56,7 @@ namespace TicketManagement.BusinessLogic.Implementations
             }
         }
 
-        public async Task ChangePassword(string userId, string currentPassword, string newPassword)
+        public async Task ChangePasswordAsync(string userId, string currentPassword, string newPassword)
         {
             User existingUser = await _userManager.FindByIdAsync(userId);
 
@@ -58,14 +65,14 @@ namespace TicketManagement.BusinessLogic.Implementations
                 throw new ValidationException("User was not found.");
             }
 
-            var isValidPassword = await _userManager.CheckPasswordAsync(existingUser, currentPassword);
+            bool isValidPassword = await _userManager.CheckPasswordAsync(existingUser, currentPassword);
 
             if (!isValidPassword)
             {
                 throw new ValidationException("Not valid current password.");
             }
 
-            var result = await _userManager.ChangePasswordAsync(existingUser, currentPassword, newPassword);
+            IdentityResult result = await _userManager.ChangePasswordAsync(existingUser, currentPassword, newPassword);
 
             if (!result.Succeeded)
             {
@@ -82,7 +89,7 @@ namespace TicketManagement.BusinessLogic.Implementations
                 throw new ValidationException("User was not found.");
             }
 
-            var model = _mapper.Map<UserModel>(existingUser);
+            UserModel model = _mapper.Map<UserModel>(existingUser);
 
             return model;
         }
@@ -96,7 +103,7 @@ namespace TicketManagement.BusinessLogic.Implementations
                 throw new ValidationException("User was not found.");
             }
 
-            var roles = await _userManager.GetRolesAsync(existingUser);
+            IList<string> roles = await _userManager.GetRolesAsync(existingUser);
 
             return roles;
         }
@@ -107,13 +114,13 @@ namespace TicketManagement.BusinessLogic.Implementations
 
             if (existingUser == null)
             {
-                var user = _mapper.Map<User>(userModel);
+                User user = _mapper.Map<User>(userModel);
                 user.UserName = user.Email;
-                var result = await _userManager.CreateAsync(user, password);
+                IdentityResult result = await _userManager.CreateAsync(user, password);
 
                 if (result.Succeeded)
                 {
-                    var createdUser = await _userManager.FindByEmailAsync(user.Email);
+                    User createdUser = await _userManager.FindByEmailAsync(user.Email);
                     await _userManager.AddToRoleAsync(createdUser, "User");
                 }
                 else
@@ -127,7 +134,7 @@ namespace TicketManagement.BusinessLogic.Implementations
             }
         }
 
-        public async Task AssignRole(string userId, string role)
+        public async Task AssignRoleAsync(string userId, string role)
         {
             User existingUser = await _userManager.FindByIdAsync(userId);
 
@@ -136,7 +143,7 @@ namespace TicketManagement.BusinessLogic.Implementations
                 throw new ValidationException("User was not found.");
             }
 
-            var result = await _userManager.AddToRoleAsync(existingUser, role);
+            IdentityResult result = await _userManager.AddToRoleAsync(existingUser, role);
 
             if (!result.Succeeded)
             {
@@ -153,19 +160,19 @@ namespace TicketManagement.BusinessLogic.Implementations
                 throw new ValidationException("User with such email does not exists.");
             }
 
-            var result = await _signInManager.PasswordSignInAsync(existingUser, password, false, false);
+            SignInResult result = await _signInManager.PasswordSignInAsync(existingUser, password, false, false);
 
             if (!result.Succeeded)
             {
                 throw new ValidationException("Wrong password.");
             }
 
-            var model = _mapper.Map<UserModel>(existingUser);
+            UserModel model = _mapper.Map<UserModel>(existingUser);
 
             return model;
         }
 
-        public async Task SeedInitialData()
+        public async Task SeedInitialDataAsync()
         {
             await SeedRolesAsync();
             await SeedUsersAsync();
@@ -173,7 +180,7 @@ namespace TicketManagement.BusinessLogic.Implementations
 
         private async Task SeedRolesAsync()
         {
-            var roles = new List<IdentityRole>
+            List<IdentityRole> roles = new List<IdentityRole>
             {
                 new IdentityRole("Admin"),
                 new IdentityRole("Venue manager"),
@@ -181,9 +188,9 @@ namespace TicketManagement.BusinessLogic.Implementations
                 new IdentityRole("Event manager"),
             };
 
-            foreach (var r in roles)
+            foreach (IdentityRole r in roles)
             {
-                var existingRole = await _roleManager.FindByNameAsync(r.Name);
+                IdentityRole existingRole = await _roleManager.FindByNameAsync(r.Name);
 
                 if (existingRole is null)
                 {
@@ -194,7 +201,7 @@ namespace TicketManagement.BusinessLogic.Implementations
 
         private async Task SeedUsersAsync()
         {
-            var userRoles = new List<(User user, string role)>
+            List<(User user, string role)> userRoles = new List<(User user, string role)>
             {
                 (new User
                 {
@@ -257,14 +264,14 @@ namespace TicketManagement.BusinessLogic.Implementations
                 }, "Event manager"),
             };
 
-            foreach (var x in userRoles)
+            foreach ((User user, string role) x in userRoles)
             {
-                var existingUser = await _userManager.FindByEmailAsync(x.user.Email);
+                User existingUser = await _userManager.FindByEmailAsync(x.user.Email);
 
                 if (existingUser is null)
                 {
                     await _userManager.CreateAsync(x.user);
-                    var createdUser = await _userManager.FindByEmailAsync(x.user.Email);
+                    User createdUser = await _userManager.FindByEmailAsync(x.user.Email);
                     await _userManager.AddToRoleAsync(createdUser, x.role);
                 }
             }

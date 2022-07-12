@@ -20,7 +20,7 @@ namespace TicketManagement.DataAccess.SqlClientImplementations
 
         public async Task<int> CreateAsync(EventArea item)
         {
-            var query = "INSERT INTO EventArea(EventId, Description, CoordX, CoordY, Price) VALUES(@eventId, @description, @coordX, @coordY, @price); SELECT SCOPE_IDENTITY()";
+            string query = "INSERT INTO EventArea(EventId, Description, CoordX, CoordY, Price) VALUES(@eventId, @description, @coordX, @coordY, @price); SELECT SCOPE_IDENTITY()";
 
             await using SqlConnection connection = new SqlConnection(_connectionString);
 
@@ -34,14 +34,14 @@ namespace TicketManagement.DataAccess.SqlClientImplementations
 
             await connection.OpenAsync();
 
-            var id = Convert.ToInt32(await command.ExecuteScalarAsync());
+            int id = Convert.ToInt32(await command.ExecuteScalarAsync());
 
             return id;
         }
 
         public async Task DeleteAsync(int id)
         {
-            var query = "DELETE FROM EventArea WHERE Id = @eventAreaId";
+            string query = "DELETE FROM EventArea WHERE Id = @eventAreaId";
 
             await using SqlConnection connection = new SqlConnection(_connectionString);
 
@@ -56,7 +56,7 @@ namespace TicketManagement.DataAccess.SqlClientImplementations
 
         public IQueryable<EventArea> GetAll()
         {
-            var query = "SELECT Id, EventId, Description, CoordX, CoordY, Price FROM EventArea";
+            string query = "SELECT Id, EventId, Description, CoordX, CoordY, Price FROM EventArea";
 
             using SqlConnection connection = new SqlConnection(_connectionString);
 
@@ -66,7 +66,7 @@ namespace TicketManagement.DataAccess.SqlClientImplementations
 
             using SqlDataReader reader = command.ExecuteReader();
 
-            var eventAreas = new List<EventArea>();
+            List<EventArea> eventAreas = new List<EventArea>();
 
             while (reader.Read())
             {
@@ -86,7 +86,7 @@ namespace TicketManagement.DataAccess.SqlClientImplementations
 
         public async Task<EventArea> GetByIdAsync(int id)
         {
-            var query = "SELECT Id, EventId, Description, CoordX, CoordY, Price FROM EventArea WHERE Id = @id";
+            string query = "SELECT Id, EventId, Description, CoordX, CoordY, Price FROM EventArea WHERE Id = @id";
 
             await using SqlConnection connection = new SqlConnection(_connectionString);
 
@@ -116,7 +116,7 @@ namespace TicketManagement.DataAccess.SqlClientImplementations
 
         public async Task UpdateAsync(EventArea item)
         {
-            var query = "UPDATE EventArea SET EventId = @eventId, Description = @description, CoordX = @coordX, CoordY = @coordY, Price = @price  WHERE Id = @eventAreaId";
+            string query = "UPDATE EventArea SET EventId = @eventId, Description = @description, CoordX = @coordX, CoordY = @coordY, Price = @price  WHERE Id = @eventAreaId";
 
             await using SqlConnection connection = new SqlConnection(_connectionString);
 

@@ -14,10 +14,10 @@ namespace TicketManagement.IntegrationTests.AreaServiceTests
         [OneTimeSetUp]
         public void CreateServices()
         {
-            var connectionString = new TestDatabase().ConnectionString;
+            string connectionString = new TestDatabase().ConnectionString;
 
-            var areaRepo = new AreaSqlClientRepository(connectionString);
-            var areaValidator = new AreaValidator(areaRepo);
+            AreaSqlClientRepository areaRepo = new AreaSqlClientRepository(connectionString);
+            AreaValidator areaValidator = new AreaValidator(areaRepo);
 
             _areaService = new AreaService(areaRepo, areaValidator);
         }

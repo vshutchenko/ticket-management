@@ -25,6 +25,7 @@ namespace TicketManagement.WebApplication.Models.Purchase
         public string ImageUrl { get; set; } = string.Empty;
 
         public List<EventAreaViewModel> Areas { get; set; } = new List<EventAreaViewModel>();
+
         public List<EventSeatViewModel> Seats { get; set; } = new List<EventSeatViewModel>();
     }
 }

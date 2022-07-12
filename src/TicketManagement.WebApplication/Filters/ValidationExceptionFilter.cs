@@ -18,7 +18,7 @@ namespace TicketManagement.WebApplication.Filters
 
             context.ExceptionHandled = true;
 
-            var viewData = new ViewDataDictionary(new EmptyModelMetadataProvider(), context.ModelState);
+            ViewDataDictionary? viewData = new ViewDataDictionary(new EmptyModelMetadataProvider(), context.ModelState);
 
             viewData.Add("ValidationError", context.Exception.Message);
 

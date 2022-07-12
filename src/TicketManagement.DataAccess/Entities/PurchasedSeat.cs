@@ -9,7 +9,9 @@ namespace TicketManagement.DataAccess.Entities
     public class PurchasedSeat
     {
         public int Id { get; set; }
+
         public int PurchaseId { get; set; }
+
         public int EventSeatId { get; set; }
     }
 }

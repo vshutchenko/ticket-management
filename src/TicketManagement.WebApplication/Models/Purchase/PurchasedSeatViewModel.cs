@@ -9,10 +9,15 @@ namespace TicketManagement.WebApplication.Models.Purchase
     public class PurchasedSeatViewModel
     {
         public int Id { get; set; }
+
         public EventViewModel? Event { get; set; }
+
         public EventAreaViewModel? Area { get; set; }
+
         public EventSeatViewModel? Seat { get; set; }
+
         public LayoutViewModel? Layout { get; set; }
+
         public VenueViewModel? Venue { get; set; }
     }
 }

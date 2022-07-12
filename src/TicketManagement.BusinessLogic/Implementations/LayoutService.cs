@@ -31,9 +31,7 @@ namespace TicketManagement.BusinessLogic.Implementations
                 throw new ValidationException("Layout is null.");
             }
 
-            layoutModel.Id = 0;
-
-            var layout = _mapper.Map<Layout>(layoutModel);
+            Layout layout = _mapper.Map<Layout>(layoutModel);
 
             _layoutValidator.Validate(layout);
 
@@ -49,7 +47,7 @@ namespace TicketManagement.BusinessLogic.Implementations
 
         public IEnumerable<LayoutModel> GetAll()
         {
-            var models = _layoutRepository.GetAll().Select(l => _mapper.Map<LayoutModel>(l));
+            IQueryable<LayoutModel> models = _layoutRepository.GetAll().Select(l => _mapper.Map<LayoutModel>(l));
 
             return models;
         }
@@ -58,9 +56,9 @@ namespace TicketManagement.BusinessLogic.Implementations
         {
             await ValidateLayoutExistsAsync(id);
 
-            var layout = await _layoutRepository.GetByIdAsync(id);
+            Layout layout = await _layoutRepository.GetByIdAsync(id);
 
-            var model = _mapper.Map<LayoutModel>(layout);
+            LayoutModel model = _mapper.Map<LayoutModel>(layout);
 
             return model;
         }
@@ -74,7 +72,7 @@ namespace TicketManagement.BusinessLogic.Implementations
 
             await ValidateLayoutExistsAsync(layoutModel.Id);
 
-            var layout = _mapper.Map<Layout>(layoutModel);
+            Layout layout = _mapper.Map<Layout>(layoutModel);
 
             _layoutValidator.Validate(layout);
 
@@ -83,7 +81,7 @@ namespace TicketManagement.BusinessLogic.Implementations
 
         private async Task ValidateLayoutExistsAsync(int id)
         {
-            var layout = await _layoutRepository.GetByIdAsync(id);
+            Layout layout = await _layoutRepository.GetByIdAsync(id);
 
             if (layout is null)
             {

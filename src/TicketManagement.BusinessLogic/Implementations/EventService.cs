@@ -35,9 +35,7 @@ namespace TicketManagement.BusinessLogic.Implementations
                 throw new ValidationException("Event is null.");
             }
 
-            eventModel.Id = 0;
-
-            var @event = _mapper.Map<Event>(eventModel);
+            Event @event = _mapper.Map<Event>(eventModel);
 
             _eventValidator.Validate(@event);
 
@@ -48,12 +46,12 @@ namespace TicketManagement.BusinessLogic.Implementations
         {
             await ValidateEventExistsAsync(id);
 
-            var seats = _eventAreaService
+            bool orderedSeatsExist = _eventAreaService
                 .GetByEventId(id)
                 .SelectMany(a => _eventSeatService.GetByEventAreaId(a.Id))
-                .ToList();
+                .Any(s => s.State == EventSeatStateModel.Ordered);
 
-            if (seats.Any(s => s.State == EventSeatStateModel.Ordered))
+            if (orderedSeatsExist)
             {
                 throw new ValidationException("Event cannot be deleted because some seats has already been purchased.");
             }
@@ -63,7 +61,7 @@ namespace TicketManagement.BusinessLogic.Implementations
 
         public IEnumerable<EventModel> GetAll()
         {
-            var models = _eventRepository.GetAll()
+            List<EventModel> models = _eventRepository.GetAll()
                 .Select(e => _mapper.Map<EventModel>(e))
                 .ToList();
 
@@ -74,9 +72,9 @@ namespace TicketManagement.BusinessLogic.Implementations
         {
             await ValidateEventExistsAsync(id);
 
-            var @event = await _eventRepository.GetByIdAsync(id);
+            Event @event = await _eventRepository.GetByIdAsync(id);
 
-            var model = _mapper.Map<EventModel>(@event);
+            EventModel model = _mapper.Map<EventModel>(@event);
 
             return model;
         }
@@ -88,33 +86,28 @@ namespace TicketManagement.BusinessLogic.Implementations
                 throw new ValidationException("Event is null.");
             }
 
+            bool orderedSeatsExist = _eventAreaService
+                .GetByEventId(eventModel.Id)
+                .SelectMany(a => _eventSeatService.GetByEventAreaId(a.Id))
+                .Any(s => s.State == EventSeatStateModel.Ordered);
+
+            if (orderedSeatsExist)
+            {
+                throw new ValidationException("Some seats have already been ordered.");
+            }
+
             await ValidateEventExistsAsync(eventModel.Id);
 
-            var @event = _mapper.Map<Event>(eventModel);
+            Event @event = _mapper.Map<Event>(eventModel);
 
             _eventValidator.Validate(@event);
 
             await _eventRepository.UpdateAsync(@event);
         }
 
-        public int Count()
-        {
-            return _eventRepository.GetAll().Count();
-        }
-
-        public IEnumerable<EventModel> GetPage(int page, int pageSize)
-        {
-            var models = _eventRepository.GetAll()
-                .Skip((page - 1) * pageSize).Take(pageSize)
-                .Select(e => _mapper.Map<EventModel>(e))
-                .ToList();
-
-            return models;
-        }
-
         private async Task ValidateEventExistsAsync(int id)
         {
-            var @event = await _eventRepository.GetByIdAsync(id);
+            Event @event = await _eventRepository.GetByIdAsync(id);
 
             if (@event is null)
             {

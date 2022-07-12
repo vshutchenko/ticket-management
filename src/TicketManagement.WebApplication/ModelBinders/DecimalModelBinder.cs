@@ -20,13 +20,13 @@ namespace TicketManagement.WebApplication.ModelBinders
                 throw new ArgumentNullException(nameof(bindingContext));
             }
 
-            var valueProviderResult = bindingContext.ValueProvider.GetValue(bindingContext.ModelName);
+            ValueProviderResult valueProviderResult = bindingContext.ValueProvider.GetValue(bindingContext.ModelName);
 
             if (valueProviderResult != ValueProviderResult.None)
             {
                 bindingContext.ModelState.SetModelValue(bindingContext.ModelName, valueProviderResult);
 
-                var valueAsString = valueProviderResult.FirstValue;
+                string? valueAsString = valueProviderResult.FirstValue;
                 decimal result;
 
                 if (decimal.TryParse(valueAsString, NumberStyles.AllowDecimalPoint | NumberStyles.AllowLeadingSign, CultureInfo.InvariantCulture, out result))

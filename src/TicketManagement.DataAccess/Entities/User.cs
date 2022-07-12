@@ -8,9 +8,13 @@ namespace TicketManagement.DataAccess.Entities
     public class User : IdentityUser
     {
         public string FirstName { get; set; }
+
         public string LastName { get; set; }
+
         public string CultureName { get; set; }
+
         public decimal Balance { get; set; }
+
         public string TimeZoneId { get; set; }
     }
 }

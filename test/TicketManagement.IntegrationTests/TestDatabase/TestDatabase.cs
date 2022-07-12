@@ -16,11 +16,11 @@ namespace TicketManagement.IntegrationTests
                 .Build()
                 .GetConnectionString("TestDatabase");
 
-            var builder = new SqlConnectionStringBuilder(_connectionString);
+            SqlConnectionStringBuilder builder = new SqlConnectionStringBuilder(_connectionString);
 
-            var dacpac = DacPackage.Load(Path.Combine("TestDatabase", "TicketManagement.Database.dacpac"));
-            var dacpacService = new DacServices(_connectionString);
-            var dacOptions = new DacDeployOptions { CreateNewDatabase = true };
+            DacPackage dacpac = DacPackage.Load(Path.Combine("TestDatabase", "TicketManagement.Database.dacpac"));
+            DacServices dacpacService = new DacServices(_connectionString);
+            DacDeployOptions dacOptions = new DacDeployOptions { CreateNewDatabase = true };
             dacpacService.Deploy(dacpac, builder["Initial Catalog"].ToString(), true, dacOptions);
         }
 

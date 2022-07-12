@@ -20,7 +20,7 @@ namespace TicketManagement.DataAccess.SqlClientImplementations
 
         public async Task<int> CreateAsync(Seat item)
         {
-            var query = "INSERT INTO Seat(AreaId, Row, Number) VALUES(@areaId, @row, @number); SELECT SCOPE_IDENTITY()";
+            string query = "INSERT INTO Seat(AreaId, Row, Number) VALUES(@areaId, @row, @number); SELECT SCOPE_IDENTITY()";
 
             await using SqlConnection connection = new SqlConnection(_connectionString);
 
@@ -32,14 +32,14 @@ namespace TicketManagement.DataAccess.SqlClientImplementations
 
             await connection.OpenAsync();
 
-            var id = Convert.ToInt32(await command.ExecuteScalarAsync());
+            int id = Convert.ToInt32(await command.ExecuteScalarAsync());
 
             return id;
         }
 
         public async Task DeleteAsync(int id)
         {
-            var query = "DELETE FROM Seat WHERE Id = @seatId";
+            string query = "DELETE FROM Seat WHERE Id = @seatId";
 
             await using SqlConnection connection = new SqlConnection(_connectionString);
 
@@ -54,7 +54,7 @@ namespace TicketManagement.DataAccess.SqlClientImplementations
 
         public IQueryable<Seat> GetAll()
         {
-            var query = "SELECT Id, AreaId, Row, Number FROM Seat";
+            string query = "SELECT Id, AreaId, Row, Number FROM Seat";
 
             using SqlConnection connection = new SqlConnection(_connectionString);
 
@@ -64,7 +64,7 @@ namespace TicketManagement.DataAccess.SqlClientImplementations
 
             using SqlDataReader reader = command.ExecuteReader();
 
-            var seats = new List<Seat>();
+            List<Seat> seats = new List<Seat>();
 
             while (reader.Read())
             {
@@ -82,7 +82,7 @@ namespace TicketManagement.DataAccess.SqlClientImplementations
 
         public async Task<Seat> GetByIdAsync(int id)
         {
-            var query = "SELECT Id, AreaId, Row, Number FROM Seat WHERE Id = @id";
+            string query = "SELECT Id, AreaId, Row, Number FROM Seat WHERE Id = @id";
 
             await using SqlConnection connection = new SqlConnection(_connectionString);
 
@@ -110,7 +110,7 @@ namespace TicketManagement.DataAccess.SqlClientImplementations
 
         public async Task UpdateAsync(Seat item)
         {
-            var query = "UPDATE Seat SET AreaId = @areaId, Row = @row, Number = @number WHERE Id = @seatId";
+            string query = "UPDATE Seat SET AreaId = @areaId, Row = @row, Number = @number WHERE Id = @seatId";
 
             await using SqlConnection connection = new SqlConnection(_connectionString);
 

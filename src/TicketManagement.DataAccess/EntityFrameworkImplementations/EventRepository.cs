@@ -20,29 +20,29 @@ namespace TicketManagement.DataAccess.EntityFrameworkImplementations
 
         public async Task<int> CreateAsync(Event item)
         {
-            var sqlCommand = "EXEC InsertEvent @name={0}, @description={1}, @layoutId={2}, @startDate={3}, @endDate={4}, @published={5}, @eventId={6} OUT";
+            string sqlCommand = "EXEC InsertEvent @name={0}, @description={1}, @layoutId={2}, @startDate={3}, @endDate={4}, @published={5}, @eventId={6} OUT";
 
-            var idParam = new SqlParameter("@eventId", SqlDbType.Int) { Direction = ParameterDirection.Output };
-            var nameParam = new SqlParameter("@name", item.Name);
-            var descriptionParam = new SqlParameter("@description", item.Description);
-            var layoutIdParam = new SqlParameter("@layoutId", item.LayoutId);
-            var startDateParam = new SqlParameter("@startDate", item.StartDate);
-            var endDateParam = new SqlParameter("@endDate", item.EndDate);
-            var publishedParam = new SqlParameter("@published", item.Published);
+            SqlParameter idParam = new SqlParameter("@eventId", SqlDbType.Int) { Direction = ParameterDirection.Output };
+            SqlParameter nameParam = new SqlParameter("@name", item.Name);
+            SqlParameter descriptionParam = new SqlParameter("@description", item.Description);
+            SqlParameter layoutIdParam = new SqlParameter("@layoutId", item.LayoutId);
+            SqlParameter startDateParam = new SqlParameter("@startDate", item.StartDate);
+            SqlParameter endDateParam = new SqlParameter("@endDate", item.EndDate);
+            SqlParameter publishedParam = new SqlParameter("@published", item.Published);
 
             await _context.Database.ExecuteSqlRawAsync(sqlCommand, nameParam, descriptionParam, layoutIdParam, startDateParam, endDateParam, publishedParam, idParam);
 
             await _context.SaveChangesAsync();
 
-            var id = (int)idParam.Value;
+            int id = (int)idParam.Value;
 
             return id;
         }
 
         public async Task DeleteAsync(int id)
         {
-            var sqlCommand = "EXEC DeleteEvent @eventId={0}";
-            var idParam = new SqlParameter("@eventId", id);
+            string sqlCommand = "EXEC DeleteEvent @eventId={0}";
+            SqlParameter idParam = new SqlParameter("@eventId", id);
 
             await _context.Database.ExecuteSqlRawAsync(sqlCommand, idParam);
 
@@ -61,19 +61,19 @@ namespace TicketManagement.DataAccess.EntityFrameworkImplementations
 
         public async Task UpdateAsync(Event item)
         {
-            var existingEvent = await GetByIdAsync(item.Id);
+            Event existingEvent = await GetByIdAsync(item.Id);
 
             if (existingEvent.LayoutId != item.LayoutId)
             {
-                var sqlCommand = "EXEC UpdateEvent @eventId={0}, @name={1}, @description={2}, @layoutId={3}, @startDate={4}, @endDate={5}, @published={6}";
+                string sqlCommand = "EXEC UpdateEvent @eventId={0}, @name={1}, @description={2}, @layoutId={3}, @startDate={4}, @endDate={5}, @published={6}";
 
-                var idParam = new SqlParameter("@eventId", item.Id);
-                var nameParam = new SqlParameter("@name", item.Name);
-                var descriptionParam = new SqlParameter("@description", item.Description);
-                var layoutIdParam = new SqlParameter("@layoutId", item.LayoutId);
-                var startDateParam = new SqlParameter("@startDate", item.StartDate);
-                var endDateParam = new SqlParameter("@endDate", item.EndDate);
-                var publishedParam = new SqlParameter("@published", item.Published);
+                SqlParameter idParam = new SqlParameter("@eventId", item.Id);
+                SqlParameter nameParam = new SqlParameter("@name", item.Name);
+                SqlParameter descriptionParam = new SqlParameter("@description", item.Description);
+                SqlParameter layoutIdParam = new SqlParameter("@layoutId", item.LayoutId);
+                SqlParameter startDateParam = new SqlParameter("@startDate", item.StartDate);
+                SqlParameter endDateParam = new SqlParameter("@endDate", item.EndDate);
+                SqlParameter publishedParam = new SqlParameter("@published", item.Published);
 
                 await _context.Database.ExecuteSqlRawAsync(sqlCommand, idParam, nameParam, descriptionParam, layoutIdParam, startDateParam, endDateParam, publishedParam);
             }

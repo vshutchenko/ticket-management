@@ -28,7 +28,7 @@ namespace TicketManagement.BusinessLogic.Implementations
 
         public IEnumerable<EventAreaModel> GetAll()
         {
-            var models = _eventAreaRepository.GetAll()
+            List<EventAreaModel> models = _eventAreaRepository.GetAll()
                 .Select(a => _mapper.Map<EventAreaModel>(a))
                 .ToList();
 
@@ -37,9 +37,9 @@ namespace TicketManagement.BusinessLogic.Implementations
 
         public IEnumerable<EventAreaModel> GetByEventId(int eventId)
         {
-            Task.Run(async () => await ValidateEventExistsAsync(eventId));
+            ValidateEventExists(eventId);
 
-            var models = _eventAreaRepository.GetAll()
+            List<EventAreaModel> models = _eventAreaRepository.GetAll()
                 .Where(a => a.EventId == eventId)
                 .Select(a => _mapper.Map<EventAreaModel>(a))
                 .ToList();
@@ -49,30 +49,30 @@ namespace TicketManagement.BusinessLogic.Implementations
 
         public async Task<EventAreaModel> GetByIdAsync(int id)
         {
-            await ValidateEventAreaExistsAsync(id);
+            ValidateEventAreaExists(id);
 
-            var eventArea = await _eventAreaRepository.GetByIdAsync(id);
+            EventArea eventArea = await _eventAreaRepository.GetByIdAsync(id);
 
-            var model = _mapper.Map<EventAreaModel>(eventArea);
+            EventAreaModel model = _mapper.Map<EventAreaModel>(eventArea);
 
             return model;
         }
 
         public async Task SetPriceAsync(int id, decimal price)
         {
-            await ValidateEventAreaExistsAsync(id);
+            ValidateEventAreaExists(id);
 
             _priceValidator.Validate(price);
 
-            var area = await _eventAreaRepository.GetByIdAsync(id);
+            EventArea area = await _eventAreaRepository.GetByIdAsync(id);
 
             area.Price = price;
             await _eventAreaRepository.UpdateAsync(area);
         }
 
-        private async Task ValidateEventAreaExistsAsync(int id)
+        private void ValidateEventAreaExists(int id)
         {
-            var eventArea = await _eventAreaRepository.GetByIdAsync(id);
+            EventArea eventArea = _eventAreaRepository.GetAll().FirstOrDefault(a => a.Id == id);
 
             if (eventArea is null)
             {
@@ -80,9 +80,9 @@ namespace TicketManagement.BusinessLogic.Implementations
             }
         }
 
-        private async Task ValidateEventExistsAsync(int id)
+        private void ValidateEventExists(int id)
         {
-            var @event = await _eventRepository.GetByIdAsync(id);
+            Event @event = _eventRepository.GetAll().FirstOrDefault(e => e.Id == id);
 
             if (@event is null)
             {

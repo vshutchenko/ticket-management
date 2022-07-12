@@ -31,9 +31,7 @@ namespace TicketManagement.BusinessLogic.Implementations
                 throw new ValidationException("Venue is null.");
             }
 
-            venueModel.Id = 0;
-
-            var venue = _mapper.Map<Venue>(venueModel);
+            Venue venue = _mapper.Map<Venue>(venueModel);
 
             _venueValidator.Validate(venue);
 
@@ -49,7 +47,7 @@ namespace TicketManagement.BusinessLogic.Implementations
 
         public IEnumerable<VenueModel> GetAll()
         {
-            var models = _venueRepository.GetAll().Select(v => _mapper.Map<VenueModel>(v));
+            IQueryable<VenueModel> models = _venueRepository.GetAll().Select(v => _mapper.Map<VenueModel>(v));
 
             return models;
         }
@@ -58,9 +56,9 @@ namespace TicketManagement.BusinessLogic.Implementations
         {
             await ValidateVenueExistsAsync(id);
 
-            var venue = await _venueRepository.GetByIdAsync(id);
+            Venue venue = await _venueRepository.GetByIdAsync(id);
 
-            var model = _mapper.Map<VenueModel>(venue);
+            VenueModel model = _mapper.Map<VenueModel>(venue);
 
             return model;
         }
@@ -74,29 +72,16 @@ namespace TicketManagement.BusinessLogic.Implementations
 
             await ValidateVenueExistsAsync(venueModel.Id);
 
-            var venue = _mapper.Map<Venue>(venueModel);
+            Venue venue = _mapper.Map<Venue>(venueModel);
 
             _venueValidator.Validate(venue);
 
             await _venueRepository.UpdateAsync(venue);
         }
 
-        public int Count()
-        {
-            return _venueRepository.GetAll().Count();
-        }
-
-        public IEnumerable<VenueModel> Get(int limit, int offset)
-        {
-            var models = _venueRepository.GetAll().Take(limit).Skip(offset).
-                Select(v => _mapper.Map<VenueModel>(v));
-
-            return models;
-        }
-
         private async Task ValidateVenueExistsAsync(int id)
         {
-            var venue = await _venueRepository.GetByIdAsync(id);
+            Venue venue = await _venueRepository.GetByIdAsync(id);
 
             if (venue is null)
             {

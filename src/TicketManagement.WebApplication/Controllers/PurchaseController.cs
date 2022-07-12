@@ -34,12 +34,12 @@ namespace TicketManagement.WebApplication.Controllers
         [Authorize(Roles ="Event manager,User")]
         public async Task<IActionResult> PurchaseSeats(int id)
         {
-            var eventVM = _mapper.Map<PurchaseSeatsViewModel>(await _eventService.GetByIdAsync(id));
+            PurchaseSeatsViewModel? eventVM = _mapper.Map<PurchaseSeatsViewModel>(await _eventService.GetByIdAsync(id));
 
-            foreach (var area in _eventAreaService.GetByEventId(id))
+            foreach (EventAreaModel? area in _eventAreaService.GetByEventId(id))
             {
-                var areaVM = _mapper.Map<EventAreaViewModel>(area);
-                var seatsVM = _eventSeatService.GetByEventAreaId(areaVM.Id).Select(s => _mapper.Map<EventSeatViewModel>(s)).ToList();
+                EventAreaViewModel? areaVM = _mapper.Map<EventAreaViewModel>(area);
+                List<EventSeatViewModel>? seatsVM = _eventSeatService.GetByEventAreaId(areaVM.Id).Select(s => _mapper.Map<EventSeatViewModel>(s)).ToList();
                 eventVM.Seats.AddRange(seatsVM);
                 eventVM.Areas.Add(areaVM);
             }
@@ -52,13 +52,13 @@ namespace TicketManagement.WebApplication.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> PurchaseSeats(CreatePurchaseViewModel model)
         {
-            var purchase = _mapper.Map<PurchaseModel>(model);
+            PurchaseModel? purchase = _mapper.Map<PurchaseModel>(model);
 
             List<EventSeatModel> seats = new List<EventSeatModel>();
 
-            foreach (var id in model.SeatIds)
+            foreach (int id in model.SeatIds)
             {
-                var s = await _eventSeatService.GetByIdAsync(id);
+                EventSeatModel? s = await _eventSeatService.GetByIdAsync(id);
                 seats.Add(_mapper.Map<EventSeatModel>(s));
             }
 
@@ -73,30 +73,30 @@ namespace TicketManagement.WebApplication.Controllers
             [FromServices] IVenueService venueService,
             [FromServices] ILayoutService layoutService)
         {
-            var userId = User.FindFirstValue("id");
+            string? userId = User.FindFirstValue("id");
 
-            var purchases = _purchaseService.GetByUserId(userId);
+            IEnumerable<PurchaseModel>? purchases = _purchaseService.GetByUserId(userId);
 
             List<PurchaseViewModel> models = new List<PurchaseViewModel>();
 
-            foreach (var purchase in purchases)
+            foreach (PurchaseModel? purchase in purchases)
             {
-                var purchasedSeats = new List<PurchasedSeatViewModel>();
+                List<PurchasedSeatViewModel>? purchasedSeats = new List<PurchasedSeatViewModel>();
 
-                foreach (var id in purchase.SeatIds)
+                foreach (int id in purchase.SeatIds)
                 {
-                    var seat = _mapper.Map<EventSeatViewModel>(await _eventSeatService.GetByIdAsync(id));
-                    var area = _mapper.Map<EventAreaViewModel>(await _eventAreaService.GetByIdAsync(seat.EventAreaId));
-                    var @event = _mapper.Map<EventViewModel>(await _eventService.GetByIdAsync(area.EventId));
-                    var layout = _mapper.Map<LayoutViewModel>(await layoutService.GetByIdAsync(@event.LayoutId));
-                    var venue = _mapper.Map<VenueViewModel>(await venueService.GetByIdAsync(layout.VenueId));
+                    EventSeatViewModel? seat = _mapper.Map<EventSeatViewModel>(await _eventSeatService.GetByIdAsync(id));
+                    EventAreaViewModel? area = _mapper.Map<EventAreaViewModel>(await _eventAreaService.GetByIdAsync(seat.EventAreaId));
+                    EventViewModel? @event = _mapper.Map<EventViewModel>(await _eventService.GetByIdAsync(area.EventId));
+                    LayoutViewModel? layout = _mapper.Map<LayoutViewModel>(await layoutService.GetByIdAsync(@event.LayoutId));
+                    VenueViewModel? venue = _mapper.Map<VenueViewModel>(await venueService.GetByIdAsync(layout.VenueId));
 
-                    var purchasedSeatVm = new PurchasedSeatViewModel { Area = area, Seat = seat,  Event = @event, Layout = layout, Venue = venue };
+                    PurchasedSeatViewModel? purchasedSeatVm = new PurchasedSeatViewModel { Area = area, Seat = seat,  Event = @event, Layout = layout, Venue = venue };
 
                     purchasedSeats.Add(purchasedSeatVm);
                 }
 
-                var purchaseVm = new PurchaseViewModel { PurchasedSeats = purchasedSeats, Price = purchase.Price };
+                PurchaseViewModel? purchaseVm = new PurchaseViewModel { PurchasedSeats = purchasedSeats, Price = purchase.Price };
 
                 models.Add(purchaseVm);
             }

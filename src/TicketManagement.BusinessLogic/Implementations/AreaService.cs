@@ -35,8 +35,7 @@ namespace TicketManagement.BusinessLogic.Implementations
                 throw new ValidationException("Area is null.");
             }
 
-            areaModel.Id = 0;
-            var area = _mapper.Map<Area>(areaModel);
+            Area area = _mapper.Map<Area>(areaModel);
 
             _areaValidator.Validate(area);
 
@@ -52,7 +51,7 @@ namespace TicketManagement.BusinessLogic.Implementations
 
         public IEnumerable<AreaModel> GetAll()
         {
-            var models = _areaRepository.GetAll().Select(a => _mapper.Map<AreaModel>(a));
+            IQueryable<AreaModel> models = _areaRepository.GetAll().Select(a => _mapper.Map<AreaModel>(a));
 
             return models;
         }
@@ -61,9 +60,9 @@ namespace TicketManagement.BusinessLogic.Implementations
         {
             await ValidateAreaExistsAsync(id);
 
-            var area = await _areaRepository.GetByIdAsync(id);
+            Area area = await _areaRepository.GetByIdAsync(id);
 
-            var model = _mapper.Map<AreaModel>(area);
+            AreaModel model = _mapper.Map<AreaModel>(area);
 
             return model;
         }
@@ -77,7 +76,7 @@ namespace TicketManagement.BusinessLogic.Implementations
 
             await ValidateAreaExistsAsync(areaModel.Id);
 
-            var area = _mapper.Map<Area>(areaModel);
+            Area area = _mapper.Map<Area>(areaModel);
 
             _areaValidator.Validate(area);
 
@@ -86,7 +85,7 @@ namespace TicketManagement.BusinessLogic.Implementations
 
         private async Task ValidateAreaExistsAsync(int id)
         {
-            var area = await _areaRepository.GetByIdAsync(id);
+            Area area = await _areaRepository.GetByIdAsync(id);
 
             if (area is null)
             {

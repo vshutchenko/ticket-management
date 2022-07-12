@@ -10,7 +10,7 @@ using TicketManagement.WebApplication.Filters;
 using TicketManagement.WebApplication.Infrastructure;
 using TicketManagement.WebApplication.ModelBinders;
 
-var builder = WebApplication.CreateBuilder(args);
+WebApplicationBuilder? builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddScoped(provider => new MapperConfiguration(mc =>
@@ -20,7 +20,7 @@ builder.Services.AddScoped(provider => new MapperConfiguration(mc =>
 })
 .CreateMapper());
 
-var connectionString = builder.Configuration.GetConnectionString("TicketManagement.Database");
+string? connectionString = builder.Configuration.GetConnectionString("TicketManagement.Database");
 
 builder.Services.AddEntityFrameworkServices(connectionString);
 
@@ -48,20 +48,20 @@ builder.Services.AddControllersWithViews(options =>
 
 builder.Services.Configure<RequestLocalizationOptions>(options =>
 {
-    var supportedCultures = new List<CultureInfo> { new CultureInfo("en-US"), new CultureInfo("ru-RU"), new CultureInfo("be-BY") };
+    List<CultureInfo>? supportedCultures = new List<CultureInfo> { new CultureInfo("en-US"), new CultureInfo("ru-RU"), new CultureInfo("be-BY") };
     options.DefaultRequestCulture = new RequestCulture("en-US");
     options.SupportedCultures = supportedCultures;
     options.SupportedUICultures = supportedCultures;
 
-    var requestProvider = options.RequestCultureProviders.OfType<AcceptLanguageHeaderRequestCultureProvider>().First();
+    AcceptLanguageHeaderRequestCultureProvider? requestProvider = options.RequestCultureProviders.OfType<AcceptLanguageHeaderRequestCultureProvider>().First();
     options.RequestCultureProviders.Remove(requestProvider);
 });
 
-var app = builder.Build();
+WebApplication? app = builder.Build();
 
-using var scope = app.Services.CreateScope();
+using IServiceScope? scope = app.Services.CreateScope();
 
-var identityService = scope.ServiceProvider.GetRequiredService<IIdentityService>();
+IIdentityService? identityService = scope.ServiceProvider.GetRequiredService<IIdentityService>();
 
 await identityService.SeedInitialData();
 

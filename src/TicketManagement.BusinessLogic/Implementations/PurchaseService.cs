@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using TicketManagement.BusinessLogic.Interfaces;
 using TicketManagement.BusinessLogic.Models;
@@ -18,46 +16,42 @@ namespace TicketManagement.BusinessLogic.Implementations
         private readonly IRepository<Purchase> _purchaseRepository;
         private readonly IRepository<PurchasedSeat> _purchasedSeatRepository;
         private readonly IEventSeatService _eventSeatService;
-        private readonly IRepository<EventArea> _eventAreaRepository;
-        private readonly IMapper _mapper;
+        private readonly IEventAreaService _eventAreaService;
 
         public PurchaseService(
             UserManager<User> userManager,
             IRepository<Purchase> purchaseRepository,
             IRepository<PurchasedSeat> purchasedSeatRepository,
             IEventSeatService eventSeatService,
-            IRepository<EventArea> eventAreaRepository,
-            IMapper mapper)
+            IEventAreaService eventAreaService)
         {
             _userManager = userManager;
             _purchaseRepository = purchaseRepository;
             _purchasedSeatRepository = purchasedSeatRepository;
             _eventSeatService = eventSeatService;
-            _eventAreaRepository = eventAreaRepository;
-            _mapper = mapper;
+            _eventAreaService = eventAreaService;
         }
 
         public async Task PurchaseSeatAsync(PurchaseModel model)
         {
             await CheckSeatsAsync(model.SeatIds);
 
-            model.Price = await CalculatePriceAsync(model.SeatIds);
-
-            var purchase = _mapper.Map<Purchase>(model);
+            Purchase purchase = new Purchase
+            {
+                EventId = model.EventId,
+                UserId = model.UserId,
+                Price = await CalculatePriceAsync(model.SeatIds),
+            };
 
             await MakePayment(purchase.UserId, purchase.Price);
 
-            var purchaseId = await _purchaseRepository.CreateAsync(purchase);
+            int purchaseId = await _purchaseRepository.CreateAsync(purchase);
 
-            foreach (var id in model.SeatIds)
+            foreach (int id in model.SeatIds)
             {
                 await _eventSeatService.SetSeatStateAsync(id, EventSeatStateModel.Ordered);
 
-                var purchasedSeat = new PurchasedSeat
-                {
-                    EventSeatId = id,
-                    PurchaseId = purchaseId,
-                };
+                PurchasedSeat purchasedSeat = new PurchasedSeat { EventSeatId = id, PurchaseId = purchaseId };
 
                 await _purchasedSeatRepository.CreateAsync(purchasedSeat);
             }
@@ -65,16 +59,23 @@ namespace TicketManagement.BusinessLogic.Implementations
 
         public IEnumerable<PurchaseModel> GetByUserId(string userId)
         {
-            var purchases = _purchaseRepository.GetAll().Where(p => p.UserId == userId).ToList();
+            List<Purchase> purchases = _purchaseRepository.GetAll().Where(p => p.UserId == userId).ToList();
 
             List<PurchaseModel> models = new List<PurchaseModel>();
 
-            foreach (var p in purchases)
+            foreach (Purchase p in purchases)
             {
-                var purchaseModel = _mapper.Map<PurchaseModel>(p);
-                purchaseModel.SeatIds = _purchasedSeatRepository.GetAll()
-                    .Where(s => s.PurchaseId == p.Id)
-                    .Select(s => s.EventSeatId).ToList();
+                PurchaseModel purchaseModel = new PurchaseModel
+                {
+                    Id = p.Id,
+                    EventId = p.EventId,
+                    Price = p.Price,
+                    UserId = p.UserId,
+                    SeatIds = _purchasedSeatRepository.GetAll()
+                        .Where(s => s.PurchaseId == p.Id)
+                        .Select(s => s.EventSeatId)
+                        .ToList(),
+                };
 
                 models.Add(purchaseModel);
             }
@@ -84,14 +85,13 @@ namespace TicketManagement.BusinessLogic.Implementations
 
         public IEnumerable<EventSeatModel> GetByPurchaseId(int purchaseId)
         {
-            var purchasedSeatIds = _purchasedSeatRepository.GetAll()
+            List<int> purchasedSeatIds = _purchasedSeatRepository.GetAll()
                 .Where(ps => ps.PurchaseId == purchaseId)
                 .Select(ps => ps.EventSeatId)
                 .ToList();
 
-            var eventSeats = _eventSeatService.GetAll()
+            List<EventSeatModel> eventSeats = _eventSeatService.GetAll()
                 .Where(s => purchasedSeatIds.Contains(s.Id))
-                .Select(s => _mapper.Map<EventSeatModel>(s))
                 .ToList();
 
             return eventSeats;
@@ -104,9 +104,9 @@ namespace TicketManagement.BusinessLogic.Implementations
                 throw new ValidationException($"No seats chosen.");
             }
 
-            foreach (var id in seatIds)
+            foreach (int id in seatIds)
             {
-                var seat = await _eventSeatService.GetByIdAsync(id);
+                EventSeatModel seat = await _eventSeatService.GetByIdAsync(id);
 
                 if (seat.State != EventSeatStateModel.Available)
                 {
@@ -119,10 +119,10 @@ namespace TicketManagement.BusinessLogic.Implementations
         {
             decimal totalPrice = 0;
 
-            foreach (var id in seatIds)
+            foreach (int id in seatIds)
             {
-                var seat = await _eventSeatService.GetByIdAsync(id);
-                var area = await _eventAreaRepository.GetByIdAsync(seat.EventAreaId);
+                EventSeatModel seat = await _eventSeatService.GetByIdAsync(id);
+                EventAreaModel area = await _eventAreaService.GetByIdAsync(seat.EventAreaId);
 
                 totalPrice += area.Price;
             }
@@ -132,7 +132,7 @@ namespace TicketManagement.BusinessLogic.Implementations
 
         private async Task MakePayment(string userId, decimal price)
         {
-            var user = await _userManager.FindByIdAsync(userId);
+            User user = await _userManager.FindByIdAsync(userId);
 
             if (user is null)
             {

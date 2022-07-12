@@ -14,10 +14,10 @@ namespace TicketManagement.IntegrationTests.LayoutServiceTests
         [OneTimeSetUp]
         public void CreateServices()
         {
-            var connectionString = new TestDatabase().ConnectionString;
+            string connectionString = new TestDatabase().ConnectionString;
 
-            var layoutRepo = new LayoutSqlClientRepository(connectionString);
-            var layoutValidator = new LayoutValidator(layoutRepo);
+            LayoutSqlClientRepository layoutRepo = new LayoutSqlClientRepository(connectionString);
+            LayoutValidator layoutValidator = new LayoutValidator(layoutRepo);
 
             _layoutService = new LayoutService(layoutRepo, layoutValidator);
         }

@@ -14,10 +14,10 @@ namespace TicketManagement.IntegrationTests.VenueServiceTests
         [OneTimeSetUp]
         public void CreateServices()
         {
-            var connectionString = new TestDatabase().ConnectionString;
+            string connectionString = new TestDatabase().ConnectionString;
 
-            var venueRepo = new VenueSqlClientRepository(connectionString);
-            var venueValidator = new VenueValidator(venueRepo);
+            VenueSqlClientRepository venueRepo = new VenueSqlClientRepository(connectionString);
+            VenueValidator venueValidator = new VenueValidator(venueRepo);
 
             _venueService = new VenueService(venueRepo, venueValidator);
         }

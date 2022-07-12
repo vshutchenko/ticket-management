@@ -26,6 +26,7 @@ namespace TicketManagement.DataAccess.EntityFrameworkImplementations
         public DbSet<EventSeat> EventSeats { get; set; }
 
         public DbSet<Purchase> Purchases { get; set; }
+
         public DbSet<PurchasedSeat> PurchasedSeats { get; set; }
     }
 }

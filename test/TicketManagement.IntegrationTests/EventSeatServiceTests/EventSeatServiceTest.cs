@@ -15,9 +15,9 @@ namespace TicketManagement.IntegrationTests.EventSeatServiceTests
         [OneTimeSetUp]
         public void CreateServices()
         {
-            var connectionString = new TestDatabase().ConnectionString;
+            string connectionString = new TestDatabase().ConnectionString;
 
-            var eventSeatRepo = new EventSeatSqlClientRepository(connectionString);
+            EventSeatSqlClientRepository eventSeatRepo = new EventSeatSqlClientRepository(connectionString);
 
             _eventSeatService = new EventSeatService(eventSeatRepo);
         }
@@ -29,7 +29,7 @@ namespace TicketManagement.IntegrationTests.EventSeatServiceTests
 
             EventSeatState stateBeforeUpdate = EventSeatState.Ordered;
 
-            var actualSeatBeforeUpdate = await _eventSeatService.GetByIdAsync(id);
+            BusinessLogic.Models.EventSeatModel actualSeatBeforeUpdate = await _eventSeatService.GetByIdAsync(id);
 
             actualSeatBeforeUpdate.State.Should().Be(stateBeforeUpdate);
 
@@ -37,7 +37,7 @@ namespace TicketManagement.IntegrationTests.EventSeatServiceTests
 
             await _eventSeatService.SetSeatStateAsync(id, stateToUpdate);
 
-            var actualSeatAfterUpdate = await _eventSeatService.GetByIdAsync(id);
+            BusinessLogic.Models.EventSeatModel actualSeatAfterUpdate = await _eventSeatService.GetByIdAsync(id);
 
             actualSeatAfterUpdate.State.Should().Be(stateToUpdate);
         }

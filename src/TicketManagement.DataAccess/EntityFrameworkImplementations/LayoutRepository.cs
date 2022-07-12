@@ -19,7 +19,7 @@ namespace TicketManagement.DataAccess.EntityFrameworkImplementations
 
         public async Task<int> CreateAsync(Layout item)
         {
-            var entityEntry = await _context.AddAsync(item);
+            Microsoft.EntityFrameworkCore.ChangeTracking.EntityEntry<Layout> entityEntry = await _context.AddAsync(item);
 
             await _context.SaveChangesAsync();
 
@@ -28,7 +28,7 @@ namespace TicketManagement.DataAccess.EntityFrameworkImplementations
 
         public async Task DeleteAsync(int id)
         {
-            var entity = _context.Layouts.FirstOrDefault(l => l.Id == id);
+            Layout entity = _context.Layouts.FirstOrDefault(l => l.Id == id);
 
             if (entity != null)
             {

@@ -20,7 +20,7 @@ namespace TicketManagement.DataAccess.SqlClientImplementations
 
         public async Task<int> CreateAsync(Layout item)
         {
-            var query = "INSERT INTO Layout(Description, VenueId) VALUES(@description, @venueId); SELECT SCOPE_IDENTITY()";
+            string query = "INSERT INTO Layout(Description, VenueId) VALUES(@description, @venueId); SELECT SCOPE_IDENTITY()";
 
             await using SqlConnection connection = new SqlConnection(_connectionString);
 
@@ -31,14 +31,14 @@ namespace TicketManagement.DataAccess.SqlClientImplementations
 
             await connection.OpenAsync();
 
-            var id = Convert.ToInt32(await command.ExecuteScalarAsync());
+            int id = Convert.ToInt32(await command.ExecuteScalarAsync());
 
             return id;
         }
 
         public async Task DeleteAsync(int id)
         {
-            var query = "DELETE FROM Layout WHERE Id = @layoutId";
+            string query = "DELETE FROM Layout WHERE Id = @layoutId";
 
             await using SqlConnection connection = new SqlConnection(_connectionString);
 
@@ -53,7 +53,7 @@ namespace TicketManagement.DataAccess.SqlClientImplementations
 
         public IQueryable<Layout> GetAll()
         {
-            var query = "SELECT Id, Description, VenueId FROM Layout";
+            string query = "SELECT Id, Description, VenueId FROM Layout";
 
             using SqlConnection connection = new SqlConnection(_connectionString);
 
@@ -63,7 +63,7 @@ namespace TicketManagement.DataAccess.SqlClientImplementations
 
             using SqlDataReader reader = command.ExecuteReader();
 
-            var layouts = new List<Layout>();
+            List<Layout> layouts = new List<Layout>();
 
             while (reader.Read())
             {
@@ -80,7 +80,7 @@ namespace TicketManagement.DataAccess.SqlClientImplementations
 
         public async Task<Layout> GetByIdAsync(int id)
         {
-            var query = "SELECT Id, Description, VenueId FROM Layout WHERE Id = @id";
+            string query = "SELECT Id, Description, VenueId FROM Layout WHERE Id = @id";
 
             await using SqlConnection connection = new SqlConnection(_connectionString);
 
@@ -107,7 +107,7 @@ namespace TicketManagement.DataAccess.SqlClientImplementations
 
         public async Task UpdateAsync(Layout item)
         {
-            var query = "UPDATE Layout SET Description = @description, VenueId = @venueId WHERE Id = @layoutId";
+            string query = "UPDATE Layout SET Description = @description, VenueId = @venueId WHERE Id = @layoutId";
 
             await using SqlConnection connection = new SqlConnection(_connectionString);
 
