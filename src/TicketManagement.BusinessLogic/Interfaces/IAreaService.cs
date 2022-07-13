@@ -1,14 +1,19 @@
 ﻿using System.Collections.Generic;
-using TicketManagement.DataAccess.Entities;
+using System.Threading.Tasks;
+using TicketManagement.BusinessLogic.Models;
 
 namespace TicketManagement.BusinessLogic.Interfaces
 {
     public interface IAreaService
     {
-        IEnumerable<Area> GetAll();
-        Area GetById(int id);
-        int Create(Area area);
-        void Update(Area area);
-        void Delete(int id);
+        IEnumerable<AreaModel> GetAll();
+
+        Task<AreaModel> GetByIdAsync(int id);
+
+        Task<int> CreateAsync(AreaModel areaModel);
+
+        Task UpdateAsync(AreaModel areaModel);
+
+        Task DeleteAsync(int id);
     }
 }

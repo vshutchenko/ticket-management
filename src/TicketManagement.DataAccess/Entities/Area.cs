@@ -1,5 +1,8 @@
-﻿namespace TicketManagement.DataAccess.Entities
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace TicketManagement.DataAccess.Entities
 {
+    [Table("Area")]
     public class Area
     {
         public int Id { get; set; }

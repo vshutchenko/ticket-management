@@ -1,0 +1,36 @@
+﻿@using TicketManagement.WebApplication.Models.Account
+@model LoginViewModel
+
+<div class="container py-5 h-100">
+    <div class="row d-flex justify-content-center align-items-center h-100">
+        <div class="col-12 col-md-8 col-lg-6 col-xl-5">
+            <div class="card shadow-2-strong" style="border-radius: 1rem;">
+                <div class="card-body p-5 text-center">
+                    <form asp-action="Login" asp-anti-forgery="true">
+                        <h3 class="mb-5">@Localizer["Sign in"]</h3>
+
+                        <div class="validation text-left" asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                        <div class="form-outline mb-4">
+                            <input asp-for="Email" class="form-control form-control-lg" placeholder=@Localizer["Email"] />
+                            <span asp-validation-for="Email" class="text-danger text-left" />
+                        </div>
+
+                        <div class="form-outline mb-4">
+                            <input asp-for="Password" class="form-control form-control-lg" placeholder="@Localizer["Password"]" />
+                            <span asp-validation-for="Password" class="text-danger text-left" />
+                        </div>
+
+                        <input type="submit" value="@Localizer["Submit"]" class="btn btn-primary btn-lg btn-block" />
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

@@ -1,0 +1,82 @@
+﻿@using System.Globalization
+@using TicketManagement.WebApplication.Models.Event
+@model IEnumerable<EventViewModel>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Description)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.StartDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.EndDate)
+            </th>
+            @if (User.IsEventManager())
+            {
+                <th>
+                    @Html.DisplayNameFor(model => model.Published)
+                </th>
+            }
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Description)
+                </td>
+                <td>
+                    @User.GetLocalTime(@item.StartDate).ToString("g", CultureInfo.CurrentCulture)
+                </td>
+                <td>
+                    @User.GetLocalTime(@item.EndDate).ToString("g", CultureInfo.CurrentCulture)
+                </td>
+                @if (User.IsEventManager())
+                {
+                    <th>
+                        @Html.DisplayFor(modelItem => item.Published)
+                    </th>
+                }
+                <td>
+                    <a class="btn btn-success" asp-controller="Purchase" asp-action="PurchaseSeats" asp-route-id="@item.Id">@Localizer["Details"]</a>
+
+                    @if (User.IsEventManager())
+                    {
+                        <a class="btn btn-primary" asp-action="EditEvent" asp-route-id="@item.Id">@Localizer["Edit"]</a>
+
+                        <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#exampleModal">@Localizer["Delete"]</button>
+
+                        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="exampleModalLabel">@Localizer["Delete confirmation"]</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="@Localizer["Close"]"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                     @Localizer["Are you sure you want to delete this event?"]
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">@Localizer["Close"]</button>
+                                        <a class="btn btn-danger" asp-action="DeleteEvent" asp-route-id="@item.Id">@Localizer["Delete"]</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

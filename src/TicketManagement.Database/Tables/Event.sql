@@ -5,5 +5,7 @@
 	[Description] nvarchar(max) NOT NULL,
 	[LayoutId] int NOT NULL, 
     [StartDate] DATETIME2 NOT NULL, 
-    [EndDate] DATETIME2 NOT NULL,
+    [EndDate] DATETIME2 NOT NULL, 
+    [ImageUrl] NVARCHAR(MAX) NULL, 
+    [Published] BIT NOT NULL,
 )

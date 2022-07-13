@@ -1,0 +1,13 @@
+﻿@using System.Security.Claims
+@using TicketManagement.WebApplication.Extensions
+@using TicketManagement.WebApplication.Models.Event
+@model List<EventViewModel>
+
+<h1>@Localizer["List of events"]</h1>
+
+@if (@User.IsEventManager())
+{
+    <a class="btn btn-success" asp-controller="Event" asp-action="CreateEvent">@Localizer["Create event"]</a>
+}
+
+<partial name="_EventList" model="@Model" />

@@ -1,0 +1,8 @@
+﻿@using TicketManagement.WebApplication.Models.Purchase
+@model List<PurchaseViewModel>
+
+@foreach (var p in @Model)
+{
+    <partial name="_PurchasedSeats" model="@p.PurchasedSeats" />
+    <h5>@Localizer["Total price: {0:c}", @p.Price]</h5>
+}

@@ -4,7 +4,9 @@
 	@description nvarchar(max),
 	@layoutId int,
 	@startDate datetime2,
-	@endDate datetime2
+	@endDate datetime2,
+	@imageUrl nvarchar(max),
+	@published bit
 AS
 	BEGIN TRANSACTION
 
@@ -12,7 +14,7 @@ AS
 	WHERE EventId = @eventId
 
 	UPDATE Event
-	SET Name = @name, Description = @description, LayoutId = @layoutId, StartDate = @startDate, EndDate = @endDate
+	SET Name = @name, Description = @description, LayoutId = @layoutId, StartDate = @startDate, EndDate = @endDate, ImageUrl = @imageUrl, Published = @published
 	WHERE Id = @eventId
 
 	DECLARE @areaId int

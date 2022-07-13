@@ -1,14 +1,19 @@
 ﻿using System.Collections.Generic;
-using TicketManagement.DataAccess.Entities;
+using System.Threading.Tasks;
+using TicketManagement.BusinessLogic.Models;
 
 namespace TicketManagement.BusinessLogic.Interfaces
 {
     public interface ISeatService
     {
-        IEnumerable<Seat> GetAll();
-        Seat GetById(int id);
-        int Create(Seat seat);
-        void Update(Seat seat);
-        void Delete(int id);
+        IEnumerable<SeatModel> GetAll();
+
+        Task<SeatModel> GetByIdAsync(int id);
+
+        Task<int> CreateAsync(SeatModel seatModel);
+
+        Task UpdateAsync(SeatModel seatModel);
+
+        Task DeleteAsync(int id);
     }
 }

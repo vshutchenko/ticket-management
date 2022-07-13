@@ -1,12 +1,17 @@
 ﻿using System.Collections.Generic;
-using TicketManagement.DataAccess.Entities;
+using System.Threading.Tasks;
+using TicketManagement.BusinessLogic.Models;
 
 namespace TicketManagement.BusinessLogic.Interfaces
 {
     public interface IEventAreaService
     {
-        IEnumerable<EventArea> GetAll();
-        EventArea GetById(int id);
-        void SetPrice(int id, decimal price);
+        IEnumerable<EventAreaModel> GetAll();
+
+        Task<EventAreaModel> GetByIdAsync(int id);
+
+        IEnumerable<EventAreaModel> GetByEventId(int eventId);
+
+        Task SetPriceAsync(int id, decimal price);
     }
 }

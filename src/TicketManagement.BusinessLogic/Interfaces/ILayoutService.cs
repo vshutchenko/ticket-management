@@ -1,14 +1,19 @@
 ﻿using System.Collections.Generic;
-using TicketManagement.DataAccess.Entities;
+using System.Threading.Tasks;
+using TicketManagement.BusinessLogic.Models;
 
 namespace TicketManagement.BusinessLogic.Interfaces
 {
     public interface ILayoutService
     {
-        IEnumerable<Layout> GetAll();
-        Layout GetById(int id);
-        int Create(Layout layout);
-        void Update(Layout layout);
-        void Delete(int id);
+        IEnumerable<LayoutModel> GetAll();
+
+        Task<LayoutModel> GetByIdAsync(int id);
+
+        Task<int> CreateAsync(LayoutModel layoutModel);
+
+        Task UpdateAsync(LayoutModel layoutModel);
+
+        Task DeleteAsync(int id);
     }
 }

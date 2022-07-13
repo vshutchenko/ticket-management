@@ -1,0 +1,31 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using System.Security.Claims;
+
+<ul class="navbar-nav">
+    @if (User.Identity!.IsAuthenticated)
+    {
+        <li class="nav-item dropdown">
+            <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">@User.FindFirst(ClaimTypes.Email)!.Value</a>
+            <div class="dropdown-menu dropdown-menu-right">
+                <a class="dropdown-item" asp-controller="Account" asp-action="EditUser" asp-route-userId="@User.FindFirst("id")!.Value">@Localizer["Edit profile"]</a>
+                <a class="dropdown-item" asp-controller="Account" asp-action="ChangePassword">@Localizer["Change password"]</a>
+                @if (@User.IsUser())
+                {
+                    <a class="dropdown-item" asp-controller="Purchase" asp-action="PurchaseHistory">@Localizer["Purchase history"]</a>
+                    <a class="dropdown-item" asp-controller="Account" asp-action="AddFunds">@Localizer["Add funds"]</a>
+                }
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" asp-controller="Account" asp-action="Logout">@Localizer["Logout"]</a>
+            </div>
+        </li>
+    }
+    else
+    {
+        <li class="nav-item">
+            <a class="nav-link text-dark" asp-controller="Account" asp-action="Register">@Localizer["Register"]</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link text-dark" asp-controller="Account" asp-action="Login">@Localizer["Login"]</a>
+        </li>
+    }
+</ul>

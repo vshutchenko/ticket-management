@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using TicketManagement.BusinessLogic.Extensions;
+using System.Linq;
+using System.Threading.Tasks;
+using AutoMapper;
 using TicketManagement.BusinessLogic.Interfaces;
+using TicketManagement.BusinessLogic.Models;
 using TicketManagement.BusinessLogic.Validation;
 using TicketManagement.DataAccess.Entities;
 using TicketManagement.DataAccess.Interfaces;
@@ -12,58 +15,78 @@ namespace TicketManagement.BusinessLogic.Implementations
     {
         private readonly IRepository<Layout> _layoutRepository;
         private readonly IValidator<Layout> _layoutValidator;
+        private readonly IMapper _mapper;
 
-        public LayoutService(IRepository<Layout> layoutRepository, IValidator<Layout> layoutValidator)
+        public LayoutService(IRepository<Layout> layoutRepository, IValidator<Layout> layoutValidator, IMapper mapper)
         {
             _layoutRepository = layoutRepository ?? throw new ArgumentNullException(nameof(layoutRepository));
             _layoutValidator = layoutValidator ?? throw new ArgumentNullException(nameof(layoutValidator));
+            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
 
-        public int Create(Layout layout)
+        public Task<int> CreateAsync(LayoutModel layoutModel)
         {
-            if (layout is null)
+            if (layoutModel is null)
             {
                 throw new ValidationException("Layout is null.");
             }
 
-            layout.Id = 0;
+            var layout = _mapper.Map<Layout>(layoutModel);
 
             _layoutValidator.Validate(layout);
 
-            return _layoutRepository.Create(layout);
+            return _layoutRepository.CreateAsync(layout);
         }
 
-        public void Delete(int id)
+        public async Task DeleteAsync(int id)
         {
-            _layoutRepository.CheckIfIdExists(id);
+            await ValidateLayoutExistsAsync(id);
 
-            _layoutRepository.Delete(id);
+            await _layoutRepository.DeleteAsync(id);
         }
 
-        public IEnumerable<Layout> GetAll()
+        public IEnumerable<LayoutModel> GetAll()
         {
-            return _layoutRepository.GetAll();
+            var models = _layoutRepository.GetAll().Select(l => _mapper.Map<LayoutModel>(l));
+
+            return models;
         }
 
-        public Layout GetById(int id)
+        public async Task<LayoutModel> GetByIdAsync(int id)
         {
-            _layoutRepository.CheckIfIdExists(id);
+            await ValidateLayoutExistsAsync(id);
 
-            return _layoutRepository.GetById(id);
+            var layout = await _layoutRepository.GetByIdAsync(id);
+
+            var model = _mapper.Map<LayoutModel>(layout);
+
+            return model;
         }
 
-        public void Update(Layout layout)
+        public async Task UpdateAsync(LayoutModel layoutModel)
         {
-            if (layout is null)
+            if (layoutModel is null)
             {
                 throw new ValidationException("Layout is null.");
             }
 
-            _layoutRepository.CheckIfIdExists(layout.Id);
+            await ValidateLayoutExistsAsync(layoutModel.Id);
+
+            var layout = _mapper.Map<Layout>(layoutModel);
 
             _layoutValidator.Validate(layout);
 
-            _layoutRepository.Update(layout);
+            await _layoutRepository.UpdateAsync(layout);
+        }
+
+        private async Task ValidateLayoutExistsAsync(int id)
+        {
+            var layout = await _layoutRepository.GetByIdAsync(id);
+
+            if (layout is null)
+            {
+                throw new ValidationException("Entity was not found.");
+            }
         }
     }
 }

@@ -4,12 +4,14 @@
 	@layoutId int,
 	@startDate datetime2,
 	@endDate datetime2,
+	@imageUrl nvarchar(max),
+	@published bit,
 	@eventId int out
 AS
 	BEGIN TRANSACTION
 
-	INSERT INTO Event (Name, Description, LayoutId, StartDate, EndDate)
-	VALUES (@name, @description, @layoutId, @startDate, @endDate)
+	INSERT INTO Event (Name, Description, LayoutId, StartDate, EndDate, ImageUrl, Published)
+	VALUES (@name, @description, @layoutId, @startDate, @endDate, @imageUrl, @published)
 	SET @eventId = SCOPE_IDENTITY()
 
 	DECLARE @areaId int

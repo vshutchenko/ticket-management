@@ -1,0 +1,25 @@
+﻿@using TicketManagement.WebApplication.Models.Account
+
+<h1>@Localizer["Add funds to account"]</h1>
+<hr />
+
+<div>
+    <form asp-action="AddFunds" asp-antiforgery="true" method="post">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <div class="w-25">
+            <div class="form-group">
+                <label class="control-label">@Localizer[$"Current balance: {@ViewBag.Balance:c}"]</label>
+            </div>
+            <input type="hidden" value="100" name="amount" />
+            <div class="mt-5">
+                <input type="submit" value="@Localizer[$"Add {100:c}"]" class="btn btn-primary" />
+            </div>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

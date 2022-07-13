@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using TicketManagement.BusinessLogic.Extensions;
+using System.Linq;
+using System.Threading.Tasks;
+using AutoMapper;
 using TicketManagement.BusinessLogic.Interfaces;
+using TicketManagement.BusinessLogic.Models;
 using TicketManagement.BusinessLogic.Validation;
 using TicketManagement.DataAccess.Entities;
 using TicketManagement.DataAccess.Interfaces;
@@ -12,58 +15,78 @@ namespace TicketManagement.BusinessLogic.Implementations
     {
         private readonly IRepository<Venue> _venueRepository;
         private readonly IValidator<Venue> _venueValidator;
+        private readonly IMapper _mapper;
 
-        public VenueService(IRepository<Venue> venueRepository, IValidator<Venue> venueValidator)
+        public VenueService(IRepository<Venue> venueRepository, IValidator<Venue> venueValidator, IMapper mapper)
         {
             _venueRepository = venueRepository ?? throw new ArgumentNullException(nameof(venueRepository));
             _venueValidator = venueValidator ?? throw new ArgumentNullException(nameof(venueValidator));
+            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
 
-        public int Create(Venue venue)
+        public Task<int> CreateAsync(VenueModel venueModel)
         {
-            if (venue is null)
+            if (venueModel is null)
             {
                 throw new ValidationException("Venue is null.");
             }
 
-            venue.Id = 0;
+            var venue = _mapper.Map<Venue>(venueModel);
 
             _venueValidator.Validate(venue);
 
-            return _venueRepository.Create(venue);
+            return _venueRepository.CreateAsync(venue);
         }
 
-        public void Delete(int id)
+        public async Task DeleteAsync(int id)
         {
-            _venueRepository.CheckIfIdExists(id);
+            await ValidateVenueExistsAsync(id);
 
-            _venueRepository.Delete(id);
+            await _venueRepository.DeleteAsync(id);
         }
 
-        public IEnumerable<Venue> GetAll()
+        public IEnumerable<VenueModel> GetAll()
         {
-            return _venueRepository.GetAll();
+            var models = _venueRepository.GetAll().Select(v => _mapper.Map<VenueModel>(v));
+
+            return models;
         }
 
-        public Venue GetById(int id)
+        public async Task<VenueModel> GetByIdAsync(int id)
         {
-            _venueRepository.CheckIfIdExists(id);
+            await ValidateVenueExistsAsync(id);
 
-            return _venueRepository.GetById(id);
+            var venue = await _venueRepository.GetByIdAsync(id);
+
+            var model = _mapper.Map<VenueModel>(venue);
+
+            return model;
         }
 
-        public void Update(Venue venue)
+        public async Task UpdateAsync(VenueModel venueModel)
         {
-            if (venue is null)
+            if (venueModel is null)
             {
                 throw new ValidationException("Venue is null.");
             }
 
-            _venueRepository.CheckIfIdExists(venue.Id);
+            await ValidateVenueExistsAsync(venueModel.Id);
+
+            var venue = _mapper.Map<Venue>(venueModel);
 
             _venueValidator.Validate(venue);
 
-            _venueRepository.Update(venue);
+            await _venueRepository.UpdateAsync(venue);
+        }
+
+        private async Task ValidateVenueExistsAsync(int id)
+        {
+            var venue = await _venueRepository.GetByIdAsync(id);
+
+            if (venue is null)
+            {
+                throw new ValidationException("Entity was not found.");
+            }
         }
     }
 }

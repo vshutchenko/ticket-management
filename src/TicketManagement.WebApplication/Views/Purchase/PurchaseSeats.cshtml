@@ -1,0 +1,85 @@
+﻿@using System.Globalization
+@using System.Security.Claims
+@using TicketManagement.WebApplication.Models.Event
+@using TicketManagement.WebApplication.Models.EventSeat;
+@using TicketManagement.WebApplication.Models.Purchase
+@model PurchaseSeatsViewModel
+
+<h1>@Localizer["Purchase seats"]</h1>
+<hr />
+
+
+<div>
+    @if(@Model.ImageUrl != null && @Model.ImageUrl != string.Empty)
+    {
+        <img src="@Model.ImageUrl" width=300 height=300 style="object-fit: contain; object-position: left;" />
+        <hr />
+    }
+    
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Name)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Name)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Description)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Description)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.StartDate)
+        </dt>
+        <dd class="col-sm-10">
+            @User.GetLocalTime(@Model.StartDate).ToString("g", CultureInfo.CurrentCulture)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.EndDate)
+        </dt>
+        <dd class="col-sm-10">
+            @User.GetLocalTime(@Model.EndDate).ToString("g", CultureInfo.CurrentCulture)
+        </dd>
+    </dl>
+</div>
+<form method="post" asp-controller="Purchase" asp-action="PurchaseSeats" asp-antiforgery="true">
+    <input type="hidden" name="UserId" value="@User.FindFirst("id")!.Value" />
+    <input type="hidden" name="EventName" value="@Model.Name" />
+    <input type="hidden" name="EventId" value="@Model.Id" />
+    @foreach (var area in Model.Areas)
+    {
+        var rows = Model.Seats.Where(s => s.EventAreaId == area.Id).GroupBy(s => s.Row);
+        <h5>@area.Description</h5>
+        <table>
+            @foreach (var row in rows)
+            {
+                <tr>
+                    @foreach (var seat in row.OrderBy(s => s.Number))
+                    {
+                        if (seat.State == EventSeatState.Available)
+                        {
+                            <td>
+                                <div class="seat" style="background-color:mediumseagreen">
+                                    <p class="mb-0">@seat.Row:@seat.Number</p>
+                                    <input type="checkbox" name="SeatIds" value="@seat.Id" />
+                                </div>
+                            </td>
+                        }
+                        else
+                        {
+                            <td>
+                                <div class="seat" style="background-color:crimson">
+                                    <p class="mb-0">@seat.Row:@seat.Number</p>
+                                    <input disabled type="checkbox" />
+                                </div>
+                            </td>
+                        }
+                    }
+                </tr>
+            }
+        </table>
+    }
+
+    <input class="btn btn-primary mt-5" value="@Localizer["Buy"]" type="submit" />
+</form>

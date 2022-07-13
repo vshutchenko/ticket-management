@@ -15,7 +15,7 @@
     <RootNamespace>TicketManagement</RootNamespace>
     <AssemblyName>TicketManagement</AssemblyName>
     <ModelCollation>1033, CI</ModelCollation>
-    <DefaultFileStructure>BySchemaAndSchemaType</DefaultFileStructure>
+    <DefaultFileStructure>BySchemaType</DefaultFileStructure>
     <DeployToDatabase>True</DeployToDatabase>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <TargetLanguage>CS</TargetLanguage>
@@ -62,6 +62,7 @@
     <Folder Include="Tables" />
     <Folder Include="Post" />
     <Folder Include="StoredProcedures" />
+    <Folder Include="Scripts\" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="ForeignKeys\FK_Venue_Layout.sql" />
@@ -74,6 +75,16 @@
     <Build Include="StoredProcedures\DeleteEvent.sql" />
     <Build Include="StoredProcedures\InsertEvent.sql" />
     <Build Include="StoredProcedures\UpdateEvent.sql" />
+    <Build Include="Tables\AspNetRoleClaims.sql" />
+    <Build Include="Tables\AspNetRoles.sql" />
+    <Build Include="Tables\AspNetUserClaims.sql" />
+    <Build Include="Tables\AspNetUserLogins.sql" />
+    <Build Include="Tables\AspNetUserRoles.sql" />
+    <Build Include="Tables\AspNetUsers.sql" />
+    <Build Include="Tables\AspNetUserTokens.sql" />
+    <None Include="Scripts\ScriptsIgnoredOnImport.sql" />
+    <Build Include="Tables\Purchase.sql" />
+    <Build Include="Tables\PurchasedSeat.sql" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="Tables\Event.sql" />
@@ -88,6 +99,9 @@
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="Post\Script.PostDeployment.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <RefactorLog Include="TicketManagement.Database.refactorlog" />
   </ItemGroup>
   <PropertyGroup>
     <PostBuildEvent>xcopy /y "$(ProjectDir)$(OutDir)*.dacpac" "$(SolutionDir)\test\TicketManagement.IntegrationTests\TestDatabase"</PostBuildEvent>

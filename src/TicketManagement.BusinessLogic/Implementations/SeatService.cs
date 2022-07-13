@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using TicketManagement.BusinessLogic.Extensions;
+using System.Linq;
+using System.Threading.Tasks;
+using AutoMapper;
 using TicketManagement.BusinessLogic.Interfaces;
+using TicketManagement.BusinessLogic.Models;
 using TicketManagement.BusinessLogic.Validation;
 using TicketManagement.DataAccess.Entities;
 using TicketManagement.DataAccess.Interfaces;
@@ -12,58 +15,78 @@ namespace TicketManagement.BusinessLogic.Implementations
     {
         private readonly IRepository<Seat> _seatRepository;
         private readonly IValidator<Seat> _seatValidator;
+        private readonly IMapper _mapper;
 
-        public SeatService(IRepository<Seat> seatRepository, IValidator<Seat> seatValidator)
+        public SeatService(IRepository<Seat> seatRepository, IValidator<Seat> seatValidator, IMapper mapper)
         {
             _seatRepository = seatRepository ?? throw new ArgumentNullException(nameof(seatRepository));
             _seatValidator = seatValidator ?? throw new ArgumentNullException(nameof(seatValidator));
+            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
 
-        public int Create(Seat seat)
+        public Task<int> CreateAsync(SeatModel seatModel)
         {
-            if (seat is null)
+            if (seatModel is null)
             {
                 throw new ValidationException("Seat is null.");
             }
 
-            seat.Id = 0;
+            var seat = _mapper.Map<Seat>(seatModel);
 
             _seatValidator.Validate(seat);
 
-            return _seatRepository.Create(seat);
+            return _seatRepository.CreateAsync(seat);
         }
 
-        public void Delete(int id)
+        public async Task DeleteAsync(int id)
         {
-            _seatRepository.CheckIfIdExists(id);
+            await ValidateSeatExistsAsync(id);
 
-            _seatRepository.Delete(id);
+            await _seatRepository.DeleteAsync(id);
         }
 
-        public IEnumerable<Seat> GetAll()
+        public IEnumerable<SeatModel> GetAll()
         {
-            return _seatRepository.GetAll();
+            var models = _seatRepository.GetAll().Select(s => _mapper.Map<SeatModel>(s));
+
+            return models;
         }
 
-        public Seat GetById(int id)
+        public async Task<SeatModel> GetByIdAsync(int id)
         {
-            _seatRepository.CheckIfIdExists(id);
+            await ValidateSeatExistsAsync(id);
 
-            return _seatRepository.GetById(id);
+            var seat = await _seatRepository.GetByIdAsync(id);
+
+            var model = _mapper.Map<SeatModel>(seat);
+
+            return model;
         }
 
-        public void Update(Seat seat)
+        public async Task UpdateAsync(SeatModel seatModel)
         {
-            if (seat is null)
+            if (seatModel is null)
             {
                 throw new ValidationException("Seat is null.");
             }
 
-            _seatRepository.CheckIfIdExists(seat.Id);
+            await ValidateSeatExistsAsync(seatModel.Id);
+
+            var seat = _mapper.Map<Seat>(seatModel);
 
             _seatValidator.Validate(seat);
 
-            _seatRepository.Update(seat);
+            await _seatRepository.UpdateAsync(seat);
+        }
+
+        private async Task ValidateSeatExistsAsync(int id)
+        {
+            var seat = await _seatRepository.GetByIdAsync(id);
+
+            if (seat is null)
+            {
+                throw new ValidationException("Entity was not found.");
+            }
         }
     }
 }

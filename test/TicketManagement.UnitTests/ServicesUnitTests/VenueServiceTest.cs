@@ -1,10 +1,13 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
+using AutoMapper;
 using FluentAssertions;
 using Moq;
 using NUnit.Framework;
 using TicketManagement.BusinessLogic.Implementations;
 using TicketManagement.BusinessLogic.Interfaces;
+using TicketManagement.BusinessLogic.Models;
 using TicketManagement.BusinessLogic.Validation;
 using TicketManagement.DataAccess.Entities;
 using TicketManagement.DataAccess.Interfaces;
@@ -16,69 +19,97 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
     {
         private Mock<IRepository<Venue>> _venueRepositoryMock;
         private IVenueService _venueService;
+        private Mock<IMapper> _mapperMock;
 
         [SetUp]
         public void SetUp()
         {
             _venueRepositoryMock = new Mock<IRepository<Venue>>();
+            _mapperMock = new Mock<IMapper>();
 
             var venueValidator = new VenueValidator(_venueRepositoryMock.Object);
-
-            _venueService = new VenueService(_venueRepositoryMock.Object, venueValidator);
+            _venueService = new VenueService(_venueRepositoryMock.Object, venueValidator, _mapperMock.Object);
         }
 
         [Test]
-        public void Create_ValidVenue_CreatesVenue()
+        public async Task Create_ValidVenue_CreatesVenue()
         {
-            var venueToCreate = new Venue { Id = 1, Description = "New Venue", Address = "New Addres", Phone = "111 222 333 444" };
+            // Arrange
+            var venueToCreate = new VenueModel { Id = 1, Description = "New Venue", Address = "New Addres", Phone = "111 222 333 444" };
 
-            _venueService.Create(venueToCreate);
+            var mappedVenue = new Venue { Id = 1, Description = "New Venue", Address = "New Addres", Phone = "111 222 333 444" };
 
-            _venueRepositoryMock.Verify(x => x.Create(venueToCreate), Times.Once);
+            _mapperMock.Setup(m => m.Map<Venue>(venueToCreate)).Returns(mappedVenue);
+
+            // Act
+            await _venueService.CreateAsync(venueToCreate);
+
+            // Assert
+            _venueRepositoryMock.Verify(x => x.CreateAsync(mappedVenue), Times.Once);
         }
 
         [Test]
-        public void Create_VenueWithSameDescriptionExists_ThrowsValidationException()
+        public async Task Create_VenueWithSameDescriptionExists_ThrowsValidationException()
         {
+            // Arrange
             var venues = new List<Venue>
             {
                 new Venue { Id = 1, Description = "Venue 1", Address = "Addres 1", Phone = "111 222 333 444" },
             };
 
-            _venueRepositoryMock.Setup(x => x.GetAll()).Returns(venues);
+            _venueRepositoryMock.Setup(x => x.GetAll()).Returns(venues.AsQueryable());
 
-            var venueToCreate = new Venue { Id = 1, Description = "Venue 1", Address = "New Addres", Phone = "111 222 333 444" };
+            var venueToCreate = new VenueModel { Description = "Venue 1", Address = "New Addres", Phone = "111 222 333 444" };
 
-            _venueService.Invoking(s => s.Create(venueToCreate))
-                .Should().Throw<ValidationException>()
+            var mappedVenue = new Venue { Description = "Venue 1", Address = "New Addres", Phone = "111 222 333 444" };
+
+            _mapperMock.Setup(m => m.Map<Venue>(venueToCreate)).Returns(mappedVenue);
+
+            // Act
+            var creatingVenue = _venueService.Invoking(s => s.CreateAsync(venueToCreate));
+
+            // Assert
+            await creatingVenue
+                .Should().ThrowAsync<ValidationException>()
                 .WithMessage("Venue with same description is already exists.");
         }
 
         [Test]
-        public void Create_NullVenue_ThrowsValidationException()
+        public async Task Create_NullVenue_ThrowsValidationException()
         {
-            _venueService.Invoking(s => s.Create(null))
-                .Should().Throw<ValidationException>()
+            // Arrange
+            VenueModel nullVenue = null;
+
+            // Act
+            var creatingVenue = _venueService.Invoking(s => s.CreateAsync(nullVenue));
+
+            // Assert
+            await creatingVenue
+                .Should().ThrowAsync<ValidationException>()
                 .WithMessage("Venue is null.");
         }
 
         [Test]
-        public void Delete_VenueExists_DeletesVenue()
+        public async Task Delete_VenueExists_DeletesVenue()
         {
+            // Arrange
             var venue = new Venue { Id = 1, Description = "Venue 1", Address = "Addres 1", Phone = "111 222 333 444" };
 
-            int id = 1;
+            var id = 1;
 
-            _venueRepositoryMock.Setup(x => x.GetById(id)).Returns(venue);
+            _venueRepositoryMock.Setup(x => x.GetByIdAsync(id)).ReturnsAsync(venue);
 
-            _venueService.Delete(id);
+            // Act
+            await _venueService.DeleteAsync(id);
 
-            _venueRepositoryMock.Verify(x => x.Delete(id), Times.Once);
+            // Assert
+            _venueRepositoryMock.Verify(x => x.DeleteAsync(id), Times.Once);
         }
 
         [Test]
-        public void Delete_VenueNotFound_ThrowsValidationException()
+        public async Task Delete_VenueNotFound_ThrowsValidationException()
         {
+            // Arrange
             var venues = new List<Venue>
             {
                 new Venue { Id = 1, Description = "Venue 1", Address = "Addres 1", Phone = "111 222 333 444" },
@@ -86,96 +117,135 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
                 new Venue { Id = 3, Description = "Venue 3", Address = "Addres 3", Phone = "666 444 333 111" },
             };
 
-            _venueRepositoryMock.Setup(x => x.GetAll()).Returns(venues);
+            _venueRepositoryMock.Setup(x => x.GetAll()).Returns(venues.AsQueryable());
 
-            int notExistingId = 99;
+            var notExistingId = 99;
 
-            _venueService.Invoking(s => s.Delete(notExistingId))
-                .Should().Throw<ValidationException>()
+            // Act
+            var deletingVenue = _venueService.Invoking(s => s.DeleteAsync(notExistingId));
+
+            // Assert
+            await deletingVenue
+                .Should().ThrowAsync<ValidationException>()
                 .WithMessage("Entity was not found.");
         }
 
         [Test]
-        public void UpdateDescription_ValidVenue_UpdatesVenue()
+        public async Task UpdateDescription_ValidVenue_UpdatesVenue()
         {
-            int id = 1;
+            // Arrange
+            var id = 1;
 
             var venue = new Venue { Id = 1, Description = "Venue 1", Address = "Addres 1", Phone = "111 222 333 444" };
+            var venues = new List<Venue> { venue };
 
-            _venueRepositoryMock.Setup(x => x.GetById(id)).Returns(venue);
-            _venueRepositoryMock.Setup(x => x.GetAll()).Returns(new List<Venue> { venue });
+            _venueRepositoryMock.Setup(x => x.GetByIdAsync(id)).ReturnsAsync(venue);
+            _venueRepositoryMock.Setup(x => x.GetAll()).Returns(venues.AsQueryable());
 
-            var venueToUpdate = new Venue { Id = 1, Description = "Updated Venue", Address = "Addres 1", Phone = "111 222 333 444" };
+            var venueToUpdate = new VenueModel { Id = 1, Description = "Updated Venue", Address = "Addres 1", Phone = "111 222 333 444" };
+            var mappedVenue = new Venue { Id = 1, Description = "Updated Venue", Address = "Addres 1", Phone = "111 222 333 444" };
 
-            _venueService.Update(venueToUpdate);
+            _mapperMock.Setup(m => m.Map<Venue>(venueToUpdate)).Returns(mappedVenue);
 
-            _venueRepositoryMock.Verify(x => x.Update(venueToUpdate), Times.Once);
+            // Act
+            await _venueService.UpdateAsync(venueToUpdate);
+
+            // Assert
+            _venueRepositoryMock.Verify(x => x.UpdateAsync(mappedVenue), Times.Once);
         }
 
         [Test]
-        public void UpdateAddressAndPhone_ValidVenue_UpdatesVenue()
+        public async Task UpdateAddressAndPhone_ValidVenue_UpdatesVenue()
         {
-            int id = 1;
+            // Arrange
+            var id = 1;
 
             var venue = new Venue { Id = 1, Description = "Venue 1", Address = "Addres 1", Phone = "111 222 333 444" };
+            var venues = new List<Venue> { venue };
 
-            _venueRepositoryMock.Setup(x => x.GetById(id)).Returns(venue);
-            _venueRepositoryMock.Setup(x => x.GetAll()).Returns(new List<Venue> { venue });
+            _venueRepositoryMock.Setup(x => x.GetByIdAsync(id)).ReturnsAsync(venue);
+            _venueRepositoryMock.Setup(x => x.GetAll()).Returns(venues.AsQueryable());
 
-            var venueToUpdate = new Venue { Id = 1, Description = "Venue 1", Address = "New Addres", Phone = "111 111 111 111" };
+            var venueToUpdate = new VenueModel { Id = 1, Description = "Venue 1", Address = "New Addres", Phone = "111 111 111 111" };
+            var mappedVenue = new Venue { Id = 1, Description = "Venue 1", Address = "New Addres", Phone = "111 111 111 111" };
 
-            _venueService.Update(venueToUpdate);
+            _mapperMock.Setup(m => m.Map<Venue>(venueToUpdate)).Returns(mappedVenue);
 
-            _venueRepositoryMock.Verify(x => x.Update(venueToUpdate), Times.Once);
+            // Act
+            await _venueService.UpdateAsync(venueToUpdate);
+
+            // Assert
+            _venueRepositoryMock.Verify(x => x.UpdateAsync(mappedVenue), Times.Once);
         }
 
         [Test]
-        public void Update_VenueNotFound_ThrowsValidationException()
+        public async Task Update_VenueNotFound_ThrowsValidationException()
         {
-            int notExistingId = 1;
+            // Arrange
+            var notExistingId = 1;
 
-            var venueToUpdate = new Venue { Id = 1, Description = "Updated Venue", Address = "New Addres", Phone = "111 222 333 444" };
+            var venueToUpdate = new VenueModel { Id = 1, Description = "Updated Venue", Address = "New Addres", Phone = "111 222 333 444" };
 
-            _venueRepositoryMock.Setup(x => x.GetById(notExistingId)).Returns<Venue>(null);
+            _venueRepositoryMock.Setup(x => x.GetByIdAsync(notExistingId)).ReturnsAsync(default(Venue));
 
-            _venueService.Invoking(s => s.Update(venueToUpdate))
-                .Should().Throw<ValidationException>()
+            // Act
+            var updatingVenue = _venueService.Invoking(s => s.UpdateAsync(venueToUpdate));
+
+            // Assert
+            await updatingVenue
+                .Should().ThrowAsync<ValidationException>()
                 .WithMessage("Entity was not found.");
         }
 
         [Test]
-        public void Update_VenueWithSameDescriptionExists_ThrowsValidationException()
+        public async Task Update_VenueWithSameDescriptionExists_ThrowsValidationException()
         {
+            // Arrange
             var venues = new List<Venue>
             {
                 new Venue { Id = 1, Description = "Venue 1", Address = "Addres 1", Phone = "111 222 333 444" },
                 new Venue { Id = 2, Description = "Venue 2", Address = "Addres 2", Phone = "555 566 333 333" },
             };
 
-            int id = 2;
+            var id = 2;
 
-            _venueRepositoryMock.Setup(x => x.GetAll()).Returns(venues);
+            _venueRepositoryMock.Setup(x => x.GetAll()).Returns(venues.AsQueryable());
 
-            _venueRepositoryMock.Setup(x => x.GetById(id)).Returns(venues.First(v => v.Id == id));
+            _venueRepositoryMock.Setup(x => x.GetByIdAsync(id)).ReturnsAsync(venues.First(v => v.Id == id));
 
-            var venueToUpdate = new Venue { Id = 2, Description = "Venue 1", Address = "New Addres", Phone = "111 222 333 444" };
+            var venueToUpdate = new VenueModel { Id = 2, Description = "Venue 1", Address = "New Addres", Phone = "111 222 333 444" };
+            var mappedVenue = new Venue { Id = 2, Description = "Venue 1", Address = "New Addres", Phone = "111 222 333 444" };
 
-            _venueService.Invoking(s => s.Update(venueToUpdate))
-                .Should().Throw<ValidationException>()
+            _mapperMock.Setup(m => m.Map<Venue>(venueToUpdate)).Returns(mappedVenue);
+
+            // Act
+            var updatingVenue = _venueService.Invoking(s => s.UpdateAsync(venueToUpdate));
+
+            // Assert
+            await updatingVenue
+                .Should().ThrowAsync<ValidationException>()
                 .WithMessage("Venue with same description is already exists.");
         }
 
         [Test]
-        public void Update_NullVenue_ThrowsValidationException()
+        public async Task Update_NullVenue_ThrowsValidationException()
         {
-            _venueService.Invoking(s => s.Update(null))
-                .Should().Throw<ValidationException>()
+            // Arrange
+            VenueModel nullVenue = null;
+
+            // Act
+            var updatingVenue = _venueService.Invoking(s => s.UpdateAsync(nullVenue));
+
+            // Assert
+            await updatingVenue
+                .Should().ThrowAsync<ValidationException>()
                 .WithMessage("Venue is null.");
         }
 
         [Test]
         public void GetAll_VenueListNotEmpty_ReturnsVenueList()
         {
+            // Arrange
             var venues = new List<Venue>
             {
                 new Venue { Id = 1, Description = "Venue 1", Address = "Addres 1", Phone = "111 222 333 444" },
@@ -183,32 +253,62 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
                 new Venue { Id = 3, Description = "Venue 3", Address = "Addres 3", Phone = "666 444 333 111" },
             };
 
-            _venueRepositoryMock.Setup(x => x.GetAll()).Returns(venues);
+            var mappedVenues = new List<VenueModel>
+            {
+                new VenueModel { Id = 1, Description = "Venue 1", Address = "Addres 1", Phone = "111 222 333 444" },
+                new VenueModel { Id = 2, Description = "Venue 2", Address = "Addres 2", Phone = "555 566 333 333" },
+                new VenueModel { Id = 3, Description = "Venue 3", Address = "Addres 3", Phone = "666 444 333 111" },
+            };
 
-            _venueService.GetAll().Should().BeEquivalentTo(venues);
+            for (var i = 0; i < venues.Count; i++)
+            {
+                _mapperMock.Setup(m => m.Map<VenueModel>(venues[i])).Returns(mappedVenues[i]);
+            }
+
+            _venueRepositoryMock.Setup(x => x.GetAll()).Returns(venues.AsQueryable());
+
+            // Act
+            var actualVenues = _venueService.GetAll();
+
+            // Assert
+            actualVenues.Should().BeEquivalentTo(mappedVenues);
         }
 
         [Test]
-        public void GetById_VenueExists_ReturnsVenue()
+        public async Task GetById_VenueExists_ReturnsVenue()
         {
-            int id = 1;
+            // Arrange
+            var id = 1;
 
             var venue = new Venue { Id = 1, Description = "Venue 1", Address = "Addres 1", Phone = "111 222 333 444" };
 
-            _venueRepositoryMock.Setup(x => x.GetById(id)).Returns(venue);
+            var mappedVenue = new VenueModel { Id = 1, Description = "Venue 1", Address = "Addres 1", Phone = "111 222 333 444" };
 
-            _venueService.GetById(id).Should().BeEquivalentTo(venue);
+            _venueRepositoryMock.Setup(x => x.GetByIdAsync(id)).ReturnsAsync(venue);
+
+            _mapperMock.Setup(m => m.Map<VenueModel>(venue)).Returns(mappedVenue);
+
+            // Act
+            var actualVenue = await _venueService.GetByIdAsync(id);
+
+            // Assert
+            actualVenue.Should().BeEquivalentTo(mappedVenue);
         }
 
         [Test]
-        public void GetById_VenueNotFound_ThrowsValidationException()
+        public async Task GetById_VenueNotFound_ThrowsValidationException()
         {
-            int id = 1;
+            // Arrange
+            var id = 1;
 
-            _venueRepositoryMock.Setup(x => x.GetById(id)).Returns<Venue>(null);
+            _venueRepositoryMock.Setup(x => x.GetByIdAsync(id)).ReturnsAsync(default(Venue));
 
-            _venueService.Invoking(s => s.GetById(id))
-                .Should().Throw<ValidationException>()
+            // Act
+            var gettingById = _venueService.Invoking(s => s.GetByIdAsync(id));
+
+            // Assert
+            await gettingById
+                .Should().ThrowAsync<ValidationException>()
                 .WithMessage("Entity was not found.");
         }
     }

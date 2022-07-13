@@ -12,7 +12,10 @@ namespace TicketManagement.BusinessLogic.Validation
         private readonly IRepository<Seat> _seatRepository;
         private readonly IRepository<Area> _areaRepository;
 
-        public EventValidator(IRepository<Event> eventRepository, IRepository<Seat> seatRepository, IRepository<Area> areaRepository)
+        public EventValidator(
+            IRepository<Event> eventRepository,
+            IRepository<Seat> seatRepository,
+            IRepository<Area> areaRepository)
         {
             _eventRepository = eventRepository ?? throw new ArgumentNullException(nameof(eventRepository));
             _seatRepository = seatRepository ?? throw new ArgumentNullException(nameof(seatRepository));
@@ -27,7 +30,7 @@ namespace TicketManagement.BusinessLogic.Validation
             }
 
             ValidateDate(item.StartDate, item.EndDate);
-            ValidateAvailableLayout(item.LayoutId, item.StartDate, item.EndDate);
+            ValidateAvailableLayout(item.Id, item.LayoutId, item.StartDate, item.EndDate);
             ValidateAvailableSeats(item.LayoutId);
         }
 
@@ -44,14 +47,15 @@ namespace TicketManagement.BusinessLogic.Validation
             }
         }
 
-        private void ValidateAvailableLayout(int layoutId, DateTime start, DateTime end)
+        private void ValidateAvailableLayout(int eventId, int layoutId, DateTime start, DateTime end)
         {
-            var eventInTheSameLayout = _eventRepository
-                .GetAll()
-                .FirstOrDefault(e => e.LayoutId == layoutId
-                    && (start.InRange(e.StartDate, e.EndDate) || end.InRange(e.StartDate, e.EndDate)));
+            var eventsInTheSameLayout = _eventRepository.GetAll()
+                .Where(e => e.LayoutId == layoutId && e.Id != eventId).ToList();
 
-            if (eventInTheSameLayout != null)
+            var eventInTheSameDate = eventsInTheSameLayout
+                .FirstOrDefault(e => start.InRange(e.StartDate, e.EndDate) || end.InRange(e.StartDate, e.EndDate));
+
+            if (eventInTheSameDate != null)
             {
                 throw new ValidationException("Event in the same layout and the same time is already exists.");
             }
@@ -61,7 +65,7 @@ namespace TicketManagement.BusinessLogic.Validation
         {
             var layoutAreas = _areaRepository.GetAll().Where(a => a.LayoutId == layoutId).ToList();
 
-            bool availableSeatsExist = _seatRepository.GetAll().Any(s => layoutAreas.Any(a => a.Id == s.AreaId));
+            var availableSeatsExist = _seatRepository.GetAll().AsEnumerable().Any(s => layoutAreas.Any(a => a.Id == s.AreaId));
 
             if (!availableSeatsExist)
             {
