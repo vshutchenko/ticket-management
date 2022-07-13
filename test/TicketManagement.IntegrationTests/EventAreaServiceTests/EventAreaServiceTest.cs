@@ -1,8 +1,10 @@
 ﻿using System.Threading.Tasks;
+using AutoMapper;
 using FluentAssertions;
 using NUnit.Framework;
 using TicketManagement.BusinessLogic.Implementations;
 using TicketManagement.BusinessLogic.Interfaces;
+using TicketManagement.BusinessLogic.MappingConfig;
 using TicketManagement.BusinessLogic.Validation;
 using TicketManagement.DataAccess.SqlClientImplementations;
 
@@ -17,14 +19,23 @@ namespace TicketManagement.IntegrationTests.EventAreaServiceTests
         {
             var connectionString = new TestDatabase().ConnectionString;
 
-            var eventareaRepo = new EventAreaSqlClientRepository(connectionString);
+            var eventAreaRepo = new EventAreaSqlClientRepository(connectionString);
+            var eventRepo = new EventSqlClientRepository(connectionString);
 
-            _eventAreaService = new EventAreaService(eventareaRepo, new PriceValidator());
+            var mapper = new MapperConfiguration(mc =>
+                {
+                    mc.AddProfile(new MappingProfile());
+                    mc.AddProfile(new TicketManagement.BusinessLogic.MappingConfig.MappingProfile());
+                })
+                .CreateMapper();
+
+            _eventAreaService = new EventAreaService(eventAreaRepo, eventRepo, new PriceValidator(), mapper);
         }
 
         [Test]
         public async Task SetPrice_ValidPrice_SetsPrice()
         {
+            // Arrange
             var id = 1;
 
             decimal priceBeforeUpdate = 15;
@@ -35,10 +46,12 @@ namespace TicketManagement.IntegrationTests.EventAreaServiceTests
 
             decimal priceToUpdate = 10;
 
+            // Act
             await _eventAreaService.SetPriceAsync(id, priceToUpdate);
 
             var eventAreaAfterUpdate = await _eventAreaService.GetByIdAsync(id);
 
+            // Assert
             eventAreaAfterUpdate.Price.Should().Be(priceToUpdate);
         }
     }

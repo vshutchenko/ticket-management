@@ -1,9 +1,11 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using FluentAssertions;
 using NUnit.Framework;
 using TicketManagement.BusinessLogic.Implementations;
 using TicketManagement.BusinessLogic.Interfaces;
+using TicketManagement.BusinessLogic.MappingConfig;
 using TicketManagement.BusinessLogic.Validation;
 using TicketManagement.DataAccess.SqlClientImplementations;
 
@@ -27,23 +29,35 @@ namespace TicketManagement.IntegrationTests.EventServiceTests
             var eventAreaRepo = new EventAreaSqlClientRepository(connectionString);
             var eventSeatRepo = new EventSeatSqlClientRepository(connectionString);
 
-            var eventValidationService = new EventValidator(eventRepo, seatRepo, areaRepo);
-            var priceValidationService = new PriceValidator();
+            var eventValidator = new EventValidator(eventRepo, seatRepo, areaRepo);
+            var priceValidator = new PriceValidator();
 
-            _eventService = new EventService(eventRepo, eventValidationService);
+            var mapper = new MapperConfiguration(mc =>
+                {
+                    mc.AddProfile(new MappingProfile());
+                    mc.AddProfile(new TicketManagement.BusinessLogic.MappingConfig.MappingProfile());
+                })
+                .CreateMapper();
 
-            _eventSeatService = new EventSeatService(eventSeatRepo);
-            _eventAreaService = new EventAreaService(eventAreaRepo, priceValidationService);
+            _eventSeatService = new EventSeatService(eventSeatRepo, eventAreaRepo, mapper);
+            _eventAreaService = new EventAreaService(eventAreaRepo, eventRepo, priceValidator, mapper);
+
+            _eventService = new EventService(eventRepo, eventValidator, _eventSeatService, _eventAreaService, mapper);
         }
 
         [Test]
         public async Task Delete_EventExists_DeletesEvent()
         {
+            // Arrange
             var id = 1;
 
+            // Act
             await _eventService.DeleteAsync(id);
 
-            await _eventService.Invoking(s => s.GetByIdAsync(id))
+            var gettingById = _eventService.Invoking(s => s.GetByIdAsync(id));
+
+            // Assert
+            await gettingById
                 .Should().ThrowAsync<ValidationException>()
                 .WithMessage("Entity was not found.");
         }
@@ -51,24 +65,29 @@ namespace TicketManagement.IntegrationTests.EventServiceTests
         [Test]
         public async Task Delete_EventExists_DeletesAreas()
         {
+            // Arrange
             var id = 1;
             var expectedEventAreasCount = 0;
 
+            // Act
             await _eventService.DeleteAsync(id);
 
             var actualEventAreasCount = _eventAreaService
                 .GetAll()
                 .Count(a => a.EventId == id);
 
+            // Assert
             actualEventAreasCount.Should().Be(expectedEventAreasCount);
         }
 
         [Test]
         public async Task Delete_EventExists_DeletesSeats()
         {
+            // Arrange
             var id = 1;
             var expectedEventSeatsCount = 0;
 
+            // Act
             await _eventService.DeleteAsync(id);
 
             var actualEventSeatsCount = _eventAreaService
@@ -76,6 +95,7 @@ namespace TicketManagement.IntegrationTests.EventServiceTests
                 .Where(a => a.EventId == id)
                 .Sum(a => _eventSeatService.GetAll().Count(s => s.EventAreaId == a.Id));
 
+            // Assert
             expectedEventSeatsCount.Should().Be(actualEventSeatsCount);
         }
     }

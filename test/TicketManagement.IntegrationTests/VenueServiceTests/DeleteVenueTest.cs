@@ -1,7 +1,10 @@
-﻿using FluentAssertions;
+﻿using System.Threading.Tasks;
+using AutoMapper;
+using FluentAssertions;
 using NUnit.Framework;
 using TicketManagement.BusinessLogic.Implementations;
 using TicketManagement.BusinessLogic.Interfaces;
+using TicketManagement.BusinessLogic.MappingConfig;
 using TicketManagement.BusinessLogic.Validation;
 using TicketManagement.DataAccess.SqlClientImplementations;
 
@@ -19,15 +22,28 @@ namespace TicketManagement.IntegrationTests.VenueServiceTests
             var venueRepo = new VenueSqlClientRepository(connectionString);
             var venueValidator = new VenueValidator(venueRepo);
 
-            _venueService = new VenueService(venueRepo, venueValidator);
+            var mapper = new MapperConfiguration(mc =>
+                {
+                    mc.AddProfile(new MappingProfile());
+                    mc.AddProfile(new TicketManagement.BusinessLogic.MappingConfig.MappingProfile());
+                })
+                .CreateMapper();
+
+            _venueService = new VenueService(venueRepo, venueValidator, mapper);
         }
 
-        [TestCase(1)]
-        public void Delete_VenueExists_DeletesVenue(int id)
+        public async Task Delete_VenueExists_DeletesVenue()
         {
-            _venueService.DeleteAsync(id);
+            // Arrange
+            var id = 1;
 
-            _venueService.Invoking(s => s.GetByIdAsync(id))
+            // Act
+            await _venueService.DeleteAsync(id);
+
+            var gettingById = _venueService.Invoking(s => s.GetByIdAsync(id));
+
+            // Assert
+            await gettingById
                 .Should().ThrowAsync<ValidationException>()
                 .WithMessage("Entity was not found.");
         }

@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using TicketManagement.BusinessLogic.Interfaces;
 using TicketManagement.BusinessLogic.Models;
 using TicketManagement.WebApplication.Extensions;
-using TicketManagement.WebApplication.Models;
 using TicketManagement.WebApplication.Models.Event;
 using TicketManagement.WebApplication.Models.EventArea;
 using TicketManagement.WebApplication.Models.Layout;
@@ -36,7 +35,7 @@ namespace TicketManagement.WebApplication.Controllers
         }
 
         [HttpGet]
-        public IActionResult Index(int page = 1)
+        public IActionResult Index()
         {
             var eventsVM = _eventService.GetAll()
                 .Where(e => e.Published)
@@ -170,6 +169,7 @@ namespace TicketManagement.WebApplication.Controllers
             return RedirectToAction("Index");
         }
 
+        [HttpDelete]
         [Authorize(Roles = "Event manager")]
         public async Task<IActionResult> DeleteEvent(int id)
         {

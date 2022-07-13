@@ -1,8 +1,11 @@
 ﻿using System;
+using System.Threading.Tasks;
+using AutoMapper;
 using FluentAssertions;
 using NUnit.Framework;
 using TicketManagement.BusinessLogic.Implementations;
 using TicketManagement.BusinessLogic.Interfaces;
+using TicketManagement.BusinessLogic.MappingConfig;
 using TicketManagement.BusinessLogic.Validation;
 using TicketManagement.DataAccess.SqlClientImplementations;
 
@@ -20,15 +23,29 @@ namespace TicketManagement.IntegrationTests.SeatServiceTests
             var seatRepo = new SeatSqlClientRepository(connectionString);
             var seatValidator = new SeatValidator(seatRepo);
 
-            _seatService = new SeatService(seatRepo, seatValidator);
+            var mapper = new MapperConfiguration(mc =>
+                {
+                    mc.AddProfile(new MappingProfile());
+                    mc.AddProfile(new TicketManagement.BusinessLogic.MappingConfig.MappingProfile());
+                })
+                .CreateMapper();
+
+            _seatService = new SeatService(seatRepo, seatValidator, mapper);
         }
 
-        [TestCase(1)]
-        public void Delete_SeatExists_DeletesSeat(int id)
+        [Test]
+        public async Task Delete_SeatExists_DeletesSeat()
         {
-            _seatService.DeleteAsync(id);
+            // Arrange
+            var id = 1;
 
-            _seatService.Invoking(s => s.GetByIdAsync(id))
+            // Act
+            await _seatService.DeleteAsync(id);
+
+            var gettingSeat = _seatService.Invoking(s => s.GetByIdAsync(id));
+
+            // Assert
+            await gettingSeat
                 .Should().ThrowAsync<ValidationException>()
                 .WithMessage("Entity was not found.");
         }
