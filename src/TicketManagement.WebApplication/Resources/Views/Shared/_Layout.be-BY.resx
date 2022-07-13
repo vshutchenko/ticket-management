@@ -123,4 +123,7 @@
   <data name="Home" xml:space="preserve">
     <value>Галоўная</value>
   </data>
+  <data name="Not published events" xml:space="preserve">
+    <value>Неапублікаваныя падзеі</value>
+  </data>
 </root>

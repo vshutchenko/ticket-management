@@ -169,7 +169,6 @@ namespace TicketManagement.WebApplication.Controllers
             return RedirectToAction("Index");
         }
 
-        [HttpDelete]
         [Authorize(Roles = "Event manager")]
         public async Task<IActionResult> DeleteEvent(int id)
         {
