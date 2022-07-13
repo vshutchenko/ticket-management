@@ -132,7 +132,7 @@ namespace TicketManagement.WebApplication.Controllers
 
             SetCultureCookie("en-US");
 
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction("Index", "Event");
         }
 
         public IActionResult AccessDenied()

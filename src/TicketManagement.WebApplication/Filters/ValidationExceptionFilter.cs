@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
-using Microsoft.Extensions.Localization;
 using TicketManagement.BusinessLogic.Validation;
 
 namespace TicketManagement.WebApplication.Filters

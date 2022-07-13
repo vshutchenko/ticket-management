@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Data.SqlClient;
 using TicketManagement.DataAccess.Entities;
 using TicketManagement.DataAccess.Interfaces;
 
@@ -33,6 +33,7 @@ namespace TicketManagement.DataAccess.SqlClientImplementations
             command.Parameters.AddWithValue("@layoutId", @event.LayoutId);
             command.Parameters.AddWithValue("@startDate", @event.StartDate);
             command.Parameters.AddWithValue("@endDate", @event.EndDate);
+            command.Parameters.AddWithValue("@imageUrl", @event.ImageUrl);
             command.Parameters.AddWithValue("@published", @event.Published);
 
             await connection.OpenAsync();
@@ -60,7 +61,7 @@ namespace TicketManagement.DataAccess.SqlClientImplementations
 
         public IQueryable<Event> GetAll()
         {
-            var query = "SELECT Id, Name, Description, LayoutId, StartDate, EndDate, Published FROM Event";
+            var query = "SELECT Id, Name, Description, LayoutId, StartDate, EndDate, ImageUrl, Published FROM Event";
 
             using var connection = new SqlConnection(_connectionString);
 
@@ -82,6 +83,7 @@ namespace TicketManagement.DataAccess.SqlClientImplementations
                     LayoutId = reader.GetInt32("LayoutId"),
                     StartDate = reader.GetDateTime("StartDate"),
                     EndDate = reader.GetDateTime("EndDate"),
+                    ImageUrl = reader.GetString("ImageUrl"),
                     Published = reader.GetBoolean("Published"),
                 });
             }
@@ -91,7 +93,7 @@ namespace TicketManagement.DataAccess.SqlClientImplementations
 
         public async Task<Event> GetByIdAsync(int id)
         {
-            var query = "SELECT Id, Name, Description, LayoutId, StartDate, EndDate, Published FROM Event WHERE Id = @id";
+            var query = "SELECT Id, Name, Description, LayoutId, StartDate, EndDate, ImageUrl, Published FROM Event WHERE Id = @id";
 
             await using var connection = new SqlConnection(_connectionString);
 
@@ -113,6 +115,7 @@ namespace TicketManagement.DataAccess.SqlClientImplementations
                     LayoutId = reader.GetInt32("LayoutId"),
                     StartDate = reader.GetDateTime("StartDate"),
                     EndDate = reader.GetDateTime("EndDate"),
+                    ImageUrl = reader.GetString("ImageUrl"),
                     Published = reader.GetBoolean("Published"),
                 };
             }
@@ -135,6 +138,7 @@ namespace TicketManagement.DataAccess.SqlClientImplementations
             command.Parameters.AddWithValue("@layoutId", @event.LayoutId);
             command.Parameters.AddWithValue("@startDate", @event.StartDate);
             command.Parameters.AddWithValue("@endDate", @event.EndDate);
+            command.Parameters.AddWithValue("@imageUrl", @event.ImageUrl);
             command.Parameters.AddWithValue("@published", @event.Published);
 
             await connection.OpenAsync();

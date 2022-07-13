@@ -20,7 +20,7 @@ namespace TicketManagement.DataAccess.EntityFrameworkImplementations
 
         public async Task<int> CreateAsync(Event item)
         {
-            var sqlCommand = "EXEC InsertEvent @name={0}, @description={1}, @layoutId={2}, @startDate={3}, @endDate={4}, @published={5}, @eventId={6} OUT";
+            var sqlCommand = "EXEC InsertEvent @name={0}, @description={1}, @layoutId={2}, @startDate={3}, @endDate={4}, @imageUrl={5}, @published={6}, @eventId={7} OUT";
 
             var idParam = new SqlParameter("@eventId", SqlDbType.Int) { Direction = ParameterDirection.Output };
             var nameParam = new SqlParameter("@name", item.Name);
@@ -28,9 +28,10 @@ namespace TicketManagement.DataAccess.EntityFrameworkImplementations
             var layoutIdParam = new SqlParameter("@layoutId", item.LayoutId);
             var startDateParam = new SqlParameter("@startDate", item.StartDate);
             var endDateParam = new SqlParameter("@endDate", item.EndDate);
+            var imageUrlParam = new SqlParameter("@imageUrl", item.ImageUrl);
             var publishedParam = new SqlParameter("@published", item.Published);
 
-            await _context.Database.ExecuteSqlRawAsync(sqlCommand, nameParam, descriptionParam, layoutIdParam, startDateParam, endDateParam, publishedParam, idParam);
+            await _context.Database.ExecuteSqlRawAsync(sqlCommand, nameParam, descriptionParam, layoutIdParam, startDateParam, endDateParam, imageUrlParam, publishedParam, idParam);
 
             await _context.SaveChangesAsync();
 
@@ -62,26 +63,20 @@ namespace TicketManagement.DataAccess.EntityFrameworkImplementations
         public async Task UpdateAsync(Event item)
         {
             var existingEvent = await GetByIdAsync(item.Id);
+            _context.Entry(existingEvent).State = EntityState.Detached;
 
-            if (existingEvent.LayoutId != item.LayoutId)
-            {
-                var sqlCommand = "EXEC UpdateEvent @eventId={0}, @name={1}, @description={2}, @layoutId={3}, @startDate={4}, @endDate={5}, @published={6}";
+            var sqlCommand = "EXEC UpdateEvent @eventId={0}, @name={1}, @description={2}, @layoutId={3}, @startDate={4}, @endDate={5}, @imageUrl={6}, @published={7}";
 
-                var idParam = new SqlParameter("@eventId", item.Id);
-                var nameParam = new SqlParameter("@name", item.Name);
-                var descriptionParam = new SqlParameter("@description", item.Description);
-                var layoutIdParam = new SqlParameter("@layoutId", item.LayoutId);
-                var startDateParam = new SqlParameter("@startDate", item.StartDate);
-                var endDateParam = new SqlParameter("@endDate", item.EndDate);
-                var publishedParam = new SqlParameter("@published", item.Published);
+            var idParam = new SqlParameter("@eventId", item.Id);
+            var nameParam = new SqlParameter("@name", item.Name);
+            var descriptionParam = new SqlParameter("@description", item.Description);
+            var layoutIdParam = new SqlParameter("@layoutId", item.LayoutId);
+            var startDateParam = new SqlParameter("@startDate", item.StartDate);
+            var endDateParam = new SqlParameter("@endDate", item.EndDate);
+            var imageUrlParam = new SqlParameter("@imageUrl", item.ImageUrl);
+            var publishedParam = new SqlParameter("@published", item.Published);
 
-                await _context.Database.ExecuteSqlRawAsync(sqlCommand, idParam, nameParam, descriptionParam, layoutIdParam, startDateParam, endDateParam, publishedParam);
-            }
-            else
-            {
-                _context.Entry(existingEvent).State = EntityState.Detached;
-                _context.Events.Update(item);
-            }
+            await _context.Database.ExecuteSqlRawAsync(sqlCommand, idParam, nameParam, descriptionParam, layoutIdParam, startDateParam, endDateParam, imageUrlParam, publishedParam);
 
             await _context.SaveChangesAsync();
         }

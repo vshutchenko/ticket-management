@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq;
-using TicketManagement.BusinessLogic.Extensions;
 using TicketManagement.DataAccess.Entities;
 using TicketManagement.DataAccess.Interfaces;
 
@@ -22,7 +21,9 @@ namespace TicketManagement.BusinessLogic.Validation
                 throw new ValidationException("Venue is null.");
             }
 
-            var venueExists = _venueRepository.GetAll().Any(v => v.Id != item.Id && v.Description.Equals(item.Description, StringComparison.OrdinalIgnoreCase));
+            var venueExists = _venueRepository
+                .GetAll().AsEnumerable()
+                .Any(v => v.Id != item.Id && v.Description.Equals(item.Description, StringComparison.OrdinalIgnoreCase));
 
             if (venueExists)
             {

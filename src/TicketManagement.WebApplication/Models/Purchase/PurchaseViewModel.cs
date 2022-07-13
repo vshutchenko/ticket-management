@@ -1,8 +1,4 @@
-﻿using TicketManagement.WebApplication.Models.Event;
-using TicketManagement.WebApplication.Models.EventArea;
-using TicketManagement.WebApplication.Models.EventSeat;
-
-namespace TicketManagement.WebApplication.Models.Purchase
+﻿namespace TicketManagement.WebApplication.Models.Purchase
 {
     public class PurchaseViewModel
     {

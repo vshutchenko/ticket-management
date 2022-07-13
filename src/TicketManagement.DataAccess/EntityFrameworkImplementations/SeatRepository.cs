@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
@@ -49,6 +48,10 @@ namespace TicketManagement.DataAccess.EntityFrameworkImplementations
 
         public async Task UpdateAsync(Seat item)
         {
+            var seat = await GetByIdAsync(item.Id);
+
+            _context.Entry(seat).State = EntityState.Detached;
+
             _context.Update(item);
 
             await _context.SaveChangesAsync();

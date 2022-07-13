@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using FluentAssertions;
@@ -35,13 +34,13 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
 
             var roleStoreMock = new Mock<IRoleStore<IdentityRole>>();
             _roleManagerMock = new Mock<RoleManager<IdentityRole>>(roleStoreMock.Object, null, null, null, null);
-
             _signInManagerMock = new Mock<SignInManager<User>>(_userManagerMock.Object,
                  new Mock<IHttpContextAccessor>().Object,
                  new Mock<IUserClaimsPrincipalFactory<User>>().Object,
                  new Mock<IOptions<IdentityOptions>>().Object,
                  new Mock<ILogger<SignInManager<User>>>().Object,
-                 new Mock<IAuthenticationSchemeProvider>().Object);
+                 new Mock<IAuthenticationSchemeProvider>().Object,
+                 new Mock<IUserConfirmation<User>>().Object);
 
             _mapperMock = new Mock<IMapper>();
 
@@ -151,7 +150,7 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
         public async Task ChangePasswordAsync_UserNotFound_ThrowsValidationException()
         {
             // Arrange
-            string id = "13fd42af-6a64-4022-bed4-8c7507cb67b9";
+            var id = "13fd42af-6a64-4022-bed4-8c7507cb67b9";
             var currentPassword = "password";
             var newPassword = "newpassword";
 
@@ -187,7 +186,7 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
         public async Task GetUserAsync_UserNotFound_ThrowsValidationException()
         {
             // Arrange
-            string id = "13fd42af-6a64-4022-bed4-8c7507cb67b9";
+            var id = "13fd42af-6a64-4022-bed4-8c7507cb67b9";
 
             _userManagerMock.Setup(x => x.FindByIdAsync(id)).ReturnsAsync(default(User));
 
@@ -221,7 +220,7 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
         public async Task GetRolesAsync_UserNotFound_ThrowsValidationException()
         {
             // Arrange
-            string id = "13fd42af-6a64-4022-bed4-8c7507cb67b9";
+            var id = "13fd42af-6a64-4022-bed4-8c7507cb67b9";
 
             _userManagerMock.Setup(x => x.FindByIdAsync(id)).ReturnsAsync(default(User));
 

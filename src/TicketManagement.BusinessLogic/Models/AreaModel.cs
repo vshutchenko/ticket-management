@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace TicketManagement.BusinessLogic.Models
+﻿namespace TicketManagement.BusinessLogic.Models
 {
     public class AreaModel
     {
