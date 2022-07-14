@@ -41,7 +41,7 @@
                 @{
                     for (var i = 0; i < Model.Areas.Count(); i++)
                     {
-                        <h5>@Localizer["{0} - seat price ({1})", @Model.Areas[i].Description!, @CultureInfo.CurrentCulture.NumberFormat.CurrencySymbol]</h5>
+                        <h5>@Localizer["{0} - seat price ({1})", @Model.Areas[i].Description!, "$"]</h5>
                         <input type="hidden" asp-for="@Model.Areas[i].Id" />
                         <input asp-for="@Model.Areas[i].Price" class="price form-control" lang="en" />
 

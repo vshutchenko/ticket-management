@@ -50,7 +50,7 @@
     @foreach (var area in Model.Areas)
     {
         var rows = Model.Seats.Where(s => s.EventAreaId == area.Id).GroupBy(s => s.Row);
-        <h5>@area.Description</h5>
+        <h5>@area.Description&nbsp;-&nbsp;@area.Price.FormatPrice()&nbsp;@Localizer["for ticket"]</h5>
         <table>
             @foreach (var row in rows)
             {
