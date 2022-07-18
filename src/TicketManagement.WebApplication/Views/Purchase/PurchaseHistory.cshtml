@@ -4,5 +4,5 @@
 @foreach (var p in @Model)
 {
     <partial name="_PurchasedSeats" model="@p.PurchasedSeats" />
-    <h5>@Localizer["Total price: {0:c}", @p.Price]</h5>
+    <h5>@Localizer["Total price:"]&nbsp;@p.Price.FormatPrice()</h5>
 }
