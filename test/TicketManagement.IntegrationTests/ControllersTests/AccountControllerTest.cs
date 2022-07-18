@@ -41,7 +41,7 @@ namespace TicketManagement.IntegrationTests.ControllersTests
             var formModel = new Dictionary<string, string>
             {
                 { AntiForgeryTokenExtractor.Field, antiForgery.field },
-                { "Email", "testUser@gmail.com" },
+                { "Email", "eventManager@gmail.com" },
                 { "Password", "Password123#" },
             };
 

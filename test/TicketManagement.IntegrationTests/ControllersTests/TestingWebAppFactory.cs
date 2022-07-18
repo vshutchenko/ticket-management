@@ -16,7 +16,7 @@ namespace TicketManagement.IntegrationTests.ControllersTests
     {
         protected override void ConfigureWebHost(IWebHostBuilder builder)
         {
-            builder.ConfigureServices(async services =>
+            builder.ConfigureServices(services =>
             {
                 var descriptor = services.SingleOrDefault(
                 d => d.ServiceType == typeof(DbContextOptions<TicketManagementContext>));
@@ -46,8 +46,8 @@ namespace TicketManagement.IntegrationTests.ControllersTests
                 using var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
                 using var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
 
-                await SeedRolesAsync(roleManager);
-                await SeedUsersAsync(userManager);
+                SeedRolesAsync(roleManager).Wait();
+                SeedUsersAsync(userManager).Wait();
             });
         }
 
