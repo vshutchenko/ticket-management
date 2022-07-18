@@ -46,6 +46,7 @@ namespace TicketManagement.WebApplication.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Event manager")]
         public IActionResult NotPublishedEvents()
         {
             var eventsVM = _eventService.GetAll()
@@ -169,6 +170,7 @@ namespace TicketManagement.WebApplication.Controllers
             return RedirectToAction("Index");
         }
 
+        [HttpPost]
         [Authorize(Roles = "Event manager")]
         public async Task<IActionResult> DeleteEvent(int id)
         {

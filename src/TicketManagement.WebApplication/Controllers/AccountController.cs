@@ -14,6 +14,7 @@ using TicketManagement.WebApplication.Models.Account;
 
 namespace TicketManagement.WebApplication.Controllers
 {
+    [Authorize]
     public class AccountController : Controller
     {
         private readonly IOptions<RequestLocalizationOptions> _locOptions;
@@ -222,7 +223,7 @@ namespace TicketManagement.WebApplication.Controllers
                 new Claim("culture", user.CultureName),
             };
 
-            IList<string>? roles = await _identityService.GetRolesAsync(user.Id);
+            var roles = await _identityService.GetRolesAsync(user.Id);
 
             claims.AddRange(roles
                 .Select(r => new Claim(ClaimTypes.Role, r))
