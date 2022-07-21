@@ -160,8 +160,8 @@ namespace TicketManagement.IntegrationTests.SqlClientImplementations.EventServic
                 new EventSeatModel { Id = 6, EventAreaId = 2, Row = 1, Number = 1, State = EventSeatStateModel.Available },
                 new EventSeatModel { Id = 7, EventAreaId = 2, Row = 1, Number = 2, State = EventSeatStateModel.Available },
                 new EventSeatModel { Id = 8, EventAreaId = 2, Row = 1, Number = 3, State = EventSeatStateModel.Available },
-                new EventSeatModel { Id = 9, EventAreaId = 2, Row = 2, Number = 2, State = EventSeatStateModel.Available },
-                new EventSeatModel { Id = 10, EventAreaId = 2, Row = 2, Number = 1, State = EventSeatStateModel.Available },
+                new EventSeatModel { Id = 9, EventAreaId = 2, Row = 2, Number = 1, State = EventSeatStateModel.Available },
+                new EventSeatModel { Id = 10, EventAreaId = 2, Row = 2, Number = 2, State = EventSeatStateModel.Available },
                 new EventSeatModel { Id = 11, EventAreaId = 3, Row = 1, Number = 1, State = EventSeatStateModel.Available },
             };
 
