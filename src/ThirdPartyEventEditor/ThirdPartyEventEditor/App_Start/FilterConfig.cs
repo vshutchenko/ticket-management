@@ -1,5 +1,6 @@
 ﻿using System.Web;
 using System.Web.Mvc;
+using ThirdPartyEventEditor.Filters;
 
 namespace ThirdPartyEventEditor
 {
@@ -7,6 +8,7 @@ namespace ThirdPartyEventEditor
     {
         public static void RegisterGlobalFilters(GlobalFilterCollection filters)
         {
+            filters.Add(new ExceptionFilter());
         }
     }
 }
