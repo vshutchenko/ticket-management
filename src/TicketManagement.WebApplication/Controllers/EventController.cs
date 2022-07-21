@@ -167,7 +167,7 @@ namespace TicketManagement.WebApplication.Controllers
 
             await _eventService.UpdateAsync(@event);
 
-            return RedirectToAction("Index");
+            return RedirectToAction("EditEvent", new { id = @event.Id });
         }
 
         [HttpPost]
