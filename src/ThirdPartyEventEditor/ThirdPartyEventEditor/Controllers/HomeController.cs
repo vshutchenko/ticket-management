@@ -104,7 +104,7 @@ namespace ThirdPartyEventEditor.Controllers
         {
             if (!IsValidInputModel(inputModel))
             {
-                return View(new ThirdPartyEventInputModel());
+                return View(inputModel);
             }
 
             using (var fs = new FileStream(_path, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None))
@@ -173,7 +173,7 @@ namespace ThirdPartyEventEditor.Controllers
                 if (eventToDelete is null)
                 {
                     ModelState.AddModelError("", "Requested event was not found.");
-                    return View("Index");
+                    return RedirectToAction("Index");
                 }
 
                 events.RemoveAll(e => e.Id == inputModel.Id);
@@ -183,7 +183,13 @@ namespace ThirdPartyEventEditor.Controllers
                 await JsonSerializer.SerializeAsync(fs, events);
             }
 
-            return View("Index");
+            return RedirectToAction("Index");
+        }
+
+        [HttpGet]
+        public FileResult DownloadFile()
+        {
+            return File(_path, "application/json", "events.json");
         }
 
         private bool IsValidInputModel(ThirdPartyEventInputModel model)
