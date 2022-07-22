@@ -27,6 +27,12 @@
     <None Update="appsettings.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="Files\invalidEvents.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Files\events.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="TestDatabase\TicketManagement.Database.dacpac">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
