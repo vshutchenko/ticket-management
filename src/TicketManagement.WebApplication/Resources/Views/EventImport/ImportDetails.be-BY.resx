@@ -117,16 +117,34 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Events" xml:space="preserve">
-    <value>Падзеі</value>
+  <data name="All events were successfully imported!" xml:space="preserve">
+    <value>Усе падзеі былі паспяхова імпартаваны!</value>
   </data>
-  <data name="Home" xml:space="preserve">
-    <value>Галоўная</value>
+  <data name="Cannot import" xml:space="preserve">
+    <value>Немагчыма імпартаваць</value>
   </data>
-  <data name="Import events" xml:space="preserve">
-    <value>Імпарт падзей</value>
+  <data name="End date is less than start date." xml:space="preserve">
+    <value>Дата заканчэння меншая за дату пачатку.</value>
   </data>
-  <data name="Not published events" xml:space="preserve">
-    <value>Неапублікаваныя падзеі</value>
+  <data name="Entity was not found." xml:space="preserve">
+    <value>Аб'ект не знойдзены.</value>
+  </data>
+  <data name="Event in the same layout and the same time is already exists." xml:space="preserve">
+    <value>У дадзенай лакацыі ўжо існуе падзея ў абраны час.</value>
+  </data>
+  <data name="Event is null." xml:space="preserve">
+    <value>Падзея не знойдзена.</value>
+  </data>
+  <data name="Go to publication" xml:space="preserve">
+    <value>Перайсці да публікацыі</value>
+  </data>
+  <data name="Import details" xml:space="preserve">
+    <value>Падрабязнасці імпарту</value>
+  </data>
+  <data name="Start date is in the past." xml:space="preserve">
+    <value>Дата пачатку знаходзіцца ў мінулым.</value>
+  </data>
+  <data name="There are no available seats in the layout." xml:space="preserve">
+    <value>У дадзенай лакацыі няма даступных месцаў.</value>
   </data>
 </root>

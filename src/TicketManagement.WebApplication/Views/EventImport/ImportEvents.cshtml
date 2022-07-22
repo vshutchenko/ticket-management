@@ -1,0 +1,52 @@
+﻿@using TicketManagement.WebApplication.Models.EventImport
+@model ImportViewModel
+
+<h1>@Localizer["Import events"]</h1>
+<hr />
+
+<div>
+    <form asp-action="ImportEvents" asp-antiforgery="true" enctype="multipart/form-data">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <div class="w-25">
+            <div class="form-group">
+                <label asp-for="Venues" class="control-label"></label>
+                <select id="venue" asp-for="Venue" asp-items="Model.Venues" class="form-select"></select>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Layouts" class="control-label"></label>
+                <select id="layout" asp-for="Layout" asp-items="Model.Layouts" class="form-select"></select>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="EventsJson" class="control-label"></label>
+                <input asp-for="EventsJson" type="file" accept="application/JSON" class="form-control-file">
+                <span asp-validation-for="EventsJson" class="text-danger"></span>
+            </div>
+
+            <div class="mt-2">
+                <input type="submit" value="@Localizer["Import"]" class="btn btn-primary" />
+            </div>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <script>
+        $(function() {
+            $('#venue').change(function() {
+                var id = $(this).val();
+                $.ajax({
+                    type: 'GET',
+                    url: '@Url.Action("PartialLayoutList", "Event")?venueId=' + id,
+                    success: function(data) {
+                        $('#layout').replaceWith(data);
+                    }
+                });
+            });
+        })
+    </script>
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

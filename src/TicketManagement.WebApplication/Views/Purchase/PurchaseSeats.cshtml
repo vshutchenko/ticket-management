@@ -12,7 +12,7 @@
 <div>
     @if(@Model.ImageUrl != null && @Model.ImageUrl != string.Empty)
     {
-        <img src="@Model.ImageUrl" width=300 height=300 style="object-fit: contain; object-position: left;" />
+        <img src="@Model.ImageUrl.GetAbsoluteUrl(Context.Request.Host.Value)" width=300 height=300 style="object-fit: contain; object-position: left;" />
         <hr />
     }
     

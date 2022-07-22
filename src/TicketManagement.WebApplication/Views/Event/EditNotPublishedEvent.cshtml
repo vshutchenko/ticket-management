@@ -12,7 +12,7 @@
             <div class="form-group">
                 @if (Model.Event!.ImageUrl != null)
                 {
-                    <img src="@Model.Event!.ImageUrl" width=300 height=300 style="object-fit: contain; object-position: left;" />
+                    <img src="@Model.Event!.ImageUrl.GetAbsoluteUrl(Context.Request.Host.Value)" width=300 height=300 style="object-fit: contain; object-position: left;" />
                 }
 
                 <input type="hidden" asp-for="Event!.Id" value="@Model.Event!.Id" />

@@ -1,0 +1,23 @@
+﻿@using TicketManagement.WebApplication.Models.EventImport
+@model Dictionary<string, string>
+
+<h1>@Localizer["Import details"]</h1>
+<hr />
+
+@if (@Model.Keys.Count() == 0)
+{
+    <div class="alert alert-success">
+        <h3>@Localizer["All events were successfully imported!"]</h3>
+    </div>
+    <a asp-controller="Event" asp-action="NotPublishedEvents">@Localizer["Go to publication"]</a>
+}
+else
+{
+    foreach (var name in Model.Keys)
+    {
+        <div class="alert alert-danger">
+        <h4>@name</h4>
+        <p>@Localizer[@Model[name]]</p>
+    </div>
+    }
+}

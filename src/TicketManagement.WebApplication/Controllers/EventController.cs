@@ -172,8 +172,17 @@ namespace TicketManagement.WebApplication.Controllers
 
         [HttpPost]
         [Authorize(Roles = "Event manager")]
-        public async Task<IActionResult> DeleteEvent(int id)
+        public async Task<IActionResult> DeleteEvent(int id, [FromServices] IWebHostEnvironment enviroment)
         {
+            var @event = await _eventService.GetByIdAsync(id);
+
+            var imagePath = Path.Combine(enviroment.WebRootPath, $"{@event.ImageUrl}");
+
+            if (System.IO.File.Exists(imagePath))
+            {
+                System.IO.File.Delete(imagePath);
+            }
+
             await _eventService.DeleteAsync(id);
 
             return RedirectToAction("Index");

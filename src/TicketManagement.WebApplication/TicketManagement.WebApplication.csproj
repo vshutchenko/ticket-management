@@ -32,6 +32,7 @@
 
   <ItemGroup>
     <Folder Include="wwwroot\lib\jquery\" />
+    <Folder Include="wwwroot\EventImages\" />
   </ItemGroup>
 
 </Project>

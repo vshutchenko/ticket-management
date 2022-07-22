@@ -117,16 +117,16 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Events" xml:space="preserve">
-    <value>Падзеі</value>
+  <data name="File with events" xml:space="preserve">
+    <value>Файл с событиями</value>
   </data>
-  <data name="Home" xml:space="preserve">
-    <value>Галоўная</value>
+  <data name="Layout" xml:space="preserve">
+    <value>Локация</value>
   </data>
-  <data name="Import events" xml:space="preserve">
-    <value>Імпарт падзей</value>
+  <data name="Select a file for import." xml:space="preserve">
+    <value>Выберите файл для импорта.</value>
   </data>
-  <data name="Not published events" xml:space="preserve">
-    <value>Неапублікаваныя падзеі</value>
+  <data name="Venue" xml:space="preserve">
+    <value>Место проведения</value>
   </data>
 </root>
