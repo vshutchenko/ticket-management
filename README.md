@@ -7,6 +7,7 @@ This project represents an application for ticket management. The project has th
     - User - has ability to see information about events and purchase seats on events. Each user can modify his profile information and see his purchase history. 
     - Event Manager - has ability to create, update and delete events.
 - Localization. Supported languages: English, Russian, Belarussian.
+- Event import from JSON file.
 ### Testing
 The solution contains unit and integration tests. To run integration tests you need to specify connection string in the appsettings.json file in the TicketManagement.IntegrationTests folder.
 
@@ -17,3 +18,7 @@ The solution contains unit and integration tests. To run integration tests you n
 ##### User:
 - login: user1@gmail.com
 - password: Password123#
+
+## Third Party Event Editor
+
+This project is an utility for the Ticket management application. It provides the possibility to manage and extract events from another vendor. The application uses JSON file as storage and supports CRUD operations fo events. JSON file with events can be downloaded and used for import in the main application.
