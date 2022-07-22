@@ -1,4 +1,4 @@
-﻿@model ThirdPartyEventEditor.Models.ThirdPartyEventInputModel
+﻿@model ThirdPartyEventEditor.Models.ThirdPartyEventEditModel
 
 @{
     ViewBag.Title = "Edit event";
@@ -18,6 +18,7 @@
 
     <div class="form-group">
         @Html.LabelFor(model => model.CurrentImage, htmlAttributes: new { @class = "control-label col-md-2" })
+        @Html.HiddenFor(model => model.CurrentImage)
         <div class="col-md-10">
             <img src="data:image/jpeg;base64,@Model.CurrentImage" alt="" />
         </div>
@@ -42,7 +43,7 @@
     <div class="form-group">
         @Html.LabelFor(model => model.StartDate, htmlAttributes: new { @class = "control-label col-md-2" })
         <div class="col-md-10">
-            @Html.EditorFor(model => model.StartDate, new { htmlAttributes = new { @class = "form-control", @type = "datetime-local" } })
+            @Html.TextBoxFor(x => x.StartDate, "{0:yyyy-MM-ddTHH:mm:ss}", new { @class = "form-control", @type = "datetime-local" })
             @Html.ValidationMessageFor(model => model.StartDate)
         </div>
     </div>
@@ -50,15 +51,15 @@
     <div class="form-group">
         @Html.LabelFor(model => model.EndDate, htmlAttributes: new { @class = "control-label col-md-2" })
         <div class="col-md-10">
-            @Html.EditorFor(model => model.EndDate, new { htmlAttributes = new { @class = "form-control", @type = "datetime-local" } })
+            @Html.TextBoxFor(x => x.EndDate, "{0:yyyy-MM-ddTHH:mm:ss}", new { @class = "form-control", @type = "datetime-local" })
             @Html.ValidationMessageFor(model => model.EndDate)
         </div>
     </div>
 
     <div class="form-group">
-        @Html.LabelFor(model => model.PosterImage, htmlAttributes: new { @value = "New poster image", @class = "control-label col-md-2" })
+        @Html.LabelFor(model => model.NewPosterImage, htmlAttributes: new { @value = "New poster image", @class = "control-label col-md-2" })
         <div class="col-md-10">
-            <input type="file" name="PosterImage" id="PosterImage" />
+            <input type="file" name="NewPosterImage" id="NewPosterImage" />
         </div>
     </div>
 

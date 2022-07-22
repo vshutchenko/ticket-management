@@ -23,12 +23,7 @@ namespace ThirdPartyEventEditor.Controllers
         [HttpGet]
         public async Task<ActionResult> Index()
         {
-            var events = new List<ThirdPartyEvent>();
-
-            using (var fileStream = new FileStream(_path, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None))
-            {
-                events.AddRange(await JsonSerializer.DeserializeAsync<List<ThirdPartyEvent>>(fileStream));
-            }
+            var events = await GetEventsAsync();
 
             return View(events);
         }
@@ -36,37 +31,32 @@ namespace ThirdPartyEventEditor.Controllers
         [HttpGet]
         public ActionResult Create()
         {
-            return View(new ThirdPartyEventInputModel());
+            return View(new ThirdPartyEventCreateModel());
         }
 
         [HttpPost]
-        public async Task<ActionResult> Create(ThirdPartyEventInputModel inputModel)
+        public async Task<ActionResult> Create(ThirdPartyEventCreateModel createModel)
         {
-            if (!IsValidInputModel(inputModel))
+            var events = await GetEventsAsync();
+
+            var @event = new ThirdPartyEvent
             {
-                return View(new ThirdPartyEventInputModel());
+                Id = events.GenerateId(),
+                Name = createModel.Name,
+                Description = createModel.Description,
+                StartDate = createModel.StartDate,
+                EndDate = createModel.EndDate,
+                PosterImage = await createModel.PosterImage.InputStream.GetBase64StringAsync(),
+            };
+
+            if (!IsValidEvent(@event))
+            {
+                return View(createModel);
             }
 
-            using (var fs = new FileStream(_path, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None))
-            {
-                var events = await JsonSerializer.DeserializeAsync<List<ThirdPartyEvent>>(fs);
+            events.Add(@event);
 
-                var @event = new ThirdPartyEvent
-                {
-                    Id = events.GenerateId(),
-                    Name = inputModel.Name,
-                    Description = inputModel.Description,
-                    StartDate = inputModel.StartDate,
-                    EndDate = inputModel.EndDate,
-                    PosterImage = await inputModel.PosterImage.InputStream.GetBase64StringAsync(),
-                };
-
-                events.Add(@event);
-
-                fs.SetLength(0);
-
-                await JsonSerializer.SerializeAsync(fs, events);
-            }
+            await SaveEventsAsync(events);
 
             return RedirectToAction("Index");
         }
@@ -74,61 +64,61 @@ namespace ThirdPartyEventEditor.Controllers
         [HttpGet]
         public async Task<ActionResult> Edit(int id)
         {
-            var inputModel = new ThirdPartyEventInputModel();
+            var editModel = new ThirdPartyEventEditModel();
 
-            using (var fs = new FileStream(_path, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None))
+            var events = await GetEventsAsync();
+
+            var eventToUpdate = events.FirstOrDefault(e => e.Id == id);
+
+            if (eventToUpdate is null)
             {
-                var events = await JsonSerializer.DeserializeAsync<List<ThirdPartyEvent>>(fs);
-
-                var eventToUpdate = events.FirstOrDefault(e => e.Id == id);
-
-                if (eventToUpdate is null)
-                {
-                    ModelState.AddModelError("", "Requested event was not found.");
-                    return View(inputModel);
-                }
-
-                inputModel.Id = eventToUpdate.Id;
-                inputModel.Name = eventToUpdate.Name;
-                inputModel.Description = eventToUpdate.Description;
-                inputModel.StartDate = eventToUpdate.StartDate;
-                inputModel.EndDate = eventToUpdate.EndDate;
-                inputModel.CurrentImage = eventToUpdate.PosterImage;
+                ModelState.AddModelError("", "Requested event was not found.");
+                return View(editModel);
             }
 
-            return View(inputModel);
+            editModel.Id = eventToUpdate.Id;
+            editModel.Name = eventToUpdate.Name;
+            editModel.Description = eventToUpdate.Description;
+            editModel.StartDate = eventToUpdate.StartDate;
+            editModel.EndDate = eventToUpdate.EndDate;
+            editModel.CurrentImage = eventToUpdate.PosterImage;
+
+            return View(editModel);
         }
 
         [HttpPost]
-        public async Task<ActionResult> Edit(ThirdPartyEventInputModel inputModel)
+        public async Task<ActionResult> Edit(ThirdPartyEventEditModel editModel)
         {
-            if (!IsValidInputModel(inputModel))
+            var events = await GetEventsAsync();
+
+            var eventToUpdate = events.FirstOrDefault(e => e.Id == editModel.Id);
+
+            if (eventToUpdate is null)
             {
-                return View(inputModel);
+                ModelState.AddModelError("", "Requested event was not found.");
+                return View(editModel);
             }
 
-            using (var fs = new FileStream(_path, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None))
+            eventToUpdate.Name = editModel.Name;
+            eventToUpdate.Description = editModel.Description;
+            eventToUpdate.StartDate = editModel.StartDate;
+            eventToUpdate.EndDate = editModel.EndDate;
+
+            if (editModel.NewPosterImage != null && editModel.NewPosterImage.ContentLength > 0)
             {
-                var events = await JsonSerializer.DeserializeAsync<List<ThirdPartyEvent>>(fs);
-
-                var eventToUpdate = events.FirstOrDefault(e => e.Id == inputModel.Id);
-
-                if (eventToUpdate is null)
-                {
-                    ModelState.AddModelError("", "Requested event was not found.");
-                    return View(inputModel);
-                }
-
-                eventToUpdate.Name = inputModel.Name;
-                eventToUpdate.Description = inputModel.Description;
-                eventToUpdate.StartDate = inputModel.StartDate;
-                eventToUpdate.EndDate = inputModel.EndDate;
-                eventToUpdate.PosterImage = await inputModel.PosterImage.InputStream.GetBase64StringAsync();
-
-                fs.SetLength(0);
-
-                await JsonSerializer.SerializeAsync(fs, events);
+                eventToUpdate.PosterImage = await editModel.NewPosterImage.InputStream.GetBase64StringAsync();
             }
+            else
+            {
+                eventToUpdate.PosterImage = editModel.CurrentImage;
+            }
+
+            if (!IsValidEvent(eventToUpdate))
+            {
+                return View(editModel);
+            }
+
+            await SaveEventsAsync(events);
 
             return RedirectToAction("Index");
         }
@@ -136,52 +126,44 @@ namespace ThirdPartyEventEditor.Controllers
         [HttpGet]
         public async Task<ActionResult> Delete(int id)
         {
-            var inputModel = new ThirdPartyEventInputModel();
+            var editModel = new ThirdPartyEventEditModel();
 
-            using (var fs = new FileStream(_path, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None))
+            var events = await GetEventsAsync();
+
+            var eventToDelete = events.FirstOrDefault(e => e.Id == id);
+
+            if (eventToDelete is null)
             {
-                var events = await JsonSerializer.DeserializeAsync<List<ThirdPartyEvent>>(fs);
-
-                var eventToDelete = events.FirstOrDefault(e => e.Id == id);
-
-                if (eventToDelete is null)
-                {
-                    ModelState.AddModelError("", "Requested event was not found.");
-                    return View(inputModel);
-                }
-
-                inputModel.Id = eventToDelete.Id;
-                inputModel.Name = eventToDelete.Name;
-                inputModel.Description = eventToDelete.Description;
-                inputModel.StartDate = eventToDelete.StartDate;
-                inputModel.EndDate = eventToDelete.EndDate;
-                inputModel.CurrentImage = eventToDelete.PosterImage;
+                ModelState.AddModelError("", "Requested event was not found.");
+                return View(editModel);
             }
 
-            return View(inputModel);
+            editModel.Id = eventToDelete.Id;
+            editModel.Name = eventToDelete.Name;
+            editModel.Description = eventToDelete.Description;
+            editModel.StartDate = eventToDelete.StartDate;
+            editModel.EndDate = eventToDelete.EndDate;
+            editModel.CurrentImage = eventToDelete.PosterImage;
+
+            return View(editModel);
         }
 
         [HttpPost]
-        public async Task<ActionResult> Delete(ThirdPartyEventInputModel inputModel)
+        public async Task<ActionResult> DeleteConfirmed(int id)
         {
-            using (var fs = new FileStream(_path, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None))
+            var events = await GetEventsAsync();
+
+            var eventToDelete = events.FirstOrDefault(e => e.Id == id);
+
+            if (eventToDelete is null)
             {
-                var events = await JsonSerializer.DeserializeAsync<List<ThirdPartyEvent>>(fs);
-
-                var eventToDelete = events.FirstOrDefault(e => e.Id == inputModel.Id);
-
-                if (eventToDelete is null)
-                {
-                    ModelState.AddModelError("", "Requested event was not found.");
-                    return RedirectToAction("Index");
-                }
-
-                events.RemoveAll(e => e.Id == inputModel.Id);
-
-                fs.SetLength(0);
-
-                await JsonSerializer.SerializeAsync(fs, events);
+                ModelState.AddModelError("", "Requested event was not found.");
+                return RedirectToAction("Index");
             }
+
+            events.RemoveAll(e => e.Id == id);
+
+            await SaveEventsAsync(events);
 
             return RedirectToAction("Index");
         }
@@ -192,14 +174,37 @@ namespace ThirdPartyEventEditor.Controllers
             return File(_path, "application/json", "events.json");
         }
 
-        private bool IsValidInputModel(ThirdPartyEventInputModel model)
+        private async Task<List<ThirdPartyEvent>> GetEventsAsync()
         {
-            if (model.StartDate < DateTime.Now)
+            using (var fileStream = new FileStream(_path, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None))
+            {
+                try
+                {
+                    return await JsonSerializer.DeserializeAsync<List<ThirdPartyEvent>>(fileStream);
+                }
+                catch (JsonException)
+                {
+                    return new List<ThirdPartyEvent>();
+                }
+            }
+        }
+        private async Task SaveEventsAsync(List<ThirdPartyEvent> events)
+        {
+            using (var fs = new FileStream(_path, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None))
+            {
+                fs.SetLength(0);
+                await JsonSerializer.SerializeAsync(fs, events);
+            }
+        }
+
+        private bool IsValidEvent(ThirdPartyEvent @event)
+        {
+            if (@event.StartDate < DateTime.Now)
             {
                 ModelState.AddModelError("", "Start date is in the past.");
             }
 
-            if (model.EndDate < model.StartDate)
+            if (@event.EndDate < @event.StartDate)
             {
                 ModelState.AddModelError("", "End date is less than start date.");
             }
