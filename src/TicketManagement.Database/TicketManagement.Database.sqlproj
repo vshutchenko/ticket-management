@@ -74,7 +74,7 @@
     <Build Include="ForeignKeys\FK_EventArea_EventSeat.sql" />
     <Build Include="StoredProcedures\DeleteEvent.sql" />
     <Build Include="StoredProcedures\InsertEvent.sql" />
-    <Build Include="StoredProcedures\UpdateEvent.sql" />
+    <Build Include="StoredProcedures\UpdateEventWithAreas.sql" />
     <Build Include="Tables\AspNetRoleClaims.sql" />
     <Build Include="Tables\AspNetRoles.sql" />
     <Build Include="Tables\AspNetUserClaims.sql" />
@@ -85,6 +85,7 @@
     <None Include="Scripts\ScriptsIgnoredOnImport.sql" />
     <Build Include="Tables\Purchase.sql" />
     <Build Include="Tables\PurchasedSeat.sql" />
+    <Build Include="StoredProcedures\UpdateEvent.sql" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="Tables\Event.sql" />

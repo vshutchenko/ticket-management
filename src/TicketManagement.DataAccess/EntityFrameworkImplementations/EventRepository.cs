@@ -64,24 +64,28 @@ namespace TicketManagement.DataAccess.EntityFrameworkImplementations
         {
             var existingEvent = await GetByIdAsync(item.Id);
             _context.Entry(existingEvent).State = EntityState.Detached;
+
+            var idParam = new SqlParameter("@eventId", item.Id);
+            var nameParam = new SqlParameter("@name", item.Name);
+            var descriptionParam = new SqlParameter("@description", item.Description);
+            var startDateParam = new SqlParameter("@startDate", item.StartDate);
+            var endDateParam = new SqlParameter("@endDate", item.EndDate);
+            var imageUrlParam = new SqlParameter("@imageUrl", item.ImageUrl);
+            var publishedParam = new SqlParameter("@published", item.Published);
+
             if (existingEvent.LayoutId != item.LayoutId)
             {
-                var sqlCommand = "EXEC UpdateEvent @eventId={0}, @name={1}, @description={2}, @layoutId={3}, @startDate={4}, @endDate={5}, @imageUrl={6}, @published={7}";
+                var sqlCommand = "EXEC UpdateEventWithAreas @eventId={0}, @name={1}, @description={2}, @layoutId={3}, @startDate={4}, @endDate={5}, @imageUrl={6}, @published={7}";
 
-                var idParam = new SqlParameter("@eventId", item.Id);
-                var nameParam = new SqlParameter("@name", item.Name);
-                var descriptionParam = new SqlParameter("@description", item.Description);
                 var layoutIdParam = new SqlParameter("@layoutId", item.LayoutId);
-                var startDateParam = new SqlParameter("@startDate", item.StartDate);
-                var endDateParam = new SqlParameter("@endDate", item.EndDate);
-                var imageUrlParam = new SqlParameter("@imageUrl", item.ImageUrl);
-                var publishedParam = new SqlParameter("@published", item.Published);
 
                 await _context.Database.ExecuteSqlRawAsync(sqlCommand, idParam, nameParam, descriptionParam, layoutIdParam, startDateParam, endDateParam, imageUrlParam, publishedParam);
             }
             else
             {
-                _context.Events.Update(item);
+                var sqlCommand = "EXEC UpdateEvent @eventId={0}, @name={1}, @description={2}, @startDate={3}, @endDate={4}, @imageUrl={5}, @published={6}";
+
+                await _context.Database.ExecuteSqlRawAsync(sqlCommand, idParam, nameParam, descriptionParam, startDateParam, endDateParam, imageUrlParam, publishedParam);
             }
 
             await _context.SaveChangesAsync();
