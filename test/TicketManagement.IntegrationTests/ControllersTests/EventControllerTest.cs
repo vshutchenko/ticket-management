@@ -22,9 +22,9 @@ namespace TicketManagement.IntegrationTests.ControllersTests
 
             // Act
             var response = await client.GetAsync(url);
-            var responseString = await response.Content.ReadAsStringAsync();
 
             // Assert
+            var responseString = await response.Content.ReadAsStringAsync();
             response.EnsureSuccessStatusCode();
             responseString.Should().Contain("List of events");
         }
@@ -40,9 +40,9 @@ namespace TicketManagement.IntegrationTests.ControllersTests
 
             // Act
             var response = await client.GetAsync(url);
-            var responseString = await response.Content.ReadAsStringAsync();
 
             // Assert
+            var responseString = await response.Content.ReadAsStringAsync();
             response.EnsureSuccessStatusCode();
             responseString.Should().Contain("List of events");
         }
@@ -58,9 +58,9 @@ namespace TicketManagement.IntegrationTests.ControllersTests
 
             // Act
             var response = await client.GetAsync(url);
-            var responseString = await response.Content.ReadAsStringAsync();
 
             // Assert
+            var responseString = await response.Content.ReadAsStringAsync();
             response.EnsureSuccessStatusCode();
             responseString.Should().Contain("List of events");
         }
@@ -74,9 +74,9 @@ namespace TicketManagement.IntegrationTests.ControllersTests
 
             // Act
             var response = await client.GetAsync(url);
-            var responseString = await response.Content.ReadAsStringAsync();
 
             // Assert
+            var responseString = await response.Content.ReadAsStringAsync();
             response.EnsureSuccessStatusCode();
             responseString.Should().Contain("Sign in");
         }
@@ -108,9 +108,9 @@ namespace TicketManagement.IntegrationTests.ControllersTests
 
             // Act
             var response = await client.GetAsync(url);
-            var responseString = await response.Content.ReadAsStringAsync();
 
             // Assert
+            var responseString = await response.Content.ReadAsStringAsync();
             response.EnsureSuccessStatusCode();
             responseString.Should().Contain("Create event");
         }
@@ -172,9 +172,9 @@ namespace TicketManagement.IntegrationTests.ControllersTests
 
             // Act
             var response = await client.PostAsync(url, new FormUrlEncodedContent(formModel));
-            var responseString = await response.Content.ReadAsStringAsync();
 
             // Assert
+            var responseString = await response.Content.ReadAsStringAsync();
             response.StatusCode.Should().Be(HttpStatusCode.OK);
             responseString.Should().Contain("End date is less than start date.");
         }
@@ -188,9 +188,9 @@ namespace TicketManagement.IntegrationTests.ControllersTests
 
             // Act
             var response = await client.GetAsync(url);
-            var responseString = await response.Content.ReadAsStringAsync();
 
             // Assert
+            var responseString = await response.Content.ReadAsStringAsync();
             response.EnsureSuccessStatusCode();
             responseString.Should().Contain("Sign in");
         }
@@ -286,9 +286,9 @@ namespace TicketManagement.IntegrationTests.ControllersTests
 
             // Act
             var response = await client.PostAsync(url, new FormUrlEncodedContent(formModel));
-            var responseString = await response.Content.ReadAsStringAsync();
 
             // Assert
+            var responseString = await response.Content.ReadAsStringAsync();
             response.StatusCode.Should().Be(HttpStatusCode.OK);
             responseString.Should().Contain("End date is less than start date.");
         }
@@ -356,9 +356,9 @@ namespace TicketManagement.IntegrationTests.ControllersTests
 
             // Act
             var response = await client.PostAsync(url, new FormUrlEncodedContent(formModel));
-            var responseString = await response.Content.ReadAsStringAsync();
 
             // Assert
+            var responseString = await response.Content.ReadAsStringAsync();
             response.StatusCode.Should().Be(HttpStatusCode.OK);
             responseString.Should().Contain("End date is less than start date.");
         }

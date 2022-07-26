@@ -6,6 +6,9 @@
 # Logs
 src/ThirdPartyEventEditor/ThirdPartyEventEditor/App_Data/Log*.txt
 
+# Event Images
+src/TicketManagement.WebApplication/wwwroot/EventImages/*.png
+
 #
 # User-specific files
 *.rsuser

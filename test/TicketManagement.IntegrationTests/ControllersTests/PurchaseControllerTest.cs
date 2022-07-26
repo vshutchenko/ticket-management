@@ -24,9 +24,8 @@ namespace TicketManagement.IntegrationTests.ControllersTests
             // Act
             var response = await client.GetAsync(url);
 
-            var responseString = await response.Content.ReadAsStringAsync();
-
             // Assert
+            var responseString = await response.Content.ReadAsStringAsync();
             response.StatusCode.Should().Be(HttpStatusCode.OK);
             responseString.Contains("Sign in");
         }
@@ -74,9 +73,8 @@ namespace TicketManagement.IntegrationTests.ControllersTests
             // Act
             var response = await client.GetAsync(url);
 
-            var responseString = await response.Content.ReadAsStringAsync();
-
             // Assert
+            var responseString = await response.Content.ReadAsStringAsync();
             response.StatusCode.Should().Be(HttpStatusCode.OK);
             responseString.Contains("Sign in");
         }
@@ -161,9 +159,9 @@ namespace TicketManagement.IntegrationTests.ControllersTests
 
             // Act
             var response = await client.PostAsync("/Purchase/PurchaseSeats", new FormUrlEncodedContent(formModel));
-            var responseString = await response.Content.ReadAsStringAsync();
 
             // Assert
+            var responseString = await response.Content.ReadAsStringAsync();
             response.StatusCode.Should().Be(HttpStatusCode.OK);
             responseString.Should().Contain("Entity was not found.");
         }

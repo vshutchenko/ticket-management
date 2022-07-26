@@ -21,9 +21,9 @@ namespace TicketManagement.IntegrationTests.ControllersTests
 
             // Act
             var response = await client.GetAsync("/Account/Login");
-            var responseString = await response.Content.ReadAsStringAsync();
 
             // Assert
+            var responseString = await response.Content.ReadAsStringAsync();
             response.EnsureSuccessStatusCode();
             responseString.Should().Contain("Sign in");
         }
@@ -47,9 +47,9 @@ namespace TicketManagement.IntegrationTests.ControllersTests
 
             // Act
             var response = await client.PostAsync(url, new FormUrlEncodedContent(formModel));
-            var responseString = await response.Content.ReadAsStringAsync();
 
             // Assert
+            var responseString = await response.Content.ReadAsStringAsync();
             response.EnsureSuccessStatusCode();
             responseString.Should().Contain("List of events");
         }
@@ -75,9 +75,9 @@ namespace TicketManagement.IntegrationTests.ControllersTests
 
             // Act
             var response = await client.PostAsync(url, new FormUrlEncodedContent(formModel));
-            var responseString = await response.Content.ReadAsStringAsync();
 
             // Assert
+            var responseString = await response.Content.ReadAsStringAsync();
             response.StatusCode.Should().Be(HttpStatusCode.OK);
             responseString.Should().Contain("User with such email does not exists.");
         }
@@ -90,9 +90,9 @@ namespace TicketManagement.IntegrationTests.ControllersTests
 
             // Act
             var response = await client.GetAsync("/Account/Register");
-            var responseString = await response.Content.ReadAsStringAsync();
 
             // Assert
+            var responseString = await response.Content.ReadAsStringAsync();
             response.EnsureSuccessStatusCode();
             responseString.Should().Contain("Register");
         }
@@ -121,9 +121,9 @@ namespace TicketManagement.IntegrationTests.ControllersTests
 
             // Act
             var response = await client.PostAsync(url, new FormUrlEncodedContent(formModel));
-            var responseString = await response.Content.ReadAsStringAsync();
 
             // Assert
+            var responseString = await response.Content.ReadAsStringAsync();
             response.EnsureSuccessStatusCode();
             responseString.Should().Contain("List of events");
         }
@@ -154,9 +154,9 @@ namespace TicketManagement.IntegrationTests.ControllersTests
 
             // Act
             var response = await client.PostAsync(url, new FormUrlEncodedContent(formModel));
-            var responseString = await response.Content.ReadAsStringAsync();
 
             // Assert
+            var responseString = await response.Content.ReadAsStringAsync();
             response.StatusCode.Should().Be(HttpStatusCode.OK);
             responseString.Should().Contain("User already exists.");
         }
@@ -170,9 +170,9 @@ namespace TicketManagement.IntegrationTests.ControllersTests
 
             // Act
             var response = await client.GetAsync(url);
-            var responseString = await response.Content.ReadAsStringAsync();
 
             // Assert
+            var responseString = await response.Content.ReadAsStringAsync();
             response.EnsureSuccessStatusCode();
             responseString.Should().Contain("Sign in");
         }
@@ -202,9 +202,9 @@ namespace TicketManagement.IntegrationTests.ControllersTests
 
             // Act
             var response = await client.GetAsync(url);
-            var responseString = await response.Content.ReadAsStringAsync();
 
             // Assert
+            var responseString = await response.Content.ReadAsStringAsync();
             response.EnsureSuccessStatusCode();
             responseString.Should().Contain("Add funds to account");
         }
@@ -312,9 +312,9 @@ namespace TicketManagement.IntegrationTests.ControllersTests
 
             // Act
             var response = await client.PostAsync(url, new FormUrlEncodedContent(formModel));
-            var responseString = await response.Content.ReadAsStringAsync();
 
             // Assert
+            var responseString = await response.Content.ReadAsStringAsync();
             response.StatusCode.Should().Be(HttpStatusCode.OK);
             responseString.Should().Contain("Not valid current password.");
         }
@@ -404,9 +404,9 @@ namespace TicketManagement.IntegrationTests.ControllersTests
 
             // Act
             var response = await client.PostAsync(url, new FormUrlEncodedContent(formModel));
-            var responseString = await response.Content.ReadAsStringAsync();
 
             // Assert
+            var responseString = await response.Content.ReadAsStringAsync();
             response.StatusCode.Should().Be(HttpStatusCode.OK);
             responseString.Should().Contain("This email is already taken.");
         }
