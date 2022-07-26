@@ -1,29 +1,28 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Threading.Tasks;
 using System.Web.Mvc;
 using ThirdPartyEventEditor.Models;
-using System.Text.Json;
-using System.Configuration;
 using ThirdPartyEventEditor.Extensions;
 using System.Linq;
+using ThirdPartyEventEditor.Services.Interfaces;
+using System.Text.Json;
+using System.Collections.Generic;
 
 namespace ThirdPartyEventEditor.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly string _path;
+        private readonly IEventStorage _storage;
 
-        public HomeController()
+        public HomeController(IEventStorage storage)
         {
-            _path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, ConfigurationManager.AppSettings["jsonFilePath"]);
+            _storage = storage ?? throw new ArgumentNullException(nameof(storage));
         }
 
         [HttpGet]
         public async Task<ActionResult> Index()
         {
-            var events = await GetEventsAsync();
+            var events = await _storage.GetEventsAsync();
 
             return View(events);
         }
@@ -37,7 +36,7 @@ namespace ThirdPartyEventEditor.Controllers
         [HttpPost]
         public async Task<ActionResult> Create(ThirdPartyEventCreateModel createModel)
         {
-            var events = await GetEventsAsync();
+            var events = await _storage.GetEventsAsync();
 
             var @event = new ThirdPartyEvent
             {
@@ -56,7 +55,7 @@ namespace ThirdPartyEventEditor.Controllers
 
             events.Add(@event);
 
-            await SaveEventsAsync(events);
+            await _storage.SaveEventsAsync(events);
 
             return RedirectToAction("Index");
         }
@@ -66,7 +65,7 @@ namespace ThirdPartyEventEditor.Controllers
         {
             var editModel = new ThirdPartyEventEditModel();
 
-            var events = await GetEventsAsync();
+            var events = await _storage.GetEventsAsync();
 
             var eventToUpdate = events.FirstOrDefault(e => e.Id == id);
 
@@ -89,7 +88,7 @@ namespace ThirdPartyEventEditor.Controllers
         [HttpPost]
         public async Task<ActionResult> Edit(ThirdPartyEventEditModel editModel)
         {
-            var events = await GetEventsAsync();
+            var events = await _storage.GetEventsAsync();
 
             var eventToUpdate = events.FirstOrDefault(e => e.Id == editModel.Id);
 
@@ -118,7 +117,7 @@ namespace ThirdPartyEventEditor.Controllers
                 return View(editModel);
             }
 
-            await SaveEventsAsync(events);
+            await _storage.SaveEventsAsync(events);
 
             return RedirectToAction("Index");
         }
@@ -128,7 +127,7 @@ namespace ThirdPartyEventEditor.Controllers
         {
             var editModel = new ThirdPartyEventEditModel();
 
-            var events = await GetEventsAsync();
+            var events = await _storage.GetEventsAsync();
 
             var eventToDelete = events.FirstOrDefault(e => e.Id == id);
 
@@ -151,7 +150,7 @@ namespace ThirdPartyEventEditor.Controllers
         [HttpPost]
         public async Task<ActionResult> DeleteConfirmed(int id)
         {
-            var events = await GetEventsAsync();
+            var events = await _storage.GetEventsAsync();
 
             var eventToDelete = events.FirstOrDefault(e => e.Id == id);
 
@@ -163,38 +162,19 @@ namespace ThirdPartyEventEditor.Controllers
 
             events.RemoveAll(e => e.Id == id);
 
-            await SaveEventsAsync(events);
+            await _storage.SaveEventsAsync(events);
 
             return RedirectToAction("Index");
         }
 
         [HttpGet]
-        public FileResult DownloadFile()
+        public async Task<FileResult> DownloadFile()
         {
-            return File(_path, "application/json", "events.json");
-        }
+            var events = await _storage.GetEventsAsync();
 
-        private async Task<List<ThirdPartyEvent>> GetEventsAsync()
-        {
-            using (var fileStream = new FileStream(_path, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None))
-            {
-                try
-                {
-                    return await JsonSerializer.DeserializeAsync<List<ThirdPartyEvent>>(fileStream);
-                }
-                catch (JsonException)
-                {
-                    return new List<ThirdPartyEvent>();
-                }
-            }
-        }
-        private async Task SaveEventsAsync(List<ThirdPartyEvent> events)
-        {
-            using (var fs = new FileStream(_path, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None))
-            {
-                fs.SetLength(0);
-                await JsonSerializer.SerializeAsync(fs, events);
-            }
+            var bytes = JsonSerializer.SerializeToUtf8Bytes(events);
+
+            return File(bytes, "application/json", "events.json");
         }
 
         private bool IsValidEvent(ThirdPartyEvent @event)
