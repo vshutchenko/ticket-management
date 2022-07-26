@@ -41,7 +41,7 @@ namespace ThirdPartyEventEditor.Controllers
 
             var @event = new ThirdPartyEvent
             {
-                Id = events.GenerateId(),
+                Id = events.Max(e => e.Id) + 1,
                 Name = createModel.Name,
                 Description = createModel.Description,
                 StartDate = createModel.StartDate,
