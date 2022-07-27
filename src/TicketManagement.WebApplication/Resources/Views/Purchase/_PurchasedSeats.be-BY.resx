@@ -126,6 +126,9 @@
   <data name="Event" xml:space="preserve">
     <value>Падзея</value>
   </data>
+  <data name="for ticket" xml:space="preserve">
+    <value>за білет</value>
+  </data>
   <data name="Layout" xml:space="preserve">
     <value>Лакацыя</value>
   </data>

@@ -10,43 +10,23 @@
 AS
 	BEGIN TRANSACTION
 
-	INSERT INTO Event (Name, Description, LayoutId, StartDate, EndDate, ImageUrl, Published)
+	INSERT INTO [Event] (Name, Description, LayoutId, StartDate, EndDate, ImageUrl, Published)
 	VALUES (@name, @description, @layoutId, @startDate, @endDate, @imageUrl, @published)
-	SET @eventId = SCOPE_IDENTITY()
 
-	DECLARE @areaId int
-	DECLARE @areaDescription nvarchar(200)
-	DECLARE @coordX int
-	DECLARE @coordY int
-	DECLARE @eventAreaId int
+	SET @eventId = SCOPE_IDENTITY();
 
-	DECLARE AREA_CURSOR CURSOR 
-	LOCAL STATIC READ_ONLY FORWARD_ONLY
-	FOR 
-	SELECT Id, Description, CoordX, CoordY
-	FROM Area
-	WHERE LayoutId = @layoutId
+	INSERT INTO [EventArea] ([EventId], [Description], [CoordX], [CoordY], [Price])
+		SELECT e.[Id], a.[Description], a.[CoordX], a.[CoordY], 0 FROM [Event] as e 
+		INNER JOIN [Area] as a ON a.[LayoutId] = e.[LayoutId]
+		WHERE e.[Id] = @eventId;
 
-	OPEN AREA_CURSOR
-	FETCH NEXT FROM AREA_CURSOR INTO @areaId, @areaDescription, @coordX, @coordY
-	WHILE @@FETCH_STATUS = 0
-	BEGIN 
-    
-		INSERT INTO EventArea (EventId, Description, CoordX, CoordY, Price)
-		VALUES (@eventId, @areaDescription, @coordX, @coordY, 0)
-	
-		SET @eventAreaId = SCOPE_IDENTITY()
-
-		INSERT INTO EventSeat (EventAreaId, Row, Number, State)
-		SELECT @eventAreaId, Row, Number, 0
-		FROM Seat
-		WHERE AreaId = @areaId
-
-		FETCH NEXT FROM AREA_CURSOR INTO @areaId, @areaDescription, @coordX, @coordY
-
-	END
-
-	CLOSE AREA_CURSOR
-	DEALLOCATE AREA_CURSOR
+	INSERT INTO [EventSeat] ([EventAreaId], [Row], [Number], [State])
+		SELECT ea.[Id] as EventAreaId, s.[Row], s.[Number], 0 as State FROM [Event] as e
+		INNER JOIN [Area] as a ON a.[LayoutId] = e.[LayoutId]
+		INNER JOIN [EventArea] as ea ON ea.[EventId] = e.[Id] AND a.Description = ea.Description
+		INNER JOIN [Seat] as s ON s.[AreaId] = a.[Id]
+		WHERE e.[Id] = @eventId;
 
 	COMMIT
+
+	RETURN

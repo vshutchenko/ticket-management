@@ -123,6 +123,9 @@
   <data name="Home" xml:space="preserve">
     <value>Главная</value>
   </data>
+  <data name="Import events" xml:space="preserve">
+    <value>Импорт событий</value>
+  </data>
   <data name="Not published events" xml:space="preserve">
     <value>Неопубликованные события</value>
   </data>

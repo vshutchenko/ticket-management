@@ -127,7 +127,7 @@ namespace TicketManagement.DataAccess.SqlClientImplementations
         {
             await using var connection = new SqlConnection(_connectionString);
 
-            await using var command = new SqlCommand("UpdateEvent", connection)
+            await using var command = new SqlCommand("UpdateEventWithAreas", connection)
             {
                 CommandType = CommandType.StoredProcedure,
             };

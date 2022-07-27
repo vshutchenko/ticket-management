@@ -53,11 +53,12 @@
 
                     @if (User.IsEventManager())
                     {
+                        var modalId = "modal" + item.Id;
                         <a class="btn btn-primary" asp-action="EditEvent" asp-route-id="@item.Id">@Localizer["Edit"]</a>
 
-                        <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#exampleModal">@Localizer["Delete"]</button>
+                        <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#@modalId">@Localizer["Delete"]</button>
 
-                        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal fade" id="@modalId" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                             <div class="modal-dialog">
                                 <div class="modal-content">
                                     <div class="modal-header">
@@ -69,7 +70,13 @@
                                     </div>
                                     <div class="modal-footer">
                                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">@Localizer["Close"]</button>
-                                        <a class="btn btn-danger" asp-action="DeleteEvent" asp-route-id="@item.Id">@Localizer["Delete"]</a>
+                                        <form asp-action="Delete" asp-antiforgery="true" method="post">
+
+                                        <input type="hidden" name="id" value="@item.Id" />
+
+                                        <input type="submit" class="btn btn-danger" asp-action="DeleteEvent" value="@Localizer["Delete"]" />
+
+                                        </form>
                                     </div>
                                 </div>
                             </div>
