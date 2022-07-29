@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.IO;
 using System.Text.Json;
+using System.Threading;
 using System.Threading.Tasks;
 using ThirdPartyEventEditor.Models;
 using ThirdPartyEventEditor.Services.Interfaces;
@@ -12,6 +13,8 @@ namespace ThirdPartyEventEditor.Services.Implementations
     internal sealed class FileEventStorage : IEventStorage
     {
         private readonly string _path;
+        private static readonly SemaphoreSlim _writeSemaphore = new SemaphoreSlim(1, 1);
+        private static readonly SemaphoreSlim _readSemaphore = new SemaphoreSlim(1, 1);
 
         public FileEventStorage()
         {
@@ -20,25 +23,40 @@ namespace ThirdPartyEventEditor.Services.Implementations
 
         public async Task<List<ThirdPartyEvent>> GetEventsAsync()
         {
-            using (var fileStream = new FileStream(_path, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None))
+            var events = new List<ThirdPartyEvent>();
+
+            await _readSemaphore.WaitAsync();
+
+            try
             {
-                try
+                using (var fileStream = new FileStream(_path, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None))
                 {
-                    return await JsonSerializer.DeserializeAsync<List<ThirdPartyEvent>>(fileStream);
-                }
-                catch (JsonException)
-                {
-                    return new List<ThirdPartyEvent>();
+                    events.AddRange(await JsonSerializer.DeserializeAsync<List<ThirdPartyEvent>>(fileStream));
                 }
             }
+            finally
+            {
+                _readSemaphore.Release();
+            }
+
+            return events;
         }
 
         public async Task SaveEventsAsync(List<ThirdPartyEvent> events)
         {
-            using (var fs = new FileStream(_path, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None))
+            await _writeSemaphore.WaitAsync();
+
+            try
             {
-                fs.SetLength(0);
-                await JsonSerializer.SerializeAsync(fs, events);
+                using (var fs = new FileStream(_path, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None))
+                {
+                    fs.SetLength(0);
+                    await JsonSerializer.SerializeAsync(fs, events);
+                }
+            }
+            finally
+            {
+                _writeSemaphore.Release();
             }
         }
     }
