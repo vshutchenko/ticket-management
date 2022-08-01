@@ -6,8 +6,14 @@ namespace ThirdPartyEventEditor.Services.Interfaces
 {
     public interface IEventStorage
     {
-        Task<List<ThirdPartyEvent>> GetEventsAsync();
+        Task CreateAsync(ThirdPartyEvent @event);
 
-        Task SaveEventsAsync(List<ThirdPartyEvent> events);
+        Task UpdateAsync(ThirdPartyEvent @event);
+
+        Task DeleteAsync(string id);
+
+        Task<List<ThirdPartyEvent>> GetAllAsync();
+
+        Task<ThirdPartyEvent> GetByIdAsync(string id);
     }
 }
