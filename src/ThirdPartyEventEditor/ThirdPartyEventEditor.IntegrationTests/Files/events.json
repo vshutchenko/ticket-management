@@ -1,0 +1,18 @@
+[
+  {
+    "Id": "403dfbd3-a4ac-4d41-b495-59907c7079eb",
+    "Name": "First event",
+    "Description": "Description 1",
+    "StartDate": "2023-01-01T10:00:00Z",
+    "EndDate": "2023-01-01T12:00:00Z",
+    "PosterImage": "Image 1"
+  },
+  {
+    "Id": "48be7ed9-acc2-4723-9ba2-deb2b62747cd",
+    "Name": "Second event",
+    "Description": "Description 2",
+    "StartDate": "2024-01-01T10:00:00Z",
+    "EndDate": "2024-01-01T12:00:00Z",
+    "PosterImage": "Image 2"
+  }
+]
