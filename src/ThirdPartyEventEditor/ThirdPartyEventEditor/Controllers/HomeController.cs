@@ -3,10 +3,8 @@ using System.Threading.Tasks;
 using System.Web.Mvc;
 using ThirdPartyEventEditor.Models;
 using ThirdPartyEventEditor.Extensions;
-using System.Linq;
 using ThirdPartyEventEditor.Services.Interfaces;
 using System.Text.Json;
-using System.Collections.Generic;
 
 namespace ThirdPartyEventEditor.Controllers
 {
@@ -22,7 +20,7 @@ namespace ThirdPartyEventEditor.Controllers
         [HttpGet]
         public async Task<ActionResult> Index()
         {
-            var events = await _storage.GetEventsAsync();
+            var events = await _storage.GetAllAsync();
 
             return View(events);
         }
@@ -36,11 +34,8 @@ namespace ThirdPartyEventEditor.Controllers
         [HttpPost]
         public async Task<ActionResult> Create(ThirdPartyEventCreateModel createModel)
         {
-            var events = await _storage.GetEventsAsync();
-
             var @event = new ThirdPartyEvent
             {
-                Id = events.Max(e => e.Id) + 1,
                 Name = createModel.Name,
                 Description = createModel.Description,
                 StartDate = createModel.StartDate,
@@ -53,21 +48,17 @@ namespace ThirdPartyEventEditor.Controllers
                 return View(createModel);
             }
 
-            events.Add(@event);
-
-            await _storage.SaveEventsAsync(events);
+            await _storage.CreateAsync(@event);
 
             return RedirectToAction("Index");
         }
 
         [HttpGet]
-        public async Task<ActionResult> Edit(int id)
+        public async Task<ActionResult> Edit(Guid id)
         {
             var editModel = new ThirdPartyEventEditModel();
 
-            var events = await _storage.GetEventsAsync();
-
-            var eventToUpdate = events.FirstOrDefault(e => e.Id == id);
+            var eventToUpdate = await _storage.GetByIdAsync(id);
 
             if (eventToUpdate is null)
             {
@@ -88,9 +79,7 @@ namespace ThirdPartyEventEditor.Controllers
         [HttpPost]
         public async Task<ActionResult> Edit(ThirdPartyEventEditModel editModel)
         {
-            var events = await _storage.GetEventsAsync();
-
-            var eventToUpdate = events.FirstOrDefault(e => e.Id == editModel.Id);
+            var eventToUpdate = await _storage.GetByIdAsync(editModel.Id);
 
             if (eventToUpdate is null)
             {
@@ -117,19 +106,17 @@ namespace ThirdPartyEventEditor.Controllers
                 return View(editModel);
             }
 
-            await _storage.SaveEventsAsync(events);
+            await _storage.UpdateAsync(eventToUpdate);
 
             return RedirectToAction("Index");
         }
 
         [HttpGet]
-        public async Task<ActionResult> Delete(int id)
+        public async Task<ActionResult> Delete(Guid id)
         {
             var editModel = new ThirdPartyEventEditModel();
 
-            var events = await _storage.GetEventsAsync();
-
-            var eventToDelete = events.FirstOrDefault(e => e.Id == id);
+            var eventToDelete = await _storage.GetByIdAsync(id);
 
             if (eventToDelete is null)
             {
@@ -148,11 +135,9 @@ namespace ThirdPartyEventEditor.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> DeleteConfirmed(int id)
+        public async Task<ActionResult> DeleteConfirmed(Guid id)
         {
-            var events = await _storage.GetEventsAsync();
-
-            var eventToDelete = events.FirstOrDefault(e => e.Id == id);
+            var eventToDelete = await _storage.GetByIdAsync(id);
 
             if (eventToDelete is null)
             {
@@ -160,9 +145,7 @@ namespace ThirdPartyEventEditor.Controllers
                 return RedirectToAction("Index");
             }
 
-            events.RemoveAll(e => e.Id == id);
-
-            await _storage.SaveEventsAsync(events);
+            await _storage.DeleteAsync(id);
 
             return RedirectToAction("Index");
         }
@@ -170,7 +153,7 @@ namespace ThirdPartyEventEditor.Controllers
         [HttpGet]
         public async Task<FileResult> DownloadFile()
         {
-            var events = await _storage.GetEventsAsync();
+            var events = await _storage.GetAllAsync();
 
             var bytes = JsonSerializer.SerializeToUtf8Bytes(events);
 

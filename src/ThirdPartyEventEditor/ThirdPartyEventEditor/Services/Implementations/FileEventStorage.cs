@@ -2,61 +2,141 @@
 using System.Collections.Generic;
 using System.Configuration;
 using System.IO;
+using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using ThirdPartyEventEditor.Models;
 using ThirdPartyEventEditor.Services.Interfaces;
 
+[assembly: InternalsVisibleTo("ThirdPartyEventEditor.IntegrationTests")]
+
 namespace ThirdPartyEventEditor.Services.Implementations
 {
     internal sealed class FileEventStorage : IEventStorage
     {
         private readonly string _path;
-        private static readonly SemaphoreSlim _writeSemaphore = new SemaphoreSlim(1, 1);
-        private static readonly SemaphoreSlim _readSemaphore = new SemaphoreSlim(1, 1);
+        private static readonly SemaphoreSlim _semaphore = new SemaphoreSlim(1, 1);
 
         public FileEventStorage()
         {
             _path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, ConfigurationManager.AppSettings["jsonFilePath"]);
         }
 
-        public async Task<List<ThirdPartyEvent>> GetEventsAsync()
+        public async Task CreateAsync(ThirdPartyEvent @event)
         {
-            var events = new List<ThirdPartyEvent>();
-
-            await _readSemaphore.WaitAsync();
+            await _semaphore.WaitAsync();
 
             try
             {
-                using (var fileStream = new FileStream(_path, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None))
-                {
-                    events.AddRange(await JsonSerializer.DeserializeAsync<List<ThirdPartyEvent>>(fileStream));
-                }
+                var events = await LoadEventsAsync();
+
+                @event.Id = Guid.NewGuid();
+
+                events.Add(@event);
+
+                await SaveEventsAsync(events);
             }
             finally
             {
-                _readSemaphore.Release();
+                _semaphore.Release();
             }
-
-            return events;
         }
 
-        public async Task SaveEventsAsync(List<ThirdPartyEvent> events)
+        public async Task UpdateAsync(ThirdPartyEvent @event)
         {
-            await _writeSemaphore.WaitAsync();
+            await _semaphore.WaitAsync();
 
             try
             {
-                using (var fs = new FileStream(_path, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None))
-                {
-                    fs.SetLength(0);
-                    await JsonSerializer.SerializeAsync(fs, events);
-                }
+                var events = await LoadEventsAsync();
+
+                var eventToUpdate = events.First(e => e.Id == @event.Id);
+
+                eventToUpdate.Name = @event.Name;
+                eventToUpdate.Description = @event.Description;
+                eventToUpdate.StartDate = @event.StartDate;
+                eventToUpdate.EndDate = @event.EndDate;
+                eventToUpdate.PosterImage = @event.PosterImage;
+
+                await SaveEventsAsync(events);
             }
             finally
             {
-                _writeSemaphore.Release();
+                _semaphore.Release();
+            }
+        }
+
+        public async Task DeleteAsync(Guid id)
+        {
+            await _semaphore.WaitAsync();
+
+            try
+            {
+                var events = await LoadEventsAsync();
+
+                events.RemoveAll(e => e.Id == id);
+
+                await SaveEventsAsync(events);
+            }
+            finally
+            {
+                _semaphore.Release();
+            }
+        }
+
+        public async Task<List<ThirdPartyEvent>> GetAllAsync()
+        {
+            await _semaphore.WaitAsync();
+
+            try
+            {
+                return await LoadEventsAsync();
+            }
+            finally
+            {
+                _semaphore.Release();
+            }
+        }
+
+        public async Task<ThirdPartyEvent> GetByIdAsync(Guid id)
+        {
+            await _semaphore.WaitAsync();
+
+            try
+            {
+                var events = await LoadEventsAsync();
+
+                return events.First(e => e.Id == id);
+            }
+            finally
+            {
+                _semaphore.Release();
+            }
+        }
+
+        private async Task<List<ThirdPartyEvent>> LoadEventsAsync()
+        {
+            try
+            {
+                using (var fileStream = new FileStream(_path, FileMode.OpenOrCreate, FileAccess.Read))
+                {
+                    return new List<ThirdPartyEvent>(await JsonSerializer.DeserializeAsync<List<ThirdPartyEvent>>(fileStream));
+                }
+            }
+            catch (JsonException)
+            {
+                return new List<ThirdPartyEvent>();
+            }
+        }
+
+        private async Task SaveEventsAsync(List<ThirdPartyEvent> events)
+        {
+            using (var fs = new FileStream(_path, FileMode.OpenOrCreate, FileAccess.Write))
+            {
+                fs.SetLength(0);
+                await JsonSerializer.SerializeAsync(fs, events);
             }
         }
     }
