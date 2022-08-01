@@ -32,7 +32,7 @@ namespace ThirdPartyEventEditor.Services.Implementations
             {
                 var events = await LoadEventsAsync();
 
-                @event.Id = Guid.NewGuid().ToString();
+                @event.Id = Guid.NewGuid();
 
                 events.Add(@event);
 
@@ -68,7 +68,7 @@ namespace ThirdPartyEventEditor.Services.Implementations
             }
         }
 
-        public async Task DeleteAsync(string id)
+        public async Task DeleteAsync(Guid id)
         {
             await _semaphore.WaitAsync();
 
@@ -100,7 +100,7 @@ namespace ThirdPartyEventEditor.Services.Implementations
             }
         }
 
-        public async Task<ThirdPartyEvent> GetByIdAsync(string id)
+        public async Task<ThirdPartyEvent> GetByIdAsync(Guid id)
         {
             await _semaphore.WaitAsync();
 

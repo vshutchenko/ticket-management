@@ -39,7 +39,7 @@ namespace ThirdPartyEventEditor.IntegrationTests
             {
                 new ThirdPartyEvent
                 {
-                    Id = "403dfbd3-a4ac-4d41-b495-59907c7079eb",
+                    Id = Guid.Parse("403dfbd3-a4ac-4d41-b495-59907c7079eb"),
                     Name = "First event",
                     Description = "Description 1",
                     StartDate = new DateTime(2023, 1, 1, 10, 0, 0),
@@ -48,7 +48,7 @@ namespace ThirdPartyEventEditor.IntegrationTests
                 },
                 new ThirdPartyEvent
                 {
-                    Id = "48be7ed9-acc2-4723-9ba2-deb2b62747cd",
+                    Id = Guid.Parse("48be7ed9-acc2-4723-9ba2-deb2b62747cd"),
                     Name = "Second event",
                     Description = "Description 2",
                     StartDate = new DateTime(2024, 1, 1, 10, 0, 0),
@@ -58,8 +58,6 @@ namespace ThirdPartyEventEditor.IntegrationTests
             };
 
             var actualEventsBeforeCreate = await _storage.GetAllAsync();
-
-            actualEventsBeforeCreate.Should().BeEquivalentTo(expectedEventsBeforeCreate);
 
             var eventsToCreate = new List<ThirdPartyEvent>()
             {
@@ -101,7 +99,7 @@ namespace ThirdPartyEventEditor.IntegrationTests
             {
                 new ThirdPartyEvent
                 {
-                    Id = "403dfbd3-a4ac-4d41-b495-59907c7079eb",
+                    Id = Guid.Parse("403dfbd3-a4ac-4d41-b495-59907c7079eb"),
                     Name = "First event",
                     Description = "Description 1",
                     StartDate = new DateTime(2023, 1, 1, 10, 0, 0),
@@ -110,7 +108,7 @@ namespace ThirdPartyEventEditor.IntegrationTests
                 },
                 new ThirdPartyEvent
                 {
-                    Id = "48be7ed9-acc2-4723-9ba2-deb2b62747cd",
+                    Id = Guid.Parse("48be7ed9-acc2-4723-9ba2-deb2b62747cd"),
                     Name = "Second event",
                     Description = "Description 2",
                     StartDate = new DateTime(2024, 1, 1, 10, 0, 0),
@@ -165,6 +163,7 @@ namespace ThirdPartyEventEditor.IntegrationTests
             var actualEvents = await _storage.GetAllAsync();
 
             // Assert
+            actualEventsBeforeCreate.Should().BeEquivalentTo(expectedEventsBeforeCreate);
             actualEvents.Should().BeEquivalentTo(expectedEvents, opt => opt.Excluding(e => e.Id));
         }
 
@@ -176,7 +175,7 @@ namespace ThirdPartyEventEditor.IntegrationTests
             {
                 new ThirdPartyEvent
                 {
-                    Id = "403dfbd3-a4ac-4d41-b495-59907c7079eb",
+                    Id = Guid.Parse("403dfbd3-a4ac-4d41-b495-59907c7079eb"),
                     Name = "First event",
                     Description = "Description 1",
                     StartDate = new DateTime(2023, 1, 1, 10, 0, 0),
@@ -185,7 +184,7 @@ namespace ThirdPartyEventEditor.IntegrationTests
                 },
                 new ThirdPartyEvent
                 {
-                    Id = "48be7ed9-acc2-4723-9ba2-deb2b62747cd",
+                    Id = Guid.Parse("48be7ed9-acc2-4723-9ba2-deb2b62747cd"),
                     Name = "Second event",
                     Description = "Description 2",
                     StartDate = new DateTime(2024, 1, 1, 10, 0, 0),
@@ -196,12 +195,10 @@ namespace ThirdPartyEventEditor.IntegrationTests
 
             var actualEventsBeforeUpdate = await _storage.GetAllAsync();
 
-            actualEventsBeforeUpdate.Should().BeEquivalentTo(expectedEventsBeforeUpdate);
-
-            var idsToDelete = new List<string>()
+            var idsToDelete = new List<Guid>()
             {
-                "403dfbd3-a4ac-4d41-b495-59907c7079eb",
-                "48be7ed9-acc2-4723-9ba2-deb2b62747cd",
+                Guid.Parse("403dfbd3-a4ac-4d41-b495-59907c7079eb"),
+                Guid.Parse("48be7ed9-acc2-4723-9ba2-deb2b62747cd"),
             };
 
             var expectedEvents = new List<ThirdPartyEvent>();
@@ -220,6 +217,7 @@ namespace ThirdPartyEventEditor.IntegrationTests
             var actualEvents = await _storage.GetAllAsync();
 
             // Assert
+            actualEventsBeforeUpdate.Should().BeEquivalentTo(expectedEventsBeforeUpdate);
             actualEvents.Should().BeEquivalentTo(expectedEvents);
         }
 
@@ -231,7 +229,7 @@ namespace ThirdPartyEventEditor.IntegrationTests
             {
                 new ThirdPartyEvent
                 {
-                    Id = "403dfbd3-a4ac-4d41-b495-59907c7079eb",
+                    Id = Guid.Parse("403dfbd3-a4ac-4d41-b495-59907c7079eb"),
                     Name = "First event",
                     Description = "Description 1",
                     StartDate = new DateTime(2023, 1, 1, 10, 0, 0),
@@ -240,7 +238,7 @@ namespace ThirdPartyEventEditor.IntegrationTests
                 },
                 new ThirdPartyEvent
                 {
-                    Id = "48be7ed9-acc2-4723-9ba2-deb2b62747cd",
+                    Id = Guid.Parse("48be7ed9-acc2-4723-9ba2-deb2b62747cd"),
                     Name = "Second event",
                     Description = "Description 2",
                     StartDate = new DateTime(2024, 1, 1, 10, 0, 0),
@@ -251,13 +249,11 @@ namespace ThirdPartyEventEditor.IntegrationTests
 
             var actualEventsBeforeUpdate = await _storage.GetAllAsync();
 
-            actualEventsBeforeUpdate.Should().BeEquivalentTo(expectedEventsBeforeUpdate);
-
             var eventsToUpdate = new List<ThirdPartyEvent>()
             {
                 new ThirdPartyEvent
                 {
-                    Id = "403dfbd3-a4ac-4d41-b495-59907c7079eb",
+                    Id = Guid.Parse("403dfbd3-a4ac-4d41-b495-59907c7079eb"),
                     Name = "First updated event",
                     Description = "Updated description 1",
                     StartDate = new DateTime(2023, 1, 1, 10, 0, 0),
@@ -266,7 +262,7 @@ namespace ThirdPartyEventEditor.IntegrationTests
                 },
                 new ThirdPartyEvent
                 {
-                    Id = "48be7ed9-acc2-4723-9ba2-deb2b62747cd",
+                    Id = Guid.Parse("48be7ed9-acc2-4723-9ba2-deb2b62747cd"),
                     Name = "Second updated event",
                     Description = "Updated description 2",
                     StartDate = new DateTime(2025, 1, 1, 10, 0, 0),
@@ -289,6 +285,7 @@ namespace ThirdPartyEventEditor.IntegrationTests
             var actualEvents = await _storage.GetAllAsync();
 
             // Assert
+            actualEventsBeforeUpdate.Should().BeEquivalentTo(expectedEventsBeforeUpdate);
             actualEvents.Should().BeEquivalentTo(eventsToUpdate);
         }
     }

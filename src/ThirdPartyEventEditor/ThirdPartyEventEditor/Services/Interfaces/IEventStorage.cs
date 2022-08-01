@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using ThirdPartyEventEditor.Models;
 
@@ -10,10 +11,10 @@ namespace ThirdPartyEventEditor.Services.Interfaces
 
         Task UpdateAsync(ThirdPartyEvent @event);
 
-        Task DeleteAsync(string id);
+        Task DeleteAsync(Guid id);
 
         Task<List<ThirdPartyEvent>> GetAllAsync();
 
-        Task<ThirdPartyEvent> GetByIdAsync(string id);
+        Task<ThirdPartyEvent> GetByIdAsync(Guid id);
     }
 }

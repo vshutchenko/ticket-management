@@ -6,7 +6,7 @@ namespace ThirdPartyEventEditor.Models
 {
     public class ThirdPartyEventEditModel
     {
-        public string Id { get; set; }
+        public Guid Id { get; set; }
 
         [Display(Name = "Name")]
         [Required(ErrorMessage = "Name is required")]

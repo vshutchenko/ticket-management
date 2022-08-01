@@ -54,7 +54,7 @@ namespace ThirdPartyEventEditor.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult> Edit(string id)
+        public async Task<ActionResult> Edit(Guid id)
         {
             var editModel = new ThirdPartyEventEditModel();
 
@@ -112,7 +112,7 @@ namespace ThirdPartyEventEditor.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult> Delete(string id)
+        public async Task<ActionResult> Delete(Guid id)
         {
             var editModel = new ThirdPartyEventEditModel();
 
@@ -135,7 +135,7 @@ namespace ThirdPartyEventEditor.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> DeleteConfirmed(string id)
+        public async Task<ActionResult> DeleteConfirmed(Guid id)
         {
             var eventToDelete = await _storage.GetByIdAsync(id);
 
