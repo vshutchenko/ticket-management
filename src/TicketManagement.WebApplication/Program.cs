@@ -1,11 +1,15 @@
 using System.Globalization;
+using System.Text;
 using AutoMapper;
-using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 using TicketManagement.BusinessLogic.DependencyResolving;
 using TicketManagement.BusinessLogic.Interfaces;
+using TicketManagement.WebApplication.Authentication;
+using TicketManagement.WebApplication.Controllers;
 using TicketManagement.WebApplication.Filters;
 using TicketManagement.WebApplication.Infrastructure;
 using TicketManagement.WebApplication.ModelBinders;
@@ -26,13 +30,19 @@ builder.Services.AddEntityFrameworkServices(connectionString);
 
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-builder.Services
-    .AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-    .AddCookie(options =>
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters
     {
-        options.LoginPath = new Microsoft.AspNetCore.Http.PathString("/Account/Login");
-        options.AccessDeniedPath = new Microsoft.AspNetCore.Http.PathString("/Account/AccessDenied");
-    });
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        ValidIssuer = builder.Configuration["Jwt:Issuer"],
+        ValidAudience = builder.Configuration["Jwt:Audience"],
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"])),
+    };
+});
 
 builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
 
@@ -44,7 +54,10 @@ builder.Services.AddControllersWithViews(options =>
 })
     .AddRazorRuntimeCompilation()
     .AddDataAnnotationsLocalization()
-    .AddViewLocalization(Microsoft.AspNetCore.Mvc.Razor.LanguageViewLocationExpanderFormat.Suffix);
+    .AddViewLocalization(Microsoft.AspNetCore.Mvc.Razor.LanguageViewLocationExpanderFormat.Suffix)
+    .AddSessionStateTempDataProvider();
+
+builder.Services.AddSession();
 
 builder.Services.Configure<RequestLocalizationOptions>(options =>
 {
@@ -56,6 +69,13 @@ builder.Services.Configure<RequestLocalizationOptions>(options =>
     var requestProvider = options.RequestCultureProviders.OfType<AcceptLanguageHeaderRequestCultureProvider>().First();
     options.RequestCultureProviders.Remove(requestProvider);
 });
+
+builder.Services.AddTransient<BackendApiAuthenticationHttpClientHandler>();
+
+builder.Services.AddTransient<AccountController>();
+
+builder.Services.AddHttpClient<AccountController>()
+    .AddHttpMessageHandler<BackendApiAuthenticationHttpClientHandler>();
 
 var app = builder.Build();
 
@@ -75,6 +95,19 @@ else
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
+
+app.UseSession();
+
+app.Use(async (context, next) =>
+{
+    var token = context.Session.GetString("Token");
+    if (!string.IsNullOrEmpty(token))
+    {
+        context.Request.Headers.Add("Authorization", "Bearer " + token);
+    }
+
+    await next();
+});
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
