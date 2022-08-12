@@ -28,10 +28,6 @@
   </ItemGroup>
 
   <ItemGroup>
-	  <ProjectReference Include="..\TicketManagement.BusinessLogic\TicketManagement.BusinessLogic.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Folder Include="wwwroot\lib\jquery\" />
     <Folder Include="wwwroot\EventImages\" />
   </ItemGroup>

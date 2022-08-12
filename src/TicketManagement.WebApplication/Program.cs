@@ -1,33 +1,17 @@
 using System.Globalization;
 using System.Text;
-using AutoMapper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Localization;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
-using TicketManagement.BusinessLogic.DependencyResolving;
-using TicketManagement.BusinessLogic.Interfaces;
 using TicketManagement.WebApplication.Authentication;
 using TicketManagement.WebApplication.Controllers;
 using TicketManagement.WebApplication.Filters;
-using TicketManagement.WebApplication.Infrastructure;
 using TicketManagement.WebApplication.ModelBinders;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddScoped(provider => new MapperConfiguration(mc =>
-{
-    mc.AddProfile(new MappingProfile());
-    mc.AddProfile(new TicketManagement.BusinessLogic.MappingConfig.MappingProfile());
-})
-.CreateMapper());
-
-var connectionString = builder.Configuration.GetConnectionString("TicketManagement.Database");
-
-builder.Services.AddEntityFrameworkServices(connectionString);
-
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
@@ -78,12 +62,6 @@ builder.Services.AddHttpClient<AccountController>()
     .AddHttpMessageHandler<BackendApiAuthenticationHttpClientHandler>();
 
 var app = builder.Build();
-
-using var scope = app.Services.CreateScope();
-
-var identityService = scope.ServiceProvider.GetRequiredService<IIdentityService>();
-
-await identityService.SeedInitialDataAsync();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
