@@ -1,52 +1,112 @@
-using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using TicketManagement.BusinessLogic.Interfaces;
-using TicketManagement.BusinessLogic.Models;
+using TicketManagement.EventApi.Models;
+using TicketManagement.EventApi.Services.Interfaces;
+using TicketManagement.EventApi.Services.Validation;
 
 namespace TicketManagement.EventApi.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Authorize(Roles = "Event manager")]
+    [Route("events")]
+    [Produces("application/json")]
     public class EventController : ControllerBase
     {
         private readonly IEventService _eventService;
-        private readonly IEventAreaService _eventAreaService;
-        private readonly ILayoutService _layoutService;
-        private readonly IVenueService _venueService;
-        private readonly IMapper _mapper;
 
-        public EventController(
-            IEventService eventService,
-            IEventAreaService eventAreaService,
-            ILayoutService layoutService,
-            IVenueService venueService,
-            IMapper mapper)
+        public EventController(IEventService eventService)
         {
             _eventService = eventService ?? throw new ArgumentNullException(nameof(eventService));
-            _eventAreaService = eventAreaService ?? throw new ArgumentNullException(nameof(eventAreaService));
-            _layoutService = layoutService ?? throw new ArgumentNullException(nameof(layoutService));
-            _venueService = venueService ?? throw new ArgumentNullException(nameof(venueService));
-            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
 
         [HttpGet]
-        public IEnumerable<EventModel> Get()
+        [AllowAnonymous]
+        [ProducesResponseType(typeof(List<EventModel>), StatusCodes.Status200OK)]
+        public IActionResult GetPublishedEvents()
         {
             var events = _eventService.GetAll()
                 .Where(e => e.Published)
                 .ToList();
 
-            return events;
+            return Ok(events);
+        }
+
+        [HttpGet("not-published")]
+        [ProducesResponseType(typeof(List<EventModel>), StatusCodes.Status200OK)]
+        public IActionResult GetNotPublishedEvents()
+        {
+            var events = _eventService.GetAll()
+                .Where(e => !e.Published)
+                .ToList();
+
+            return Ok(events);
+        }
+
+        [HttpGet("{id}")]
+        [ProducesResponseType(typeof(EventModel), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetCityById(int id)
+        {
+            try
+            {
+                var @event = await _eventService.GetByIdAsync(id);
+                return Ok(@event);
+            }
+            catch (ValidationException)
+            {
+                return NotFound();
+            }
         }
 
         [HttpPost]
-        public IActionResult Post(EventModel @event)
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> CreateEvent([FromBody] EventModel @event)
         {
-            var events = _eventService.GetAll()
-                .Where(e => e.Published)
-                .ToList();
+            try
+            {
+                var id = await _eventService.CreateAsync(@event);
 
-            return events;
+                return CreatedAtAction(nameof(CreateEvent), new { id = id });
+            }
+            catch (ValidationException ex)
+            {
+                return BadRequest(new { error = ex.Message });
+            }
+        }
+
+        [HttpPut]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> UpdateEvent([FromBody] EventModel @event)
+        {
+            try
+            {
+                await _eventService.UpdateAsync(@event);
+
+                return NoContent();
+            }
+            catch (ValidationException ex)
+            {
+                return BadRequest(new { error = ex.Message });
+            }
+        }
+
+        [HttpDelete("{id}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> Delete(int id)
+        {
+            try
+            {
+                await _eventService.DeleteAsync(id);
+
+                return NoContent();
+            }
+            catch (ValidationException ex)
+            {
+                return BadRequest(new { error = ex.Message });
+            }
         }
     }
 }
