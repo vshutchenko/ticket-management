@@ -1,4 +1,4 @@
-﻿namespace TicketManagement.EventApi.Models
+﻿namespace TicketManagement.VenueApi.Models
 {
     public class LayoutModel
     {

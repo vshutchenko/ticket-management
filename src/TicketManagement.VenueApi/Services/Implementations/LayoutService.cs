@@ -1,11 +1,11 @@
 ﻿using AutoMapper;
 using TicketManagement.DataAccess.Entities;
 using TicketManagement.DataAccess.Interfaces;
-using TicketManagement.EventApi.Models;
-using TicketManagement.EventApi.Services.Interfaces;
-using TicketManagement.EventApi.Services.Validation;
+using TicketManagement.VenueApi.Models;
+using TicketManagement.VenueApi.Services.Interfaces;
+using TicketManagement.VenueApi.Services.Validation;
 
-namespace TicketManagement.EventApi.Services.Implementations
+namespace TicketManagement.VenueApi.Services.Implementations
 {
     internal class LayoutService : ILayoutService
     {

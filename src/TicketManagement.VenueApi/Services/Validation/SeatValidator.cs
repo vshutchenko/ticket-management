@@ -1,7 +1,7 @@
 ﻿using TicketManagement.DataAccess.Entities;
 using TicketManagement.DataAccess.Interfaces;
 
-namespace TicketManagement.EventApi.Services.Validation
+namespace TicketManagement.VenueApi.Services.Validation
 {
     internal class SeatValidator : IValidator<Seat>
     {

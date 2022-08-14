@@ -1,6 +1,6 @@
-﻿using TicketManagement.EventApi.Models;
+﻿using TicketManagement.VenueApi.Models;
 
-namespace TicketManagement.EventApi.Services.Interfaces
+namespace TicketManagement.VenueApi.Services.Interfaces
 {
     public interface IAreaService
     {

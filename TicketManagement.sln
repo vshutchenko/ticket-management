@@ -31,6 +31,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TicketManagement.EventApi",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TicketManagement.PurchaseApi", "TicketManagement.PurchaseApi\TicketManagement.PurchaseApi.csproj", "{C5900D27-EBD9-4E03-87D7-99EA202271E1}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TicketManagement.VenueApi", "src\TicketManagement.VenueApi\TicketManagement.VenueApi.csproj", "{A2863D8F-26A1-4C4C-878E-BBC12286772F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -71,6 +73,10 @@ Global
 		{C5900D27-EBD9-4E03-87D7-99EA202271E1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C5900D27-EBD9-4E03-87D7-99EA202271E1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C5900D27-EBD9-4E03-87D7-99EA202271E1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A2863D8F-26A1-4C4C-878E-BBC12286772F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A2863D8F-26A1-4C4C-878E-BBC12286772F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A2863D8F-26A1-4C4C-878E-BBC12286772F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A2863D8F-26A1-4C4C-878E-BBC12286772F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -84,6 +90,7 @@ Global
 		{1CEC8A47-36FC-4724-8BAA-FAC04E0E7138} = {502C7BF9-0688-4EB0-ADDE-BE35C207FA89}
 		{C688F415-7EB9-411C-8879-B6C52429F865} = {502C7BF9-0688-4EB0-ADDE-BE35C207FA89}
 		{C5900D27-EBD9-4E03-87D7-99EA202271E1} = {502C7BF9-0688-4EB0-ADDE-BE35C207FA89}
+		{A2863D8F-26A1-4C4C-878E-BBC12286772F} = {502C7BF9-0688-4EB0-ADDE-BE35C207FA89}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {8FCBA386-043C-4C32-82A6-14ABB78C7FEC}
