@@ -1,8 +1,10 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Identity;
 using TicketManagement.DataAccess.Entities;
 using TicketManagement.DataAccess.Interfaces;
 using TicketManagement.PurchaseApi.Models;
 using TicketManagement.PurchaseApi.Services.Interfaces;
+using TicketManagement.PurchaseApi.Services.Validation;
 
 namespace TicketManagement.PurchaseApi.Services.Implementations
 {
@@ -11,21 +13,24 @@ namespace TicketManagement.PurchaseApi.Services.Implementations
         private readonly UserManager<User> _userManager;
         private readonly IRepository<Purchase> _purchaseRepository;
         private readonly IRepository<PurchasedSeat> _purchasedSeatRepository;
-        private readonly IEventSeatService _eventSeatService;
-        private readonly IEventAreaService _eventAreaService;
+        private readonly IRepository<EventSeat> _eventSeatRepository;
+        private readonly IRepository<EventArea> _eventAreaRepository;
+        private readonly IMapper _mapper;
 
         public PurchaseService(
             UserManager<User> userManager,
             IRepository<Purchase> purchaseRepository,
             IRepository<PurchasedSeat> purchasedSeatRepository,
-            IEventSeatService eventSeatService,
-            IEventAreaService eventAreaService)
+            IRepository<EventSeat> eventSeatRepository,
+            IRepository<EventArea> eventAreaRepository,
+            IMapper mapper)
         {
             _userManager = userManager;
             _purchaseRepository = purchaseRepository;
             _purchasedSeatRepository = purchasedSeatRepository;
-            _eventSeatService = eventSeatService;
-            _eventAreaService = eventAreaService;
+            _eventSeatRepository = eventSeatRepository;
+            _eventAreaRepository = eventAreaRepository;
+            _mapper = mapper;
         }
 
         public async Task PurchaseSeatAsync(PurchaseModel model)
@@ -39,13 +44,17 @@ namespace TicketManagement.PurchaseApi.Services.Implementations
                 Price = await CalculatePriceAsync(model.SeatIds),
             };
 
-            await MakePayment(purchase.UserId, purchase.Price);
+            await MakePayment(purchase.UserId!, purchase.Price);
 
             var purchaseId = await _purchaseRepository.CreateAsync(purchase);
 
             foreach (var id in model.SeatIds)
             {
-                await _eventSeatService.SetSeatStateAsync(id, EventSeatStateModel.Ordered);
+                var seat = await _eventSeatRepository.GetByIdAsync(id);
+
+                seat.State = EventSeatState.Ordered;
+
+                await _eventSeatRepository.UpdateAsync(seat);
 
                 var purchasedSeat = new PurchasedSeat { EventSeatId = id, PurchaseId = purchaseId };
 
@@ -86,8 +95,9 @@ namespace TicketManagement.PurchaseApi.Services.Implementations
                 .Select(ps => ps.EventSeatId)
                 .ToList();
 
-            var eventSeats = _eventSeatService.GetAll()
+            var eventSeats = _eventSeatRepository.GetAll()
                 .Where(s => purchasedSeatIds.Contains(s.Id))
+                .Select(m => _mapper.Map<EventSeatModel>(m))
                 .ToList();
 
             return eventSeats;
@@ -102,9 +112,9 @@ namespace TicketManagement.PurchaseApi.Services.Implementations
 
             foreach (var id in seatIds)
             {
-                var seat = await _eventSeatService.GetByIdAsync(id);
+                var seat = await _eventSeatRepository.GetByIdAsync(id);
 
-                if (seat.State != EventSeatStateModel.Available)
+                if (seat.State != EventSeatState.Available)
                 {
                     throw new ValidationException($"One or more seats have already been ordered.");
                 }
@@ -117,8 +127,8 @@ namespace TicketManagement.PurchaseApi.Services.Implementations
 
             foreach (var id in seatIds)
             {
-                var seat = await _eventSeatService.GetByIdAsync(id);
-                var area = await _eventAreaService.GetByIdAsync(seat.EventAreaId);
+                var seat = await _eventSeatRepository.GetByIdAsync(id);
+                var area = await _eventAreaRepository.GetByIdAsync(seat.EventAreaId);
 
                 totalPrice += area.Price;
             }

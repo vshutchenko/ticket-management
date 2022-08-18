@@ -8,6 +8,7 @@ namespace TicketManagement.PurchaseApi.MappingConfig
     {
         public MappingProfile()
         {
+            CreateMap<EventSeat, EventSeatModel>();
             CreateMap<Purchase, PurchaseModel>();
             CreateMap<PurchaseModel, Purchase>()
                 .ForSourceMember(x => x.SeatIds, opt => opt.DoNotValidate());
