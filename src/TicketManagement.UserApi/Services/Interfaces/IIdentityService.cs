@@ -1,6 +1,6 @@
 ﻿using TicketManagement.UserApi.Models;
 
-namespace TicketManagement.UserApi.Services.Implementations
+namespace TicketManagement.UserApi.Services.Interfaces
 {
     public interface IIdentityService
     {
@@ -8,9 +8,13 @@ namespace TicketManagement.UserApi.Services.Implementations
 
         Task UpdateUserAsync(UserModel user);
 
-        Task<UserModel> GetUserAsync(string userId);
+        Task<UserModel> GetUserByIdAsync(string userId);
+
+        Task<UserModel> GetUserByEmailAsync(string email);
 
         Task<IList<string>> GetRolesAsync(string userId);
+
+        Task<bool> CheckPasswordAsync(string userId, string password);
 
         Task<UserModel> AuthenticateAsync(string email, string password);
 

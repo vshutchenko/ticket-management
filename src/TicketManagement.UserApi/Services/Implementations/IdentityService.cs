@@ -1,8 +1,9 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Identity;
-using TicketManagement.BusinessLogic.Interfaces;
 using TicketManagement.DataAccess.Entities;
 using TicketManagement.UserApi.Models;
+using TicketManagement.UserApi.Services.Interfaces;
+using TicketManagement.UserApi.Services.Validation;
 
 namespace TicketManagement.UserApi.Services.Implementations
 {
@@ -53,6 +54,20 @@ namespace TicketManagement.UserApi.Services.Implementations
             }
         }
 
+        public async Task<bool> CheckPasswordAsync(string userId, string password)
+        {
+            var existingUser = await _userManager.FindByIdAsync(userId);
+
+            if (existingUser == null)
+            {
+                throw new ValidationException("User was not found.");
+            }
+
+            var isValidPassword = await _userManager.CheckPasswordAsync(existingUser, password);
+
+            return isValidPassword;
+        }
+
         public async Task ChangePasswordAsync(string userId, string currentPassword, string newPassword)
         {
             var existingUser = await _userManager.FindByIdAsync(userId);
@@ -77,9 +92,23 @@ namespace TicketManagement.UserApi.Services.Implementations
             }
         }
 
-        public async Task<UserModel> GetUserAsync(string userId)
+        public async Task<UserModel> GetUserByIdAsync(string userId)
         {
             var existingUser = await _userManager.FindByIdAsync(userId);
+
+            if (existingUser == null)
+            {
+                throw new ValidationException("User was not found.");
+            }
+
+            var model = _mapper.Map<UserModel>(existingUser);
+
+            return model;
+        }
+
+        public async Task<UserModel> GetUserByEmailAsync(string email)
+        {
+            var existingUser = await _userManager.FindByEmailAsync(email);
 
             if (existingUser == null)
             {
@@ -207,7 +236,7 @@ namespace TicketManagement.UserApi.Services.Implementations
                     Email = "admin@gmail.com",
                     NormalizedEmail = "ADMIN@GMAIL.COM",
                     EmailConfirmed = false,
-                    PasswordHash = _userManager.PasswordHasher.HashPassword(null, "Password123#"),
+                    PasswordHash = _userManager.PasswordHasher.HashPassword(null!, "Password123#"),
                     SecurityStamp = string.Empty,
                     FirstName = "John",
                     LastName = "Doe",
@@ -222,7 +251,7 @@ namespace TicketManagement.UserApi.Services.Implementations
                     Email = "manager1@gmail.com",
                     NormalizedEmail = "MANAGER1@GMAIL.COM",
                     EmailConfirmed = false,
-                    PasswordHash = _userManager.PasswordHasher.HashPassword(null, "Password123#"),
+                    PasswordHash = _userManager.PasswordHasher.HashPassword(null!, "Password123#"),
                     SecurityStamp = string.Empty,
                     FirstName = "John",
                     LastName = "Doe",
@@ -237,7 +266,7 @@ namespace TicketManagement.UserApi.Services.Implementations
                     Email = "user1@gmail.com",
                     NormalizedEmail = "USER1@GMAIL.COM",
                     EmailConfirmed = false,
-                    PasswordHash = _userManager.PasswordHasher.HashPassword(null, "Password123#"),
+                    PasswordHash = _userManager.PasswordHasher.HashPassword(null!, "Password123#"),
                     SecurityStamp = string.Empty,
                     FirstName = "John",
                     LastName = "Doe",
@@ -252,7 +281,7 @@ namespace TicketManagement.UserApi.Services.Implementations
                     Email = "eventManager@gmail.com",
                     NormalizedEmail = "EVENTMANAGER@GMAIL.COM",
                     EmailConfirmed = false,
-                    PasswordHash = _userManager.PasswordHasher.HashPassword(null, "Password123#"),
+                    PasswordHash = _userManager.PasswordHasher.HashPassword(null!, "Password123#"),
                     SecurityStamp = string.Empty,
                     FirstName = "John",
                     LastName = "Doe",
