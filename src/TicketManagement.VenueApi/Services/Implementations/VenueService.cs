@@ -5,7 +5,7 @@ using TicketManagement.VenueApi.Models;
 using TicketManagement.VenueApi.Services.Interfaces;
 using TicketManagement.VenueApi.Services.Validation;
 
-namespace TicketManagement.EventApi.Services.Implementations
+namespace TicketManagement.VenueApi.Services.Implementations
 {
     internal class VenueService : IVenueService
     {

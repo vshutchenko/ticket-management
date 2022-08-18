@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TicketManagement.VenueApi.Models;
 using TicketManagement.VenueApi.Services.Interfaces;
@@ -5,7 +6,9 @@ using TicketManagement.VenueApi.Services.Interfaces;
 namespace TicketManagement.VenueApi.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Authorize(Roles = "Venue manager,Event manager")]
+    [Route("venues")]
+    [Produces("application/json")]
     public class VenueController : ControllerBase
     {
         private readonly IVenueService _venueService;
@@ -16,12 +19,13 @@ namespace TicketManagement.VenueApi.Controllers
         }
 
         [HttpGet]
-        public IEnumerable<VenueModel> Get()
+        [ProducesResponseType(typeof(List<VenueModel>), StatusCodes.Status200OK)]
+        public IActionResult GetVenues()
         {
             var venues = _venueService.GetAll()
                 .ToList();
 
-            return venues;
+            return Ok(venues);
         }
     }
 }
