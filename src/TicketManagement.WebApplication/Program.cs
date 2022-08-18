@@ -1,32 +1,37 @@
 using System.Globalization;
-using System.Text;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+using AutoMapper;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Tokens;
-using TicketManagement.WebApplication.Authentication;
-using TicketManagement.WebApplication.Controllers;
+using RestEase.HttpClientFactory;
+using Serilog;
+using TicketManagement.WebApplication.Clients.EventApi;
+using TicketManagement.WebApplication.Clients.PurchaseApi;
+using TicketManagement.WebApplication.Clients.UserApi;
+using TicketManagement.WebApplication.Clients.VenueApi;
 using TicketManagement.WebApplication.Filters;
+using TicketManagement.WebApplication.Infrastructure;
+using TicketManagement.WebApplication.JwtAuthentication;
 using TicketManagement.WebApplication.ModelBinders;
+using TicketManagement.WebApplication.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+Log.Logger = new LoggerConfiguration()
+                .ReadFrom.Configuration(builder.Configuration)
+                .CreateLogger();
+
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddScoped(provider => new MapperConfiguration(mc =>
+{
+    mc.AddProfile(new MappingProfile());
+})
+.CreateMapper());
+
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
-{
-    options.TokenValidationParameters = new TokenValidationParameters
-    {
-        ValidateIssuer = true,
-        ValidateAudience = true,
-        ValidateLifetime = true,
-        ValidateIssuerSigningKey = true,
-        ValidIssuer = builder.Configuration["Jwt:Issuer"],
-        ValidAudience = builder.Configuration["Jwt:Audience"],
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"])),
-    };
-});
+builder.Services.AddAuthentication(JwtAutheticationConstants.SchemeName)
+                .AddScheme<JwtAuthenticationOptions, JwtAuthenticationHandler>(JwtAutheticationConstants.SchemeName, null);
 
 builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
 
@@ -34,14 +39,10 @@ builder.Services.AddControllersWithViews(options =>
 {
     options.ModelBinderProviders.Insert(0, new InvariantDecimalModelBinderProvider());
     options.Filters.Add<UnexpectedExceptionFilter>();
-    options.Filters.Add<ValidationExceptionFilter>();
 })
     .AddRazorRuntimeCompilation()
     .AddDataAnnotationsLocalization()
-    .AddViewLocalization(Microsoft.AspNetCore.Mvc.Razor.LanguageViewLocationExpanderFormat.Suffix)
-    .AddSessionStateTempDataProvider();
-
-builder.Services.AddSession();
+    .AddViewLocalization(Microsoft.AspNetCore.Mvc.Razor.LanguageViewLocationExpanderFormat.Suffix);
 
 builder.Services.Configure<RequestLocalizationOptions>(options =>
 {
@@ -54,12 +55,17 @@ builder.Services.Configure<RequestLocalizationOptions>(options =>
     options.RequestCultureProviders.Remove(requestProvider);
 });
 
-builder.Services.AddTransient<BackendApiAuthenticationHttpClientHandler>();
+builder.Services.AddSingleton<ITokenService, TokenService>();
 
-builder.Services.AddTransient<AccountController>();
+builder.Services.AddRestEaseClient<IEventClient>(builder.Configuration["EventApi:BaseAddress"]);
+builder.Services.AddRestEaseClient<IEventAreaClient>(builder.Configuration["EventApi:BaseAddress"]);
 
-builder.Services.AddHttpClient<AccountController>()
-    .AddHttpMessageHandler<BackendApiAuthenticationHttpClientHandler>();
+builder.Services.AddRestEaseClient<IPurchaseClient>(builder.Configuration["PurchaseApi:BaseAddress"]);
+
+builder.Services.AddRestEaseClient<IVenueClient>(builder.Configuration["VenueApi:BaseAddress"]);
+builder.Services.AddRestEaseClient<ILayoutClient>(builder.Configuration["VenueApi:BaseAddress"]);
+
+builder.Services.AddRestEaseClient<IUserClient>(builder.Configuration["UserApi:BaseAddress"]);
 
 var app = builder.Build();
 
@@ -74,14 +80,15 @@ else
     app.UseHsts();
 }
 
-app.UseSession();
-
 app.Use(async (context, next) =>
 {
-    var token = context.Session.GetString("Token");
+    var tokenService = context.RequestServices.GetRequiredService<ITokenService>();
+
+    var token = tokenService.GetToken();
+
     if (!string.IsNullOrEmpty(token))
     {
-        context.Request.Headers.Add("Authorization", "Bearer " + token);
+        context.Request.Headers.Add("Authorization", $"{tokenService.Scheme} {token}");
     }
 
     await next();
@@ -100,6 +107,5 @@ app.UseRequestLocalization(app.Services.GetRequiredService<IOptions<RequestLocal
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Event}/{action=Index}");
-app.MapRazorPages();
 
 app.Run();
