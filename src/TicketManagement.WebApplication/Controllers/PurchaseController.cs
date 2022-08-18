@@ -46,7 +46,7 @@ namespace TicketManagement.WebApplication.Controllers
         [Authorize(Roles = "Event manager,User")]
         public async Task<IActionResult> PurchaseSeats(int id)
         {
-            var @event = _eventClient.GetByIdAsync(id, _tokenService.GetToken());
+            var @event = await _eventClient.GetByIdAsync(id, _tokenService.GetToken());
 
             var eventVM = _mapper.Map<PurchaseSeatsViewModel>(@event);
 

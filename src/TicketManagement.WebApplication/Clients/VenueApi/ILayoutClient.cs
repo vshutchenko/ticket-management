@@ -26,7 +26,7 @@ namespace TicketManagement.WebApplication.Clients.VenueApi
             [Header("Authorization")] string jwtToken,
             CancellationToken cancellationToken = default);
 
-        [Get("layouts/{venueId}")]
+        [Get("layouts/venue/{venueId}")]
         public Task<List<LayoutModel>> GetByVenueIdAsync([Path] int venueId,
             [Header("Authorization")] string jwtToken,
             CancellationToken cancellationToken = default);

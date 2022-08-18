@@ -2,11 +2,11 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TicketManagement.VenueApi.Models;
 using TicketManagement.VenueApi.Services.Interfaces;
+using TicketManagement.VenueApi.Services.Validation;
 
 namespace TicketManagement.VenueApi.Controllers
 {
     [ApiController]
-    [Authorize(Roles = "Venue manager, Event manager")]
     [Route("layouts")]
     [Produces("application/json")]
     public class LayoutController : ControllerBase
@@ -19,6 +19,7 @@ namespace TicketManagement.VenueApi.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Venue manager,Event manager,User")]
         [ProducesResponseType(typeof(List<LayoutModel>), StatusCodes.Status200OK)]
         public IActionResult GetLayouts()
         {
@@ -28,8 +29,8 @@ namespace TicketManagement.VenueApi.Controllers
             return Ok(layouts);
         }
 
-        [HttpGet("{venueId}")]
-        [Authorize(Roles = "Event manager")]
+        [HttpGet("venue/{venueId}")]
+        [Authorize(Roles = "Venue manager,Event manager,User")]
         [ProducesResponseType(typeof(List<LayoutModel>), StatusCodes.Status200OK)]
         public IActionResult GetLayoutsByVenueId(int venueId)
         {
@@ -38,6 +39,24 @@ namespace TicketManagement.VenueApi.Controllers
                 .ToList();
 
             return Ok(layouts);
+        }
+
+        [HttpGet("{id}")]
+        [Authorize(Roles = "Venue manager,Event manager,User")]
+        [ProducesResponseType(typeof(LayoutModel), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetLayoutById(int id)
+        {
+            try
+            {
+                var layout = await _layoutService.GetByIdAsync(id);
+
+                return Ok(layout);
+            }
+            catch (ValidationException)
+            {
+                return NotFound();
+            }
         }
     }
 }

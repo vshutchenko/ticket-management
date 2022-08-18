@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Serilog;
 using TicketManagement.DataAccess.DependencyResolving;
+using TicketManagement.UserApi.JwtAuthentication;
 using TicketManagement.UserApi.MappingConfig;
 using TicketManagement.UserApi.Services.Implementations;
 using TicketManagement.UserApi.Services.Interfaces;
@@ -23,27 +24,6 @@ builder.Services.AddScoped(provider => new MapperConfiguration(mc =>
 
 builder.Services.AddControllers();
 
-builder.Services.AddAuthentication(options =>
-{
-    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-    options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-})
-    .AddJwtBearer(options =>
-    {
-        options.RequireHttpsMetadata = false;
-        options.TokenValidationParameters = new TokenValidationParameters
-        {
-            ValidateIssuer = true,
-            ValidIssuer = builder.Configuration["Jwt:Issuer"],
-            ValidateAudience = true,
-            ValidAudience = builder.Configuration["Jwt:Audience"],
-            ValidateIssuerSigningKey = true,
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"])),
-            ValidateLifetime = false,
-        };
-    });
-
 builder.Services.AddScoped<ITokenService, TokenService>(
     p => new TokenService(builder.Configuration["Jwt:Key"], builder.Configuration["Jwt:Audience"], builder.Configuration["Jwt:Issuer"]));
 
@@ -51,6 +31,9 @@ var connectionString = builder.Configuration.GetConnectionString("TicketManageme
 
 builder.Services.AddScoped<IIdentityService, IdentityService>();
 builder.Services.AddEntityFrameworkRepositories(connectionString);
+
+builder.Services.AddAuthentication(JwtAutheticationConstants.SchemeName)
+                .AddScheme<JwtAuthenticationOptions, JwtAuthenticationHandler>(JwtAutheticationConstants.SchemeName, null);
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();

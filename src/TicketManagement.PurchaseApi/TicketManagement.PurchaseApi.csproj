@@ -4,8 +4,6 @@
     <TargetFramework>net6.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <BaseIntermediateOutputPath>C:\Users\Vlad\Desktop\UladzislauShutchenka\src\TicketManagement.PurchaseApi\obj</BaseIntermediateOutputPath>
-    <BaseOutputPath>C:\Users\Vlad\Desktop\UladzislauShutchenka\src\TicketManagement.PurchaseApi\bin</BaseOutputPath>
   </PropertyGroup>
 
   <ItemGroup>

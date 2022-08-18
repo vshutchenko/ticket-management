@@ -59,6 +59,7 @@ builder.Services.AddSingleton<ITokenService, TokenService>();
 
 builder.Services.AddRestEaseClient<IEventClient>(builder.Configuration["EventApi:BaseAddress"]);
 builder.Services.AddRestEaseClient<IEventAreaClient>(builder.Configuration["EventApi:BaseAddress"]);
+builder.Services.AddRestEaseClient<IEventSeatClient>(builder.Configuration["EventApi:BaseAddress"]);
 
 builder.Services.AddRestEaseClient<IPurchaseClient>(builder.Configuration["PurchaseApi:BaseAddress"]);
 
@@ -66,6 +67,8 @@ builder.Services.AddRestEaseClient<IVenueClient>(builder.Configuration["VenueApi
 builder.Services.AddRestEaseClient<ILayoutClient>(builder.Configuration["VenueApi:BaseAddress"]);
 
 builder.Services.AddRestEaseClient<IUserClient>(builder.Configuration["UserApi:BaseAddress"]);
+
+builder.Services.AddRazorPages();
 
 var app = builder.Build();
 
@@ -88,7 +91,7 @@ app.Use(async (context, next) =>
 
     if (!string.IsNullOrEmpty(token))
     {
-        context.Request.Headers.Add("Authorization", $"{tokenService.Scheme} {token}");
+        context.Request.Headers.Add("Authorization", token);
     }
 
     await next();
@@ -107,5 +110,5 @@ app.UseRequestLocalization(app.Services.GetRequiredService<IOptions<RequestLocal
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Event}/{action=Index}");
-
+app.MapRazorPages();
 app.Run();

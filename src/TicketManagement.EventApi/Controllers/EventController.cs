@@ -7,7 +7,6 @@ using TicketManagement.EventApi.Services.Validation;
 namespace TicketManagement.EventApi.Controllers
 {
     [ApiController]
-    [Authorize(Roles = "Event manager")]
     [Route("events")]
     [Produces("application/json")]
     public class EventController : ControllerBase
@@ -32,6 +31,7 @@ namespace TicketManagement.EventApi.Controllers
         }
 
         [HttpGet("not-published")]
+        [Authorize(Roles = "Event manager")]
         [ProducesResponseType(typeof(List<EventModel>), StatusCodes.Status200OK)]
         public IActionResult GetNotPublishedEvents()
         {
@@ -43,6 +43,7 @@ namespace TicketManagement.EventApi.Controllers
         }
 
         [HttpGet("{id}")]
+        [Authorize(Roles = "Event manager,User")]
         [ProducesResponseType(typeof(EventModel), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetEventById(int id)
@@ -60,6 +61,7 @@ namespace TicketManagement.EventApi.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Event manager")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> CreateEvent([FromBody] EventModel @event)
@@ -77,6 +79,7 @@ namespace TicketManagement.EventApi.Controllers
         }
 
         [HttpPut]
+        [Authorize(Roles = "Event manager")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> UpdateEvent([FromBody] EventModel @event)
@@ -94,6 +97,7 @@ namespace TicketManagement.EventApi.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Event manager")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> DeleteEvent(int id)

@@ -2,11 +2,11 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TicketManagement.VenueApi.Models;
 using TicketManagement.VenueApi.Services.Interfaces;
+using TicketManagement.VenueApi.Services.Validation;
 
 namespace TicketManagement.VenueApi.Controllers
 {
     [ApiController]
-    [Authorize(Roles = "Venue manager,Event manager")]
     [Route("venues")]
     [Produces("application/json")]
     public class VenueController : ControllerBase
@@ -19,6 +19,7 @@ namespace TicketManagement.VenueApi.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Venue manager, Event manager,User")]
         [ProducesResponseType(typeof(List<VenueModel>), StatusCodes.Status200OK)]
         public IActionResult GetVenues()
         {
@@ -26,6 +27,24 @@ namespace TicketManagement.VenueApi.Controllers
                 .ToList();
 
             return Ok(venues);
+        }
+
+        [HttpGet("{id}")]
+        [Authorize(Roles = "Venue manager,Event manager,User")]
+        [ProducesResponseType(typeof(VenueModel), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetVenueById(int id)
+        {
+            try
+            {
+                var venue = await _venueService.GetByIdAsync(id);
+
+                return Ok(venue);
+            }
+            catch (ValidationException)
+            {
+                return NotFound();
+            }
         }
     }
 }

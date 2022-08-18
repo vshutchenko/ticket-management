@@ -7,7 +7,7 @@ namespace TicketManagement.WebApplication.Clients.EventApi
     public interface IEventSeatClient
     {
         [Get("event-seats/areas/{areaId}")]
-        public Task<List<EventAreaModel>> GetByAreaIdAsync([Path] int areaId,
+        public Task<List<EventSeatModel>> GetByAreaIdAsync([Path] int areaId,
             [Header("Authorization")] string jwtToken,
             CancellationToken cancellationToken = default);
 

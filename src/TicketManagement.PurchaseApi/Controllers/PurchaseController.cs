@@ -19,7 +19,7 @@ namespace TicketManagement.PurchaseApi.Controllers
             _purchaseService = purchaseService ?? throw new ArgumentNullException(nameof(purchaseService));
         }
 
-        [HttpGet]
+        [HttpGet("user/{userId}")]
         [ProducesResponseType(typeof(List<PurchaseModel>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public IActionResult GetByUserId(string userId)

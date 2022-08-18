@@ -3,13 +3,13 @@ using System.Security.Claims;
 using System.Text.Encodings.Web;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Options;
-using TicketManagement.VenueApi.Clients.UserApi;
+using TicketManagement.UserApi.Services.Interfaces;
 
-namespace TicketManagement.VenueApi.JwtAuthentication
+namespace TicketManagement.UserApi.JwtAuthentication
 {
     internal class JwtAuthenticationHandler : AuthenticationHandler<JwtAuthenticationOptions>
     {
-        private readonly IUserClient _userClient;
+        private readonly ITokenService _tokenService;
         private readonly ILogger<JwtAuthenticationHandler> _logger;
 
         public JwtAuthenticationHandler(
@@ -17,11 +17,11 @@ namespace TicketManagement.VenueApi.JwtAuthentication
             ILoggerFactory loggerFactory,
             UrlEncoder encoder,
             ISystemClock clock,
-            IUserClient userClient,
+            ITokenService tokenService,
             ILogger<JwtAuthenticationHandler> logger)
             : base(options, loggerFactory, encoder, clock)
         {
-            _userClient = userClient;
+            _tokenService = tokenService;
             _logger = logger;
         }
 
@@ -29,23 +29,21 @@ namespace TicketManagement.VenueApi.JwtAuthentication
         {
             if (!Request.Headers.ContainsKey("Authorization"))
             {
-                return AuthenticateResult.Fail("Unauthorized");
+                return await Task.FromResult(AuthenticateResult.Fail("Unauthorized"));
             }
 
             var token = Request.Headers["Authorization"].ToString();
 
             if (string.IsNullOrEmpty(token) || "Bearer ".Length > token.Length)
             {
-                return AuthenticateResult.Fail("Unauthorized");
+                return await Task.FromResult(AuthenticateResult.Fail("Unauthorized"));
             }
 
-            try
+            var isValid = _tokenService.ValidateToken(token);
+
+            if (!isValid)
             {
-                await _userClient.ValidateTokenAsync(token);
-            }
-            catch (HttpRequestException)
-            {
-                return AuthenticateResult.Fail("Unauthorized");
+                return await Task.FromResult(AuthenticateResult.Fail("Unauthorized"));
             }
 
             var tokenHandler = new JwtSecurityTokenHandler();
@@ -53,7 +51,8 @@ namespace TicketManagement.VenueApi.JwtAuthentication
             var identity = new ClaimsIdentity(jwtToken.Claims, Scheme.Name);
             var principal = new ClaimsPrincipal(identity);
             var ticket = new AuthenticationTicket(principal, Scheme.Name);
-            return AuthenticateResult.Success(ticket);
+
+            return await Task.FromResult(AuthenticateResult.Success(ticket));
         }
     }
 }
