@@ -44,17 +44,18 @@ namespace TicketManagement.EventApi.Controllers
 
         [HttpGet("{id}")]
         [ProducesResponseType(typeof(EventModel), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> GetCityById(int id)
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> GetEventById(int id)
         {
             try
             {
                 var @event = await _eventService.GetByIdAsync(id);
+
                 return Ok(@event);
             }
-            catch (ValidationException)
+            catch (ValidationException ex)
             {
-                return NotFound();
+                return BadRequest(new { error = ex.Message });
             }
         }
 
@@ -95,7 +96,7 @@ namespace TicketManagement.EventApi.Controllers
         [HttpDelete("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> Delete(int id)
+        public async Task<IActionResult> DeleteEvent(int id)
         {
             try
             {
