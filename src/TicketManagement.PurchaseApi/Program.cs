@@ -1,6 +1,7 @@
 using AutoMapper;
 using RestEase.HttpClientFactory;
 using Serilog;
+using Serilog.Events;
 using TicketManagement.PurchaseApi.Clients.UserApi;
 using TicketManagement.PurchaseApi.DependencyResolving;
 using TicketManagement.PurchaseApi.JwtAuthentication;
@@ -10,8 +11,12 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 Log.Logger = new LoggerConfiguration()
-                .ReadFrom.Configuration(builder.Configuration)
-                .CreateLogger();
+            .MinimumLevel.Debug()
+            .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
+            .Enrich.FromLogContext()
+            .WriteTo.Console()
+            .WriteTo.File(builder.Configuration["LogsPath"])
+            .CreateLogger();
 
 builder.Services.AddScoped(provider => new MapperConfiguration(mc =>
 {
@@ -34,6 +39,8 @@ builder.Services.AddAuthentication(JwtAutheticationConstants.SchemeName)
 
 builder.Services.AddRestEaseClient<IUserClient>(builder.Configuration["UserApi:BaseAddress"]);
 
+builder.Host.UseSerilog();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -42,6 +49,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseSerilogRequestLogging();
 
 app.UseHttpsRedirection();
 

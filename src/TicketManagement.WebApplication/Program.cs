@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Localization;
 using Microsoft.Extensions.Options;
 using RestEase.HttpClientFactory;
 using Serilog;
+using Serilog.Events;
 using TicketManagement.WebApplication.Clients.EventApi;
 using TicketManagement.WebApplication.Clients.PurchaseApi;
 using TicketManagement.WebApplication.Clients.UserApi;
@@ -18,8 +19,12 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 Log.Logger = new LoggerConfiguration()
-                .ReadFrom.Configuration(builder.Configuration)
-                .CreateLogger();
+            .MinimumLevel.Debug()
+            .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
+            .Enrich.FromLogContext()
+            .WriteTo.Console()
+            .WriteTo.File(builder.Configuration["LogsPath"])
+            .CreateLogger();
 
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped(provider => new MapperConfiguration(mc =>
@@ -70,6 +75,8 @@ builder.Services.AddRestEaseClient<IUserClient>(builder.Configuration["UserApi:B
 
 builder.Services.AddRazorPages();
 
+builder.Host.UseSerilog();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -82,6 +89,8 @@ else
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
+
+app.UseSerilogRequestLogging();
 
 app.Use(async (context, next) =>
 {

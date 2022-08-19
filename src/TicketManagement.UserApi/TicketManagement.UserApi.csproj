@@ -22,4 +22,8 @@
 		<ProjectReference Include="..\TicketManagement.DataAccess\TicketManagement.DataAccess.csproj" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <Folder Include="Logs\" />
+	</ItemGroup>
+
 </Project>

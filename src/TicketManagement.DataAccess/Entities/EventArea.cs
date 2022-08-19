@@ -15,6 +15,7 @@ namespace TicketManagement.DataAccess.Entities
 
         public int CoordY { get; set; }
 
+        [Column(TypeName = "decimal(16,2)")]
         public decimal Price { get; set; }
     }
 }

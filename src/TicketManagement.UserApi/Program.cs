@@ -1,8 +1,6 @@
-using System.Text;
 using AutoMapper;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
 using Serilog;
+using Serilog.Events;
 using TicketManagement.DataAccess.DependencyResolving;
 using TicketManagement.UserApi.JwtAuthentication;
 using TicketManagement.UserApi.MappingConfig;
@@ -13,8 +11,12 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 Log.Logger = new LoggerConfiguration()
-                .ReadFrom.Configuration(builder.Configuration)
-                .CreateLogger();
+            .MinimumLevel.Debug()
+            .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
+            .Enrich.FromLogContext()
+            .WriteTo.Console()
+            .WriteTo.File(builder.Configuration["LogsPath"])
+            .CreateLogger();
 
 builder.Services.AddScoped(provider => new MapperConfiguration(mc =>
 {
@@ -39,6 +41,8 @@ builder.Services.AddAuthentication(JwtAutheticationConstants.SchemeName)
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Host.UseSerilog();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -47,6 +51,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseSerilogRequestLogging();
 
 app.UseHttpsRedirection();
 

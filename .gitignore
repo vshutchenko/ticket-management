@@ -5,11 +5,11 @@
 
 # Logs
 src/ThirdPartyEventEditor/ThirdPartyEventEditor/App_Data/Log*.txt
-src/TicketManagement.WebApplication/Logs/*.txt
-src/TicketManagement.VenueApi/Logs/*.txt
-src/TicketManagement.EventApi/Logs/*.txt
-src/TicketManagement.PurchaseApi/Logs/*.txt
-src/TicketManagement.UserApi/Logs/*.txt
+src/TicketManagement.WebApplication/Logs
+src/TicketManagement.VenueApi/Logs
+src/TicketManagement.EventApi/Logs
+src/TicketManagement.PurchaseApi/Logs
+src/TicketManagement.UserApi/Logs
 
 # Event Images
 src/TicketManagement.WebApplication/wwwroot/EventImages/*.png
