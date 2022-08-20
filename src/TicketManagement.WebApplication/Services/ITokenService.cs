@@ -2,11 +2,9 @@
 {
     public interface ITokenService
     {
-        string Scheme { get; }
-
         public string GetToken();
 
-        public void SaveToken(string token);
+        public void SaveToken(string tokenString);
 
         public void DeleteToken();
     }

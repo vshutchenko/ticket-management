@@ -35,6 +35,8 @@ builder.Services.AddScoped(provider => new MapperConfiguration(mc =>
 
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
+builder.Services.AddSession();
+
 builder.Services.AddAuthentication(JwtAutheticationConstants.SchemeName)
                 .AddScheme<JwtAuthenticationOptions, JwtAuthenticationHandler>(JwtAutheticationConstants.SchemeName, null);
 
@@ -43,11 +45,13 @@ builder.Services.AddLocalization(options => options.ResourcesPath = "Resources")
 builder.Services.AddControllersWithViews(options =>
 {
     options.ModelBinderProviders.Insert(0, new InvariantDecimalModelBinderProvider());
+    options.ModelBinderProviders.Insert(1, new CustomDateTimeModelBinderProvider());
     options.Filters.Add<UnexpectedExceptionFilter>();
 })
     .AddRazorRuntimeCompilation()
     .AddDataAnnotationsLocalization()
-    .AddViewLocalization(Microsoft.AspNetCore.Mvc.Razor.LanguageViewLocationExpanderFormat.Suffix);
+    .AddViewLocalization(Microsoft.AspNetCore.Mvc.Razor.LanguageViewLocationExpanderFormat.Suffix)
+    .AddSessionStateTempDataProvider();
 
 builder.Services.Configure<RequestLocalizationOptions>(options =>
 {
@@ -73,8 +77,6 @@ builder.Services.AddRestEaseClient<ILayoutClient>(builder.Configuration["VenueAp
 
 builder.Services.AddRestEaseClient<IUserClient>(builder.Configuration["UserApi:BaseAddress"]);
 
-builder.Services.AddRazorPages();
-
 builder.Host.UseSerilog();
 
 var app = builder.Build();
@@ -89,6 +91,8 @@ else
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
+
+app.UseSession();
 
 app.UseSerilogRequestLogging();
 
@@ -119,5 +123,5 @@ app.UseRequestLocalization(app.Services.GetRequiredService<IOptions<RequestLocal
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Event}/{action=Index}");
-app.MapRazorPages();
+
 app.Run();

@@ -1,9 +1,7 @@
 ﻿using System.Globalization;
-using System.Net.Http.Headers;
 using System.Security.Claims;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Options;
@@ -33,8 +31,6 @@ namespace TicketManagement.WebApplication.Controllers
         public IActionResult Logout()
         {
             _tokenService.DeleteToken();
-
-            SetCookies("en-US", TimeZoneInfo.Local.Id);
 
             return RedirectToAction("Index", "Event");
         }
@@ -153,8 +149,6 @@ namespace TicketManagement.WebApplication.Controllers
 
             var token = await _userClient.UpdateAsync(user, _tokenService.GetToken());
 
-            SetCookies(model.CultureName, model.TimeZoneId);
-
             _tokenService.SaveToken(token);
 
             TempData["Message"] = "Profile information was successfully updated!";
@@ -216,22 +210,6 @@ namespace TicketManagement.WebApplication.Controllers
             ViewBag.Message = "Profile information was successfully updated!";
 
             return View("Success");
-        }
-
-        private void SetCookies(string culture, string timeZone)
-        {
-            var cookieOptions = new CookieOptions
-            {
-                Path = "/",
-                Expires = DateTimeOffset.UtcNow.AddYears(1),
-            };
-
-            Response.Cookies.Append("timezoneId", timeZone, cookieOptions);
-
-            Response.Cookies.Append(
-                CookieRequestCultureProvider.DefaultCookieName,
-                CookieRequestCultureProvider.MakeCookieValue(new RequestCulture(culture)),
-                new CookieOptions { Expires = DateTimeOffset.UtcNow.AddYears(1) });
         }
     }
 }

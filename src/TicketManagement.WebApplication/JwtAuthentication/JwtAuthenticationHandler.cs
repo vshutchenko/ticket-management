@@ -32,12 +32,14 @@ namespace TicketManagement.WebApplication.JwtAuthentication
                 return AuthenticateResult.Fail("Unauthorized");
             }
 
-            var token = Request.Headers["Authorization"].ToString();
+            var tokenWithScheme = Request.Headers["Authorization"].ToString();
 
-            if (string.IsNullOrEmpty(token) || "Bearer ".Length > token.Length)
+            if (!tokenWithScheme.StartsWith("Bearer "))
             {
                 return AuthenticateResult.Fail("Unauthorized");
             }
+
+            var token = tokenWithScheme["Bearer ".Length..];
 
             try
             {

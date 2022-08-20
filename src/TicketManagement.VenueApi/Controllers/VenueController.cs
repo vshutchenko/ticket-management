@@ -19,7 +19,7 @@ namespace TicketManagement.VenueApi.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "Venue manager, Event manager,User")]
+        [Authorize(Roles = "Venue manager,Event manager,User")]
         [ProducesResponseType(typeof(List<VenueModel>), StatusCodes.Status200OK)]
         public IActionResult GetVenues()
         {

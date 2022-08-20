@@ -1,20 +1,55 @@
-﻿namespace TicketManagement.WebApplication.Services
+﻿using System.IdentityModel.Tokens.Jwt;
+using Microsoft.AspNetCore.Localization;
+
+namespace TicketManagement.WebApplication.Services
 {
     internal class TokenService : ITokenService
     {
-        private readonly string _scheme = "Bearer";
+        private readonly IHttpContextAccessor _accessor;
 
-        private string _token = string.Empty;
-
-        public string Scheme => _scheme;
-
-        public void DeleteToken() => _token = string.Empty;
-
-        public string GetToken() => _token;
-
-        public void SaveToken(string token)
+        public TokenService(IHttpContextAccessor accessor)
         {
-            _token = token ?? throw new ArgumentNullException(nameof(token));
+            _accessor = accessor ?? throw new ArgumentNullException(nameof(accessor));
+        }
+
+        public void DeleteToken()
+        {
+            _accessor.HttpContext!.Session.Remove("JwtToken");
+            SetCookies("en-US", TimeZoneInfo.Local.Id);
+        }
+
+        public string GetToken()
+        {
+            return _accessor.HttpContext!.Session.GetString("JwtToken") ?? string.Empty;
+        }
+
+        public void SaveToken(string tokenString)
+        {
+            _accessor.HttpContext!.Session.SetString("JwtToken", $"Bearer {tokenString}");
+
+            var token = new JwtSecurityTokenHandler().ReadJwtToken(tokenString);
+
+            var timezone = token.Claims.First(c => c.Type == "timezoneId").Value;
+
+            var culture = token.Claims.First(c => c.Type == "culture").Value;
+
+            SetCookies(culture, timezone);
+        }
+
+        private void SetCookies(string culture, string timeZone)
+        {
+            var cookieOptions = new CookieOptions
+            {
+                Path = "/",
+                Expires = DateTimeOffset.UtcNow.AddYears(1),
+            };
+
+            _accessor.HttpContext!.Response.Cookies.Append("timezoneId", timeZone, cookieOptions);
+
+            _accessor.HttpContext.Response.Cookies.Append(
+                CookieRequestCultureProvider.DefaultCookieName,
+                CookieRequestCultureProvider.MakeCookieValue(new RequestCulture(culture)),
+                new CookieOptions { Expires = DateTimeOffset.UtcNow.AddYears(1) });
         }
     }
 }
