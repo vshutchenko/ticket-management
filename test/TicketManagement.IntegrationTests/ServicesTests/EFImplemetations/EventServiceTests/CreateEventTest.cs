@@ -6,12 +6,12 @@ using AutoMapper;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using NUnit.Framework;
-using TicketManagement.BusinessLogic.Implementations;
-using TicketManagement.BusinessLogic.Interfaces;
-using TicketManagement.BusinessLogic.MappingConfig;
-using TicketManagement.BusinessLogic.Models;
-using TicketManagement.BusinessLogic.Validation;
 using TicketManagement.DataAccess.EntityFrameworkImplementations;
+using TicketManagement.EventApi.MappingConfig;
+using TicketManagement.EventApi.Models;
+using TicketManagement.EventApi.Services.Implementations;
+using TicketManagement.EventApi.Services.Interfaces;
+using TicketManagement.EventApi.Services.Validation;
 
 namespace TicketManagement.IntegrationTests.EFImplemetations.EventServiceTests
 {
@@ -44,7 +44,6 @@ namespace TicketManagement.IntegrationTests.EFImplemetations.EventServiceTests
             var mapper = new MapperConfiguration(mc =>
                 {
                     mc.AddProfile(new MappingProfile());
-                    mc.AddProfile(new TicketManagement.BusinessLogic.MappingConfig.MappingProfile());
                 })
                 .CreateMapper();
 

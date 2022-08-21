@@ -5,6 +5,7 @@ using Microsoft.OpenApi.Models;
 using Serilog;
 using Serilog.Events;
 using TicketManagement.DataAccess.DependencyResolving;
+using TicketManagement.UserApi.Data;
 using TicketManagement.UserApi.JwtAuthentication;
 using TicketManagement.UserApi.MappingConfig;
 using TicketManagement.UserApi.Services.Implementations;
@@ -34,8 +35,9 @@ builder.Services.AddScoped<ITokenService, TokenService>(
 
 var connectionString = builder.Configuration.GetConnectionString("TicketManagement.Database");
 
-builder.Services.AddScoped<IIdentityService, IdentityService>();
 builder.Services.AddEntityFrameworkRepositories(connectionString);
+
+builder.Services.AddScoped<ContextSeeder>();
 
 builder.Services.AddAuthentication(JwtAutheticationConstants.SchemeName)
                 .AddScheme<JwtAuthenticationOptions, JwtAuthenticationHandler>(JwtAutheticationConstants.SchemeName, null);
@@ -79,6 +81,12 @@ builder.Services.AddSwaggerGen(options =>
 builder.Host.UseSerilog();
 
 var app = builder.Build();
+
+using var scope = app.Services.CreateScope();
+
+var seeder = scope.ServiceProvider.GetRequiredService<ContextSeeder>();
+
+await seeder.SeedInitialDataAsync();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

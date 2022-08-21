@@ -9,7 +9,7 @@ namespace TicketManagement.IntegrationTests.ControllersTests.Addition
 {
     internal static class TestingWebAppFactoryExtensions
     {
-        public static WebApplicationFactory<Program> WithAuthentication(this TestingWebAppFactory factory, TestClaimsProvider claimsProvider)
+        public static WebApplicationFactory<WebApplication.Program> WithAuthentication(this TestingWebAppFactory factory, TestClaimsProvider claimsProvider)
         {
             return factory.WithWebHostBuilder(builder =>
             {

@@ -2,11 +2,12 @@
 using AutoMapper;
 using FluentAssertions;
 using NUnit.Framework;
-using TicketManagement.BusinessLogic.Implementations;
-using TicketManagement.BusinessLogic.Interfaces;
-using TicketManagement.BusinessLogic.MappingConfig;
-using TicketManagement.BusinessLogic.Validation;
 using TicketManagement.DataAccess.SqlClientImplementations;
+using TicketManagement.VenueApi.MappingConfig;
+using TicketManagement.VenueApi.Models;
+using TicketManagement.VenueApi.Services.Implementations;
+using TicketManagement.VenueApi.Services.Interfaces;
+using TicketManagement.VenueApi.Services.Validation;
 
 namespace TicketManagement.IntegrationTests.SqlClientImplementations.SeatServiceTests
 {
@@ -25,7 +26,6 @@ namespace TicketManagement.IntegrationTests.SqlClientImplementations.SeatService
             var mapper = new MapperConfiguration(mc =>
                 {
                     mc.AddProfile(new MappingProfile());
-                    mc.AddProfile(new TicketManagement.BusinessLogic.MappingConfig.MappingProfile());
                 })
                 .CreateMapper();
 

@@ -4,6 +4,8 @@ using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using FluentAssertions;
+using Microsoft.AspNetCore;
+using Microsoft.Extensions.Hosting;
 using NUnit.Framework;
 using TicketManagement.IntegrationTests.ControllersTests.Addition;
 
@@ -12,6 +14,10 @@ namespace TicketManagement.IntegrationTests.ControllersTests
     internal sealed class AccountControllerTest : IDisposable
     {
         private readonly TestingWebAppFactory _factory = new TestingWebAppFactory();
+        private readonly TestingEventApiFactory _factory1 = new TestingEventApiFactory();
+        private readonly TestingVenueApiFactory _factory2 = new TestingVenueApiFactory();
+        private readonly TestingUserApiFactory _factory3 = new TestingUserApiFactory();
+        private readonly TestingPurchaseApiFactory _factory4 = new TestingPurchaseApiFactory();
 
         [Test]
         public async Task Login_AnonymousUser_ReturnsLoginPage()
@@ -429,6 +435,10 @@ namespace TicketManagement.IntegrationTests.ControllersTests
         public void Dispose()
         {
             _factory.Dispose();
+            _factory1.Dispose();
+            _factory2.Dispose();
+            _factory3.Dispose();
+            _factory4.Dispose();
         }
     }
 }

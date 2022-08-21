@@ -5,12 +5,12 @@ using AutoMapper;
 using FluentAssertions;
 using Moq;
 using NUnit.Framework;
-using TicketManagement.BusinessLogic.Implementations;
-using TicketManagement.BusinessLogic.Interfaces;
-using TicketManagement.BusinessLogic.Models;
-using TicketManagement.BusinessLogic.Validation;
 using TicketManagement.DataAccess.Entities;
 using TicketManagement.DataAccess.Interfaces;
+using TicketManagement.EventApi.Models;
+using TicketManagement.EventApi.Services.Implementations;
+using TicketManagement.EventApi.Services.Interfaces;
+using TicketManagement.EventApi.Services.Validation;
 
 namespace TicketManagement.UnitTests.ServicesUnitTests
 {
