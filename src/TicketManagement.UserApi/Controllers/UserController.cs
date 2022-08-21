@@ -11,34 +11,32 @@ namespace TicketManagement.UserApi.Controllers
     [ApiController]
     public class UserController : ControllerBase
     {
-        private readonly SignInManager<User> _signInManager;
         private readonly UserManager<User> _userManager;
 
         private readonly ITokenService _tokenService;
 
-        private readonly ILogger<UserController> _logger;
-
-        public UserController(SignInManager<User> signInManager,
-            UserManager<User> userManager,
-            ITokenService tokenService,
-            ILogger<UserController> logger)
+        public UserController(UserManager<User> userManager, ITokenService tokenService)
         {
-            _signInManager = signInManager;
-            _userManager = userManager;
-            _tokenService = tokenService;
-            _logger = logger;
+            _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
+            _tokenService = tokenService ?? throw new ArgumentNullException(nameof(tokenService));
         }
 
         [HttpPost]
         [Route("login")]
         [AllowAnonymous]
         [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<IActionResult> Login([FromBody] LoginModel model)
         {
             var user = await _userManager.FindByEmailAsync(model.Email);
 
-            if (user != null && await _userManager.CheckPasswordAsync(user, model.Password))
+            if (user is null)
+            {
+                return NotFound(new { error = "User with such email does not exists." });
+            }
+
+            if (await _userManager.CheckPasswordAsync(user, model.Password))
             {
                 var userRoles = await _userManager.GetRolesAsync(user);
 
@@ -47,7 +45,7 @@ namespace TicketManagement.UserApi.Controllers
                 return Ok(token);
             }
 
-            return Unauthorized();
+            return Unauthorized(new { error = "Wrong password." });
         }
 
         [HttpPost]
@@ -61,7 +59,7 @@ namespace TicketManagement.UserApi.Controllers
 
             if (existingUser != null)
             {
-                return BadRequest();
+                return BadRequest(new { error = "User already exists." });
             }
 
             var user = new User
@@ -85,7 +83,7 @@ namespace TicketManagement.UserApi.Controllers
                 return Ok(_tokenService.GetToken(user, roles));
             }
 
-            return BadRequest();
+            return BadRequest(new { error = "Cannot create user." });
         }
 
         [HttpGet("validate")]
@@ -107,7 +105,7 @@ namespace TicketManagement.UserApi.Controllers
 
             if (user is null)
             {
-                return NotFound();
+                return NotFound(new { error = "Cannot create user." });
             }
 
             return Ok(user);
@@ -124,7 +122,7 @@ namespace TicketManagement.UserApi.Controllers
 
             if (existingUser is null)
             {
-                return NotFound();
+                return NotFound(new { error = "User was not found." });
             }
 
             var userWithSameEmail = await _userManager.FindByEmailAsync(user.Email);
@@ -165,7 +163,7 @@ namespace TicketManagement.UserApi.Controllers
 
             if (existingUser is null)
             {
-                return NotFound();
+                return NotFound(new { error = "User was not found." });
             }
 
             var isValidPassword = await _userManager.CheckPasswordAsync(existingUser, model.CurrentPassword);

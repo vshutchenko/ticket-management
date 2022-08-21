@@ -18,6 +18,10 @@ namespace TicketManagement.VenueApi.Controllers
             _venueService = venueService ?? throw new ArgumentNullException(nameof(venueService));
         }
 
+        /// <summary>
+        /// Get all venues.
+        /// </summary>
+        /// <returns>List of venues.</returns>
         [HttpGet]
         [Authorize(Roles = "Venue manager,Event manager,User")]
         [ProducesResponseType(typeof(List<VenueModel>), StatusCodes.Status200OK)]
@@ -29,10 +33,15 @@ namespace TicketManagement.VenueApi.Controllers
             return Ok(venues);
         }
 
+        /// <summary>
+        /// Get venue by id.
+        /// </summary>
+        /// <param name="id">Id of the venue.</param>
+        /// <returns>Venue.</returns>
         [HttpGet("{id}")]
         [Authorize(Roles = "Venue manager,Event manager,User")]
         [ProducesResponseType(typeof(VenueModel), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetVenueById(int id)
         {
             try
@@ -41,9 +50,9 @@ namespace TicketManagement.VenueApi.Controllers
 
                 return Ok(venue);
             }
-            catch (ValidationException)
+            catch (ValidationException ex)
             {
-                return NotFound();
+                return BadRequest(new { error = ex.Message });
             }
         }
     }

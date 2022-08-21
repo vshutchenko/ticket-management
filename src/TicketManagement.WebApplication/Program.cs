@@ -47,6 +47,7 @@ builder.Services.AddControllersWithViews(options =>
     options.ModelBinderProviders.Insert(0, new InvariantDecimalModelBinderProvider());
     options.ModelBinderProviders.Insert(1, new CustomDateTimeModelBinderProvider());
     options.Filters.Add<UnexpectedExceptionFilter>();
+    options.Filters.Add<ApiExceptionFilter>();
 })
     .AddRazorRuntimeCompilation()
     .AddDataAnnotationsLocalization()

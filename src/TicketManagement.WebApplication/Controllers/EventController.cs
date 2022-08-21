@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using RestEase;
 using TicketManagement.WebApplication.Clients.EventApi;
 using TicketManagement.WebApplication.Clients.EventApi.Models;
 using TicketManagement.WebApplication.Clients.VenueApi;
@@ -109,7 +110,7 @@ namespace TicketManagement.WebApplication.Controllers
 
             var id = await _eventClient.CreateAsync(@event, _tokenService.GetToken());
 
-            return RedirectToAction("EditEvent", new { id = id } );
+            return RedirectToAction("EditEvent", new { id = id });
         }
 
         [HttpGet]
@@ -169,7 +170,7 @@ namespace TicketManagement.WebApplication.Controllers
 
             await _eventClient.UpdateAsync(@event, _tokenService.GetToken());
 
-            return RedirectToAction("PurchaseSeats", "Purchase",  new { id = @event.Id });
+            return RedirectToAction("PurchaseSeats", "Purchase", new { id = @event.Id });
         }
 
         [HttpPost]

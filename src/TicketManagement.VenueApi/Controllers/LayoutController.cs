@@ -18,6 +18,10 @@ namespace TicketManagement.VenueApi.Controllers
             _layoutService = layoutService ?? throw new ArgumentNullException(nameof(layoutService));
         }
 
+        /// <summary>
+        /// Get all layouts.
+        /// </summary>
+        /// <returns>List of layouts.</returns>
         [HttpGet]
         [Authorize(Roles = "Venue manager,Event manager,User")]
         [ProducesResponseType(typeof(List<LayoutModel>), StatusCodes.Status200OK)]
@@ -29,6 +33,11 @@ namespace TicketManagement.VenueApi.Controllers
             return Ok(layouts);
         }
 
+        /// <summary>
+        /// Get layouts by venue id.
+        /// </summary>
+        /// <param name="venueId">Id of the venue.</param>
+        /// <returns>List of layouts.</returns>
         [HttpGet("venue/{venueId}")]
         [Authorize(Roles = "Venue manager,Event manager,User")]
         [ProducesResponseType(typeof(List<LayoutModel>), StatusCodes.Status200OK)]
@@ -41,10 +50,15 @@ namespace TicketManagement.VenueApi.Controllers
             return Ok(layouts);
         }
 
+        /// <summary>
+        /// Get layout by id.
+        /// </summary>
+        /// <param name="id">Id of the layout.</param>
+        /// <returns>Layout.</returns>
         [HttpGet("{id}")]
         [Authorize(Roles = "Venue manager,Event manager,User")]
         [ProducesResponseType(typeof(LayoutModel), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetLayoutById(int id)
         {
             try
@@ -53,9 +67,9 @@ namespace TicketManagement.VenueApi.Controllers
 
                 return Ok(layout);
             }
-            catch (ValidationException)
+            catch (ValidationException ex)
             {
-                return NotFound();
+                return BadRequest(new { error = ex.Message });
             }
         }
     }

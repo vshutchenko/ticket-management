@@ -18,10 +18,15 @@ namespace TicketManagement.EventApi.Controllers
             _eventSeatService = eventSeatService ?? throw new ArgumentNullException(nameof(eventSeatService));
         }
 
+        /// <summary>
+        /// Get event seats by event area id.
+        /// </summary>
+        /// <param name="areaId">Id of the event area.</param>
+        /// <returns>List of event seats.</returns>
         [HttpGet("areas/{areaId}")]
         [Authorize(Roles = "Event manager,User")]
         [ProducesResponseType(typeof(List<EventSeatModel>), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public IActionResult GetSeatsByAreaId(int areaId)
         {
             try
@@ -30,17 +35,22 @@ namespace TicketManagement.EventApi.Controllers
 
                 return Ok(seats);
             }
-            catch (ValidationException)
+            catch (ValidationException ex)
             {
-                return NotFound();
+                return BadRequest(new { error = ex.Message });
             }
         }
 
+        /// <summary>
+        /// Get event seat by id.
+        /// </summary>
+        /// <param name="id">Id of the event seat.</param>
+        /// <returns>Event seat.</returns>
         [HttpGet("{id}")]
         [Authorize(Roles = "Event manager,User")]
         [ProducesResponseType(typeof(EventSeatModel), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> GetById(int id)
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> GetSeatById(int id)
         {
             try
             {
@@ -48,12 +58,17 @@ namespace TicketManagement.EventApi.Controllers
 
                 return Ok(seat);
             }
-            catch (ValidationException)
+            catch (ValidationException ex)
             {
-                return NotFound();
+                return BadRequest(new { error = ex.Message });
             }
         }
 
+        /// <summary>
+        /// Update state for the event seat.
+        /// </summary>
+        /// <param name="seatId">Id of the event seat.</param>
+        /// <param name="state">State of the event seat.</param>
         [HttpPut("{seatId}/state")]
         [Authorize(Roles = "Event manager")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]

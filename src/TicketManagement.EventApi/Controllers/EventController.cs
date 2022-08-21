@@ -18,6 +18,10 @@ namespace TicketManagement.EventApi.Controllers
             _eventService = eventService ?? throw new ArgumentNullException(nameof(eventService));
         }
 
+        /// <summary>
+        /// Get published events.
+        /// </summary>
+        /// <returns>List of published events.</returns>
         [HttpGet]
         [AllowAnonymous]
         [ProducesResponseType(typeof(List<EventModel>), StatusCodes.Status200OK)]
@@ -30,6 +34,10 @@ namespace TicketManagement.EventApi.Controllers
             return Ok(events);
         }
 
+        /// <summary>
+        /// Get not published events.
+        /// </summary>
+        /// <returns>List of not published events.</returns>
         [HttpGet("not-published")]
         [Authorize(Roles = "Event manager")]
         [ProducesResponseType(typeof(List<EventModel>), StatusCodes.Status200OK)]
@@ -42,6 +50,11 @@ namespace TicketManagement.EventApi.Controllers
             return Ok(events);
         }
 
+        /// <summary>
+        /// Get event by id.
+        /// </summary>
+        /// <param name="id">Id of the event.</param>
+        /// <returns>Event.</returns>
         [HttpGet("{id}")]
         [Authorize(Roles = "Event manager,User")]
         [ProducesResponseType(typeof(EventModel), StatusCodes.Status200OK)]
@@ -60,6 +73,11 @@ namespace TicketManagement.EventApi.Controllers
             }
         }
 
+        /// <summary>
+        /// Create event.
+        /// </summary>
+        /// <param name="event">Event to create.</param>
+        /// <returns>Id of created event.</returns>
         [HttpPost]
         [Authorize(Roles = "Event manager")]
         [ProducesResponseType(StatusCodes.Status201Created)]
@@ -70,7 +88,7 @@ namespace TicketManagement.EventApi.Controllers
             {
                 var id = await _eventService.CreateAsync(@event);
 
-                return CreatedAtAction(nameof(CreateEvent), new { id = id });
+                return CreatedAtAction(nameof(CreateEvent), id);
             }
             catch (ValidationException ex)
             {
@@ -78,6 +96,10 @@ namespace TicketManagement.EventApi.Controllers
             }
         }
 
+        /// <summary>
+        /// Update event.
+        /// </summary>
+        /// <param name="event">Event to update.</param>
         [HttpPut]
         [Authorize(Roles = "Event manager")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
@@ -96,6 +118,10 @@ namespace TicketManagement.EventApi.Controllers
             }
         }
 
+        /// <summary>
+        /// Delete event by id.
+        /// </summary>
+        /// <param name="id">Id of the event to delete.</param>
         [HttpDelete("{id}")]
         [Authorize(Roles = "Event manager")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]

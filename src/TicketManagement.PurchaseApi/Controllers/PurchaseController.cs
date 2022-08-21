@@ -19,9 +19,14 @@ namespace TicketManagement.PurchaseApi.Controllers
             _purchaseService = purchaseService ?? throw new ArgumentNullException(nameof(purchaseService));
         }
 
+        /// <summary>
+        /// Get purchases by user id.
+        /// </summary>
+        /// <param name="userId">If of the user.</param>
+        /// <returns>List of purchases.</returns>
         [HttpGet("user/{userId}")]
         [ProducesResponseType(typeof(List<PurchaseModel>), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public IActionResult GetByUserId(string userId)
         {
             try
@@ -30,12 +35,16 @@ namespace TicketManagement.PurchaseApi.Controllers
 
                 return Ok(purchases);
             }
-            catch (ValidationException)
+            catch (ValidationException ex)
             {
-                return NotFound();
+                return BadRequest(new { error = ex.Message });
             }
         }
 
+        /// <summary>
+        /// Purchase seats for the event.
+        /// </summary>
+        /// <param name="purchaseModel">Purchase to complete.</param>
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
