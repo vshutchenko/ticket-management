@@ -12,7 +12,6 @@ using TicketManagement.WebApplication.Services;
 
 namespace TicketManagement.WebApplication.Controllers
 {
-    [Authorize]
     public class AccountController : Controller
     {
         private readonly IUserClient _userClient;
@@ -28,6 +27,8 @@ namespace TicketManagement.WebApplication.Controllers
             _userClient = userClient ?? throw new ArgumentNullException(nameof(userClient));
         }
 
+        [HttpGet]
+        [Authorize]
         public IActionResult Logout()
         {
             _tokenService.DeleteToken();
@@ -35,6 +36,8 @@ namespace TicketManagement.WebApplication.Controllers
             return RedirectToAction("Index", "Event");
         }
 
+        [HttpGet]
+        [AllowAnonymous]
         public IActionResult AccessDenied()
         {
             return View();
@@ -107,6 +110,7 @@ namespace TicketManagement.WebApplication.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public async Task<IActionResult> EditUser(string userId)
         {
             var cultures = _locOptions.Value.SupportedCultures?
@@ -142,6 +146,7 @@ namespace TicketManagement.WebApplication.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> EditUser(EditUserViewModel model)
         {
@@ -188,12 +193,14 @@ namespace TicketManagement.WebApplication.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public IActionResult ChangePassword()
         {
             return View();
         }
 
         [HttpPost]
+        [Authorize]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ChangePassword(ChangePasswordViewModel model)
         {

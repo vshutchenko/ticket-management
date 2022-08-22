@@ -49,6 +49,7 @@ namespace TicketManagement.IntegrationTests.ControllersTests.Addition
             {
                 (new User
                 {
+                    Id = "39441f04-fb16-4e79-ae59-60bf8fac057d",
                     UserName = "admin",
                     NormalizedUserName = "ADMIN",
                     Email = "admin@gmail.com",
@@ -58,12 +59,13 @@ namespace TicketManagement.IntegrationTests.ControllersTests.Addition
                     SecurityStamp = string.Empty,
                     FirstName = "John",
                     LastName = "Doe",
-                    CultureName = "ru-RU",
+                    CultureName = "en-US",
                     TimeZoneId = "Eastern Standard Time",
                 }, "Admin"),
 
                 (new User
                 {
+                    Id = "bef9f5d7-d907-4ec2-a807-9abbdcf9e414",
                     UserName = "venueManager",
                     NormalizedUserName = "VENUEMANAGER",
                     Email = "manager1@gmail.com",
@@ -73,12 +75,13 @@ namespace TicketManagement.IntegrationTests.ControllersTests.Addition
                     SecurityStamp = string.Empty,
                     FirstName = "John",
                     LastName = "Doe",
-                    CultureName = "ru-RU",
+                    CultureName = "en-US",
                     TimeZoneId = "Eastern Standard Time",
                 }, "Venue manager"),
 
                 (new User
                 {
+                    Id = "ae6af83f-d680-4a71-9af5-6ec65c06f5b6",
                     UserName = "user1",
                     NormalizedUserName = "USER1",
                     Email = "user1@gmail.com",
@@ -88,12 +91,13 @@ namespace TicketManagement.IntegrationTests.ControllersTests.Addition
                     SecurityStamp = string.Empty,
                     FirstName = "John",
                     LastName = "Doe",
-                    CultureName = "ru-RU",
+                    CultureName = "en-US",
                     TimeZoneId = "Eastern Standard Time",
                 }, "User"),
 
                 (new User
                 {
+                    Id = "d33655d7-af47-49c7-a004-64969e5b651f",
                     UserName = "eventManager",
                     NormalizedUserName = "EVENTMANAGER",
                     Email = "eventManager@gmail.com",
@@ -103,7 +107,7 @@ namespace TicketManagement.IntegrationTests.ControllersTests.Addition
                     SecurityStamp = string.Empty,
                     FirstName = "John",
                     LastName = "Doe",
-                    CultureName = "ru-RU",
+                    CultureName = "en-US",
                     TimeZoneId = "Eastern Standard Time",
                 }, "Event manager"),
             };

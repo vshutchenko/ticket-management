@@ -1,9 +1,10 @@
 ﻿using System.Linq;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using TicketManagement.DataAccess.EntityFrameworkImplementations;
+using RestEase;
+using RestEase.Implementation;
+using TicketManagement.EventApi.Clients.UserApi;
 
 namespace TicketManagement.IntegrationTests.ControllersTests
 {
@@ -14,19 +15,18 @@ namespace TicketManagement.IntegrationTests.ControllersTests
             builder.ConfigureServices(services =>
             {
                 var descriptor = services.SingleOrDefault(
-                d => d.ServiceType == typeof(DbContextOptions<TicketManagementContext>));
+                d => d.ServiceType == typeof(IUserClient));
 
                 if (descriptor != null)
                 {
                     services.Remove(descriptor);
                 }
 
-                var testDb = new TestDatabase.TestDatabase();
+                var userApiRequester = new Requester(CreateClient());
 
-                services.AddDbContext<TicketManagementContext>(options =>
-                {
-                    options.UseSqlServer(testDb.ConnectionString);
-                });
+                var userClient = RestClient.For<IUserClient>(userApiRequester);
+
+                services.AddScoped(p => userClient);
             });
         }
     }

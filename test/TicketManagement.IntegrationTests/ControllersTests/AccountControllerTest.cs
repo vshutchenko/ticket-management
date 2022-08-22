@@ -2,34 +2,31 @@
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using FluentAssertions;
-using Microsoft.AspNetCore;
-using Microsoft.Extensions.Hosting;
+using Microsoft.AspNetCore.Mvc.Testing;
 using NUnit.Framework;
+using RestEase;
 using TicketManagement.IntegrationTests.ControllersTests.Addition;
+using TicketManagement.WebApplication.Clients.EventApi;
 
 namespace TicketManagement.IntegrationTests.ControllersTests
 {
-    internal sealed class AccountControllerTest : IDisposable
+    internal sealed class AccountControllerTest : BaseTestController
     {
-        private readonly TestingWebAppFactory _factory = new TestingWebAppFactory();
-        private readonly TestingEventApiFactory _factory1 = new TestingEventApiFactory();
-        private readonly TestingVenueApiFactory _factory2 = new TestingVenueApiFactory();
-        private readonly TestingUserApiFactory _factory3 = new TestingUserApiFactory();
-        private readonly TestingPurchaseApiFactory _factory4 = new TestingPurchaseApiFactory();
-
         [Test]
         public async Task Login_AnonymousUser_ReturnsLoginPage()
         {
             // Arrange
-            var client = _factory.CreateClient();
+            var client = AppFactory.CreateClient();
+            client.DefaultRequestHeaders.Add("Authoriation", "Bearer sfsdpkofpsd");
 
             // Act
             var response = await client.GetAsync("/Account/Login");
+            var responseString = await response.Content.ReadAsStringAsync();
 
             // Assert
-            var responseString = await response.Content.ReadAsStringAsync();
             response.EnsureSuccessStatusCode();
             responseString.Should().Contain("Sign in");
         }
@@ -39,7 +36,7 @@ namespace TicketManagement.IntegrationTests.ControllersTests
         {
             // Arrange
             var url = "/Account/Login";
-            var client = _factory.CreateClient();
+            var client = AppFactory.CreateClient();
 
             var getResponse = await client.GetAsync(url);
             var antiForgery = await AntiForgeryTokenExtractor.ExtractAntiForgeryValues(getResponse);
@@ -47,15 +44,15 @@ namespace TicketManagement.IntegrationTests.ControllersTests
             var formModel = new Dictionary<string, string>
             {
                 { AntiForgeryTokenExtractor.Field, antiForgery.field },
-                { "Email", "eventManager@gmail.com" },
+                { "Email", "user1@gmail.com" },
                 { "Password", "Password123#" },
             };
 
             // Act
             var response = await client.PostAsync(url, new FormUrlEncodedContent(formModel));
+            var responseString = await response.Content.ReadAsStringAsync();
 
             // Assert
-            var responseString = await response.Content.ReadAsStringAsync();
             response.EnsureSuccessStatusCode();
             responseString.Should().Contain("List of events");
         }
@@ -65,7 +62,7 @@ namespace TicketManagement.IntegrationTests.ControllersTests
         {
             // Arrange
             var url = "/Account/Login";
-            var client = _factory.CreateClient();
+            var client = AppFactory.CreateClient();
 
             var getResponse = await client.GetAsync(url);
             var antiForgery = await AntiForgeryTokenExtractor.ExtractAntiForgeryValues(getResponse);
@@ -81,9 +78,9 @@ namespace TicketManagement.IntegrationTests.ControllersTests
 
             // Act
             var response = await client.PostAsync(url, new FormUrlEncodedContent(formModel));
+            var responseString = await response.Content.ReadAsStringAsync();
 
             // Assert
-            var responseString = await response.Content.ReadAsStringAsync();
             response.StatusCode.Should().Be(HttpStatusCode.OK);
             responseString.Should().Contain("User with such email does not exists.");
         }
@@ -92,13 +89,13 @@ namespace TicketManagement.IntegrationTests.ControllersTests
         public async Task Register_AnonymousUser_ReturnsRegisterPage()
         {
             // Arrange
-            var client = _factory.CreateClient();
+            var client = AppFactory.CreateClient();
 
             // Act
             var response = await client.GetAsync("/Account/Register");
+            var responseString = await response.Content.ReadAsStringAsync();
 
             // Assert
-            var responseString = await response.Content.ReadAsStringAsync();
             response.EnsureSuccessStatusCode();
             responseString.Should().Contain("Register");
         }
@@ -108,7 +105,7 @@ namespace TicketManagement.IntegrationTests.ControllersTests
         {
             // Arrange
             var url = "/Account/Register";
-            var client = _factory.CreateClient();
+            var client = AppFactory.CreateClient();
 
             var getResponse = await client.GetAsync(url);
             var antiForgery = await AntiForgeryTokenExtractor.ExtractAntiForgeryValues(getResponse);
@@ -127,9 +124,9 @@ namespace TicketManagement.IntegrationTests.ControllersTests
 
             // Act
             var response = await client.PostAsync(url, new FormUrlEncodedContent(formModel));
+            var responseString = await response.Content.ReadAsStringAsync();
 
             // Assert
-            var responseString = await response.Content.ReadAsStringAsync();
             response.EnsureSuccessStatusCode();
             responseString.Should().Contain("List of events");
         }
@@ -139,12 +136,12 @@ namespace TicketManagement.IntegrationTests.ControllersTests
         {
             // Arrange
             var url = "/Account/Register";
-            var client = _factory.CreateClient();
+            var client = AppFactory.CreateClient();
 
             var getResponse = await client.GetAsync(url);
             var antiForgery = await AntiForgeryTokenExtractor.ExtractAntiForgeryValues(getResponse);
 
-            var alreadyTakenEmail = "testUser@gmail.com";
+            var alreadyTakenEmail = "user1@gmail.com";
 
             var formModel = new Dictionary<string, string>
             {
@@ -160,27 +157,11 @@ namespace TicketManagement.IntegrationTests.ControllersTests
 
             // Act
             var response = await client.PostAsync(url, new FormUrlEncodedContent(formModel));
+            var responseString = await response.Content.ReadAsStringAsync();
 
             // Assert
-            var responseString = await response.Content.ReadAsStringAsync();
             response.StatusCode.Should().Be(HttpStatusCode.OK);
             responseString.Should().Contain("User already exists.");
-        }
-
-        [Test]
-        public async Task AddFunds_AnonymousUser_ReturnsLoginPage()
-        {
-            // Arrange
-            var url = "/Account/AddFunds";
-            var client = _factory.CreateClient();
-
-            // Act
-            var response = await client.GetAsync(url);
-
-            // Assert
-            var responseString = await response.Content.ReadAsStringAsync();
-            response.EnsureSuccessStatusCode();
-            responseString.Should().Contain("Sign in");
         }
 
         [Test]
@@ -189,7 +170,7 @@ namespace TicketManagement.IntegrationTests.ControllersTests
             // Arrange
             var url = "/Account/AddFunds";
             var provider = TestClaimsProvider.WithEventManagerClaims();
-            var client = _factory.CreateClientWithTestAuth(provider);
+            var client = AppFactory.CreateClientWithTestAuth(provider);
 
             // Act
             var response = await client.GetAsync(url);
@@ -199,53 +180,12 @@ namespace TicketManagement.IntegrationTests.ControllersTests
         }
 
         [Test]
-        public async Task AddFunds_UserRole_ReturnsAddFundsPage()
-        {
-            // Arrange
-            var url = "/Account/AddFunds";
-            var provider = TestClaimsProvider.WithUserClaims();
-            var client = _factory.CreateClientWithTestAuth(provider);
-
-            // Act
-            var response = await client.GetAsync(url);
-
-            // Assert
-            var responseString = await response.Content.ReadAsStringAsync();
-            response.EnsureSuccessStatusCode();
-            responseString.Should().Contain("Add funds to account");
-        }
-
-        [Test]
-        public async Task AddFunds_ValidModel_ReturnsRedirectResult()
-        {
-            // Arrange
-            var url = "/Account/AddFunds";
-            var provider = TestClaimsProvider.WithUserClaims();
-            var client = _factory.CreateClientWithTestAuth(provider);
-
-            var getResponse = await client.GetAsync(url);
-            var antiForgery = await AntiForgeryTokenExtractor.ExtractAntiForgeryValues(getResponse);
-
-            var formModel = new Dictionary<string, string>
-            {
-                { AntiForgeryTokenExtractor.Field, antiForgery.field },
-                { "amount", "100" },
-            };
-
-            // Act
-            var response = await client.PostAsync(url, new FormUrlEncodedContent(formModel));
-
-            // Assert
-            response.StatusCode.Should().Be(HttpStatusCode.Redirect);
-        }
-
-        [Test]
         public async Task ChangePassword_UserRole_ReturnsOkResult()
         {
             // Arrange
             var url = "/Account/ChangePassword";
             var provider = TestClaimsProvider.WithUserClaims();
-            var client = _factory.CreateClientWithTestAuth(provider);
+            var client = AppFactory.CreateClientWithTestAuth(provider);
 
             // Act
             var response = await client.GetAsync(url);
@@ -260,7 +200,7 @@ namespace TicketManagement.IntegrationTests.ControllersTests
             // Arrange
             var url = "/Account/ChangePassword";
             var provider = TestClaimsProvider.WithEventManagerClaims();
-            var client = _factory.CreateClientWithTestAuth(provider);
+            var client = AppFactory.CreateClientWithTestAuth(provider);
 
             // Act
             var response = await client.GetAsync(url);
@@ -275,7 +215,7 @@ namespace TicketManagement.IntegrationTests.ControllersTests
             // Arrange
             var url = "/Account/ChangePassword";
             var provider = TestClaimsProvider.WithUserClaims();
-            var client = _factory.CreateClientWithTestAuth(provider);
+            var client = AppFactory.CreateClientWithTestAuth(provider);
 
             var getResponse = await client.GetAsync(url);
             var antiForgery = await AntiForgeryTokenExtractor.ExtractAntiForgeryValues(getResponse);
@@ -296,42 +236,12 @@ namespace TicketManagement.IntegrationTests.ControllersTests
         }
 
         [Test]
-        public async Task ChangePassword_InvalidModel_ReturnsOkResultWithErrorMessage()
-        {
-            // Arrange
-            var url = "/Account/ChangePassword";
-            var provider = TestClaimsProvider.WithUserClaims();
-            var client = _factory.CreateClientWithTestAuth(provider);
-
-            var getResponse = await client.GetAsync(url);
-            var antiForgery = await AntiForgeryTokenExtractor.ExtractAntiForgeryValues(getResponse);
-
-            var wrongCurrentPassword = "wrongPassword";
-
-            var formModel = new Dictionary<string, string>
-            {
-                { AntiForgeryTokenExtractor.Field, antiForgery.field },
-                { "CurrentPassword", wrongCurrentPassword },
-                { "NewPassword", "NewPassword" },
-                { "ConfirmNewPassword", "NewPassword" },
-            };
-
-            // Act
-            var response = await client.PostAsync(url, new FormUrlEncodedContent(formModel));
-
-            // Assert
-            var responseString = await response.Content.ReadAsStringAsync();
-            response.StatusCode.Should().Be(HttpStatusCode.OK);
-            responseString.Should().Contain("Not valid current password.");
-        }
-
-        [Test]
         public async Task EditUser_UserRole_ReturnsOkResult()
         {
             // Arrange
             var url = "/Account/EditUser?userId=d33655d7-af47-49c7-a004-64969e5b651f";
             var provider = TestClaimsProvider.WithUserClaims();
-            var client = _factory.CreateClientWithTestAuth(provider);
+            var client = AppFactory.CreateClientWithTestAuth(provider);
 
             // Act
             var response = await client.GetAsync(url);
@@ -346,75 +256,13 @@ namespace TicketManagement.IntegrationTests.ControllersTests
             // Arrange
             var url = "/Account/EditUser?userId=d33655d7-af47-49c7-a004-64969e5b651f";
             var provider = TestClaimsProvider.WithEventManagerClaims();
-            var client = _factory.CreateClientWithTestAuth(provider);
+            var client = AppFactory.CreateClientWithTestAuth(provider);
 
             // Act
             var response = await client.GetAsync(url);
 
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.OK);
-        }
-
-        [Test]
-        public async Task EditUser_ValidModel_ReturnsRedirectResult()
-        {
-            // Arrange
-            var url = "/Account/EditUser?userId=d33655d7-af47-49c7-a004-64969e5b651f";
-            var provider = TestClaimsProvider.WithUserClaims();
-            var client = _factory.CreateClientWithTestAuth(provider);
-
-            var getResponse = await client.GetAsync(url);
-            var antiForgery = await AntiForgeryTokenExtractor.ExtractAntiForgeryValues(getResponse);
-
-            var formModel = new Dictionary<string, string>
-            {
-                { AntiForgeryTokenExtractor.Field, antiForgery.field },
-                { "Id", "d33655d7-af47-49c7-a004-64969e5b651f" },
-                { "FirstName", "John" },
-                { "LastName", "Doe" },
-                { "CultureName", "en-US" },
-                { "TimeZoneId", TimeZoneInfo.Local.Id },
-                { "Email", "newemail@gmail.com" },
-            };
-
-            // Act
-            var response = await client.PostAsync(url, new FormUrlEncodedContent(formModel));
-
-            // Assert
-            response.StatusCode.Should().Be(HttpStatusCode.Redirect);
-        }
-
-        [Test]
-        public async Task EditUser_InvalidModel_ReturnsOkResultWithErrorMessage()
-        {
-            // Arrange
-            var url = "/Account/EditUser?userId=d33655d7-af47-49c7-a004-64969e5b651f";
-            var provider = TestClaimsProvider.WithUserClaims();
-            var client = _factory.CreateClientWithTestAuth(provider);
-
-            var getResponse = await client.GetAsync(url);
-            var antiForgery = await AntiForgeryTokenExtractor.ExtractAntiForgeryValues(getResponse);
-
-            var alreadyTakenEmail = "eventManager@gmail.com";
-
-            var formModel = new Dictionary<string, string>
-            {
-                { AntiForgeryTokenExtractor.Field, antiForgery.field },
-                { "Id", "d33655d7-af47-49c7-a004-64969e5b651f" },
-                { "FirstName", "John" },
-                { "LastName", "Doe" },
-                { "CultureName", "en-US" },
-                { "TimeZoneId", TimeZoneInfo.Local.Id },
-                { "Email", alreadyTakenEmail },
-            };
-
-            // Act
-            var response = await client.PostAsync(url, new FormUrlEncodedContent(formModel));
-
-            // Assert
-            var responseString = await response.Content.ReadAsStringAsync();
-            response.StatusCode.Should().Be(HttpStatusCode.OK);
-            responseString.Should().Contain("This email is already taken.");
         }
 
         [Test]
@@ -423,22 +271,13 @@ namespace TicketManagement.IntegrationTests.ControllersTests
             // Arrange
             var url = "/Account/Logout";
             var provider = TestClaimsProvider.WithUserClaims();
-            var client = _factory.CreateClientWithTestAuth(provider);
+            var client = AppFactory.CreateClientWithTestAuth(provider);
 
             // Act
             var response = await client.GetAsync(url);
 
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.Redirect);
-        }
-
-        public void Dispose()
-        {
-            _factory.Dispose();
-            _factory1.Dispose();
-            _factory2.Dispose();
-            _factory3.Dispose();
-            _factory4.Dispose();
         }
     }
 }

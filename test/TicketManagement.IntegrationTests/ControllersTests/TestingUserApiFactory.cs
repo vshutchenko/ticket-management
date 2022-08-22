@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using TicketManagement.DataAccess.EntityFrameworkImplementations;
 using TicketManagement.IntegrationTests.ControllersTests.Addition;
 
@@ -10,7 +11,7 @@ namespace TicketManagement.IntegrationTests.ControllersTests
 {
     internal class TestingUserApiFactory : WebApplicationFactory<UserApi.Program>
     {
-        protected override void ConfigureWebHost(IWebHostBuilder builder)
+        protected override IHost CreateHost(IHostBuilder builder)
         {
             builder.ConfigureServices(services =>
             {
@@ -39,6 +40,8 @@ namespace TicketManagement.IntegrationTests.ControllersTests
 
                 seeder.SeedInitialDataAsync().Wait();
             });
+
+            return base.CreateHost(builder);
         }
     }
 }

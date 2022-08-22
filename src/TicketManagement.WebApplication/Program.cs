@@ -33,15 +33,6 @@ builder.Services.AddScoped(provider => new MapperConfiguration(mc =>
 })
 .CreateMapper());
 
-builder.Services.AddDatabaseDeveloperPageExceptionFilter();
-
-builder.Services.AddSession();
-
-builder.Services.AddAuthentication(JwtAutheticationConstants.SchemeName)
-                .AddScheme<JwtAuthenticationOptions, JwtAuthenticationHandler>(JwtAutheticationConstants.SchemeName, null);
-
-builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
-
 builder.Services.AddControllersWithViews(options =>
 {
     options.ModelBinderProviders.Insert(0, new InvariantDecimalModelBinderProvider());
@@ -53,6 +44,12 @@ builder.Services.AddControllersWithViews(options =>
     .AddDataAnnotationsLocalization()
     .AddViewLocalization(Microsoft.AspNetCore.Mvc.Razor.LanguageViewLocationExpanderFormat.Suffix)
     .AddSessionStateTempDataProvider();
+
+builder.Services.AddDatabaseDeveloperPageExceptionFilter();
+
+builder.Services.AddSession();
+
+builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
 
 builder.Services.Configure<RequestLocalizationOptions>(options =>
 {
@@ -77,6 +74,9 @@ builder.Services.AddRestEaseClient<IVenueClient>(builder.Configuration["VenueApi
 builder.Services.AddRestEaseClient<ILayoutClient>(builder.Configuration["VenueApi:BaseAddress"]);
 
 builder.Services.AddRestEaseClient<IUserClient>(builder.Configuration["UserApi:BaseAddress"]);
+
+builder.Services.AddAuthentication(JwtAutheticationConstants.SchemeName)
+                .AddScheme<JwtAuthenticationOptions, JwtAuthenticationHandler>(JwtAutheticationConstants.SchemeName, null);
 
 builder.Host.UseSerilog();
 
@@ -103,7 +103,7 @@ app.Use(async (context, next) =>
 
     var token = tokenService.GetToken();
 
-    if (!string.IsNullOrEmpty(token))
+    if (!context.Request.Headers.ContainsKey("Authorization") && token != null)
     {
         context.Request.Headers.Add("Authorization", token);
     }

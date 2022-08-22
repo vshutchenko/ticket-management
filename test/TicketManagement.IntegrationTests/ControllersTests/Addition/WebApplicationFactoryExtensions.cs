@@ -9,7 +9,9 @@ namespace TicketManagement.IntegrationTests.ControllersTests.Addition
 {
     internal static class TestingWebAppFactoryExtensions
     {
-        public static WebApplicationFactory<WebApplication.Program> WithAuthentication(this TestingWebAppFactory factory, TestClaimsProvider claimsProvider)
+        public static WebApplicationFactory<TicketManagement.WebApplication.Program> WithAuthentication(
+            this WebApplicationFactory<TicketManagement.WebApplication.Program> factory,
+            TestClaimsProvider claimsProvider)
         {
             return factory.WithWebHostBuilder(builder =>
             {
@@ -23,7 +25,7 @@ namespace TicketManagement.IntegrationTests.ControllersTests.Addition
             });
         }
 
-        public static HttpClient CreateClientWithTestAuth(this TestingWebAppFactory factory, TestClaimsProvider claimsProvider)
+        public static HttpClient CreateClientWithTestAuth(this WebApplicationFactory<TicketManagement.WebApplication.Program> factory, TestClaimsProvider claimsProvider)
         {
             var client = factory.WithAuthentication(claimsProvider).CreateClient(new WebApplicationFactoryClientOptions
             {
