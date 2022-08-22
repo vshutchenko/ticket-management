@@ -1,6 +1,5 @@
 ﻿using System.Net.Http;
 using System.Net.Http.Headers;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
@@ -17,9 +16,6 @@ namespace TicketManagement.IntegrationTests.ControllersTests.Addition
             {
                 builder.ConfigureTestServices(services =>
                 {
-                    services.AddAuthentication("Test")
-                            .AddScheme<AuthenticationSchemeOptions, TestAuthHandler>("Test", op => { });
-
                     services.AddScoped(_ => claimsProvider);
                 });
             });
@@ -32,7 +28,8 @@ namespace TicketManagement.IntegrationTests.ControllersTests.Addition
                 AllowAutoRedirect = false,
             });
 
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Test");
+            client.DefaultRequestHeaders.Authorization =
+                new AuthenticationHeaderValue("Bearer", new TokenHelper().GetToken(claimsProvider.Claims));
 
             return client;
         }
