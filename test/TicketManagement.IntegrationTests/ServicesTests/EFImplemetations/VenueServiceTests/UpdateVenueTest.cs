@@ -19,7 +19,9 @@ namespace TicketManagement.IntegrationTests.EFImplemetations.VenueServiceTests
         [SetUp]
         public void CreateServices()
         {
-            var connectionString = new TestDatabase.TestDatabase().ConnectionString;
+            var testDbInfo = new TestDatabase.TestDatabaseInfo();
+            var connectionString = testDbInfo.ConnectionString;
+            testDbInfo.CreateDb();
 
             var optionsBuilder = new DbContextOptionsBuilder<TicketManagementContext>();
             optionsBuilder.UseSqlServer(connectionString);

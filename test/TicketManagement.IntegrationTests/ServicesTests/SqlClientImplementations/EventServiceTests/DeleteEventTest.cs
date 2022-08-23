@@ -23,7 +23,9 @@ namespace TicketManagement.IntegrationTests.SqlClientImplementations.EventServic
         [SetUp]
         public void CreateServices()
         {
-            var connectionString = new TestDatabase.TestDatabase().ConnectionString;
+            var testDbInfo = new TestDatabase.TestDatabaseInfo();
+            var connectionString = testDbInfo.ConnectionString;
+            testDbInfo.CreateDb();
 
             var eventRepo = new EventSqlClientRepository(connectionString);
             var areaRepo = new AreaSqlClientRepository(connectionString);

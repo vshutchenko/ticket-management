@@ -18,7 +18,9 @@ namespace TicketManagement.IntegrationTests.SqlClientImplementations.AreaService
         [SetUp]
         public void CreateServices()
         {
-            var connectionString = new TestDatabase.TestDatabase().ConnectionString;
+            var testDbInfo = new TestDatabase.TestDatabaseInfo();
+            var connectionString = testDbInfo.ConnectionString;
+            testDbInfo.CreateDb();
 
             var areaRepo = new AreaSqlClientRepository(connectionString);
             var areaValidator = new AreaValidator(areaRepo);

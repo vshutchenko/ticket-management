@@ -5,13 +5,14 @@ using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
 using RestEase;
-using TicketManagement.IntegrationTests.ControllersTests.Addition;
+using TicketManagement.IntegrationTests.Addition;
+using TicketManagement.IntegrationTests.Factories;
 using TicketManagement.WebApplication.Clients.EventApi;
 using TicketManagement.WebApplication.Clients.PurchaseApi;
 using TicketManagement.WebApplication.Clients.UserApi;
 using TicketManagement.WebApplication.Clients.VenueApi;
 
-namespace TicketManagement.IntegrationTests.ControllersTests
+namespace TicketManagement.IntegrationTests.AppControllersTests
 {
     internal abstract class BaseTestController
     {
@@ -25,7 +26,7 @@ namespace TicketManagement.IntegrationTests.ControllersTests
 
         protected WebApplicationFactory<WebApplication.Program> AppFactory { get; private set; }
 
-        [OneTimeSetUp]
+        [SetUp]
         public void SetUp()
         {
             UserApiFactory = new TestingUserApiFactory();
@@ -34,6 +35,8 @@ namespace TicketManagement.IntegrationTests.ControllersTests
             EventApiFactory = new WebApplicationFactory<EventApi.Program>()
                 .WithWebHostBuilder(c => c.ConfigureServices(services =>
                 {
+                    services.ReplaceContextWithTestDb();
+
                     var descriptor = services.SingleOrDefault(
                         d => d.ServiceType == typeof(EventApi.Clients.UserApi.IUserClient));
 
@@ -50,6 +53,8 @@ namespace TicketManagement.IntegrationTests.ControllersTests
             VenueApiFactory = new WebApplicationFactory<VenueApi.Program>()
                 .WithWebHostBuilder(c => c.ConfigureServices(services =>
                 {
+                    services.ReplaceContextWithTestDb();
+
                     var descriptor = services.SingleOrDefault(
                         d => d.ServiceType == typeof(VenueApi.Clients.UserApi.IUserClient));
 
@@ -66,6 +71,8 @@ namespace TicketManagement.IntegrationTests.ControllersTests
             PurchaseApiFactory = new WebApplicationFactory<PurchaseApi.Program>()
                 .WithWebHostBuilder(c => c.ConfigureServices(services =>
                 {
+                    services.ReplaceContextWithTestDb();
+
                     var descriptor = services.SingleOrDefault(
                         d => d.ServiceType == typeof(PurchaseApi.Clients.UserApi.IUserClient));
 
@@ -86,12 +93,19 @@ namespace TicketManagement.IntegrationTests.ControllersTests
             AppFactory = new WebApplicationFactory<WebApplication.Program>()
                 .WithWebHostBuilder(c => c.ConfigureServices(services =>
                 {
+                    services.AddAntiforgery(t =>
+                    {
+                        t.Cookie.Name = AntiForgeryTokenExtractor.Cookie;
+                        t.FormFieldName = AntiForgeryTokenExtractor.Field;
+                    });
+
                     var types = new List<Type>
                     {
                         typeof(IEventClient),
                         typeof(IEventAreaClient),
                         typeof(IEventSeatClient),
                         typeof(IVenueClient),
+                        typeof(ILayoutClient),
                         typeof(IUserClient),
                         typeof(IPurchaseClient),
                     };
@@ -107,22 +121,18 @@ namespace TicketManagement.IntegrationTests.ControllersTests
                         }
                     }
 
-                    services.AddAntiforgery(t =>
-                    {
-                        t.Cookie.Name = AntiForgeryTokenExtractor.Cookie;
-                        t.FormFieldName = AntiForgeryTokenExtractor.Field;
-                    });
-
                     var eventClient = RestClient.For<IEventClient>(eventApiCLient);
                     var eventAreaClient = RestClient.For<IEventAreaClient>(eventApiCLient);
                     var eventSeatClient = RestClient.For<IEventSeatClient>(eventApiCLient);
                     var venueClient = RestClient.For<IVenueClient>(venueApiCLient);
+                    var layoutClient = RestClient.For<ILayoutClient>(venueApiCLient);
                     var userClient = RestClient.For<IUserClient>(userApiCLient);
                     var purchaseClient = RestClient.For<IPurchaseClient>(purchaseApiCLient);
 
                     services.AddScoped(p => eventClient);
                     services.AddScoped(p => eventAreaClient);
                     services.AddScoped(p => eventSeatClient);
+                    services.AddScoped(p => layoutClient);
                     services.AddScoped(p => venueClient);
                     services.AddScoped(p => userClient);
                     services.AddScoped(p => purchaseClient);

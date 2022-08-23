@@ -17,7 +17,9 @@ namespace TicketManagement.IntegrationTests.SqlClientImplementations.EventSeatSe
         [OneTimeSetUp]
         public void CreateServices()
         {
-            var connectionString = new TestDatabase.TestDatabase().ConnectionString;
+            var testDbInfo = new TestDatabase.TestDatabaseInfo();
+            var connectionString = testDbInfo.ConnectionString;
+            testDbInfo.CreateDb();
 
             var eventSeatRepo = new EventSeatSqlClientRepository(connectionString);
             var eventAreaRepo = new EventAreaSqlClientRepository(connectionString);

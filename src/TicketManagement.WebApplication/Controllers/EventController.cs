@@ -158,17 +158,17 @@ namespace TicketManagement.WebApplication.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> EditNotPublishedEvent(EditEventViewModel model)
         {
-            foreach (var item in model.Areas)
-            {
-                await _eventAreaClient.UpdatePriceAsync(item.Id, item.Price, _tokenService.GetToken());
-            }
-
             var @event = _mapper.Map<EventModel>(model.Event);
 
             @event.StartDate = User.GetUtcTime(@event.StartDate);
             @event.EndDate = User.GetUtcTime(@event.EndDate);
 
             await _eventClient.UpdateAsync(@event, _tokenService.GetToken());
+
+            foreach (var item in model.Areas)
+            {
+                await _eventAreaClient.UpdatePriceAsync(item.Id, item.Price, _tokenService.GetToken());
+            }
 
             return RedirectToAction("PurchaseSeats", "Purchase", new { id = @event.Id });
         }

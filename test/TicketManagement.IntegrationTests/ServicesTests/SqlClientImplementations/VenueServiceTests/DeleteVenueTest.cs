@@ -18,7 +18,9 @@ namespace TicketManagement.IntegrationTests.SqlClientImplementations.VenueServic
         [OneTimeSetUp]
         public void CreateServices()
         {
-            var connectionString = new TestDatabase.TestDatabase().ConnectionString;
+            var testDbInfo = new TestDatabase.TestDatabaseInfo();
+            var connectionString = testDbInfo.ConnectionString;
+            testDbInfo.CreateDb();
 
             var venueRepo = new VenueSqlClientRepository(connectionString);
             var venueValidator = new VenueValidator(venueRepo);

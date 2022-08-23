@@ -5,7 +5,6 @@ using Microsoft.EntityFrameworkCore;
 using NUnit.Framework;
 using TicketManagement.DataAccess.EntityFrameworkImplementations;
 using TicketManagement.VenueApi.MappingConfig;
-using TicketManagement.VenueApi.Models;
 using TicketManagement.VenueApi.Services.Implementations;
 using TicketManagement.VenueApi.Services.Interfaces;
 using TicketManagement.VenueApi.Services.Validation;
@@ -19,7 +18,9 @@ namespace TicketManagement.IntegrationTests.EFImplemetations.AreaServiceTests
         [OneTimeSetUp]
         public void CreateServices()
         {
-            var connectionString = new TestDatabase.TestDatabase().ConnectionString;
+            var testDbInfo = new TestDatabase.TestDatabaseInfo();
+            var connectionString = testDbInfo.ConnectionString;
+            testDbInfo.CreateDb();
 
             var optionsBuilder = new DbContextOptionsBuilder<TicketManagementContext>();
             optionsBuilder.UseSqlServer(connectionString);

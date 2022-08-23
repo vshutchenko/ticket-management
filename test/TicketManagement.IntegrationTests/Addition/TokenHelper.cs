@@ -6,7 +6,7 @@ using System.Text;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 
-namespace TicketManagement.IntegrationTests.ControllersTests.Addition
+namespace TicketManagement.IntegrationTests.Addition
 {
     internal class TokenHelper
     {

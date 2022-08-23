@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Security.Claims;
 
-namespace TicketManagement.IntegrationTests.ControllersTests.Addition
+namespace TicketManagement.IntegrationTests.Addition
 {
     public class TestClaimsProvider
     {

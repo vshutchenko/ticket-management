@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using TicketManagement.DataAccess.Entities;
 
-namespace TicketManagement.IntegrationTests.ControllersTests.Addition
+namespace TicketManagement.IntegrationTests.Addition
 {
     public class ContextSeeder
     {

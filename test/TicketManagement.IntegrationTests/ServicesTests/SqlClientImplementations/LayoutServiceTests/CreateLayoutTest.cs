@@ -18,7 +18,9 @@ namespace TicketManagement.IntegrationTests.SqlClientImplementations.LayoutServi
         [OneTimeSetUp]
         public void CreateServices()
         {
-            var connectionString = new TestDatabase.TestDatabase().ConnectionString;
+            var testDbInfo = new TestDatabase.TestDatabaseInfo();
+            var connectionString = testDbInfo.ConnectionString;
+            testDbInfo.CreateDb();
 
             var layoutRepo = new LayoutSqlClientRepository(connectionString);
             var layoutValidator = new LayoutValidator(layoutRepo);

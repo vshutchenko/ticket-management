@@ -1,11 +1,11 @@
 ﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
-using TicketManagement.IntegrationTests.ControllersTests.Addition;
+using TicketManagement.IntegrationTests.Addition;
 
-namespace TicketManagement.IntegrationTests.ControllersTests
+namespace TicketManagement.IntegrationTests.Factories
 {
-    internal class TestingWebAppFactory : WebApplicationFactory<TicketManagement.WebApplication.Program>
+    internal class TestingWebAppFactory : WebApplicationFactory<WebApplication.Program>
     {
         protected override void ConfigureWebHost(IWebHostBuilder builder)
         {

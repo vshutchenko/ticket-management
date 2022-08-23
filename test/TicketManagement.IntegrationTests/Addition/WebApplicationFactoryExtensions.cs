@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace TicketManagement.IntegrationTests.ControllersTests.Addition
+namespace TicketManagement.IntegrationTests.Addition
 {
     internal static class TestingWebAppFactoryExtensions
     {

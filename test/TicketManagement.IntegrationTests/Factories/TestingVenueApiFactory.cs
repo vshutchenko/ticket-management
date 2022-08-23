@@ -2,15 +2,16 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using RestEase;
 using RestEase.Implementation;
-using TicketManagement.EventApi.Clients.UserApi;
+using TicketManagement.VenueApi.Clients.UserApi;
 
-namespace TicketManagement.IntegrationTests.ControllersTests
+namespace TicketManagement.IntegrationTests.Factories
 {
-    internal class TestingEventApiFactory : WebApplicationFactory<EventApi.Program>
+    internal class TestingVenueApiFactory : WebApplicationFactory<VenueApi.Program>
     {
-        protected override void ConfigureWebHost(IWebHostBuilder builder)
+        protected override IHost CreateHost(IHostBuilder builder)
         {
             builder.ConfigureServices(services =>
             {
@@ -28,6 +29,8 @@ namespace TicketManagement.IntegrationTests.ControllersTests
 
                 services.AddScoped(p => userClient);
             });
+
+            return builder.Build();
         }
     }
 }

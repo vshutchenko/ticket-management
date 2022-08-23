@@ -5,7 +5,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.Net.Http.Headers;
 
-namespace TicketManagement.IntegrationTests.ControllersTests.Addition
+namespace TicketManagement.IntegrationTests.Addition
 {
     public static class AntiForgeryTokenExtractor
     {

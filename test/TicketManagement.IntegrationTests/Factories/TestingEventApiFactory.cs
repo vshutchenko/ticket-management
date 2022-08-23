@@ -4,11 +4,11 @@ using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
 using RestEase;
 using RestEase.Implementation;
-using TicketManagement.PurchaseApi.Clients.UserApi;
+using TicketManagement.EventApi.Clients.UserApi;
 
-namespace TicketManagement.IntegrationTests.ControllersTests
+namespace TicketManagement.IntegrationTests.Factories
 {
-    internal class TestingPurchaseApiFactory : WebApplicationFactory<PurchaseApi.Program>
+    internal class TestingEventApiFactory : WebApplicationFactory<EventApi.Program>
     {
         protected override void ConfigureWebHost(IWebHostBuilder builder)
         {

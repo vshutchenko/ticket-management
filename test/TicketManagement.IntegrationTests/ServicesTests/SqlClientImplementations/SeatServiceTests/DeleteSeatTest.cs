@@ -18,7 +18,9 @@ namespace TicketManagement.IntegrationTests.SqlClientImplementations.SeatService
         [OneTimeSetUp]
         public void CreateServices()
         {
-            var connectionString = new TestDatabase.TestDatabase().ConnectionString;
+            var testDbInfo = new TestDatabase.TestDatabaseInfo();
+            var connectionString = testDbInfo.ConnectionString;
+            testDbInfo.CreateDb();
 
             var seatRepo = new SeatSqlClientRepository(connectionString);
             var seatValidator = new SeatValidator(seatRepo);
