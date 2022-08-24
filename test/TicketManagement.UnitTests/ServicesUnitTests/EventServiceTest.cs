@@ -812,21 +812,27 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
         }
 
         [Test]
-        public void GetAll_EventListNotEmpty_ReturnsEventList()
+        public void GetPublishedEvents_EventListNotEmpty_ReturnsEventList()
         {
             // Arrange
             var events = new List<Event>
             {
-                new Event { Id = 1, Name = "Event 1", Description = "Description 1", LayoutId = 1, StartDate = new DateTime(2023, 1, 1), EndDate = new DateTime(2023, 1, 2) },
+                new Event { Id = 1, Name = "Event 1", Description = "Description 1", LayoutId = 1, StartDate = new DateTime(2023, 1, 1), EndDate = new DateTime(2023, 1, 2), Published = true },
                 new Event { Id = 2, Name = "Event 2", Description = "Description 2", LayoutId = 2, StartDate = new DateTime(2023, 2, 2, 10, 0, 0), EndDate = new DateTime(2023, 2, 2, 15, 0, 0) },
-                new Event { Id = 3, Name = "Event 3", Description = "Description 3", LayoutId = 2, StartDate = new DateTime(2023, 1, 3), EndDate = new DateTime(2023, 1, 5) },
+                new Event { Id = 3, Name = "Event 3", Description = "Description 3", LayoutId = 2, StartDate = new DateTime(2023, 1, 3), EndDate = new DateTime(2023, 1, 5), Published = true },
             };
 
             var mappedEvents = new List<EventModel>
             {
-                new EventModel { Id = 1, Name = "Event 1", Description = "Description 1", LayoutId = 1, StartDate = new DateTime(2023, 1, 1), EndDate = new DateTime(2023, 1, 2) },
+                new EventModel { Id = 1, Name = "Event 1", Description = "Description 1", LayoutId = 1, StartDate = new DateTime(2023, 1, 1), EndDate = new DateTime(2023, 1, 2), Published = true },
                 new EventModel { Id = 2, Name = "Event 2", Description = "Description 2", LayoutId = 2, StartDate = new DateTime(2023, 2, 2, 10, 0, 0), EndDate = new DateTime(2023, 2, 2, 15, 0, 0) },
-                new EventModel { Id = 3, Name = "Event 3", Description = "Description 3", LayoutId = 2, StartDate = new DateTime(2023, 1, 3), EndDate = new DateTime(2023, 1, 5) },
+                new EventModel { Id = 3, Name = "Event 3", Description = "Description 3", LayoutId = 2, StartDate = new DateTime(2023, 1, 3), EndDate = new DateTime(2023, 1, 5), Published = true },
+            };
+
+            var expectedEvents = new List<EventModel>
+            {
+                new EventModel { Id = 1, Name = "Event 1", Description = "Description 1", LayoutId = 1, StartDate = new DateTime(2023, 1, 1), EndDate = new DateTime(2023, 1, 2), Published = true },
+                new EventModel { Id = 3, Name = "Event 3", Description = "Description 3", LayoutId = 2, StartDate = new DateTime(2023, 1, 3), EndDate = new DateTime(2023, 1, 5), Published = true },
             };
 
             for (var i = 0; i < events.Count; i++)
@@ -837,10 +843,47 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
             _eventRepositoryMock.Setup(x => x.GetAll()).Returns(events.AsQueryable());
 
             // Act
-            var actualEvents = _eventService.GetAll();
+            var actualEvents = _eventService.GetPublishedEvents();
 
             // Assert
-            actualEvents.Should().BeEquivalentTo(mappedEvents);
+            actualEvents.Should().BeEquivalentTo(expectedEvents);
+        }
+
+        [Test]
+        public void GetNotPublishedEvents_EventListNotEmpty_ReturnsEventList()
+        {
+            // Arrange
+            var events = new List<Event>
+            {
+                new Event { Id = 1, Name = "Event 1", Description = "Description 1", LayoutId = 1, StartDate = new DateTime(2023, 1, 1), EndDate = new DateTime(2023, 1, 2), Published = true },
+                new Event { Id = 2, Name = "Event 2", Description = "Description 2", LayoutId = 2, StartDate = new DateTime(2023, 2, 2, 10, 0, 0), EndDate = new DateTime(2023, 2, 2, 15, 0, 0) },
+                new Event { Id = 3, Name = "Event 3", Description = "Description 3", LayoutId = 2, StartDate = new DateTime(2023, 1, 3), EndDate = new DateTime(2023, 1, 5), Published = true },
+            };
+
+            var mappedEvents = new List<EventModel>
+            {
+                new EventModel { Id = 1, Name = "Event 1", Description = "Description 1", LayoutId = 1, StartDate = new DateTime(2023, 1, 1), EndDate = new DateTime(2023, 1, 2), Published = true },
+                new EventModel { Id = 2, Name = "Event 2", Description = "Description 2", LayoutId = 2, StartDate = new DateTime(2023, 2, 2, 10, 0, 0), EndDate = new DateTime(2023, 2, 2, 15, 0, 0) },
+                new EventModel { Id = 3, Name = "Event 3", Description = "Description 3", LayoutId = 2, StartDate = new DateTime(2023, 1, 3), EndDate = new DateTime(2023, 1, 5), Published = true },
+            };
+
+            var expectedEvents = new List<EventModel>
+            {
+                new EventModel { Id = 2, Name = "Event 2", Description = "Description 2", LayoutId = 2, StartDate = new DateTime(2023, 2, 2, 10, 0, 0), EndDate = new DateTime(2023, 2, 2, 15, 0, 0) },
+            };
+
+            for (var i = 0; i < events.Count; i++)
+            {
+                _mapperMock.Setup(m => m.Map<EventModel>(events[i])).Returns(mappedEvents[i]);
+            }
+
+            _eventRepositoryMock.Setup(x => x.GetAll()).Returns(events.AsQueryable());
+
+            // Act
+            var actualEvents = _eventService.GetNotPublishedEvents();
+
+            // Assert
+            actualEvents.Should().BeEquivalentTo(expectedEvents);
         }
 
         [Test]

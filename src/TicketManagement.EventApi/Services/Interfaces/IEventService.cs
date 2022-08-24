@@ -4,7 +4,9 @@ namespace TicketManagement.EventApi.Services.Interfaces
 {
     public interface IEventService
     {
-        IEnumerable<EventModel> GetAll();
+        IEnumerable<EventModel> GetNotPublishedEvents();
+
+        IEnumerable<EventModel> GetPublishedEvents();
 
         Task<EventModel> GetByIdAsync(int id);
 

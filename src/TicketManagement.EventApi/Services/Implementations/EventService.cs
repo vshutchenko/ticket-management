@@ -55,9 +55,20 @@ namespace TicketManagement.EventApi.Services.Implementations
             await _eventRepository.DeleteAsync(id);
         }
 
-        public IEnumerable<EventModel> GetAll()
+        public IEnumerable<EventModel> GetNotPublishedEvents()
         {
             var models = _eventRepository.GetAll()
+                .Where(e => !e.Published)
+                .Select(e => _mapper.Map<EventModel>(e))
+                .ToList();
+
+            return models;
+        }
+
+        public IEnumerable<EventModel> GetPublishedEvents()
+        {
+            var models = _eventRepository.GetAll()
+                .Where(e => e.Published)
                 .Select(e => _mapper.Map<EventModel>(e))
                 .ToList();
 

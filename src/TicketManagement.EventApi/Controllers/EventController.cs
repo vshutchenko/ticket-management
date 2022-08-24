@@ -26,8 +26,8 @@ namespace TicketManagement.EventApi.Controllers
         [ProducesResponseType(typeof(List<EventModel>), StatusCodes.Status200OK)]
         public IActionResult GetPublishedEvents()
         {
-            var events = _eventService.GetAll()
-                .Where(e => e.Published)
+            var events = _eventService
+                .GetPublishedEvents()
                 .ToList();
 
             return Ok(events);
@@ -42,8 +42,8 @@ namespace TicketManagement.EventApi.Controllers
         [ProducesResponseType(typeof(List<EventModel>), StatusCodes.Status200OK)]
         public IActionResult GetNotPublishedEvents()
         {
-            var events = _eventService.GetAll()
-                .Where(e => !e.Published)
+            var events = _eventService
+                .GetNotPublishedEvents()
                 .ToList();
 
             return Ok(events);
