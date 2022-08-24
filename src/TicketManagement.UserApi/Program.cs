@@ -34,6 +34,7 @@ builder.Services.AddControllers(options =>
     options.Filters.Add<ValidationExceptionFilter>();
 });
 
+builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<ITokenService, TokenService>(
     p => new TokenService(builder.Configuration["Jwt:Key"], builder.Configuration["Jwt:Audience"], builder.Configuration["Jwt:Issuer"]));
 

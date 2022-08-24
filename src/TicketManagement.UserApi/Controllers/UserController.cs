@@ -1,7 +1,5 @@
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using TicketManagement.DataAccess.Entities;
 using TicketManagement.UserApi.Models;
 using TicketManagement.UserApi.Services.Interfaces;
 
@@ -11,13 +9,13 @@ namespace TicketManagement.UserApi.Controllers
     [ApiController]
     public class UserController : ControllerBase
     {
-        private readonly UserManager<User> _userManager;
+        private readonly IUserService _userService;
 
         private readonly ITokenService _tokenService;
 
-        public UserController(UserManager<User> userManager, ITokenService tokenService)
+        public UserController(IUserService userService, ITokenService tokenService)
         {
-            _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
+            _userService = userService ?? throw new ArgumentNullException(nameof(userService));
             _tokenService = tokenService ?? throw new ArgumentNullException(nameof(tokenService));
         }
 
@@ -25,27 +23,18 @@ namespace TicketManagement.UserApi.Controllers
         [Route("login")]
         [AllowAnonymous]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> Login([FromBody] LoginModel model)
         {
-            var user = await _userManager.FindByEmailAsync(model.Email);
+            var user = await _userService.FindByEmailAsync(model.Email!);
 
-            if (user is null)
-            {
-                return NotFound(new { error = "User with such email does not exists." });
-            }
+            await _userService.CheckPasswordAsync(user.Email, model.Password!);
 
-            if (await _userManager.CheckPasswordAsync(user, model.Password))
-            {
-                var userRoles = await _userManager.GetRolesAsync(user);
+            var userRoles = await _userService.GetRolesAsync(user.Id);
 
-                var token = _tokenService.GetToken(user, userRoles);
+            var token = _tokenService.GetToken(user, userRoles);
 
-                return Ok(token);
-            }
-
-            return Unauthorized(new { error = "Wrong password." });
+            return Ok(token);
         }
 
         [HttpPost]
@@ -55,17 +44,9 @@ namespace TicketManagement.UserApi.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> Register([FromBody] RegisterModel model)
         {
-            var existingUser = await _userManager.FindByEmailAsync(model.Email);
-
-            if (existingUser != null)
-            {
-                return BadRequest(new { error = "User already exists." });
-            }
-
-            var user = new User
+            var user = new UserModel
             {
                 Email = model.Email,
-                SecurityStamp = Guid.NewGuid().ToString(),
                 UserName = model.Email,
                 FirstName = model.FirstName,
                 LastName = model.LastName,
@@ -73,17 +54,13 @@ namespace TicketManagement.UserApi.Controllers
                 TimeZoneId = model.TimeZoneId,
             };
 
-            var result = await _userManager.CreateAsync(user, model.Password);
+            await _userService.CreateAsync(user, model.Password!);
 
-            if (result.Succeeded)
-            {
-                await _userManager.AddToRoleAsync(user, Roles.User);
+            var createdUser = await _userService.FindByEmailAsync(user.Email!);
 
-                var roles = await _userManager.GetRolesAsync(user);
-                return Ok(_tokenService.GetToken(user, roles));
-            }
+            var roles = await _userService.GetRolesAsync(createdUser.Id);
 
-            return BadRequest(new { error = "Cannot create user." });
+            return Ok(_tokenService.GetToken(createdUser, roles));
         }
 
         [HttpGet("validate")]
@@ -98,15 +75,10 @@ namespace TicketManagement.UserApi.Controllers
         [HttpGet("{id}")]
         [Authorize]
         [ProducesResponseType(typeof(UserModel), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetUserById(string id)
         {
-            var user = await _userManager.FindByIdAsync(id);
-
-            if (user is null)
-            {
-                return NotFound(new { error = "User was not found." });
-            }
+            var user = await _userService.FindByIdAsync(id);
 
             return Ok(user);
         }
@@ -115,74 +87,30 @@ namespace TicketManagement.UserApi.Controllers
         [Authorize(Roles = "Event manager,User")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> UpdateUser([FromBody] UserModel user)
         {
-            var existingUser = await _userManager.FindByIdAsync(user.Id);
+            await _userService.UpdateAsync(user);
 
-            if (existingUser is null)
-            {
-                return NotFound(new { error = "User was not found." });
-            }
+            var updatedUser = await _userService.FindByEmailAsync(user.Email);
 
-            var userWithSameEmail = await _userManager.FindByEmailAsync(user.Email);
+            var roles = await _userService.GetRolesAsync(updatedUser.Id);
 
-            if (userWithSameEmail != null && userWithSameEmail.Id != existingUser.Id)
-            {
-                return BadRequest(new { error = "This email is already taken." });
-            }
-
-            existingUser.Email = user.Email;
-            existingUser.UserName = user.Email;
-            existingUser.FirstName = user.FirstName;
-            existingUser.LastName = user.LastName;
-            existingUser.TimeZoneId = user.TimeZoneId;
-            existingUser.CultureName = user.CultureName;
-            existingUser.Balance = user.Balance;
-
-            var result = await _userManager.UpdateAsync(existingUser);
-
-            if (!result.Succeeded)
-            {
-                return BadRequest(new { error = "Cannot update user." });
-            }
-
-            var roles = await _userManager.GetRolesAsync(existingUser);
-
-            return Ok(_tokenService.GetToken(existingUser, roles));
+            return Ok(_tokenService.GetToken(updatedUser, roles));
         }
 
         [HttpPut("{id}/password")]
         [Authorize(Roles = "Event manager,User")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> ChangePassword(string id, [FromBody] PasswordModel model)
         {
-            var existingUser = await _userManager.FindByIdAsync(id);
+            await _userService.ChangePasswordAsync(id, model.CurrentPassword!, model.NewPassword!);
 
-            if (existingUser is null)
-            {
-                return NotFound(new { error = "User was not found." });
-            }
+            var roles = await _userService.GetRolesAsync(id);
 
-            var isValidPassword = await _userManager.CheckPasswordAsync(existingUser, model.CurrentPassword);
+            var user = await _userService.FindByIdAsync(id);
 
-            if (!isValidPassword)
-            {
-                return BadRequest(new { error = "Not valid current password." });
-            }
-
-            var result = await _userManager.ChangePasswordAsync(existingUser, model.CurrentPassword, model.NewPassword);
-
-            if (!result.Succeeded)
-            {
-                return BadRequest(new { error = "Cannot change password." });
-            }
-
-            var roles = await _userManager.GetRolesAsync(existingUser);
-
-            return Ok(_tokenService.GetToken(existingUser, roles));
+            return Ok(_tokenService.GetToken(user, roles));
         }
     }
 }

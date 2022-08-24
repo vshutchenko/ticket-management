@@ -19,6 +19,7 @@
     <ProjectReference Include="..\..\src\TicketManagement.DataAccess\TicketManagement.DataAccess.csproj" />
     <ProjectReference Include="..\..\src\TicketManagement.EventApi\TicketManagement.EventApi.csproj" />
     <ProjectReference Include="..\..\src\TicketManagement.PurchaseApi\TicketManagement.PurchaseApi.csproj" />
+    <ProjectReference Include="..\..\src\TicketManagement.UserApi\TicketManagement.UserApi.csproj" />
     <ProjectReference Include="..\..\src\TicketManagement.VenueApi\TicketManagement.VenueApi.csproj" />
   </ItemGroup>
 

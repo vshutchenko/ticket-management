@@ -2,7 +2,7 @@
 using System.Security.Claims;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
-using TicketManagement.DataAccess.Entities;
+using TicketManagement.UserApi.Models;
 using TicketManagement.UserApi.Services.Interfaces;
 
 namespace TicketManagement.UserApi.Services.Implementations
@@ -20,7 +20,7 @@ namespace TicketManagement.UserApi.Services.Implementations
             _issuer = issuer;
         }
 
-        public string GetToken(User user, IList<string> roles)
+        public string GetToken(UserModel user, IList<string> roles)
         {
             var claims = new List<Claim>
             {
