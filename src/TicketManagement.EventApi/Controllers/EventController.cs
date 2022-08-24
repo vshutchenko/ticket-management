@@ -2,7 +2,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TicketManagement.EventApi.Models;
 using TicketManagement.EventApi.Services.Interfaces;
-using TicketManagement.EventApi.Services.Validation;
 
 namespace TicketManagement.EventApi.Controllers
 {
@@ -61,16 +60,9 @@ namespace TicketManagement.EventApi.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetEventById(int id)
         {
-            try
-            {
-                var @event = await _eventService.GetByIdAsync(id);
+            var @event = await _eventService.GetByIdAsync(id);
 
-                return Ok(@event);
-            }
-            catch (ValidationException ex)
-            {
-                return BadRequest(new { error = ex.Message });
-            }
+            return Ok(@event);
         }
 
         /// <summary>
@@ -84,16 +76,9 @@ namespace TicketManagement.EventApi.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> CreateEvent([FromBody] EventModel @event)
         {
-            try
-            {
-                var id = await _eventService.CreateAsync(@event);
+            var id = await _eventService.CreateAsync(@event);
 
-                return CreatedAtAction(nameof(CreateEvent), id);
-            }
-            catch (ValidationException ex)
-            {
-                return BadRequest(new { error = ex.Message });
-            }
+            return CreatedAtAction(nameof(CreateEvent), id);
         }
 
         /// <summary>
@@ -106,16 +91,9 @@ namespace TicketManagement.EventApi.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> UpdateEvent([FromBody] EventModel @event)
         {
-            try
-            {
-                await _eventService.UpdateAsync(@event);
+            await _eventService.UpdateAsync(@event);
 
-                return NoContent();
-            }
-            catch (ValidationException ex)
-            {
-                return BadRequest(new { error = ex.Message });
-            }
+            return NoContent();
         }
 
         /// <summary>
@@ -128,16 +106,9 @@ namespace TicketManagement.EventApi.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> DeleteEvent(int id)
         {
-            try
-            {
-                await _eventService.DeleteAsync(id);
+            await _eventService.DeleteAsync(id);
 
-                return NoContent();
-            }
-            catch (ValidationException ex)
-            {
-                return BadRequest(new { error = ex.Message });
-            }
+            return NoContent();
         }
     }
 }

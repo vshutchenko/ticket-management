@@ -2,7 +2,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TicketManagement.VenueApi.Models;
 using TicketManagement.VenueApi.Services.Interfaces;
-using TicketManagement.VenueApi.Services.Validation;
 
 namespace TicketManagement.VenueApi.Controllers
 {
@@ -44,16 +43,9 @@ namespace TicketManagement.VenueApi.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetVenueById(int id)
         {
-            try
-            {
-                var venue = await _venueService.GetByIdAsync(id);
+            var venue = await _venueService.GetByIdAsync(id);
 
-                return Ok(venue);
-            }
-            catch (ValidationException ex)
-            {
-                return BadRequest(new { error = ex.Message });
-            }
+            return Ok(venue);
         }
     }
 }

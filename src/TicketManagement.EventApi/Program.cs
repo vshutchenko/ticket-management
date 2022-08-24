@@ -7,6 +7,7 @@ using Serilog;
 using Serilog.Events;
 using TicketManagement.EventApi.Clients.UserApi;
 using TicketManagement.EventApi.DependencyResolving;
+using TicketManagement.EventApi.Filters;
 using TicketManagement.EventApi.JwtAuthentication;
 using TicketManagement.EventApi.MappingConfig;
 
@@ -31,7 +32,10 @@ var connectionString = builder.Configuration.GetConnectionString("TicketManageme
 
 builder.Services.AddEntityFrameworkServices(connectionString);
 
-builder.Services.AddControllers();
+builder.Services.AddControllers(options =>
+{
+    options.Filters.Add<ValidationExceptionFilter>();
+});
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();

@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using TicketManagement.DataAccess.Entities;
+using TicketManagement.UserApi.Models;
 
 namespace TicketManagement.UserApi.Data
 {
@@ -24,19 +25,19 @@ namespace TicketManagement.UserApi.Data
         {
             var roles = new List<IdentityRole>
             {
-                new IdentityRole("Admin"),
-                new IdentityRole("Venue manager"),
-                new IdentityRole("User"),
-                new IdentityRole("Event manager"),
+                new IdentityRole(Roles.Admin),
+                new IdentityRole(Roles.VenueManager),
+                new IdentityRole(Roles.User),
+                new IdentityRole(Roles.EventManager),
             };
 
-            foreach (var r in roles)
+            foreach (var role in roles)
             {
-                var existingRole = await _roleManager.FindByNameAsync(r.Name);
+                var existingRole = await _roleManager.FindByNameAsync(role.Name);
 
                 if (existingRole is null)
                 {
-                    await _roleManager.CreateAsync(r);
+                    await _roleManager.CreateAsync(role);
                 }
             }
         }
@@ -58,7 +59,7 @@ namespace TicketManagement.UserApi.Data
                     LastName = "Doe",
                     CultureName = "ru-RU",
                     TimeZoneId = "Eastern Standard Time",
-                }, "Admin"),
+                }, Roles.Admin),
 
                 (new User
                 {
@@ -73,7 +74,7 @@ namespace TicketManagement.UserApi.Data
                     LastName = "Doe",
                     CultureName = "ru-RU",
                     TimeZoneId = "Eastern Standard Time",
-                }, "Venue manager"),
+                }, Roles.VenueManager),
 
                 (new User
                 {
@@ -88,7 +89,7 @@ namespace TicketManagement.UserApi.Data
                     LastName = "Doe",
                     CultureName = "ru-RU",
                     TimeZoneId = "Eastern Standard Time",
-                }, "User"),
+                }, Roles.User),
 
                 (new User
                 {
@@ -103,7 +104,7 @@ namespace TicketManagement.UserApi.Data
                     LastName = "Doe",
                     CultureName = "ru-RU",
                     TimeZoneId = "Eastern Standard Time",
-                }, "Event manager"),
+                }, Roles.EventManager),
             };
 
             foreach (var x in userRoles)

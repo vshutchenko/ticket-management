@@ -6,6 +6,7 @@ using Serilog;
 using Serilog.Events;
 using TicketManagement.DataAccess.DependencyResolving;
 using TicketManagement.UserApi.Data;
+using TicketManagement.UserApi.Filters;
 using TicketManagement.UserApi.JwtAuthentication;
 using TicketManagement.UserApi.MappingConfig;
 using TicketManagement.UserApi.Services.Implementations;
@@ -28,7 +29,10 @@ builder.Services.AddScoped(provider => new MapperConfiguration(mc =>
 })
 .CreateMapper());
 
-builder.Services.AddControllers();
+builder.Services.AddControllers(options =>
+{
+    options.Filters.Add<ValidationExceptionFilter>();
+});
 
 builder.Services.AddScoped<ITokenService, TokenService>(
     p => new TokenService(builder.Configuration["Jwt:Key"], builder.Configuration["Jwt:Audience"], builder.Configuration["Jwt:Issuer"]));

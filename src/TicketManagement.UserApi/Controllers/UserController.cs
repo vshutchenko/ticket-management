@@ -77,7 +77,7 @@ namespace TicketManagement.UserApi.Controllers
 
             if (result.Succeeded)
             {
-                await _userManager.AddToRoleAsync(user, "User");
+                await _userManager.AddToRoleAsync(user, Roles.User);
 
                 var roles = await _userManager.GetRolesAsync(user);
                 return Ok(_tokenService.GetToken(user, roles));
@@ -105,7 +105,7 @@ namespace TicketManagement.UserApi.Controllers
 
             if (user is null)
             {
-                return NotFound(new { error = "Cannot create user." });
+                return NotFound(new { error = "User was not found." });
             }
 
             return Ok(user);

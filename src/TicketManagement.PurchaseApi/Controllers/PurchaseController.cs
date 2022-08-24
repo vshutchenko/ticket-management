@@ -2,7 +2,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TicketManagement.PurchaseApi.Models;
 using TicketManagement.PurchaseApi.Services.Interfaces;
-using TicketManagement.PurchaseApi.Services.Validation;
 
 namespace TicketManagement.PurchaseApi.Controllers
 {
@@ -29,16 +28,9 @@ namespace TicketManagement.PurchaseApi.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public IActionResult GetByUserId(string userId)
         {
-            try
-            {
-                var purchases = _purchaseService.GetByUserId(userId).ToList();
+            var purchases = _purchaseService.GetByUserId(userId).ToList();
 
-                return Ok(purchases);
-            }
-            catch (ValidationException ex)
-            {
-                return BadRequest(new { error = ex.Message });
-            }
+            return Ok(purchases);
         }
 
         /// <summary>
@@ -50,16 +42,9 @@ namespace TicketManagement.PurchaseApi.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> Purchase([FromBody] PurchaseModel purchaseModel)
         {
-            try
-            {
-                await _purchaseService.PurchaseSeatAsync(purchaseModel);
+            await _purchaseService.PurchaseSeatAsync(purchaseModel);
 
-                return Ok();
-            }
-            catch (ValidationException ex)
-            {
-                return BadRequest(new { error = ex.Message });
-            }
+            return Ok();
         }
     }
 }

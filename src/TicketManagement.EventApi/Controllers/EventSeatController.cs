@@ -2,7 +2,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TicketManagement.EventApi.Models;
 using TicketManagement.EventApi.Services.Interfaces;
-using TicketManagement.EventApi.Services.Validation;
 
 namespace TicketManagement.EventApi.Controllers
 {
@@ -29,16 +28,9 @@ namespace TicketManagement.EventApi.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public IActionResult GetSeatsByAreaId(int areaId)
         {
-            try
-            {
-                var seats = _eventSeatService.GetByEventAreaId(areaId);
+            var seats = _eventSeatService.GetByEventAreaId(areaId);
 
-                return Ok(seats);
-            }
-            catch (ValidationException ex)
-            {
-                return BadRequest(new { error = ex.Message });
-            }
+            return Ok(seats);
         }
 
         /// <summary>
@@ -52,16 +44,9 @@ namespace TicketManagement.EventApi.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetSeatById(int id)
         {
-            try
-            {
-                var seat = await _eventSeatService.GetByIdAsync(id);
+            var seat = await _eventSeatService.GetByIdAsync(id);
 
-                return Ok(seat);
-            }
-            catch (ValidationException ex)
-            {
-                return BadRequest(new { error = ex.Message });
-            }
+            return Ok(seat);
         }
 
         /// <summary>
@@ -73,18 +58,11 @@ namespace TicketManagement.EventApi.Controllers
         [Authorize(Roles = "Event manager")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> UpdateAreaPrice(int seatId, [FromBody] int state)
+        public async Task<IActionResult> UpdateAreaPrice(int seatId, [FromBody] EventSeatStateModel state)
         {
-            try
-            {
-                await _eventSeatService.SetSeatStateAsync(seatId, (EventSeatStateModel)state);
+            await _eventSeatService.SetSeatStateAsync(seatId, state);
 
-                return NoContent();
-            }
-            catch (ValidationException ex)
-            {
-                return BadRequest(new { error = ex.Message });
-            }
+            return NoContent();
         }
     }
 }

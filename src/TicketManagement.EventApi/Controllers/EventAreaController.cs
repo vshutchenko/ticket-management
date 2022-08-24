@@ -2,7 +2,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TicketManagement.EventApi.Models;
 using TicketManagement.EventApi.Services.Interfaces;
-using TicketManagement.EventApi.Services.Validation;
 
 namespace TicketManagement.EventApi.Controllers
 {
@@ -29,16 +28,9 @@ namespace TicketManagement.EventApi.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public IActionResult GetAreasByEventId(int eventId)
         {
-            try
-            {
-                var areas = _eventAreaService.GetByEventId(eventId);
+            var areas = _eventAreaService.GetByEventId(eventId);
 
-                return Ok(areas);
-            }
-            catch (ValidationException ex)
-            {
-                return BadRequest(new { error = ex.Message });
-            }
+            return Ok(areas);
         }
 
         /// <summary>
@@ -52,16 +44,9 @@ namespace TicketManagement.EventApi.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetAreaById(int id)
         {
-            try
-            {
-                var area = await _eventAreaService.GetByIdAsync(id);
+            var area = await _eventAreaService.GetByIdAsync(id);
 
-                return Ok(area);
-            }
-            catch (ValidationException ex)
-            {
-                return BadRequest(new { error = ex.Message });
-            }
+            return Ok(area);
         }
 
         /// <summary>
@@ -75,16 +60,9 @@ namespace TicketManagement.EventApi.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> UpdateAreaPrice(int areaId, [FromBody] decimal price)
         {
-            try
-            {
-                await _eventAreaService.SetPriceAsync(areaId, price);
+            await _eventAreaService.SetPriceAsync(areaId, price);
 
-                return NoContent();
-            }
-            catch (ValidationException ex)
-            {
-                return BadRequest(new { error = ex.Message });
-            }
+            return NoContent();
         }
     }
 }

@@ -7,6 +7,7 @@ using Serilog;
 using Serilog.Events;
 using TicketManagement.PurchaseApi.Clients.UserApi;
 using TicketManagement.PurchaseApi.DependencyResolving;
+using TicketManagement.PurchaseApi.Filters;
 using TicketManagement.PurchaseApi.JwtAuthentication;
 using TicketManagement.PurchaseApi.MappingConfig;
 
@@ -27,7 +28,10 @@ builder.Services.AddScoped(provider => new MapperConfiguration(mc =>
 })
 .CreateMapper());
 
-builder.Services.AddControllers();
+builder.Services.AddControllers(options =>
+{
+    options.Filters.Add<ValidationExceptionFilter>();
+});
 
 var connectionString = builder.Configuration.GetConnectionString("TicketManagement.Database");
 
