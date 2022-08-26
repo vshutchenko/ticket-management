@@ -117,19 +117,31 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Events" xml:space="preserve">
-    <value>События</value>
+  <data name="Add row" xml:space="preserve">
+    <value>Дадаць лакацыю</value>
   </data>
-  <data name="Home" xml:space="preserve">
-    <value>Главная</value>
+  <data name="Are you sure you want to delete this area?" xml:space="preserve">
+    <value>Вы ўпэўненыя, што хочаце выдаліць зону?</value>
   </data>
-  <data name="Import events" xml:space="preserve">
-    <value>Импорт событий</value>
+  <data name="Are you sure you want to delete this row?" xml:space="preserve">
+    <value>Вы ўпэўненыя, што жадаеце выдаліць шэраг?</value>
   </data>
-  <data name="Not published events" xml:space="preserve">
-    <value>Неопубликованные события</value>
+  <data name="Close" xml:space="preserve">
+    <value>Закрыць</value>
   </data>
-  <data name="Venue management" xml:space="preserve">
-    <value>Управление местами проведения</value>
+  <data name="Create area" xml:space="preserve">
+    <value>Стварыць зону</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>Выдаліць</value>
+  </data>
+  <data name="Delete area" xml:space="preserve">
+    <value>Выдаліць зону</value>
+  </data>
+  <data name="Delete confirmation" xml:space="preserve">
+    <value>Пацвердзіце выдаленне</value>
+  </data>
+  <data name="Edit" xml:space="preserve">
+    <value>Рэдагаваць</value>
   </data>
 </root>

@@ -117,19 +117,28 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Events" xml:space="preserve">
-    <value>События</value>
+  <data name="Add layout" xml:space="preserve">
+    <value>Добавить локацию</value>
   </data>
-  <data name="Home" xml:space="preserve">
-    <value>Главная</value>
+  <data name="Are you sure you want to delete this layout?" xml:space="preserve">
+    <value>Вы уверены, что хотите удалить локацию?</value>
   </data>
-  <data name="Import events" xml:space="preserve">
-    <value>Импорт событий</value>
+  <data name="Are you sure you want to delete this venue?" xml:space="preserve">
+    <value>Вы уверены, что хотите удалить место проведения?</value>
   </data>
-  <data name="Not published events" xml:space="preserve">
-    <value>Неопубликованные события</value>
+  <data name="Close" xml:space="preserve">
+    <value>Закрыть</value>
   </data>
-  <data name="Venue management" xml:space="preserve">
-    <value>Управление местами проведения</value>
+  <data name="Create venue" xml:space="preserve">
+    <value>Создать место проведения</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>Удалить</value>
+  </data>
+  <data name="Delete confirmation" xml:space="preserve">
+    <value>Подтвердите удаление</value>
+  </data>
+  <data name="Edit" xml:space="preserve">
+    <value>Редактировать</value>
   </data>
 </root>

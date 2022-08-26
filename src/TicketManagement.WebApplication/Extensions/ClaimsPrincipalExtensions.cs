@@ -9,6 +9,11 @@ namespace TicketManagement.WebApplication.Extensions
             return principal.Identities.First().HasClaim(ClaimTypes.Role, "Event manager");
         }
 
+        public static bool IsVenueManager(this ClaimsPrincipal principal)
+        {
+            return principal.Identities.First().HasClaim(ClaimTypes.Role, "Venue manager");
+        }
+
         public static bool IsUser(this ClaimsPrincipal principal)
         {
             return principal.Identities.First().HasClaim(ClaimTypes.Role, "User");

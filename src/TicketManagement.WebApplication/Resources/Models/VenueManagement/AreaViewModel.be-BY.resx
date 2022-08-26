@@ -117,19 +117,22 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Events" xml:space="preserve">
-    <value>События</value>
+  <data name="Coordinate X" xml:space="preserve">
+    <value>Каардыната X</value>
   </data>
-  <data name="Home" xml:space="preserve">
-    <value>Главная</value>
+  <data name="Coordinate X is required" xml:space="preserve">
+    <value>Увядзіце каардынату X</value>
   </data>
-  <data name="Import events" xml:space="preserve">
-    <value>Импорт событий</value>
+  <data name="Coordinate Y" xml:space="preserve">
+    <value>Каардыната Y</value>
   </data>
-  <data name="Not published events" xml:space="preserve">
-    <value>Неопубликованные события</value>
+  <data name="Coordinate Y is required" xml:space="preserve">
+    <value>Увядзіце каардынату Y</value>
   </data>
-  <data name="Venue management" xml:space="preserve">
-    <value>Управление местами проведения</value>
+  <data name="Description" xml:space="preserve">
+    <value>Апісанне</value>
+  </data>
+  <data name="Description is required" xml:space="preserve">
+    <value>Увядзіце апісанне</value>
   </data>
 </root>
