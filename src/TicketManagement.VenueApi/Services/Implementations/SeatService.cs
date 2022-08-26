@@ -22,7 +22,7 @@ namespace TicketManagement.VenueApi.Services.Implementations
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
 
-        public Task<int> CreateAsync(SeatModel seatModel)
+        public async Task<int> CreateAsync(SeatModel seatModel)
         {
             if (seatModel is null)
             {
@@ -33,7 +33,9 @@ namespace TicketManagement.VenueApi.Services.Implementations
 
             _seatValidator.Validate(seat);
 
-            return _seatRepository.CreateAsync(seat);
+            await ValidateAreaExistsAsync(seatModel.AreaId);
+
+            return await _seatRepository.CreateAsync(seat);
         }
 
         public async Task DeleteAsync(int id)

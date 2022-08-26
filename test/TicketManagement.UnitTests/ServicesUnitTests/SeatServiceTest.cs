@@ -39,9 +39,11 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
         {
             // Arrange
             var seatToCreate = new SeatModel { Id = 1, Row = 1, Number = 4, AreaId = 1, };
+            var area = new Area { Id = 1, Description = "Area", LayoutId = 1, CoordX = 1, CoordY = 1 };
 
             var mappedSeat = new Seat { Id = 1, Row = 1, Number = 4, AreaId = 1, };
 
+            _areaRepositoryMock.Setup(x => x.GetByIdAsync(seatToCreate.AreaId)).ReturnsAsync(area);
             _mapperMock.Setup(m => m.Map<Seat>(seatToCreate)).Returns(mappedSeat);
 
             // Act

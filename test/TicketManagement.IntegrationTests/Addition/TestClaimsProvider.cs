@@ -30,6 +30,18 @@ namespace TicketManagement.IntegrationTests.Addition
             return provider;
         }
 
+        public static TestClaimsProvider WithVenueManagerClaims()
+        {
+            var provider = new TestClaimsProvider();
+            provider.Claims.Add(new Claim(ClaimTypes.Email, "manager1@gmail.com"));
+            provider.Claims.Add(new Claim(ClaimTypes.Role, "Venue manager"));
+            provider.Claims.Add(new Claim("id", "bef9f5d7-d907-4ec2-a807-9abbdcf9e414"));
+            provider.Claims.Add(new Claim("timezoneId", "Eastern Standard Time"));
+            provider.Claims.Add(new Claim("culture", "en-US"));
+
+            return provider;
+        }
+
         public static TestClaimsProvider WithUserClaims()
         {
             var provider = new TestClaimsProvider();

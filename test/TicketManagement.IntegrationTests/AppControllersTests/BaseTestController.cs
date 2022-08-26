@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Net.Http.Headers;
 using NUnit.Framework;
 using RestEase;
 using TicketManagement.IntegrationTests.Addition;
@@ -19,8 +16,6 @@ namespace TicketManagement.IntegrationTests.AppControllersTests
 {
     internal abstract class BaseTestController
     {
-        private static Regex _antiforgeryFormFieldRegex = new Regex(@"\<input name=""__RequestVerificationToken"" type=""hidden"" value=""([^""]+)"" \/\>");
-
         protected TestingUserApiFactory UserApiFactory { get; private set; }
 
         protected WebApplicationFactory<VenueApi.Program> VenueApiFactory { get; private set; }
@@ -30,37 +25,6 @@ namespace TicketManagement.IntegrationTests.AppControllersTests
         protected WebApplicationFactory<PurchaseApi.Program> PurchaseApiFactory { get; private set; }
 
         protected WebApplicationFactory<WebApplication.Program> AppFactory { get; private set; }
-
-        protected SetCookieHeaderValue AntiforgeryCookie { get; private set; }
-
-        protected string AntiforgeryToken { get; private set; }
-
-        protected async Task<string> EnsureAntiforgeryToken()
-        {
-            if (AntiforgeryToken != null)
-            {
-                return AntiforgeryToken;
-            }
-
-            var client = AppFactory.CreateClient();
-
-            var response = await client.GetAsync("/Account/Login");
-
-            response.EnsureSuccessStatusCode();
-
-            if (response.Headers.TryGetValues("Set-Cookie", out IEnumerable<string> values))
-            {
-                AntiforgeryCookie = SetCookieHeaderValue.ParseList(values.ToList()).SingleOrDefault(c => c.Name.StartsWith("AntiForgeryTokenCookie", StringComparison.InvariantCultureIgnoreCase));
-            }
-
-            client.DefaultRequestHeaders.Add("Cookie", new CookieHeaderValue(AntiforgeryCookie.Name, AntiforgeryCookie.Value).ToString());
-
-            var responseHtml = await response.Content.ReadAsStringAsync();
-            var match = _antiforgeryFormFieldRegex.Match(responseHtml);
-            AntiforgeryToken = match.Success ? match.Groups[1].Captures[0].Value : null;
-
-            return AntiforgeryToken;
-        }
 
         [SetUp]
         public void SetUp()
@@ -135,7 +99,7 @@ namespace TicketManagement.IntegrationTests.AppControllersTests
                         t.FormFieldName = AntiForgeryTokenExtractor.Field;
                     });
 
-                    var types = new List<Type>
+                    var servicesToRemove = new List<Type>
                     {
                         typeof(IEventClient),
                         typeof(IEventAreaClient),
@@ -148,7 +112,7 @@ namespace TicketManagement.IntegrationTests.AppControllersTests
                         typeof(IPurchaseClient),
                     };
 
-                    foreach (var t in types)
+                    foreach (var t in servicesToRemove)
                     {
                         var descriptor = services.SingleOrDefault(
                         d => d.ServiceType == t);
