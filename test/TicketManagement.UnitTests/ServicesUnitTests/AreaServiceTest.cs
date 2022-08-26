@@ -18,6 +18,7 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
     internal class AreaServiceTest
     {
         private Mock<IRepository<Area>> _areaRepositoryMock;
+        private Mock<IRepository<Layout>> _layoutRepositoryMock;
         private IAreaService _areaService;
         private Mock<IMapper> _mapperMock;
 
@@ -25,10 +26,11 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
         public void SetUp()
         {
             _areaRepositoryMock = new Mock<IRepository<Area>>();
+            _layoutRepositoryMock = new Mock<IRepository<Layout>>();
             _mapperMock = new Mock<IMapper>();
 
             var areaValidator = new AreaValidator(_areaRepositoryMock.Object);
-            _areaService = new AreaService(_areaRepositoryMock.Object, areaValidator, _mapperMock.Object);
+            _areaService = new AreaService(_areaRepositoryMock.Object, _layoutRepositoryMock.Object, areaValidator, _mapperMock.Object);
         }
 
         [Test]

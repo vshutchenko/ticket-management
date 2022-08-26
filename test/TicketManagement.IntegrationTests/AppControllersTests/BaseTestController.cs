@@ -106,6 +106,8 @@ namespace TicketManagement.IntegrationTests.AppControllersTests
                         typeof(IEventSeatClient),
                         typeof(IVenueClient),
                         typeof(ILayoutClient),
+                        typeof(IAreaClient),
+                        typeof(ISeatClient),
                         typeof(IUserClient),
                         typeof(IPurchaseClient),
                     };
@@ -126,6 +128,8 @@ namespace TicketManagement.IntegrationTests.AppControllersTests
                     var eventSeatClient = RestClient.For<IEventSeatClient>(eventApiCLient);
                     var venueClient = RestClient.For<IVenueClient>(venueApiCLient);
                     var layoutClient = RestClient.For<ILayoutClient>(venueApiCLient);
+                    var areaClient = RestClient.For<IAreaClient>(venueApiCLient);
+                    var seatClient = RestClient.For<ISeatClient>(venueApiCLient);
                     var userClient = RestClient.For<IUserClient>(userApiCLient);
                     var purchaseClient = RestClient.For<IPurchaseClient>(purchaseApiCLient);
 
@@ -134,6 +138,8 @@ namespace TicketManagement.IntegrationTests.AppControllersTests
                     services.AddScoped(p => eventSeatClient);
                     services.AddScoped(p => layoutClient);
                     services.AddScoped(p => venueClient);
+                    services.AddScoped(p => areaClient);
+                    services.AddScoped(p => seatClient);
                     services.AddScoped(p => userClient);
                     services.AddScoped(p => purchaseClient);
                 }));

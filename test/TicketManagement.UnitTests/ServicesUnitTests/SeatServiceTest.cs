@@ -18,6 +18,7 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
     internal class SeatServiceTest
     {
         private Mock<IRepository<Seat>> _seatRepositoryMock;
+        private Mock<IRepository<Area>> _areaRepositoryMock;
         private ISeatService _seatService;
         private Mock<IMapper> _mapperMock;
 
@@ -25,11 +26,12 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
         public void SetUp()
         {
             _seatRepositoryMock = new Mock<IRepository<Seat>>();
+            _areaRepositoryMock = new Mock<IRepository<Area>>();
             _mapperMock = new Mock<IMapper>();
 
             var seatValidator = new SeatValidator(_seatRepositoryMock.Object);
 
-            _seatService = new SeatService(_seatRepositoryMock.Object, seatValidator, _mapperMock.Object);
+            _seatService = new SeatService(_seatRepositoryMock.Object, _areaRepositoryMock.Object, seatValidator, _mapperMock.Object);
         }
 
         [Test]

@@ -22,7 +22,7 @@ namespace TicketManagement.VenueApi.Controllers
         /// </summary>
         /// <returns>List of venues.</returns>
         [HttpGet]
-        [Authorize(Roles = "Venue manager")]
+        [Authorize(Roles = "Venue manager,Event manager")]
         [ProducesResponseType(typeof(List<VenueModel>), StatusCodes.Status200OK)]
         public IActionResult GetVenues()
         {

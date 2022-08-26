@@ -29,6 +29,7 @@ namespace TicketManagement.IntegrationTests.EFImplemetations.SeatServiceTests
             var context = new TicketManagementContext(optionsBuilder.Options);
 
             var seatRepo = new SeatRepository(context);
+            var areaRepo = new AreaRepository(context);
             var seatValidator = new SeatValidator(seatRepo);
 
             var mapper = new MapperConfiguration(mc =>
@@ -37,7 +38,7 @@ namespace TicketManagement.IntegrationTests.EFImplemetations.SeatServiceTests
                 })
                 .CreateMapper();
 
-            _seatService = new SeatService(seatRepo, seatValidator, mapper);
+            _seatService = new SeatService(seatRepo, areaRepo, seatValidator, mapper);
         }
 
         [Test]

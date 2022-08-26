@@ -28,6 +28,7 @@ namespace TicketManagement.IntegrationTests.EFImplemetations.AreaServiceTests
             var context = new TicketManagementContext(optionsBuilder.Options);
 
             var areaRepo = new AreaRepository(context);
+            var layoutRepo = new LayoutRepository(context);
             var areaValidator = new AreaValidator(areaRepo);
             var mapper = new MapperConfiguration(mc =>
                 {
@@ -35,7 +36,7 @@ namespace TicketManagement.IntegrationTests.EFImplemetations.AreaServiceTests
                 })
                 .CreateMapper();
 
-            _areaService = new AreaService(areaRepo, areaValidator, mapper);
+            _areaService = new AreaService(areaRepo, layoutRepo, areaValidator, mapper);
         }
 
         [Test]

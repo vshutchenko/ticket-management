@@ -29,6 +29,8 @@ namespace TicketManagement.IntegrationTests.EFImplemetations.LayoutServiceTests
             var context = new TicketManagementContext(optionsBuilder.Options);
 
             var layoutRepo = new LayoutRepository(context);
+            var venueRepo = new VenueRepository(context);
+            var eventRepo = new EventRepository(context);
             var layoutValidator = new LayoutValidator(layoutRepo);
 
             var mapper = new MapperConfiguration(mc =>
@@ -37,7 +39,7 @@ namespace TicketManagement.IntegrationTests.EFImplemetations.LayoutServiceTests
                 })
                 .CreateMapper();
 
-            _layoutService = new LayoutService(layoutRepo, layoutValidator, mapper);
+            _layoutService = new LayoutService(layoutRepo, venueRepo, eventRepo, layoutValidator, mapper);
         }
 
         [Test]

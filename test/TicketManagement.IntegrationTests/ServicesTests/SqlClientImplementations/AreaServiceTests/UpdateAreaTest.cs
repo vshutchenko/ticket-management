@@ -23,6 +23,7 @@ namespace TicketManagement.IntegrationTests.SqlClientImplementations.AreaService
             testDbInfo.CreateDb();
 
             var areaRepo = new AreaSqlClientRepository(connectionString);
+            var layoutRepo = new LayoutSqlClientRepository(connectionString);
             var areaValidator = new AreaValidator(areaRepo);
             var mapper = new MapperConfiguration(mc =>
                 {
@@ -30,7 +31,7 @@ namespace TicketManagement.IntegrationTests.SqlClientImplementations.AreaService
                 })
                 .CreateMapper();
 
-            _areaService = new AreaService(areaRepo, areaValidator, mapper);
+            _areaService = new AreaService(areaRepo, layoutRepo, areaValidator, mapper);
         }
 
         [Test]

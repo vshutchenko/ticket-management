@@ -29,6 +29,8 @@ namespace TicketManagement.IntegrationTests.EFImplemetations.LayoutServiceTests
             var context = new TicketManagementContext(optionsBuilder.Options);
 
             var layoutRepo = new LayoutRepository(context);
+            var venueRepo = new VenueRepository(context);
+            var eventRepo = new EventRepository(context);
             var layoutValidator = new LayoutValidator(layoutRepo);
 
             var mapper = new MapperConfiguration(mc =>
@@ -37,14 +39,29 @@ namespace TicketManagement.IntegrationTests.EFImplemetations.LayoutServiceTests
                 })
                 .CreateMapper();
 
-            _layoutService = new LayoutService(layoutRepo, layoutValidator, mapper);
+            _layoutService = new LayoutService(layoutRepo, venueRepo, eventRepo, layoutValidator, mapper);
+        }
+
+        [Test]
+        public async Task Delete_LayoutHostsEvent_ThrowsValidationException()
+        {
+            // Arrange
+            var id = 1;
+
+            // Act
+            var deletingLayout = _layoutService.Invoking(s => s.DeleteAsync(id));
+
+            // Assert
+            await deletingLayout
+                .Should().ThrowAsync<ValidationException>()
+                .WithMessage("This layout cannot be deleted as it will host an event.");
         }
 
         [Test]
         public async Task Delete_LayoutExists_DeletesLayout()
         {
             // Arrange
-            var id = 1;
+            var id = 2;
 
             // Act
             await _layoutService.DeleteAsync(id);

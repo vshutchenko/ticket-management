@@ -38,7 +38,7 @@ namespace TicketManagement.VenueApi.Controllers
         /// <param name="venueId">Id of the venue.</param>
         /// <returns>List of layouts.</returns>
         [HttpGet("venues/{venueId}")]
-        [Authorize(Roles = "Venue manager")]
+        [Authorize(Roles = "Venue manager,Event manager")]
         [ProducesResponseType(typeof(List<LayoutModel>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetLayoutsByVenueId(int venueId)
         {

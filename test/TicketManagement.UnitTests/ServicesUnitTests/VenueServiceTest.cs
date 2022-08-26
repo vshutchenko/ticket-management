@@ -18,6 +18,8 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
     internal class VenueServiceTest
     {
         private Mock<IRepository<Venue>> _venueRepositoryMock;
+        private Mock<IRepository<Layout>> _layoutRepositoryMock;
+        private Mock<IRepository<Event>> _eventRepositoryMock;
         private IVenueService _venueService;
         private Mock<IMapper> _mapperMock;
 
@@ -25,10 +27,12 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
         public void SetUp()
         {
             _venueRepositoryMock = new Mock<IRepository<Venue>>();
+            _layoutRepositoryMock = new Mock<IRepository<Layout>>();
+            _eventRepositoryMock = new Mock<IRepository<Event>>();
             _mapperMock = new Mock<IMapper>();
 
             var venueValidator = new VenueValidator(_venueRepositoryMock.Object);
-            _venueService = new VenueService(_venueRepositoryMock.Object, venueValidator, _mapperMock.Object);
+            _venueService = new VenueService(_venueRepositoryMock.Object, _layoutRepositoryMock.Object, _eventRepositoryMock.Object, venueValidator, _mapperMock.Object);
         }
 
         [Test]

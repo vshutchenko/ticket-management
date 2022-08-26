@@ -23,6 +23,8 @@ namespace TicketManagement.IntegrationTests.SqlClientImplementations.LayoutServi
             testDbInfo.CreateDb();
 
             var layoutRepo = new LayoutSqlClientRepository(connectionString);
+            var venueRepo = new VenueSqlClientRepository(connectionString);
+            var eventRepo = new EventSqlClientRepository(connectionString);
             var layoutValidator = new LayoutValidator(layoutRepo);
             var mapper = new MapperConfiguration(mc =>
                 {
@@ -30,7 +32,7 @@ namespace TicketManagement.IntegrationTests.SqlClientImplementations.LayoutServi
                 })
                 .CreateMapper();
 
-            _layoutService = new LayoutService(layoutRepo, layoutValidator, mapper);
+            _layoutService = new LayoutService(layoutRepo, venueRepo, eventRepo, layoutValidator, mapper);
         }
 
         [Test]

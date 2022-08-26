@@ -23,6 +23,8 @@ namespace TicketManagement.IntegrationTests.SqlClientImplementations.VenueServic
             testDbInfo.CreateDb();
 
             var venueRepo = new VenueSqlClientRepository(connectionString);
+            var layoutRepo = new LayoutSqlClientRepository(connectionString);
+            var eventRepo = new EventSqlClientRepository(connectionString);
             var venueValidator = new VenueValidator(venueRepo);
 
             var mapper = new MapperConfiguration(mc =>
@@ -31,7 +33,7 @@ namespace TicketManagement.IntegrationTests.SqlClientImplementations.VenueServic
                 })
                 .CreateMapper();
 
-            _venueService = new VenueService(venueRepo, venueValidator, mapper);
+            _venueService = new VenueService(venueRepo, layoutRepo, eventRepo, venueValidator, mapper);
         }
 
         [Test]

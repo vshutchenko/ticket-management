@@ -183,6 +183,12 @@
   <data name="There are no available seats in the layout." xml:space="preserve">
     <value>В данной локации нет доступных мест.</value>
   </data>
+  <data name="This layout cannot be deleted as it will host an event." xml:space="preserve">
+    <value>Локация не может быть удалена, так как в ней будет проведено событие.</value>
+  </data>
+  <data name="This venue cannot be deleted as it will host an event." xml:space="preserve">
+    <value>Место проведения не может быть удалено, так как в нем будет проведено событие.</value>
+  </data>
   <data name="User already exists." xml:space="preserve">
     <value>Пользователь уже существует.</value>
   </data>

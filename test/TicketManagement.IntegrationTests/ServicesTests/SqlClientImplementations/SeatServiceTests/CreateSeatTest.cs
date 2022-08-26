@@ -23,6 +23,7 @@ namespace TicketManagement.IntegrationTests.SqlClientImplementations.SeatService
             testDbInfo.CreateDb();
 
             var seatRepo = new SeatSqlClientRepository(connectionString);
+            var areaRepo = new AreaSqlClientRepository(connectionString);
             var seatValidator = new SeatValidator(seatRepo);
 
             var mapper = new MapperConfiguration(mc =>
@@ -31,7 +32,7 @@ namespace TicketManagement.IntegrationTests.SqlClientImplementations.SeatService
                 })
                 .CreateMapper();
 
-            _seatService = new SeatService(seatRepo, seatValidator, mapper);
+            _seatService = new SeatService(seatRepo, areaRepo, seatValidator, mapper);
         }
 
         [Test]
