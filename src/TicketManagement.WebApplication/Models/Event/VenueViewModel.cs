@@ -1,4 +1,4 @@
-﻿namespace TicketManagement.WebApplication.Models.Venue
+﻿namespace TicketManagement.WebApplication.Models.Event
 {
     public class VenueViewModel
     {

@@ -1,5 +1,4 @@
-﻿using System.Net.Http.Headers;
-using System.Security.Claims;
+﻿using System.Security.Claims;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -11,9 +10,7 @@ using TicketManagement.WebApplication.Clients.VenueApi;
 using TicketManagement.WebApplication.Models.Event;
 using TicketManagement.WebApplication.Models.EventArea;
 using TicketManagement.WebApplication.Models.EventSeat;
-using TicketManagement.WebApplication.Models.Layout;
 using TicketManagement.WebApplication.Models.Purchase;
-using TicketManagement.WebApplication.Models.Venue;
 using TicketManagement.WebApplication.Services;
 
 namespace TicketManagement.WebApplication.Controllers

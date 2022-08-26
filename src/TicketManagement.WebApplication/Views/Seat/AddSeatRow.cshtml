@@ -1,0 +1,25 @@
+﻿@using TicketManagement.WebApplication.Models.VenueManagement
+@model SeatRowViewModel
+
+<h1>@Localizer["Add seat row"]</h1>
+<hr />
+
+<div>
+    <form asp-action="AddSeatRow" asp-antiforgery="true">
+        <input asp-for="AreaId" type="hidden" value="@Model.AreaId" />
+        <input asp-for="Row" type="hidden" value="@Model.Row" />
+
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <div class="w-25">
+            <div class="form-group">
+                <label asp-for="Length" class="control-label"></label>
+                <input asp-for="Length" class="form-control" />
+                <span asp-validation-for="Length" class="text-danger"></span>
+            </div>
+
+            <div class="mt-2">
+                <input type="submit" value="@Localizer["Submit"]" class="btn btn-primary" />
+            </div>
+        </div>
+    </form>
+</div>

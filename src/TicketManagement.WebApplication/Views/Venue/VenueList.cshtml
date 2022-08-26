@@ -1,0 +1,95 @@
+﻿@using System.Globalization
+@using TicketManagement.WebApplication.Models.VenueManagement
+@model IEnumerable<VenueViewModel>
+
+<a class="btn btn-success" asp-controller="Venue" asp-action="CreateVenue">@Localizer["Create venue"]</a>
+
+@foreach (var venue in Model)
+{
+    <div class="card mt-2" style="width: fit-content;">
+        <div class="card-body">
+            <h5 class="card-title">@venue.Description</h5>
+            <p class="card-text">@venue.Address</p>
+            <p class="card-text">@venue.Phone</p>
+        </div>
+        <ul class="list-group list-group-flush">
+            @foreach (var layout in venue.Layouts)
+            {
+                var layoutModalId = "layoutModal" + layout.Id;
+
+                <li class="list-group-item">
+                    <div class="row">
+                        <div class="column-fit-content">
+                            <p style="color: black;">@layout.Description</p>
+                        </div>
+                        <div class="column-fit-content">
+                            <a class="btn btn-primary" asp-controller="Layout" asp-action="EditLayout" asp-route-id="@layout.Id">@Localizer["Edit"]</a>
+                        </div>
+                        <div class="column-fit-content">
+                            <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#@layoutModalId">@Localizer["Delete"]</button>
+                        </div>
+                    </div>
+
+                </li>
+
+                <div class="modal fade" id="@layoutModalId" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalLabel">@Localizer["Delete confirmation"]</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="@Localizer["Close"]"></button>
+                            </div>
+                            <div class="modal-body">
+                                @Localizer["Are you sure you want to delete this layout?"]
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">@Localizer["Close"]</button>
+                                <form asp-controller="Layout" asp-action="DeleteLayout" asp-route-id="@layout.Id" asp-antiforgery="true" method="post">
+
+                                    <input type="hidden" name="id" value="@layout.Id" />
+
+                                    <input type="submit" class="btn btn-danger" value="@Localizer["Delete"]" />
+
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </ul>
+        <div class="card-body">
+            <a class="btn btn-success" asp-controller="Layout" asp-action="CreateLayout" asp-route-venueId="@venue.Id">@Localizer["Add layout"]</a>
+            <a class="btn btn-primary" asp-controller="Venue" asp-action="EditVenue" asp-route-id="@venue.Id">@Localizer["Edit"]</a>
+
+            @{
+                var venueModalId = "venueModal" + venue.Id;
+            }
+
+            <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#@venueModalId">@Localizer["Delete"]</button>
+
+            <div class="modal fade" id="@venueModalId" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel">@Localizer["Delete confirmation"]</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="@Localizer["Close"]"></button>
+                        </div>
+                        <div class="modal-body">
+                            @Localizer["Are you sure you want to delete this venue?"]
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">@Localizer["Close"]</button>
+                            <form asp-controller="Venue" asp-action="DeleteVenue" asp-route-id="@venue.Id" asp-antiforgery="true" method="post">
+
+                                <input type="hidden" name="id" value="@venue.Id" />
+
+                                <input type="submit" class="btn btn-danger" value="@Localizer["Delete"]" />
+
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}

@@ -7,9 +7,8 @@ using TicketManagement.WebApplication.Models.Account;
 using TicketManagement.WebApplication.Models.Event;
 using TicketManagement.WebApplication.Models.EventArea;
 using TicketManagement.WebApplication.Models.EventSeat;
-using TicketManagement.WebApplication.Models.Layout;
 using TicketManagement.WebApplication.Models.Purchase;
-using TicketManagement.WebApplication.Models.Venue;
+using TicketManagement.WebApplication.Models.VenueManagement;
 
 namespace TicketManagement.WebApplication.Infrastructure
 {
@@ -30,9 +29,21 @@ namespace TicketManagement.WebApplication.Infrastructure
 
             CreateMap<EventSeatModel, EventSeatViewModel>();
 
-            CreateMap<LayoutModel, LayoutViewModel>();
+            CreateMap<LayoutModel, Models.Event.LayoutViewModel>();
 
-            CreateMap<VenueModel, VenueViewModel>();
+            CreateMap<VenueModel, Models.Event.VenueViewModel>();
+
+            CreateMap<LayoutModel, Models.VenueManagement.LayoutViewModel>().ReverseMap();
+
+            CreateMap<SeatModel, SeatViewModel>().ReverseMap();
+
+            CreateMap<VenueModel, Models.VenueManagement.VenueViewModel>()
+                .ForMember(vm => vm.Layouts, opt => opt.Ignore())
+                .ReverseMap();
+
+            CreateMap<AreaModel, AreaViewModel>()
+                .ForMember(vm => vm.Seats, opt => opt.Ignore())
+                .ReverseMap();
 
             CreateMap<CreatePurchaseViewModel, PurchaseModel>()
             .ForMember(p => p.Id, opt => opt.Ignore());

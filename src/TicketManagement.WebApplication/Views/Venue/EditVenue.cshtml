@@ -1,0 +1,36 @@
+﻿@using TicketManagement.WebApplication.Models.VenueManagement
+@model VenueViewModel
+
+<h1>@Localizer["Edit venue"]</h1>
+<hr />
+
+<div>
+    <form asp-action="EditVenue" asp-antiforgery="true">
+        <input asp-for="Id" type="hidden" value="@Model.Id" />
+
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <div class="w-25">
+            <div class="form-group">
+                <label asp-for="Description" class="control-label"></label>
+                <input asp-for="Description" class="form-control" value="@Model.Description" />
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Address" class="control-label"></label>
+                <input asp-for="Address" class="form-control" value="@Model.Address" />
+                <span asp-validation-for="Address" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Phone" class="control-label"></label>
+                <input asp-for="Phone" class="form-control" value="@Model.Phone" />
+                <span asp-validation-for="Phone" class="text-danger"></span>
+            </div>
+
+            <div class="mt-2">
+                <input type="submit" value="@Localizer["Submit"]" class="btn btn-primary" />
+            </div>
+        </div>
+    </form>
+</div>

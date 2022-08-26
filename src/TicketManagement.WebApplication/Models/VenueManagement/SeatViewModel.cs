@@ -1,4 +1,4 @@
-﻿namespace TicketManagement.WebApplication.Models.Seat
+﻿namespace TicketManagement.WebApplication.Models.VenueManagement
 {
     public class SeatViewModel
     {
@@ -9,7 +9,5 @@
         public int Row { get; set; }
 
         public int Number { get; set; }
-
-        public int State { get; set; }
     }
 }

@@ -26,3 +26,23 @@ body {
     font-weight: bold;
     color: white;
 }
+
+.row {
+    display: table;
+    width: 100%;
+    border-spacing: 10px;
+}
+
+.column {
+    display: table-cell;
+    width: 10px;
+    height: 10px;
+    color: white;
+}
+
+.column-fit-content {
+    display: table-cell;
+    width: fit-content;
+    height: fit-content;
+    color: white;
+}

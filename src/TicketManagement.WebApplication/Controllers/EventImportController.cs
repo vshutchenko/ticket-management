@@ -9,8 +9,7 @@ using TicketManagement.WebApplication.Clients.EventApi;
 using TicketManagement.WebApplication.Clients.EventApi.Models;
 using TicketManagement.WebApplication.Clients.VenueApi;
 using TicketManagement.WebApplication.Models.EventImport;
-using TicketManagement.WebApplication.Models.Layout;
-using TicketManagement.WebApplication.Models.Venue;
+using TicketManagement.WebApplication.Models.VenueManagement;
 using TicketManagement.WebApplication.Services;
 
 namespace TicketManagement.WebApplication.Controllers

@@ -1,4 +1,4 @@
-﻿namespace TicketManagement.WebApplication.Models.Layout
+﻿namespace TicketManagement.WebApplication.Models.Event
 {
     public class LayoutViewModel
     {
