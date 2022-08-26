@@ -72,6 +72,8 @@ builder.Services.AddRestEaseClient<IPurchaseClient>(builder.Configuration["Purch
 
 builder.Services.AddRestEaseClient<IVenueClient>(builder.Configuration["VenueApi:BaseAddress"]);
 builder.Services.AddRestEaseClient<ILayoutClient>(builder.Configuration["VenueApi:BaseAddress"]);
+builder.Services.AddRestEaseClient<IAreaClient>(builder.Configuration["VenueApi:BaseAddress"]);
+builder.Services.AddRestEaseClient<ISeatClient>(builder.Configuration["VenueApi:BaseAddress"]);
 
 builder.Services.AddRestEaseClient<IUserClient>(builder.Configuration["UserApi:BaseAddress"]);
 

@@ -22,7 +22,7 @@ namespace TicketManagement.VenueApi.Controllers
         /// </summary>
         /// <returns>List of venues.</returns>
         [HttpGet]
-        [Authorize(Roles = "Venue manager,Event manager,User")]
+        [Authorize(Roles = "Venue manager")]
         [ProducesResponseType(typeof(List<VenueModel>), StatusCodes.Status200OK)]
         public IActionResult GetVenues()
         {
@@ -46,6 +46,52 @@ namespace TicketManagement.VenueApi.Controllers
             var venue = await _venueService.GetByIdAsync(id);
 
             return Ok(venue);
+        }
+
+        /// <summary>
+        /// Create venue.
+        /// </summary>
+        /// <param name="venue">Venue to create.</param>
+        /// <returns>Id of created venue.</returns>
+        [HttpPost]
+        [Authorize(Roles = "Venue manager")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> CreateVenue([FromBody] VenueModel venue)
+        {
+            var id = await _venueService.CreateAsync(venue);
+
+            return CreatedAtAction(nameof(CreateVenue), id);
+        }
+
+        /// <summary>
+        /// Update venue.
+        /// </summary>
+        /// <param name="venue">Venue to update.</param>
+        [HttpPut]
+        [Authorize(Roles = "Venue manager")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> UpdateVenue([FromBody] VenueModel venue)
+        {
+            await _venueService.UpdateAsync(venue);
+
+            return NoContent();
+        }
+
+        /// <summary>
+        /// Delete venue by id.
+        /// </summary>
+        /// <param name="id">Id of the venue to delete.</param>
+        [HttpDelete("{id}")]
+        [Authorize(Roles = "Venue manager")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> DeleteVenue(int id)
+        {
+            await _venueService.DeleteAsync(id);
+
+            return NoContent();
         }
     }
 }

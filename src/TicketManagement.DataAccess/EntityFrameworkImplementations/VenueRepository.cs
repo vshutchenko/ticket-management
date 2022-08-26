@@ -27,7 +27,7 @@ namespace TicketManagement.DataAccess.EntityFrameworkImplementations
 
         public async Task DeleteAsync(int id)
         {
-            var entity = _context.Areas.FirstOrDefault(v => v.Id == id);
+            var entity = _context.Venues.FirstOrDefault(v => v.Id == id);
 
             if (entity != null)
             {

@@ -10,12 +10,14 @@ namespace TicketManagement.VenueApi.Services.Implementations
     internal class SeatService : ISeatService
     {
         private readonly IRepository<Seat> _seatRepository;
+        private readonly IRepository<Area> _areaRepository;
         private readonly IValidator<Seat> _seatValidator;
         private readonly IMapper _mapper;
 
-        public SeatService(IRepository<Seat> seatRepository, IValidator<Seat> seatValidator, IMapper mapper)
+        public SeatService(IRepository<Seat> seatRepository, IRepository<Area> areaRepository, IValidator<Seat> seatValidator, IMapper mapper)
         {
             _seatRepository = seatRepository ?? throw new ArgumentNullException(nameof(seatRepository));
+            _areaRepository = areaRepository ?? throw new ArgumentNullException(nameof(areaRepository));
             _seatValidator = seatValidator ?? throw new ArgumentNullException(nameof(seatValidator));
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
@@ -46,6 +48,18 @@ namespace TicketManagement.VenueApi.Services.Implementations
             var models = _seatRepository.GetAll().Select(s => _mapper.Map<SeatModel>(s));
 
             return models;
+        }
+
+        public async Task<IEnumerable<SeatModel>> GetByAreaIdAsync(int areaId)
+        {
+            await ValidateAreaExistsAsync(areaId);
+
+            var seats = _seatRepository.GetAll()
+                .Where(s => s.AreaId == areaId)
+                .Select(s => _mapper.Map<SeatModel>(s))
+                .ToList();
+
+            return seats;
         }
 
         public async Task<SeatModel> GetByIdAsync(int id)
@@ -80,6 +94,16 @@ namespace TicketManagement.VenueApi.Services.Implementations
             var seat = await _seatRepository.GetByIdAsync(id);
 
             if (seat is null)
+            {
+                throw new ValidationException("Entity was not found.");
+            }
+        }
+
+        private async Task ValidateAreaExistsAsync(int id)
+        {
+            var area = await _areaRepository.GetByIdAsync(id);
+
+            if (area is null)
             {
                 throw new ValidationException("Entity was not found.");
             }

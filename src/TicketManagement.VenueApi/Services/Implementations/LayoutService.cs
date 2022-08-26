@@ -10,12 +10,21 @@ namespace TicketManagement.VenueApi.Services.Implementations
     internal class LayoutService : ILayoutService
     {
         private readonly IRepository<Layout> _layoutRepository;
+        private readonly IRepository<Venue> _venueRepository;
+        private readonly IRepository<Event> _eventRepository;
         private readonly IValidator<Layout> _layoutValidator;
         private readonly IMapper _mapper;
 
-        public LayoutService(IRepository<Layout> layoutRepository, IValidator<Layout> layoutValidator, IMapper mapper)
+        public LayoutService(
+            IRepository<Layout> layoutRepository,
+            IRepository<Venue> venueRepository,
+            IRepository<Event> eventRepository,
+            IValidator<Layout> layoutValidator,
+            IMapper mapper)
         {
             _layoutRepository = layoutRepository ?? throw new ArgumentNullException(nameof(layoutRepository));
+            _venueRepository = venueRepository ?? throw new ArgumentNullException(nameof(venueRepository));
+            _eventRepository = eventRepository ?? throw new ArgumentNullException(nameof(eventRepository));
             _layoutValidator = layoutValidator ?? throw new ArgumentNullException(nameof(layoutValidator));
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
@@ -38,6 +47,8 @@ namespace TicketManagement.VenueApi.Services.Implementations
         {
             await ValidateLayoutExistsAsync(id);
 
+            ValidateNoEventsInLayout(id);
+
             await _layoutRepository.DeleteAsync(id);
         }
 
@@ -57,6 +68,18 @@ namespace TicketManagement.VenueApi.Services.Implementations
             var model = _mapper.Map<LayoutModel>(layout);
 
             return model;
+        }
+
+        public async Task<IEnumerable<LayoutModel>> GetByVenueIdAsync(int venueId)
+        {
+            await ValidateVenueExistsAsync(venueId);
+
+            var layouts = _layoutRepository.GetAll()
+                .Where(l => l.VenueId == venueId)
+                .Select(l => _mapper.Map<LayoutModel>(l))
+                .ToList();
+
+            return layouts;
         }
 
         public async Task UpdateAsync(LayoutModel layoutModel)
@@ -82,6 +105,27 @@ namespace TicketManagement.VenueApi.Services.Implementations
             if (layout is null)
             {
                 throw new ValidationException("Entity was not found.");
+            }
+        }
+
+        private async Task ValidateVenueExistsAsync(int id)
+        {
+            var venue = await _venueRepository.GetByIdAsync(id);
+
+            if (venue is null)
+            {
+                throw new ValidationException("Entity was not found.");
+            }
+        }
+
+        private void ValidateNoEventsInLayout(int layoutId)
+        {
+            var eventInLayout = _eventRepository.GetAll()
+                .FirstOrDefault(e => e.LayoutId == layoutId);
+
+            if (eventInLayout is not null)
+            {
+                throw new ValidationException("This layout cannot be deleted as it will host an event.");
             }
         }
     }

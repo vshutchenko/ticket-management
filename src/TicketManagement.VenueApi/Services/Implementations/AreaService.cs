@@ -10,12 +10,14 @@ namespace TicketManagement.VenueApi.Services.Implementations
     internal class AreaService : IAreaService
     {
         private readonly IRepository<Area> _areaRepository;
+        private readonly IRepository<Layout> _layoutRepository;
         private readonly IValidator<Area> _areaValidator;
         private readonly IMapper _mapper;
 
-        public AreaService(IRepository<Area> areaRepository, IValidator<Area> areaValidator, IMapper mapper)
+        public AreaService(IRepository<Area> areaRepository, IRepository<Layout> layoutRepository, IValidator<Area> areaValidator, IMapper mapper)
         {
             _areaRepository = areaRepository ?? throw new ArgumentNullException(nameof(areaRepository));
+            _layoutRepository = layoutRepository ?? throw new ArgumentNullException(nameof(layoutRepository));
             _areaValidator = areaValidator ?? throw new ArgumentNullException(nameof(areaValidator));
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
@@ -59,6 +61,18 @@ namespace TicketManagement.VenueApi.Services.Implementations
             return model;
         }
 
+        public async Task<IEnumerable<AreaModel>> GetByLayoutIdAsync(int layoutId)
+        {
+            await ValidateLayoutExistsAsync(layoutId);
+
+            var areas = _areaRepository.GetAll()
+                .Where(a => a.LayoutId == layoutId)
+                .Select(a => _mapper.Map<AreaModel>(a))
+                .ToList();
+
+            return areas;
+        }
+
         public async Task UpdateAsync(AreaModel areaModel)
         {
             if (areaModel is null)
@@ -80,6 +94,16 @@ namespace TicketManagement.VenueApi.Services.Implementations
             var area = await _areaRepository.GetByIdAsync(id);
 
             if (area is null)
+            {
+                throw new ValidationException("Entity was not found.");
+            }
+        }
+
+        private async Task ValidateLayoutExistsAsync(int id)
+        {
+            var layout = await _layoutRepository.GetByIdAsync(id);
+
+            if (layout is null)
             {
                 throw new ValidationException("Entity was not found.");
             }

@@ -4,35 +4,35 @@ using TicketManagement.WebApplication.Clients.VenueApi.Models;
 namespace TicketManagement.WebApplication.Clients.VenueApi
 {
     [Header("Content-Type", "application/json")]
-    public interface ILayoutClient
+    public interface ISeatClient
     {
-        [Post("layouts")]
-        public Task CreateAsync([Body] LayoutModel venueModel,
+        [Post("seats")]
+        public Task CreateAsync([Body] SeatModel seatModel,
             [Header("Authorization")] string jwtToken,
             CancellationToken cancellationToken = default);
 
-        [Put("layouts")]
-        public Task UpdateAsync([Body] LayoutModel venueModel,
+        [Put("seats")]
+        public Task UpdateAsync([Body] SeatModel seatModel,
             [Header("Authorization")] string jwtToken,
             CancellationToken cancellationToken = default);
 
-        [Delete("layouts/{id}")]
+        [Delete("seats/{id}")]
         public Task DeleteAsync([Path] int id,
             [Header("Authorization")] string jwtToken,
             CancellationToken cancellationToken = default);
 
-        [Get("layouts/{id}")]
-        public Task<LayoutModel> GetByIdAsync([Path] int id,
+        [Get("seats/{id}")]
+        public Task<SeatModel> GetByIdAsync([Path] int id,
             [Header("Authorization")] string jwtToken,
             CancellationToken cancellationToken = default);
 
-        [Get("layouts/venues/{venueId}")]
-        public Task<List<LayoutModel>> GetByVenueIdAsync([Path] int venueId,
+        [Get("seats/areas/{areaId}")]
+        public Task<List<SeatModel>> GetByAreaIdAsync([Path] int areaId,
             [Header("Authorization")] string jwtToken,
             CancellationToken cancellationToken = default);
 
-        [Get("layouts")]
-        public Task<List<LayoutModel>> GetAllAsync(
+        [Get("seats")]
+        public Task<List<SeatModel>> GetAllAsync(
             [Header("Authorization")] string jwtToken,
             CancellationToken cancellationToken = default);
     }

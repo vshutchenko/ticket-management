@@ -6,6 +6,8 @@ namespace TicketManagement.VenueApi.Services.Interfaces
     {
         IEnumerable<SeatModel> GetAll();
 
+        Task<IEnumerable<SeatModel>> GetByAreaIdAsync(int areaId);
+
         Task<SeatModel> GetByIdAsync(int id);
 
         Task<int> CreateAsync(SeatModel seatModel);

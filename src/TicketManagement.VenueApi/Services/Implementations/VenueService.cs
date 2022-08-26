@@ -10,12 +10,17 @@ namespace TicketManagement.VenueApi.Services.Implementations
     internal class VenueService : IVenueService
     {
         private readonly IRepository<Venue> _venueRepository;
+        private readonly IRepository<Layout> _layoutRepository;
+        private readonly IRepository<Event> _eventRepository;
         private readonly IValidator<Venue> _venueValidator;
+
         private readonly IMapper _mapper;
 
-        public VenueService(IRepository<Venue> venueRepository, IValidator<Venue> venueValidator, IMapper mapper)
+        public VenueService(IRepository<Venue> venueRepository, IRepository<Layout> layoutRepository, IRepository<Event> eventRepository, IValidator<Venue> venueValidator, IMapper mapper)
         {
             _venueRepository = venueRepository ?? throw new ArgumentNullException(nameof(venueRepository));
+            _layoutRepository = layoutRepository ?? throw new ArgumentNullException(nameof(layoutRepository));
+            _eventRepository = eventRepository ?? throw new ArgumentNullException(nameof(eventRepository));
             _venueValidator = venueValidator ?? throw new ArgumentNullException(nameof(venueValidator));
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
@@ -37,6 +42,8 @@ namespace TicketManagement.VenueApi.Services.Implementations
         public async Task DeleteAsync(int id)
         {
             await ValidateVenueExistsAsync(id);
+
+            ValidateNoEventsInVenue(id);
 
             await _venueRepository.DeleteAsync(id);
         }
@@ -82,6 +89,24 @@ namespace TicketManagement.VenueApi.Services.Implementations
             if (venue is null)
             {
                 throw new ValidationException("Entity was not found.");
+            }
+        }
+
+        private void ValidateNoEventsInVenue(int venueId)
+        {
+            var layoutsInVenue = _layoutRepository.GetAll()
+                .Where(l => l.VenueId == venueId)
+                .ToList();
+
+            foreach (var layout in layoutsInVenue)
+            {
+                var eventInVenue = _eventRepository.GetAll()
+                    .FirstOrDefault(e => e.LayoutId == layout.Id);
+
+                if (eventInVenue is not null)
+                {
+                    throw new ValidationException("This venue cannot be deleted as it will host an event.");
+                }
             }
         }
     }

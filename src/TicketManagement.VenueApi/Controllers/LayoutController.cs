@@ -22,7 +22,7 @@ namespace TicketManagement.VenueApi.Controllers
         /// </summary>
         /// <returns>List of layouts.</returns>
         [HttpGet]
-        [Authorize(Roles = "Venue manager,Event manager,User")]
+        [Authorize(Roles = "Venue manager")]
         [ProducesResponseType(typeof(List<LayoutModel>), StatusCodes.Status200OK)]
         public IActionResult GetLayouts()
         {
@@ -37,14 +37,12 @@ namespace TicketManagement.VenueApi.Controllers
         /// </summary>
         /// <param name="venueId">Id of the venue.</param>
         /// <returns>List of layouts.</returns>
-        [HttpGet("venue/{venueId}")]
-        [Authorize(Roles = "Venue manager,Event manager,User")]
+        [HttpGet("venues/{venueId}")]
+        [Authorize(Roles = "Venue manager")]
         [ProducesResponseType(typeof(List<LayoutModel>), StatusCodes.Status200OK)]
-        public IActionResult GetLayoutsByVenueId(int venueId)
+        public async Task<IActionResult> GetLayoutsByVenueId(int venueId)
         {
-            var layouts = _layoutService.GetAll()
-                .Where(l => l.VenueId == venueId)
-                .ToList();
+            var layouts = await _layoutService.GetByVenueIdAsync(venueId);
 
             return Ok(layouts);
         }
@@ -63,6 +61,52 @@ namespace TicketManagement.VenueApi.Controllers
             var layout = await _layoutService.GetByIdAsync(id);
 
             return Ok(layout);
+        }
+
+        /// <summary>
+        /// Create layout.
+        /// </summary>
+        /// <param name="layout">Layout to create.</param>
+        /// <returns>Id of created layout.</returns>
+        [HttpPost]
+        [Authorize(Roles = "Venue manager")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> CreateLayout([FromBody] LayoutModel layout)
+        {
+            var id = await _layoutService.CreateAsync(layout);
+
+            return CreatedAtAction(nameof(CreateLayout), id);
+        }
+
+        /// <summary>
+        /// Update layout.
+        /// </summary>
+        /// <param name="layout">Layout to update.</param>
+        [HttpPut]
+        [Authorize(Roles = "Venue manager")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> UpdateLayout([FromBody] LayoutModel layout)
+        {
+            await _layoutService.UpdateAsync(layout);
+
+            return NoContent();
+        }
+
+        /// <summary>
+        /// Delete layout by id.
+        /// </summary>
+        /// <param name="id">Id of the layout to delete.</param>
+        [HttpDelete("{id}")]
+        [Authorize(Roles = "Venue manager")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> DeleteLayout(int id)
+        {
+            await _layoutService.DeleteAsync(id);
+
+            return NoContent();
         }
     }
 }
