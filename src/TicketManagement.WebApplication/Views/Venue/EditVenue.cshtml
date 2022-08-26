@@ -5,7 +5,7 @@
 <hr />
 
 <div>
-    <form asp-action="EditVenue" asp-antiforgery="true">
+    <form asp-action="EditVenue">
         <input asp-for="Id" type="hidden" value="@Model.Id" />
 
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>

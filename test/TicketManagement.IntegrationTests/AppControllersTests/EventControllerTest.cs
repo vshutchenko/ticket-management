@@ -229,7 +229,7 @@ namespace TicketManagement.IntegrationTests.AppControllersTests
             var provider = TestClaimsProvider.WithEventManagerClaims();
             var client = AppFactory.CreateClientWithTestAuth(provider);
 
-            var getResponse = await client.GetAsync("/Event/EditEvent?id=1");
+            var getResponse = await client.GetAsync("/Account/Login");
             var antiForgery = await AntiForgeryTokenExtractor.ExtractAntiForgeryValues(getResponse);
 
             var formModel = new Dictionary<string, string>
@@ -261,7 +261,7 @@ namespace TicketManagement.IntegrationTests.AppControllersTests
             var provider = TestClaimsProvider.WithEventManagerClaims();
             var client = AppFactory.CreateClientWithTestAuth(provider);
 
-            var getResponse = await client.GetAsync("/Event/EditEvent?id=1");
+            var getResponse = await client.GetAsync("/Account/Login");
             var antiForgery = await AntiForgeryTokenExtractor.ExtractAntiForgeryValues(getResponse);
 
             var formModel = new Dictionary<string, string>
@@ -295,7 +295,7 @@ namespace TicketManagement.IntegrationTests.AppControllersTests
             var provider = TestClaimsProvider.WithEventManagerClaims();
             var client = AppFactory.CreateClientWithTestAuth(provider);
 
-            var getResponse = await client.GetAsync("/Event/EditEvent?id=1");
+            var getResponse = await client.GetAsync("/Account/Login");
             var antiForgery = await AntiForgeryTokenExtractor.ExtractAntiForgeryValues(getResponse);
 
             var formModel = new Dictionary<string, string>
@@ -329,7 +329,7 @@ namespace TicketManagement.IntegrationTests.AppControllersTests
             var provider = TestClaimsProvider.WithEventManagerClaims();
             var client = AppFactory.CreateClientWithTestAuth(provider);
 
-            var getResponse = await client.GetAsync("/Event/EditEvent?id=1");
+            var getResponse = await client.GetAsync("/Account/Login");
             var antiForgery = await AntiForgeryTokenExtractor.ExtractAntiForgeryValues(getResponse);
 
             var formModel = new Dictionary<string, string>
@@ -365,8 +365,16 @@ namespace TicketManagement.IntegrationTests.AppControllersTests
             var provider = TestClaimsProvider.WithEventManagerClaims();
             var client = AppFactory.CreateClientWithTestAuth(provider);
 
+            var getResponse = await client.GetAsync("/Account/Login");
+            var antiForgery = await AntiForgeryTokenExtractor.ExtractAntiForgeryValues(getResponse);
+
+            var formModel = new Dictionary<string, string>
+            {
+                { AntiForgeryTokenExtractor.Field, antiForgery.field },
+            };
+
             // Act
-            var response = await client.PostAsync(url, null);
+            var response = await client.PostAsync(url, new FormUrlEncodedContent(formModel));
 
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.Redirect);

@@ -69,7 +69,7 @@ namespace TicketManagement.IntegrationTests.AppControllersTests
             var provider = TestClaimsProvider.WithEventManagerClaims();
             var client = AppFactory.CreateClientWithTestAuth(provider);
 
-            var getResponse = await client.GetAsync(url);
+            var getResponse = await client.GetAsync("/Account/Login");
             var antiForgery = await AntiForgeryTokenExtractor.ExtractAntiForgeryValues(getResponse);
 
             var filePath = Path.Combine(Environment.CurrentDirectory, "Files", "events.json");
@@ -104,7 +104,7 @@ namespace TicketManagement.IntegrationTests.AppControllersTests
             var provider = TestClaimsProvider.WithEventManagerClaims();
             var client = AppFactory.CreateClientWithTestAuth(provider);
 
-            var getResponse = await client.GetAsync(url);
+            var getResponse = await client.GetAsync("/Account/Login");
             var antiForgery = await AntiForgeryTokenExtractor.ExtractAntiForgeryValues(getResponse);
 
             var filePath = Path.Combine(Environment.CurrentDirectory, "Files", "invalidEvents.json");

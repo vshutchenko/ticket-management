@@ -48,7 +48,7 @@
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">@Localizer["Close"]</button>
-                                <form asp-controller="Seat" asp-action="DeleteSeatRow" asp-route-areaId="@area.Id" asp-route-row="@row.Key" asp-antiforgery="true" method="post">
+                                <form asp-controller="Seat" asp-action="DeleteSeatRow" asp-route-areaId="@area.Id" asp-route-row="@row.Key">
                                     <input type="submit" class="btn btn-danger" value="@Localizer["Delete"]" />
                                 </form>
                             </div>
@@ -80,7 +80,7 @@
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">@Localizer["Close"]</button>
-                            <form asp-controller="Area" asp-action="DeleteArea" asp-route-id="@area.Id" asp-antiforgery="true" method="post">
+                            <form asp-controller="Area" asp-action="DeleteArea" asp-route-id="@area.Id"  >
                                 <input type="submit" class="btn btn-danger" value="@Localizer["Delete area"]" />
                             </form>
                         </div>

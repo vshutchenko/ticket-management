@@ -1,6 +1,7 @@
 using System.Globalization;
 using AutoMapper;
 using Microsoft.AspNetCore.Localization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using RestEase.HttpClientFactory;
 using Serilog;
@@ -37,6 +38,7 @@ builder.Services.AddControllersWithViews(options =>
 {
     options.ModelBinderProviders.Insert(0, new InvariantDecimalModelBinderProvider());
     options.ModelBinderProviders.Insert(1, new CustomDateTimeModelBinderProvider());
+    options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute());
     options.Filters.Add<UnexpectedExceptionFilter>();
     options.Filters.Add<ApiExceptionFilter>();
 })

@@ -51,7 +51,6 @@ namespace TicketManagement.WebApplication.Controllers
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
         [AllowAnonymous]
         public async Task<IActionResult> Login(LoginViewModel viewModel)
         {
@@ -96,7 +95,6 @@ namespace TicketManagement.WebApplication.Controllers
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
         [AllowAnonymous]
         public async Task<IActionResult> Register(RegisterViewModel viewModel)
         {
@@ -147,7 +145,6 @@ namespace TicketManagement.WebApplication.Controllers
 
         [HttpPost]
         [Authorize]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> EditUser(EditUserViewModel model)
         {
             var user = _mapper.Map<UserModel>(model);
@@ -176,7 +173,6 @@ namespace TicketManagement.WebApplication.Controllers
 
         [HttpPost]
         [Authorize(Roles = "User")]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> AddFunds(decimal amount)
         {
             var userId = User.FindFirstValue("id");
@@ -201,7 +197,6 @@ namespace TicketManagement.WebApplication.Controllers
 
         [HttpPost]
         [Authorize]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> ChangePassword(ChangePasswordViewModel model)
         {
             var userId = User.FindFirstValue("id");

@@ -97,7 +97,6 @@ namespace TicketManagement.WebApplication.Controllers
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> CreateEvent(CreateEventViewModel createModel)
         {
             var @event = _mapper.Map<EventModel>(createModel);
@@ -152,7 +151,6 @@ namespace TicketManagement.WebApplication.Controllers
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> EditNotPublishedEvent(EditEventViewModel model)
         {
             var @event = _mapper.Map<EventModel>(model.Event);
@@ -171,7 +169,6 @@ namespace TicketManagement.WebApplication.Controllers
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> EditPublishedEvent(EditEventViewModel model)
         {
             var @event = _mapper.Map<EventModel>(model.Event);

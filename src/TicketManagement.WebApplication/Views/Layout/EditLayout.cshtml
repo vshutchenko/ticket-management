@@ -6,7 +6,7 @@
 
 <div>
     <a class="btn btn-success" asp-controller="Area" asp-action="AreaList" asp-route-layoutId="@Model.Id">@Localizer["View areas"]</a>
-    <form asp-action="EditLayout" asp-antiforgery="true">
+    <form asp-action="EditLayout">
         <input asp-for="Id" type="hidden" value="@Model.Id" />
         <input asp-for="VenueId" type="hidden" value="@Model.VenueId" />
 

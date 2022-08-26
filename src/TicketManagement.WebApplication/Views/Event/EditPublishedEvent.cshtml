@@ -5,7 +5,7 @@
 <hr />
 
 <div>
-    <form asp-action="EditPublishedEvent" asp-antiforgery="true" method="post">
+    <form asp-action="EditPublishedEvent">
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
         <input type="hidden" asp-for="Event!.Id" value="@Model.Event!.Id" />
         <input type="hidden" asp-for="Event!.Published" value="false" />

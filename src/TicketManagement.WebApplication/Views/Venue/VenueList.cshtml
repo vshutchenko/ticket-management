@@ -44,7 +44,7 @@
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">@Localizer["Close"]</button>
-                                <form asp-controller="Layout" asp-action="DeleteLayout" asp-route-id="@layout.Id" asp-antiforgery="true" method="post">
+                                <form asp-controller="Layout" asp-action="DeleteLayout" asp-route-id="@layout.Id">
 
                                     <input type="hidden" name="id" value="@layout.Id" />
 
@@ -79,7 +79,7 @@
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">@Localizer["Close"]</button>
-                            <form asp-controller="Venue" asp-action="DeleteVenue" asp-route-id="@venue.Id" asp-antiforgery="true" method="post">
+                            <form asp-controller="Venue" asp-action="DeleteVenue" asp-route-id="@venue.Id"  >
 
                                 <input type="hidden" name="id" value="@venue.Id" />
 

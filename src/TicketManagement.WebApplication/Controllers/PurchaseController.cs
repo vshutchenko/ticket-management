@@ -67,7 +67,6 @@ namespace TicketManagement.WebApplication.Controllers
 
         [HttpPost]
         [Authorize(Roles = "User")]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> PurchaseSeats(CreatePurchaseViewModel model)
         {
             var purchase = _mapper.Map<PurchaseModel>(model);

@@ -9,7 +9,7 @@
         <h3>@TempData["Message"]</h3>
     </div>
 
-    <form asp-action="EditUser" asp-antiforgery="true">
+    <form asp-action="EditUser">
         <input type="hidden" asp-for="Id" value="@Model.Id" />
         <input type="hidden" asp-for="Balance" value="@Model.Balance" />
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>

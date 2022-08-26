@@ -55,7 +55,6 @@ namespace TicketManagement.WebApplication.Controllers
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> ImportEvents(ImportViewModel importModel)
         {
             var events = await JsonSerializer.DeserializeAsync<List<ThirdPartyEventModel>>(importModel.EventsJson!.OpenReadStream());
