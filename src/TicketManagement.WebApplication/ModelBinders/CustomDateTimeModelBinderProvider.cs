@@ -5,14 +5,14 @@ namespace TicketManagement.WebApplication.ModelBinders
 {
     public class CustomDateTimeModelBinderProvider : IModelBinderProvider
     {
-        public IModelBinder GetBinder(ModelBinderProviderContext context)
+        public IModelBinder? GetBinder(ModelBinderProviderContext context)
         {
             if (CustomDateTimeModelBinder.SupportedTypes.Contains(context.Metadata.ModelType))
             {
                 return new BinderTypeModelBinder(typeof(CustomDateTimeModelBinder));
             }
 
-            return null!;
+            return null;
         }
     }
 }

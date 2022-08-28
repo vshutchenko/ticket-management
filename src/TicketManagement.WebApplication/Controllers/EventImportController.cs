@@ -16,26 +16,29 @@ using TicketManagement.WebApplication.Services;
 namespace TicketManagement.WebApplication.Controllers
 {
     [AuthorizeRoles(Roles.EventManager)]
-    public class EventImportController : Controller
+    public class EventImportController : BaseController
     {
         private readonly IEventClient _eventClient;
-        private readonly ITokenService _tokenService;
         private readonly IWebHostEnvironment _enviroment;
         private readonly IMapper _mapper;
 
-        public EventImportController(IEventClient eventClient, ITokenService tokenService, IWebHostEnvironment enviroment, IMapper mapper)
+        public EventImportController(
+            IEventClient eventClient,
+            ITokenService tokenService,
+            IWebHostEnvironment enviroment,
+            IMapper mapper)
+            : base(tokenService)
         {
             _eventClient = eventClient ?? throw new ArgumentNullException(nameof(eventClient));
             _enviroment = enviroment ?? throw new ArgumentNullException(nameof(enviroment));
-            _tokenService = tokenService ?? throw new ArgumentNullException(nameof(tokenService));
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
 
         [HttpGet]
         public async Task<IActionResult> ImportEvents([FromServices] IVenueClient venueClient, [FromServices] ILayoutClient layoutClient)
         {
-            var venues = await venueClient.GetAllAsync(_tokenService.GetToken());
-            var layouts = await layoutClient.GetAllAsync(_tokenService.GetToken());
+            var venues = await venueClient.GetAllAsync(TokenService.GetToken());
+            var layouts = await layoutClient.GetAllAsync(TokenService.GetToken());
 
             var venuesVM = venues
                 .Select(v => _mapper.Map<VenueViewModel>(v))
@@ -81,7 +84,7 @@ namespace TicketManagement.WebApplication.Controllers
 
                 try
                 {
-                    await _eventClient.CreateAsync(eventToCreate, _tokenService.GetToken());
+                    await _eventClient.CreateAsync(eventToCreate, TokenService.GetToken());
                 }
                 catch (ApiException ex)
                 {

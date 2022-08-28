@@ -9,20 +9,19 @@ using TicketManagement.WebApplication.Services;
 namespace TicketManagement.WebApplication.Controllers
 {
     [AuthorizeRoles(Roles.VenueManager)]
-    public class LayoutController : Controller
+    public class LayoutController : BaseController
     {
         private readonly ILayoutClient _layoutClient;
-        private readonly ITokenService _tokenService;
         private readonly IMapper _mapper;
 
         public LayoutController(
             ILayoutClient layoutClient,
             ITokenService tokenService,
             IMapper mapper)
+            : base(tokenService)
         {
-            _layoutClient = layoutClient;
-            _tokenService = tokenService;
-            _mapper = mapper;
+            _layoutClient = layoutClient ?? throw new ArgumentNullException(nameof(layoutClient));
+            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
 
         [HttpGet]
@@ -36,15 +35,15 @@ namespace TicketManagement.WebApplication.Controllers
         {
             var layout = _mapper.Map<LayoutModel>(model);
 
-            await _layoutClient.CreateAsync(layout, _tokenService.GetToken());
+            await _layoutClient.CreateAsync(layout, TokenService.GetToken());
 
-            return RedirectToAction("VenueList", "Venue");
+            return RedirectToAction(nameof(VenueController.VenueList), TrimController(nameof(VenueController)));
         }
 
         [HttpGet]
         public async Task<IActionResult> EditLayout(int id)
         {
-            var layout = await _layoutClient.GetByIdAsync(id, _tokenService.GetToken());
+            var layout = await _layoutClient.GetByIdAsync(id, TokenService.GetToken());
 
             var model = _mapper.Map<LayoutViewModel>(layout);
 
@@ -56,17 +55,17 @@ namespace TicketManagement.WebApplication.Controllers
         {
             var layout = _mapper.Map<LayoutModel>(model);
 
-            await _layoutClient.UpdateAsync(layout, _tokenService.GetToken());
+            await _layoutClient.UpdateAsync(layout, TokenService.GetToken());
 
-            return RedirectToAction("VenueList", "Venue");
+            return RedirectToAction(nameof(VenueController.VenueList), TrimController(nameof(VenueController)));
         }
 
         [HttpPost]
         public async Task<IActionResult> DeleteLayout(int id)
         {
-            await _layoutClient.DeleteAsync(id, _tokenService.GetToken());
+            await _layoutClient.DeleteAsync(id, TokenService.GetToken());
 
-            return RedirectToAction("VenueList", "Venue");
+            return RedirectToAction(nameof(VenueController.VenueList), TrimController(nameof(VenueController)));
         }
     }
 }

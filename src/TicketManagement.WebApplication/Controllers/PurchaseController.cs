@@ -15,27 +15,27 @@ using TicketManagement.WebApplication.Services;
 
 namespace TicketManagement.WebApplication.Controllers
 {
-    public class PurchaseController : Controller
+    public class PurchaseController : BaseController
     {
         private readonly IEventClient _eventClient;
         private readonly IPurchaseClient _purchaseClient;
         private readonly IEventAreaClient _eventAreaClient;
         private readonly IEventSeatClient _eventSeatClient;
-        private readonly ITokenService _tokenService;
         private readonly IMapper _mapper;
 
-        public PurchaseController(IEventClient eventClient,
+        public PurchaseController(
+            IEventClient eventClient,
             IPurchaseClient purchaseClient,
             IEventAreaClient eventAreaClient,
             IEventSeatClient eventSeatClient,
             ITokenService tokenService,
             IMapper mapper)
+            : base(tokenService)
         {
             _purchaseClient = purchaseClient ?? throw new ArgumentNullException(nameof(purchaseClient));
             _eventAreaClient = eventAreaClient ?? throw new ArgumentNullException(nameof(eventAreaClient));
             _eventClient = eventClient ?? throw new ArgumentNullException(nameof(eventClient));
             _eventSeatClient = eventSeatClient ?? throw new ArgumentNullException(nameof(eventSeatClient));
-            _tokenService = tokenService ?? throw new ArgumentNullException(nameof(tokenService));
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
 
@@ -43,17 +43,17 @@ namespace TicketManagement.WebApplication.Controllers
         [AuthorizeRoles(Roles.EventManager, Roles.User)]
         public async Task<IActionResult> PurchaseSeats(int id)
         {
-            var @event = await _eventClient.GetByIdAsync(id, _tokenService.GetToken());
+            var @event = await _eventClient.GetByIdAsync(id, TokenService.GetToken());
 
             var eventVM = _mapper.Map<PurchaseSeatsViewModel>(@event);
 
-            var areas = await _eventClient.GetAreasByEventIdAsync(id, _tokenService.GetToken());
+            var areas = await _eventClient.GetAreasByEventIdAsync(id, TokenService.GetToken());
 
             foreach (var area in areas)
             {
                 var areaVM = _mapper.Map<EventAreaViewModel>(area);
 
-                var seats = await _eventAreaClient.GetSeatsByAreaIdAsync(areaVM.Id, _tokenService.GetToken());
+                var seats = await _eventAreaClient.GetSeatsByAreaIdAsync(areaVM.Id, TokenService.GetToken());
 
                 var seatsVM = seats.Select(s => _mapper.Map<EventSeatViewModel>(s)).ToList();
 
@@ -75,13 +75,13 @@ namespace TicketManagement.WebApplication.Controllers
 
             foreach (var id in model.SeatIds)
             {
-                var s = await _eventSeatClient.GetByIdAsync(id, _tokenService.GetToken());
+                var s = await _eventSeatClient.GetByIdAsync(id, TokenService.GetToken());
                 seats.Add(_mapper.Map<EventSeatModel>(s));
             }
 
-            await _purchaseClient.PurchaseAsync(purchase, _tokenService.GetToken());
+            await _purchaseClient.PurchaseAsync(purchase, TokenService.GetToken());
 
-            return RedirectToAction("PurchaseHistory", "Purchase");
+            return RedirectToAction(nameof(PurchaseHistory));
         }
 
         [HttpGet]
@@ -92,7 +92,7 @@ namespace TicketManagement.WebApplication.Controllers
         {
             var userId = User.FindFirstValue("id");
 
-            var purchases = await _purchaseClient.GetByUserIdAsync(userId, _tokenService.GetToken());
+            var purchases = await _purchaseClient.GetByUserIdAsync(userId, TokenService.GetToken());
 
             var models = new List<PurchaseViewModel>();
 
@@ -102,11 +102,11 @@ namespace TicketManagement.WebApplication.Controllers
 
                 foreach (var id in purchase.SeatIds)
                 {
-                    var seat = _mapper.Map<EventSeatViewModel>(await _eventSeatClient.GetByIdAsync(id, _tokenService.GetToken()));
-                    var area = _mapper.Map<EventAreaViewModel>(await _eventAreaClient.GetByIdAsync(seat.EventAreaId, _tokenService.GetToken()));
-                    var @event = _mapper.Map<EventViewModel>(await _eventClient.GetByIdAsync(area.EventId, _tokenService.GetToken()));
-                    var layout = _mapper.Map<LayoutViewModel>(await layoutClient.GetByIdAsync(@event.LayoutId, _tokenService.GetToken()));
-                    var venue = _mapper.Map<VenueViewModel>(await venueClient.GetByIdAsync(layout.VenueId, _tokenService.GetToken()));
+                    var seat = _mapper.Map<EventSeatViewModel>(await _eventSeatClient.GetByIdAsync(id, TokenService.GetToken()));
+                    var area = _mapper.Map<EventAreaViewModel>(await _eventAreaClient.GetByIdAsync(seat.EventAreaId, TokenService.GetToken()));
+                    var @event = _mapper.Map<EventViewModel>(await _eventClient.GetByIdAsync(area.EventId, TokenService.GetToken()));
+                    var layout = _mapper.Map<LayoutViewModel>(await layoutClient.GetByIdAsync(@event.LayoutId, TokenService.GetToken()));
+                    var venue = _mapper.Map<VenueViewModel>(await venueClient.GetByIdAsync(layout.VenueId, TokenService.GetToken()));
 
                     var purchasedSeatVm = new PurchasedSeatViewModel { Area = area, Seat = seat, Event = @event, Layout = layout, Venue = venue };
 

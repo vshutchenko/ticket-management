@@ -14,11 +14,10 @@ using TicketManagement.WebApplication.Services;
 namespace TicketManagement.WebApplication.Controllers
 {
     [AuthorizeRoles(Roles.EventManager)]
-    public class EventController : Controller
+    public class EventController : BaseController
     {
         private readonly IEventClient _eventClient;
         private readonly IEventAreaClient _eventAreaClient;
-        private readonly ITokenService _tokenService;
         private readonly IMapper _mapper;
 
         public EventController(
@@ -26,11 +25,10 @@ namespace TicketManagement.WebApplication.Controllers
             IEventAreaClient eventAreaClient,
             ITokenService tokenService,
             IMapper mapper)
+            : base(tokenService)
         {
             _eventClient = eventClient ?? throw new ArgumentNullException(nameof(eventClient));
             _eventAreaClient = eventAreaClient ?? throw new ArgumentNullException(nameof(eventAreaClient));
-            _tokenService = tokenService ?? throw new ArgumentNullException(nameof(tokenService));
-
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
 
@@ -38,7 +36,7 @@ namespace TicketManagement.WebApplication.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> Index()
         {
-            var events = await _eventClient.GetPublishedEventsAsync(_tokenService.GetToken());
+            var events = await _eventClient.GetPublishedEventsAsync(TokenService.GetToken());
 
             var eventsVM = events
                 .Select(e => _mapper.Map<EventViewModel>(e))
@@ -50,7 +48,7 @@ namespace TicketManagement.WebApplication.Controllers
         [HttpGet]
         public async Task<IActionResult> NotPublishedEvents()
         {
-            var events = await _eventClient.GetNotPublishedEventsAsync(_tokenService.GetToken());
+            var events = await _eventClient.GetNotPublishedEventsAsync(TokenService.GetToken());
 
             var eventsVM = events
                 .Select(e => _mapper.Map<EventViewModel>(e))
@@ -62,7 +60,7 @@ namespace TicketManagement.WebApplication.Controllers
         [HttpGet]
         public async Task<PartialViewResult> PartialLayoutList(int venueId, [FromServices] ILayoutClient layoutClient)
         {
-            var layouts = await layoutClient.GetByVenueIdAsync(venueId, _tokenService.GetToken());
+            var layouts = await layoutClient.GetByVenueIdAsync(venueId, TokenService.GetToken());
 
             var layoutsVM = layouts
                 .Select(l => _mapper.Map<LayoutViewModel>(l))
@@ -76,13 +74,13 @@ namespace TicketManagement.WebApplication.Controllers
             [FromServices] ILayoutClient layoutClient,
             [FromServices] IVenueClient venueClient)
         {
-            var venues = await venueClient.GetAllAsync(_tokenService.GetToken());
+            var venues = await venueClient.GetAllAsync(TokenService.GetToken());
 
             var venuesVM = venues
                 .Select(v => _mapper.Map<VenueViewModel>(v))
                 .ToList();
 
-            var layouts = await layoutClient.GetByVenueIdAsync(venues.First().Id, _tokenService.GetToken());
+            var layouts = await layoutClient.GetByVenueIdAsync(venues.First().Id, TokenService.GetToken());
 
             var layoutsVM = layouts
                 .Select(l => _mapper.Map<LayoutViewModel>(l))
@@ -105,9 +103,9 @@ namespace TicketManagement.WebApplication.Controllers
             @event.StartDate = User.GetUtcTime(@event.StartDate);
             @event.EndDate = User.GetUtcTime(@event.EndDate);
 
-            var id = await _eventClient.CreateAsync(@event, _tokenService.GetToken());
+            var id = await _eventClient.CreateAsync(@event, TokenService.GetToken());
 
-            return RedirectToAction("EditEvent", new { id = id });
+            return RedirectToAction(nameof(EditEvent), new { id = id });
         }
 
         [HttpGet]
@@ -115,11 +113,11 @@ namespace TicketManagement.WebApplication.Controllers
             [FromServices] ILayoutClient layoutClient,
             [FromServices] IVenueClient venueClient)
         {
-            var @event = await _eventClient.GetByIdAsync(id, _tokenService.GetToken());
+            var @event = await _eventClient.GetByIdAsync(id, TokenService.GetToken());
 
-            var venues = await venueClient.GetAllAsync(_tokenService.GetToken());
+            var venues = await venueClient.GetAllAsync(TokenService.GetToken());
 
-            var layouts = await layoutClient.GetAllAsync(_tokenService.GetToken());
+            var layouts = await layoutClient.GetAllAsync(TokenService.GetToken());
 
             var venuesVM = venues
                 .Select(v => _mapper.Map<VenueViewModel>(v))
@@ -134,7 +132,7 @@ namespace TicketManagement.WebApplication.Controllers
 
             var eventVM = @event.Create(layouts.Where(l => l.VenueId == selectedVenue.Id).ToList(), selectedLayout.Id, venues, selectedVenue.Id);
 
-            var areas = await _eventClient.GetAreasByEventIdAsync(id, _tokenService.GetToken());
+            var areas = await _eventClient.GetAreasByEventIdAsync(id, TokenService.GetToken());
 
             var areasVM = areas
                 .Select(a => _mapper.Map<EventAreaViewModel>(a))
@@ -159,14 +157,14 @@ namespace TicketManagement.WebApplication.Controllers
             @event.StartDate = User.GetUtcTime(@event.StartDate);
             @event.EndDate = User.GetUtcTime(@event.EndDate);
 
-            await _eventClient.UpdateAsync(@event, _tokenService.GetToken());
+            await _eventClient.UpdateAsync(@event, TokenService.GetToken());
 
             foreach (var item in model.Areas)
             {
-                await _eventAreaClient.UpdatePriceAsync(item.Id, item.Price, _tokenService.GetToken());
+                await _eventAreaClient.UpdatePriceAsync(item.Id, item.Price, TokenService.GetToken());
             }
 
-            return RedirectToAction("PurchaseSeats", "Purchase", new { id = @event.Id });
+            return RedirectToAction(nameof(PurchaseController.PurchaseSeats), nameof(PurchaseController), new { id = @event.Id });
         }
 
         [HttpPost]
@@ -177,15 +175,15 @@ namespace TicketManagement.WebApplication.Controllers
             @event.StartDate = User.GetUtcTime(@event.StartDate);
             @event.EndDate = User.GetUtcTime(@event.EndDate);
 
-            await _eventClient.UpdateAsync(@event, _tokenService.GetToken());
+            await _eventClient.UpdateAsync(@event, TokenService.GetToken());
 
-            return RedirectToAction("EditEvent", new { id = @event.Id });
+            return RedirectToAction(nameof(EditEvent), new { id = @event.Id });
         }
 
         [HttpPost]
         public async Task<IActionResult> DeleteEvent(int id, [FromServices] IWebHostEnvironment enviroment)
         {
-            var @event = await _eventClient.GetByIdAsync(id, _tokenService.GetToken());
+            var @event = await _eventClient.GetByIdAsync(id, TokenService.GetToken());
 
             var imagePath = Path.Combine(enviroment.WebRootPath, $"{@event!.ImageUrl}");
 
@@ -194,9 +192,9 @@ namespace TicketManagement.WebApplication.Controllers
                 System.IO.File.Delete(imagePath);
             }
 
-            await _eventClient.DeleteAsync(id, _tokenService.GetToken());
+            await _eventClient.DeleteAsync(id, TokenService.GetToken());
 
-            return RedirectToAction("Index");
+            return RedirectToAction(nameof(Index));
         }
     }
 }

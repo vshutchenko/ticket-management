@@ -9,11 +9,10 @@ using TicketManagement.WebApplication.Services;
 namespace TicketManagement.WebApplication.Controllers
 {
     [AuthorizeRoles(Roles.VenueManager)]
-    public class AreaController : Controller
+    public class AreaController : BaseController
     {
         private readonly IAreaClient _areaClient;
         private readonly ISeatClient _seatClient;
-        private readonly ITokenService _tokenService;
         private readonly IMapper _mapper;
 
         public AreaController(
@@ -21,23 +20,23 @@ namespace TicketManagement.WebApplication.Controllers
             ISeatClient seatClient,
             ITokenService tokenService,
             IMapper mapper)
+            : base(tokenService)
         {
-            _areaClient = areaClient;
-            _seatClient = seatClient;
-            _tokenService = tokenService;
-            _mapper = mapper;
+            _areaClient = areaClient ?? throw new ArgumentNullException(nameof(areaClient));
+            _seatClient = seatClient ?? throw new ArgumentNullException(nameof(seatClient));
+            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
 
         [HttpGet]
         public async Task<IActionResult> AreaList(int layoutId)
         {
-            var areas = await _areaClient.GetByLayoutIdAsync(layoutId, _tokenService.GetToken());
+            var areas = await _areaClient.GetByLayoutIdAsync(layoutId, TokenService.GetToken());
 
             var areasVM = new List<AreaViewModel>();
 
             foreach (var area in areas)
             {
-                var seats = await _seatClient.GetByAreaIdAsync(area.Id, _tokenService.GetToken());
+                var seats = await _seatClient.GetByAreaIdAsync(area.Id, TokenService.GetToken());
 
                 var seatsVM = seats.Select(a => _mapper.Map<SeatViewModel>(a)).ToList();
 
@@ -64,15 +63,15 @@ namespace TicketManagement.WebApplication.Controllers
         {
             var area = _mapper.Map<AreaModel>(model);
 
-            await _areaClient.CreateAsync(area, _tokenService.GetToken());
+            await _areaClient.CreateAsync(area, TokenService.GetToken());
 
-            return RedirectToAction("AreaList", new { layoutId = area.LayoutId });
+            return RedirectToAction(nameof(AreaList), new { layoutId = area.LayoutId });
         }
 
         [HttpGet]
         public async Task<IActionResult> EditArea(int id)
         {
-            var area = await _areaClient.GetByIdAsync(id, _tokenService.GetToken());
+            var area = await _areaClient.GetByIdAsync(id, TokenService.GetToken());
 
             var model = _mapper.Map<AreaViewModel>(area);
 
@@ -84,19 +83,19 @@ namespace TicketManagement.WebApplication.Controllers
         {
             var area = _mapper.Map<AreaModel>(model);
 
-            await _areaClient.UpdateAsync(area, _tokenService.GetToken());
+            await _areaClient.UpdateAsync(area, TokenService.GetToken());
 
-            return RedirectToAction("AreaList", new { layoutId = area.LayoutId });
+            return RedirectToAction(nameof(AreaList), new { layoutId = area.LayoutId });
         }
 
         [HttpPost]
         public async Task<IActionResult> DeleteArea(int id)
         {
-            var area = await _areaClient.GetByIdAsync(id, _tokenService.GetToken());
+            var area = await _areaClient.GetByIdAsync(id, TokenService.GetToken());
 
-            await _areaClient.DeleteAsync(id, _tokenService.GetToken());
+            await _areaClient.DeleteAsync(id, TokenService.GetToken());
 
-            return RedirectToAction("AreaList", new { layoutId = area.LayoutId });
+            return RedirectToAction(nameof(AreaList), new { layoutId = area.LayoutId });
         }
     }
 }

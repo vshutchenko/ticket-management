@@ -7,7 +7,7 @@ namespace TicketManagement.Core.Validation
     {
         public void OnException(ExceptionContext context)
         {
-            if (context.Exception.GetType() != typeof(ValidationException))
+            if (context.Exception is not ValidationException)
             {
                 return;
             }

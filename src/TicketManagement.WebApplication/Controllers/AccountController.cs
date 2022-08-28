@@ -5,24 +5,27 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Options;
+using TicketManagement.Core.Clients.UserApi;
+using TicketManagement.Core.Clients.UserApi.Models;
 using TicketManagement.Core.Models;
-using TicketManagement.WebApplication.Clients.UserApi;
-using TicketManagement.WebApplication.Clients.UserApi.Models;
 using TicketManagement.WebApplication.Models.Account;
 using TicketManagement.WebApplication.Services;
 
 namespace TicketManagement.WebApplication.Controllers
 {
-    public class AccountController : Controller
+    public class AccountController : BaseController
     {
         private readonly IUserClient _userClient;
         private readonly IOptions<RequestLocalizationOptions> _locOptions;
         private readonly IMapper _mapper;
-        private readonly ITokenService _tokenService;
 
-        public AccountController(IUserClient userClient, ITokenService tokenService, IMapper mapper, IOptions<RequestLocalizationOptions> locOptions)
+        public AccountController(
+            IUserClient userClient,
+            ITokenService tokenService,
+            IMapper mapper,
+            IOptions<RequestLocalizationOptions> locOptions)
+            : base(tokenService)
         {
-            _tokenService = tokenService ?? throw new ArgumentNullException(nameof(tokenService));
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
             _locOptions = locOptions ?? throw new ArgumentNullException(nameof(locOptions));
             _userClient = userClient ?? throw new ArgumentNullException(nameof(userClient));
@@ -32,9 +35,9 @@ namespace TicketManagement.WebApplication.Controllers
         [Authorize]
         public IActionResult Logout()
         {
-            _tokenService.DeleteToken();
+            TokenService.DeleteToken();
 
-            return RedirectToAction("Index", "Event");
+            return RedirectToAction(nameof(EventController.Index), TrimController(nameof(EventController)));
         }
 
         [HttpGet]
@@ -59,9 +62,9 @@ namespace TicketManagement.WebApplication.Controllers
 
             var token = await _userClient.LoginAsync(model);
 
-            _tokenService.SaveToken(token);
+            TokenService.SaveToken(token);
 
-            return RedirectToAction("Index", "Event");
+            return RedirectToAction(nameof(EventController.Index), TrimController(nameof(EventController)));
         }
 
         [HttpGet]
@@ -103,9 +106,9 @@ namespace TicketManagement.WebApplication.Controllers
 
             var token = await _userClient.RegisterAsync(model);
 
-            _tokenService.SaveToken(token);
+            TokenService.SaveToken(token);
 
-            return RedirectToAction("Index", "Event");
+            return RedirectToAction(nameof(EventController.Index), TrimController(nameof(EventController)));
         }
 
         [HttpGet]
@@ -126,7 +129,7 @@ namespace TicketManagement.WebApplication.Controllers
                 .Select(z => new SelectListItem(z.DisplayName, z.Id))
                 .ToList();
 
-            var user = await _userClient.GetByIdAsync(userId, _tokenService.GetToken());
+            var user = await _userClient.GetByIdAsync(userId, TokenService.GetToken());
 
             var viewModel = new EditUserViewModel
             {
@@ -150,22 +153,22 @@ namespace TicketManagement.WebApplication.Controllers
         {
             var user = _mapper.Map<UserModel>(model);
 
-            var token = await _userClient.UpdateAsync(user, _tokenService.GetToken());
+            var token = await _userClient.UpdateAsync(user, TokenService.GetToken());
 
-            _tokenService.SaveToken(token);
+            TokenService.SaveToken(token);
 
             TempData["Message"] = "Profile information was successfully updated!";
 
-            return RedirectToAction("EditUser", new { userId = model.Id });
+            return RedirectToAction(nameof(EditUser), new { userId = model.Id });
         }
 
         [HttpGet]
-        [AuthorizeRoles(UserRoles.User)]
+        [AuthorizeRoles(Roles.User)]
         public async Task<IActionResult> AddFunds()
         {
             var userId = User.FindFirstValue("id");
 
-            var user = await _userClient.GetByIdAsync(userId, _tokenService.GetToken());
+            var user = await _userClient.GetByIdAsync(userId, TokenService.GetToken());
 
             ViewBag.Balance = user.Balance;
 
@@ -173,20 +176,20 @@ namespace TicketManagement.WebApplication.Controllers
         }
 
         [HttpPost]
-        [AuthorizeRoles(UserRoles.User)]
+        [AuthorizeRoles(Roles.User)]
         public async Task<IActionResult> AddFunds(decimal amount)
         {
             var userId = User.FindFirstValue("id");
 
-            var user = await _userClient.GetByIdAsync(userId, _tokenService.GetToken());
+            var user = await _userClient.GetByIdAsync(userId, TokenService.GetToken());
 
             user.Balance += amount;
 
-            var token = await _userClient.UpdateAsync(user, _tokenService.GetToken());
+            var token = await _userClient.UpdateAsync(user, TokenService.GetToken());
 
-            _tokenService.SaveToken(token);
+            TokenService.SaveToken(token);
 
-            return RedirectToAction("AddFunds");
+            return RedirectToAction(nameof(AddFunds));
         }
 
         [HttpGet]
@@ -208,7 +211,7 @@ namespace TicketManagement.WebApplication.Controllers
                 NewPassword = model.NewPassword,
             };
 
-            await _userClient.ChangePassword(userId, passwordModel, _tokenService.GetToken());
+            await _userClient.ChangePassword(userId, passwordModel, TokenService.GetToken());
 
             ViewBag.Message = "Profile information was successfully updated!";
 

@@ -8,20 +8,19 @@ using TicketManagement.WebApplication.Services;
 namespace TicketManagement.WebApplication.Controllers
 {
     [AuthorizeRoles(Roles.VenueManager)]
-    public class SeatController : Controller
+    public class SeatController : BaseController
     {
         private readonly ISeatClient _seatClient;
         private readonly IAreaClient _areaClient;
-        private readonly ITokenService _tokenService;
 
         public SeatController(
             ISeatClient seatClient,
             IAreaClient areaClient,
             ITokenService tokenService)
+            : base(tokenService)
         {
-            _seatClient = seatClient;
-            _areaClient = areaClient;
-            _tokenService = tokenService;
+            _seatClient = seatClient ?? throw new ArgumentNullException(nameof(seatClient));
+            _areaClient = areaClient ?? throw new ArgumentNullException(nameof(areaClient));
         }
 
         [HttpGet]
@@ -37,29 +36,35 @@ namespace TicketManagement.WebApplication.Controllers
             {
                 var seat = new SeatModel { AreaId = model.AreaId, Row = model.Row, Number = i };
 
-                await _seatClient.CreateAsync(seat, _tokenService.GetToken());
+                await _seatClient.CreateAsync(seat, TokenService.GetToken());
             }
 
-            var area = await _areaClient.GetByIdAsync(model.AreaId, _tokenService.GetToken());
+            var area = await _areaClient.GetByIdAsync(model.AreaId, TokenService.GetToken());
 
-            return RedirectToAction("AreaList", "Area", new { layoutId = area.LayoutId });
+            return RedirectToAction(
+                nameof(AreaController.AreaList),
+                TrimController(nameof(AreaController)),
+                new { layoutId = area.LayoutId });
         }
 
         [HttpPost]
         public async Task<IActionResult> DeleteSeatRow(int areaId, int row)
         {
-            var seats = await _seatClient.GetByAreaIdAsync(areaId, _tokenService.GetToken());
+            var seats = await _seatClient.GetByAreaIdAsync(areaId, TokenService.GetToken());
 
             var seatsToDelete = seats.Where(s => s.Row == row);
 
             foreach (var seat in seatsToDelete)
             {
-                await _seatClient.DeleteAsync(seat.Id, _tokenService.GetToken());
+                await _seatClient.DeleteAsync(seat.Id, TokenService.GetToken());
             }
 
-            var area = await _areaClient.GetByIdAsync(areaId, _tokenService.GetToken());
+            var area = await _areaClient.GetByIdAsync(areaId, TokenService.GetToken());
 
-            return RedirectToAction("AreaList", "Area", new { layoutId = area.LayoutId });
+            return RedirectToAction(
+                nameof(AreaController.AreaList),
+                TrimController(nameof(AreaController)),
+                new { layoutId = area.LayoutId });
         }
     }
 }

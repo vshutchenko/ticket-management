@@ -11,7 +11,7 @@ namespace TicketManagement.WebApplication.Filters
     {
         public void OnException(ExceptionContext context)
         {
-            if (context.Exception.GetType() != typeof(ApiException))
+            if (context.Exception is not ApiException)
             {
                 return;
             }

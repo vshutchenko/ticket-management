@@ -9,11 +9,10 @@ using TicketManagement.WebApplication.Services;
 namespace TicketManagement.WebApplication.Controllers
 {
     [AuthorizeRoles(Roles.VenueManager)]
-    public class VenueController : Controller
+    public class VenueController : BaseController
     {
         private readonly ILayoutClient _layoutClient;
         private readonly IVenueClient _venueClient;
-        private readonly ITokenService _tokenService;
         private readonly IMapper _mapper;
 
         public VenueController(
@@ -21,25 +20,25 @@ namespace TicketManagement.WebApplication.Controllers
             IVenueClient venueClient,
             ITokenService tokenService,
             IMapper mapper)
+            : base(tokenService)
         {
-            _layoutClient = layoutClient;
-            _venueClient = venueClient;
-            _tokenService = tokenService;
-            _mapper = mapper;
+            _layoutClient = layoutClient ?? throw new ArgumentNullException(nameof(layoutClient));
+            _venueClient = venueClient ?? throw new ArgumentNullException(nameof(venueClient));
+            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
 
         [HttpGet]
         public async Task<IActionResult> VenueList()
         {
-            var venues = await _venueClient.GetAllAsync(_tokenService.GetToken());
+            var venues = await _venueClient.GetAllAsync(TokenService.GetToken());
 
             var venuesVM = new List<VenueViewModel>();
 
             foreach (var venue in venues)
             {
-                var layouts = await _layoutClient.GetByVenueIdAsync(venue.Id, _tokenService.GetToken());
+                var layouts = await _layoutClient.GetByVenueIdAsync(venue.Id, TokenService.GetToken());
 
-                var layoutsVM = layouts.Select(l => _mapper.Map<LayoutViewModel>(l)).ToList();
+                var layoutsVM = layouts.Select(layout => _mapper.Map<LayoutViewModel>(layout)).ToList();
 
                 var venueVM = venue.CreateVM(layoutsVM);
 
@@ -60,15 +59,15 @@ namespace TicketManagement.WebApplication.Controllers
         {
             var venue = _mapper.Map<VenueModel>(model);
 
-            await _venueClient.CreateAsync(venue, _tokenService.GetToken());
+            await _venueClient.CreateAsync(venue, TokenService.GetToken());
 
-            return RedirectToAction("VenueList");
+            return RedirectToAction(nameof(VenueList));
         }
 
         [HttpGet]
         public async Task<IActionResult> EditVenue(int id)
         {
-            var venue = await _venueClient.GetByIdAsync(id, _tokenService.GetToken());
+            var venue = await _venueClient.GetByIdAsync(id, TokenService.GetToken());
 
             var model = _mapper.Map<VenueViewModel>(venue);
 
@@ -80,17 +79,17 @@ namespace TicketManagement.WebApplication.Controllers
         {
             var venue = _mapper.Map<VenueModel>(model);
 
-            await _venueClient.UpdateAsync(venue, _tokenService.GetToken());
+            await _venueClient.UpdateAsync(venue, TokenService.GetToken());
 
-            return RedirectToAction("VenueList");
+            return RedirectToAction(nameof(VenueList));
         }
 
         [HttpPost]
         public async Task<IActionResult> DeleteVenue(int id)
         {
-            await _venueClient.DeleteAsync(id, _tokenService.GetToken());
+            await _venueClient.DeleteAsync(id, TokenService.GetToken());
 
-            return RedirectToAction("VenueList");
+            return RedirectToAction(nameof(VenueList));
         }
     }
 }
