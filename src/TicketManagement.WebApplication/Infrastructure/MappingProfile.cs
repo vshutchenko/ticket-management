@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
+using TicketManagement.Core.Clients.UserApi.Models;
 using TicketManagement.WebApplication.Clients.EventApi.Models;
 using TicketManagement.WebApplication.Clients.PurchaseApi.Models;
-using TicketManagement.WebApplication.Clients.UserApi.Models;
 using TicketManagement.WebApplication.Clients.VenueApi.Models;
 using TicketManagement.WebApplication.Models.Account;
 using TicketManagement.WebApplication.Models.Event;

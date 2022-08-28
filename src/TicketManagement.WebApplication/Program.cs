@@ -6,13 +6,13 @@ using Microsoft.Extensions.Options;
 using RestEase.HttpClientFactory;
 using Serilog;
 using Serilog.Events;
+using TicketManagement.Core.Clients.UserApi;
+using TicketManagement.Core.JwtAuthentication;
 using TicketManagement.WebApplication.Clients.EventApi;
 using TicketManagement.WebApplication.Clients.PurchaseApi;
-using TicketManagement.WebApplication.Clients.UserApi;
 using TicketManagement.WebApplication.Clients.VenueApi;
 using TicketManagement.WebApplication.Filters;
 using TicketManagement.WebApplication.Infrastructure;
-using TicketManagement.WebApplication.JwtAuthentication;
 using TicketManagement.WebApplication.ModelBinders;
 using TicketManagement.WebApplication.Services;
 
@@ -105,10 +105,15 @@ app.Use(async (context, next) =>
 {
     var tokenService = context.RequestServices.GetRequiredService<ITokenService>();
 
-    var token = tokenService.GetToken();
-
-    if (!context.Request.Headers.ContainsKey("Authorization") && token != null)
+    if (context.Request.Headers.ContainsKey("Authorization") &&
+        context.Request.Headers["Authorization"].ToString().StartsWith("Bearer "))
     {
+        var token = context.Request.Headers.Authorization.ToString()["Bearer ".Length..];
+        tokenService.SaveToken(token);
+    }
+    else
+    {
+        var token = tokenService.GetToken();
         context.Request.Headers.Add("Authorization", token);
     }
 

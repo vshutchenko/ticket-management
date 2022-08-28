@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 
-namespace TicketManagement.WebApplication.Clients.UserApi.Models
+namespace TicketManagement.Core.Clients.UserApi.Models
 {
     public class UserModel : IdentityUser
     {

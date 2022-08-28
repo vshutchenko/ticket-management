@@ -5,11 +5,11 @@ using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
 using RestEase;
+using TicketManagement.Core.Clients.UserApi;
 using TicketManagement.IntegrationTests.Addition;
 using TicketManagement.IntegrationTests.Factories;
 using TicketManagement.WebApplication.Clients.EventApi;
 using TicketManagement.WebApplication.Clients.PurchaseApi;
-using TicketManagement.WebApplication.Clients.UserApi;
 using TicketManagement.WebApplication.Clients.VenueApi;
 
 namespace TicketManagement.IntegrationTests.AppControllersTests

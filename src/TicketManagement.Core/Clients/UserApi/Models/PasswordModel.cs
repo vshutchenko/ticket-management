@@ -1,4 +1,4 @@
-﻿namespace TicketManagement.WebApplication.Clients.UserApi.Models
+﻿namespace TicketManagement.Core.Clients.UserApi.Models
 {
     public class PasswordModel
     {
