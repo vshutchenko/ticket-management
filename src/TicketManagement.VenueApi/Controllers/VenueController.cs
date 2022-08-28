@@ -1,5 +1,5 @@
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using TicketManagement.Core.Models;
 using TicketManagement.VenueApi.Models;
 using TicketManagement.VenueApi.Services.Interfaces;
 
@@ -22,7 +22,7 @@ namespace TicketManagement.VenueApi.Controllers
         /// </summary>
         /// <returns>List of venues.</returns>
         [HttpGet]
-        [Authorize(Roles = "Venue manager,Event manager")]
+        [AuthorizeRoles(Roles.VenueManager, Roles.EventManager)]
         [ProducesResponseType(typeof(List<VenueModel>), StatusCodes.Status200OK)]
         public IActionResult GetVenues()
         {
@@ -38,7 +38,7 @@ namespace TicketManagement.VenueApi.Controllers
         /// <param name="id">Id of the venue.</param>
         /// <returns>Venue.</returns>
         [HttpGet("{id}")]
-        [Authorize(Roles = "Venue manager,Event manager,User")]
+        [AuthorizeRoles(Roles.VenueManager, Roles.EventManager, Roles.User)]
         [ProducesResponseType(typeof(VenueModel), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetVenueById(int id)
@@ -54,7 +54,7 @@ namespace TicketManagement.VenueApi.Controllers
         /// <param name="venue">Venue to create.</param>
         /// <returns>Id of created venue.</returns>
         [HttpPost]
-        [Authorize(Roles = "Venue manager")]
+        [AuthorizeRoles(Roles.VenueManager)]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> CreateVenue([FromBody] VenueModel venue)
@@ -69,7 +69,7 @@ namespace TicketManagement.VenueApi.Controllers
         /// </summary>
         /// <param name="venue">Venue to update.</param>
         [HttpPut]
-        [Authorize(Roles = "Venue manager")]
+        [AuthorizeRoles(Roles.VenueManager)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> UpdateVenue([FromBody] VenueModel venue)
@@ -84,7 +84,7 @@ namespace TicketManagement.VenueApi.Controllers
         /// </summary>
         /// <param name="id">Id of the venue to delete.</param>
         [HttpDelete("{id}")]
-        [Authorize(Roles = "Venue manager")]
+        [AuthorizeRoles(Roles.VenueManager)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> DeleteVenue(int id)

@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Options;
+using TicketManagement.Core.Models;
 using TicketManagement.WebApplication.Clients.UserApi;
 using TicketManagement.WebApplication.Clients.UserApi.Models;
 using TicketManagement.WebApplication.Models.Account;
@@ -159,7 +160,7 @@ namespace TicketManagement.WebApplication.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "User")]
+        [AuthorizeRoles(UserRoles.User)]
         public async Task<IActionResult> AddFunds()
         {
             var userId = User.FindFirstValue("id");
@@ -172,7 +173,7 @@ namespace TicketManagement.WebApplication.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "User")]
+        [AuthorizeRoles(UserRoles.User)]
         public async Task<IActionResult> AddFunds(decimal amount)
         {
             var userId = User.FindFirstValue("id");

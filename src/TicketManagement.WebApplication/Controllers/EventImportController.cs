@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using RestEase;
+using TicketManagement.Core.Models;
 using TicketManagement.WebApplication.Clients.CommonModels;
 using TicketManagement.WebApplication.Clients.EventApi;
 using TicketManagement.WebApplication.Clients.EventApi.Models;
@@ -14,7 +15,7 @@ using TicketManagement.WebApplication.Services;
 
 namespace TicketManagement.WebApplication.Controllers
 {
-    [Authorize(Roles = "Event manager")]
+    [AuthorizeRoles(Roles.EventManager)]
     public class EventImportController : Controller
     {
         private readonly IEventClient _eventClient;

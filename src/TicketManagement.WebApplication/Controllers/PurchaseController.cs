@@ -1,7 +1,7 @@
 ﻿using System.Security.Claims;
 using AutoMapper;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using TicketManagement.Core.Models;
 using TicketManagement.WebApplication.Clients.EventApi;
 using TicketManagement.WebApplication.Clients.EventApi.Models;
 using TicketManagement.WebApplication.Clients.PurchaseApi;
@@ -40,7 +40,7 @@ namespace TicketManagement.WebApplication.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "Event manager,User")]
+        [AuthorizeRoles(Roles.EventManager, Roles.User)]
         public async Task<IActionResult> PurchaseSeats(int id)
         {
             var @event = await _eventClient.GetByIdAsync(id, _tokenService.GetToken());
@@ -66,7 +66,7 @@ namespace TicketManagement.WebApplication.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "User")]
+        [AuthorizeRoles(Roles.User)]
         public async Task<IActionResult> PurchaseSeats(CreatePurchaseViewModel model)
         {
             var purchase = _mapper.Map<PurchaseModel>(model);
@@ -85,7 +85,7 @@ namespace TicketManagement.WebApplication.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "User")]
+        [AuthorizeRoles(Roles.User)]
         public async Task<IActionResult> PurchaseHistory(
             [FromServices] ILayoutClient layoutClient,
             [FromServices] IVenueClient venueClient)

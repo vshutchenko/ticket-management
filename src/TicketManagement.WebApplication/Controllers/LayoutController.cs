@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using TicketManagement.Core.Models;
 using TicketManagement.WebApplication.Clients.VenueApi;
 using TicketManagement.WebApplication.Clients.VenueApi.Models;
 using TicketManagement.WebApplication.Models.VenueManagement;
@@ -8,7 +8,7 @@ using TicketManagement.WebApplication.Services;
 
 namespace TicketManagement.WebApplication.Controllers
 {
-    [Authorize(Roles = "Venue manager")]
+    [AuthorizeRoles(Roles.VenueManager)]
     public class LayoutController : Controller
     {
         private readonly ILayoutClient _layoutClient;

@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
+using TicketManagement.Core.Models;
 using TicketManagement.DataAccess.Entities;
 
 namespace TicketManagement.IntegrationTests.Addition
@@ -26,10 +27,10 @@ namespace TicketManagement.IntegrationTests.Addition
         {
             var roles = new List<IdentityRole>
             {
-                new IdentityRole("Admin"),
-                new IdentityRole("Venue manager"),
-                new IdentityRole("User"),
-                new IdentityRole("Event manager"),
+                new IdentityRole(Roles.Admin),
+                new IdentityRole(Roles.VenueManager),
+                new IdentityRole(Roles.User),
+                new IdentityRole(Roles.EventManager),
             };
 
             foreach (var r in roles)
@@ -61,7 +62,7 @@ namespace TicketManagement.IntegrationTests.Addition
                     LastName = "Doe",
                     CultureName = "en-US",
                     TimeZoneId = "Eastern Standard Time",
-                }, "Admin"),
+                }, Roles.Admin),
 
                 (new User
                 {
@@ -77,7 +78,7 @@ namespace TicketManagement.IntegrationTests.Addition
                     LastName = "Doe",
                     CultureName = "en-US",
                     TimeZoneId = "Eastern Standard Time",
-                }, "Venue manager"),
+                }, Roles.VenueManager),
 
                 (new User
                 {
@@ -93,7 +94,7 @@ namespace TicketManagement.IntegrationTests.Addition
                     LastName = "Doe",
                     CultureName = "en-US",
                     TimeZoneId = "Eastern Standard Time",
-                }, "User"),
+                }, Roles.User),
 
                 (new User
                 {
@@ -109,7 +110,7 @@ namespace TicketManagement.IntegrationTests.Addition
                     LastName = "Doe",
                     CultureName = "en-US",
                     TimeZoneId = "Eastern Standard Time",
-                }, "Event manager"),
+                }, Roles.EventManager),
             };
 
             foreach (var x in userRoles)

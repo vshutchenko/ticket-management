@@ -1,4 +1,3 @@
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TicketManagement.Core.Models;
 using TicketManagement.EventApi.Models;
@@ -24,7 +23,7 @@ namespace TicketManagement.EventApi.Controllers
         /// <param name="id">Id of the event seat.</param>
         /// <returns>Event seat.</returns>
         [HttpGet("{id}")]
-        [Authorize(Roles = "Event manager,User")]
+        [AuthorizeRoles(Roles.EventManager, Roles.User)]
         [ProducesResponseType(typeof(EventSeatModel), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetSeatById(int id)
@@ -40,7 +39,7 @@ namespace TicketManagement.EventApi.Controllers
         /// <param name="seatId">Id of the event seat.</param>
         /// <param name="state">State of the event seat.</param>
         [HttpPut("{seatId}/state")]
-        [Authorize(Roles = "Event manager")]
+        [AuthorizeRoles(Roles.EventManager)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> UpdateSeatState(int seatId, [FromBody] EventSeatState state)

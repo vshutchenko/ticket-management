@@ -6,6 +6,7 @@ using TicketManagement.UserApi.Services.Interfaces;
 namespace TicketManagement.UserApi.Controllers
 {
     [Route("users")]
+    [Authorize]
     [ApiController]
     public class UserController : ControllerBase
     {
@@ -73,7 +74,6 @@ namespace TicketManagement.UserApi.Controllers
         }
 
         [HttpGet("{id}")]
-        [Authorize]
         [ProducesResponseType(typeof(UserModel), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetUserById(string id)
@@ -84,7 +84,6 @@ namespace TicketManagement.UserApi.Controllers
         }
 
         [HttpPut]
-        [Authorize(Roles = "Event manager,User")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> UpdateUser([FromBody] UserModel user)
@@ -99,7 +98,6 @@ namespace TicketManagement.UserApi.Controllers
         }
 
         [HttpPut("{id}/password")]
-        [Authorize(Roles = "Event manager,User")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> ChangePassword(string id, [FromBody] PasswordModel model)

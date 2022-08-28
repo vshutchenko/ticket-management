@@ -1,12 +1,12 @@
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using TicketManagement.Core.Models;
 using TicketManagement.VenueApi.Models;
 using TicketManagement.VenueApi.Services.Interfaces;
 
 namespace TicketManagement.VenueApi.Controllers
 {
     [ApiController]
-    [Authorize(Roles = "Venue manager")]
+    [AuthorizeRoles(Roles.VenueManager)]
     [Route("seats")]
     [Produces("application/json")]
     public class SeatController : ControllerBase

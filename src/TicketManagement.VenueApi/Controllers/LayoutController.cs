@@ -1,5 +1,5 @@
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using TicketManagement.Core.Models;
 using TicketManagement.VenueApi.Models;
 using TicketManagement.VenueApi.Services.Interfaces;
 
@@ -22,7 +22,7 @@ namespace TicketManagement.VenueApi.Controllers
         /// </summary>
         /// <returns>List of layouts.</returns>
         [HttpGet]
-        [Authorize(Roles = "Venue manager")]
+        [AuthorizeRoles(Roles.VenueManager)]
         [ProducesResponseType(typeof(List<LayoutModel>), StatusCodes.Status200OK)]
         public IActionResult GetLayouts()
         {
@@ -38,7 +38,7 @@ namespace TicketManagement.VenueApi.Controllers
         /// <param name="venueId">Id of the venue.</param>
         /// <returns>List of layouts.</returns>
         [HttpGet("venues/{venueId}")]
-        [Authorize(Roles = "Venue manager,Event manager")]
+        [AuthorizeRoles(Roles.EventManager, Roles.VenueManager)]
         [ProducesResponseType(typeof(List<LayoutModel>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetLayoutsByVenueId(int venueId)
         {
@@ -53,7 +53,7 @@ namespace TicketManagement.VenueApi.Controllers
         /// <param name="id">Id of the layout.</param>
         /// <returns>Layout.</returns>
         [HttpGet("{id}")]
-        [Authorize(Roles = "Venue manager,Event manager,User")]
+        [AuthorizeRoles(Roles.VenueManager, Roles.EventManager, Roles.User)]
         [ProducesResponseType(typeof(LayoutModel), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetLayoutById(int id)
@@ -69,7 +69,7 @@ namespace TicketManagement.VenueApi.Controllers
         /// <param name="layout">Layout to create.</param>
         /// <returns>Id of created layout.</returns>
         [HttpPost]
-        [Authorize(Roles = "Venue manager")]
+        [AuthorizeRoles(Roles.VenueManager)]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> CreateLayout([FromBody] LayoutModel layout)
@@ -84,7 +84,7 @@ namespace TicketManagement.VenueApi.Controllers
         /// </summary>
         /// <param name="layout">Layout to update.</param>
         [HttpPut]
-        [Authorize(Roles = "Venue manager")]
+        [AuthorizeRoles(Roles.VenueManager)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> UpdateLayout([FromBody] LayoutModel layout)
@@ -99,7 +99,7 @@ namespace TicketManagement.VenueApi.Controllers
         /// </summary>
         /// <param name="id">Id of the layout to delete.</param>
         [HttpDelete("{id}")]
-        [Authorize(Roles = "Venue manager")]
+        [AuthorizeRoles(Roles.VenueManager)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> DeleteLayout(int id)

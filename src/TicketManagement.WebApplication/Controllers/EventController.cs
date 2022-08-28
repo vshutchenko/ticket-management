@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using TicketManagement.Core.Models;
 using TicketManagement.WebApplication.Clients.EventApi;
 using TicketManagement.WebApplication.Clients.EventApi.Models;
 using TicketManagement.WebApplication.Clients.VenueApi;
@@ -12,7 +13,7 @@ using TicketManagement.WebApplication.Services;
 
 namespace TicketManagement.WebApplication.Controllers
 {
-    [Authorize(Roles = "Event manager")]
+    [AuthorizeRoles(Roles.EventManager)]
     public class EventController : Controller
     {
         private readonly IEventClient _eventClient;

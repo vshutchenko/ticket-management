@@ -1,5 +1,5 @@
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using TicketManagement.Core.Models;
 using TicketManagement.PurchaseApi.Models;
 using TicketManagement.PurchaseApi.Services.Interfaces;
 
@@ -7,7 +7,7 @@ namespace TicketManagement.PurchaseApi.Controllers
 {
     [ApiController]
     [Route("purchases")]
-    [Authorize(Roles = "User")]
+    [AuthorizeRoles(Roles.User)]
     [Produces("application/json")]
     public class PurchaseController : ControllerBase
     {
