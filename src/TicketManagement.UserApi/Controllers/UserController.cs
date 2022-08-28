@@ -20,6 +20,11 @@ namespace TicketManagement.UserApi.Controllers
             _tokenService = tokenService ?? throw new ArgumentNullException(nameof(tokenService));
         }
 
+        /// <summary>
+        /// Login and generate JWT.
+        /// </summary>
+        /// <param name="model">Login model.</param>
+        /// <returns>JWT.</returns>
         [HttpPost]
         [Route("login")]
         [AllowAnonymous]
@@ -38,6 +43,11 @@ namespace TicketManagement.UserApi.Controllers
             return Ok(token);
         }
 
+        /// <summary>
+        /// Register new user.
+        /// </summary>
+        /// <param name="model">Register model.</param>
+        /// <returns>JWT.</returns>
         [HttpPost]
         [Route("register")]
         [AllowAnonymous]
@@ -64,6 +74,11 @@ namespace TicketManagement.UserApi.Controllers
             return Ok(_tokenService.GetToken(createdUser, roles));
         }
 
+        /// <summary>
+        /// Validate JWT.
+        /// </summary>
+        /// <param name="token">Token to validate.</param>
+        /// <returns>Validation result.</returns>
         [HttpGet("validate")]
         [AllowAnonymous]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -73,6 +88,11 @@ namespace TicketManagement.UserApi.Controllers
             return _tokenService.ValidateToken(token) ? Ok() : Forbid();
         }
 
+        /// <summary>
+        /// Get user by id.
+        /// </summary>
+        /// <param name="id">Id.</param>
+        /// <returns>User.</returns>
         [HttpGet("{id}")]
         [ProducesResponseType(typeof(UserModel), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -83,6 +103,11 @@ namespace TicketManagement.UserApi.Controllers
             return Ok(user);
         }
 
+        /// <summary>
+        /// Updates user.
+        /// </summary>
+        /// <param name="user">User to update.</param>
+        /// <returns>JWT.</returns>
         [HttpPut]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -97,6 +122,12 @@ namespace TicketManagement.UserApi.Controllers
             return Ok(_tokenService.GetToken(updatedUser, roles));
         }
 
+        /// <summary>
+        /// Change user password.
+        /// </summary>
+        /// <param name="id">User id.</param>
+        /// <param name="model">Password model.</param>
+        /// <returns>JWT.</returns>
         [HttpPut("{id}/password")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
