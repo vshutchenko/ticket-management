@@ -1,4 +1,5 @@
-﻿using TicketManagement.EventApi.Models;
+﻿using TicketManagement.Core.Models;
+using TicketManagement.EventApi.Models;
 
 namespace TicketManagement.EventApi.Services.Interfaces
 {
@@ -10,6 +11,6 @@ namespace TicketManagement.EventApi.Services.Interfaces
 
         IEnumerable<EventSeatModel> GetByEventAreaId(int eventAreaId);
 
-        Task SetSeatStateAsync(int id, EventSeatStateModel stateModel);
+        Task SetSeatStateAsync(int id, EventSeatState state);
     }
 }

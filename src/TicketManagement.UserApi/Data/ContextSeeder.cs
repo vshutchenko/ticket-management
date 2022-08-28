@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using TicketManagement.Core.Models;
 using TicketManagement.DataAccess.Entities;
 using TicketManagement.UserApi.Models;
 

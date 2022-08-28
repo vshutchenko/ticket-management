@@ -5,10 +5,10 @@ using Microsoft.OpenApi.Models;
 using RestEase.HttpClientFactory;
 using Serilog;
 using Serilog.Events;
-using TicketManagement.VenueApi.Clients.UserApi;
+using TicketManagement.Core.Clients.UserApi;
+using TicketManagement.Core.JwtAuthentication;
+using TicketManagement.Core.Validation;
 using TicketManagement.VenueApi.DependencyResolving;
-using TicketManagement.VenueApi.Filters;
-using TicketManagement.VenueApi.JwtAuthentication;
 using TicketManagement.VenueApi.MappingConfig;
 
 var builder = WebApplication.CreateBuilder(args);

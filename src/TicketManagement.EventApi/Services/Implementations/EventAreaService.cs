@@ -1,9 +1,9 @@
 ﻿using AutoMapper;
+using TicketManagement.Core.Validation;
 using TicketManagement.DataAccess.Entities;
 using TicketManagement.DataAccess.Interfaces;
 using TicketManagement.EventApi.Models;
 using TicketManagement.EventApi.Services.Interfaces;
-using TicketManagement.EventApi.Services.Validation;
 
 namespace TicketManagement.EventApi.Services.Implementations
 {

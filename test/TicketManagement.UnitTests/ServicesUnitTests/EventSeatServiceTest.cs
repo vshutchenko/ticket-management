@@ -5,12 +5,13 @@ using AutoMapper;
 using FluentAssertions;
 using Moq;
 using NUnit.Framework;
+using TicketManagement.Core.Models;
+using TicketManagement.Core.Validation;
 using TicketManagement.DataAccess.Entities;
 using TicketManagement.DataAccess.Interfaces;
 using TicketManagement.EventApi.Models;
 using TicketManagement.EventApi.Services.Implementations;
 using TicketManagement.EventApi.Services.Interfaces;
-using TicketManagement.EventApi.Services.Validation;
 
 namespace TicketManagement.UnitTests.ServicesUnitTests
 {
@@ -43,7 +44,7 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
             _eventSeatRepositoryMock.Setup(x => x.GetByIdAsync(id)).ReturnsAsync(eventSeat);
 
             // Act
-            await _eventSeatService.SetSeatStateAsync(id, EventSeatStateModel.Ordered);
+            await _eventSeatService.SetSeatStateAsync(id, EventSeatState.Ordered);
 
             // Assert
             _eventSeatRepositoryMock.Verify(x => x.UpdateAsync(eventSeat), Times.Once);
@@ -58,7 +59,7 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
             _eventSeatRepositoryMock.Setup(x => x.GetByIdAsync(notExistingId)).ReturnsAsync(default(EventSeat));
 
             // Act
-            var settingState = _eventSeatService.Invoking(s => s.SetSeatStateAsync(notExistingId, EventSeatStateModel.Ordered));
+            var settingState = _eventSeatService.Invoking(s => s.SetSeatStateAsync(notExistingId, EventSeatState.Ordered));
 
             // Assert
             await settingState
@@ -79,9 +80,9 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
 
             var mappedEventSeats = new List<EventSeatModel>
             {
-                new EventSeatModel { Id = 1, EventAreaId = 1, Row = 1, Number = 1, State = EventSeatStateModel.Available },
-                new EventSeatModel { Id = 2, EventAreaId = 1, Row = 1, Number = 2, State = EventSeatStateModel.Available },
-                new EventSeatModel { Id = 2, EventAreaId = 1, Row = 1, Number = 3, State = EventSeatStateModel.Ordered },
+                new EventSeatModel { Id = 1, EventAreaId = 1, Row = 1, Number = 1, State = EventSeatState.Available },
+                new EventSeatModel { Id = 2, EventAreaId = 1, Row = 1, Number = 2, State = EventSeatState.Available },
+                new EventSeatModel { Id = 2, EventAreaId = 1, Row = 1, Number = 3, State = EventSeatState.Ordered },
             };
 
             for (var i = 0; i < eventSeats.Count; i++)
@@ -111,9 +112,9 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
 
             var mappedEventSeats = new List<EventSeatModel>
             {
-                new EventSeatModel { Id = 1, EventAreaId = 1, Row = 1, Number = 1, State = EventSeatStateModel.Available },
-                new EventSeatModel { Id = 2, EventAreaId = 1, Row = 1, Number = 2, State = EventSeatStateModel.Available },
-                new EventSeatModel { Id = 2, EventAreaId = 1, Row = 1, Number = 3, State = EventSeatStateModel.Ordered },
+                new EventSeatModel { Id = 1, EventAreaId = 1, Row = 1, Number = 1, State = EventSeatState.Available },
+                new EventSeatModel { Id = 2, EventAreaId = 1, Row = 1, Number = 2, State = EventSeatState.Available },
+                new EventSeatModel { Id = 2, EventAreaId = 1, Row = 1, Number = 3, State = EventSeatState.Ordered },
             };
 
             var id = 1;
@@ -150,9 +151,9 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
 
             var mappedEventSeats = new List<EventSeatModel>
             {
-                new EventSeatModel { Id = 1, EventAreaId = 1, Row = 1, Number = 1, State = EventSeatStateModel.Available },
-                new EventSeatModel { Id = 2, EventAreaId = 1, Row = 1, Number = 2, State = EventSeatStateModel.Available },
-                new EventSeatModel { Id = 2, EventAreaId = 1, Row = 1, Number = 3, State = EventSeatStateModel.Ordered },
+                new EventSeatModel { Id = 1, EventAreaId = 1, Row = 1, Number = 1, State = EventSeatState.Available },
+                new EventSeatModel { Id = 2, EventAreaId = 1, Row = 1, Number = 2, State = EventSeatState.Available },
+                new EventSeatModel { Id = 2, EventAreaId = 1, Row = 1, Number = 3, State = EventSeatState.Ordered },
             };
 
             var id = 99;
@@ -181,7 +182,7 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
             var id = 1;
 
             var eventSeat = new EventSeat { Id = 1, EventAreaId = 1, Row = 1, Number = 1, State = EventSeatState.Available };
-            var mappedEventSeat = new EventSeatModel { Id = 1, EventAreaId = 1, Row = 1, Number = 1, State = EventSeatStateModel.Available };
+            var mappedEventSeat = new EventSeatModel { Id = 1, EventAreaId = 1, Row = 1, Number = 1, State = EventSeatState.Available };
 
             _mapperMock.Setup(m => m.Map<EventSeatModel>(eventSeat)).Returns(mappedEventSeat);
 

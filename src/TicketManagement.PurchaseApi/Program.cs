@@ -5,10 +5,10 @@ using Microsoft.OpenApi.Models;
 using RestEase.HttpClientFactory;
 using Serilog;
 using Serilog.Events;
-using TicketManagement.PurchaseApi.Clients.UserApi;
+using TicketManagement.Core.Clients.UserApi;
+using TicketManagement.Core.JwtAuthentication;
+using TicketManagement.Core.Validation;
 using TicketManagement.PurchaseApi.DependencyResolving;
-using TicketManagement.PurchaseApi.Filters;
-using TicketManagement.PurchaseApi.JwtAuthentication;
 using TicketManagement.PurchaseApi.MappingConfig;
 
 var builder = WebApplication.CreateBuilder(args);

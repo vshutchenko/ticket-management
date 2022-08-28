@@ -1,9 +1,10 @@
 ﻿using AutoMapper;
+using TicketManagement.Core.Models;
+using TicketManagement.Core.Validation;
 using TicketManagement.DataAccess.Entities;
 using TicketManagement.DataAccess.Interfaces;
 using TicketManagement.EventApi.Models;
 using TicketManagement.EventApi.Services.Interfaces;
-using TicketManagement.EventApi.Services.Validation;
 
 namespace TicketManagement.EventApi.Services.Implementations
 {
@@ -40,15 +41,14 @@ namespace TicketManagement.EventApi.Services.Implementations
             return model;
         }
 
-        public async Task SetSeatStateAsync(int id, EventSeatStateModel stateModel)
+        public async Task SetSeatStateAsync(int id, EventSeatState state)
         {
             await ValidateEventSeatExistsAsync(id);
 
             var seat = await _eventSeatRepository.GetByIdAsync(id);
 
-            var state = _mapper.Map<EventSeatState>(stateModel);
-
             seat.State = state;
+
             await _eventSeatRepository.UpdateAsync(seat);
         }
 

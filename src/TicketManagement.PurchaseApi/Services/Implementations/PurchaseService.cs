@@ -1,10 +1,11 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Identity;
+using TicketManagement.Core.Models;
+using TicketManagement.Core.Validation;
 using TicketManagement.DataAccess.Entities;
 using TicketManagement.DataAccess.Interfaces;
 using TicketManagement.PurchaseApi.Models;
 using TicketManagement.PurchaseApi.Services.Interfaces;
-using TicketManagement.PurchaseApi.Services.Validation;
 
 namespace TicketManagement.PurchaseApi.Services.Implementations
 {

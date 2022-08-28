@@ -6,15 +6,13 @@ using FluentAssertions;
 using Microsoft.AspNetCore.Identity;
 using Moq;
 using NUnit.Framework;
+using TicketManagement.Core.Models;
+using TicketManagement.Core.Validation;
 using TicketManagement.DataAccess.Entities;
 using TicketManagement.DataAccess.Interfaces;
-using TicketManagement.EventApi.Models;
 using TicketManagement.PurchaseApi.Models;
 using TicketManagement.PurchaseApi.Services.Implementations;
 using TicketManagement.PurchaseApi.Services.Interfaces;
-using TicketManagement.PurchaseApi.Services.Validation;
-using EventSeatModel = TicketManagement.PurchaseApi.Models.EventSeatModel;
-using EventSeatStateModel = TicketManagement.PurchaseApi.Models.EventSeatStateModel;
 
 namespace TicketManagement.UnitTests.ServicesUnitTests
 {
@@ -246,9 +244,9 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
 
             var mappedSeats = new List<EventSeatModel>
             {
-                new EventSeatModel { Id = 1, EventAreaId = 1, Row = 1, Number = 1, State = EventSeatStateModel.Ordered },
-                new EventSeatModel { Id = 2, EventAreaId = 1, Row = 1, Number = 2, State = EventSeatStateModel.Ordered },
-                new EventSeatModel { Id = 3, EventAreaId = 1, Row = 2, Number = 1, State = EventSeatStateModel.Ordered },
+                new EventSeatModel { Id = 1, EventAreaId = 1, Row = 1, Number = 1, State = EventSeatState.Ordered },
+                new EventSeatModel { Id = 2, EventAreaId = 1, Row = 1, Number = 2, State = EventSeatState.Ordered },
+                new EventSeatModel { Id = 3, EventAreaId = 1, Row = 2, Number = 1, State = EventSeatState.Ordered },
             };
 
             _purchasedSeatRepositoryMock.Setup(x => x.GetAll()).Returns(purchasedSeats.AsQueryable());

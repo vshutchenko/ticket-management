@@ -42,14 +42,14 @@ namespace TicketManagement.IntegrationTests.AppControllersTests
                     services.ReplaceContextWithTestDb();
 
                     var descriptor = services.SingleOrDefault(
-                        d => d.ServiceType == typeof(EventApi.Clients.UserApi.IUserClient));
+                        d => d.ServiceType == typeof(Core.Clients.UserApi.IUserClient));
 
                     if (descriptor != null)
                     {
                         services.Remove(descriptor);
                     }
 
-                    var userClient = RestClient.For<EventApi.Clients.UserApi.IUserClient>(userApiCLient);
+                    var userClient = RestClient.For<Core.Clients.UserApi.IUserClient>(userApiCLient);
 
                     services.AddScoped(p => userClient);
                 }));
@@ -60,14 +60,14 @@ namespace TicketManagement.IntegrationTests.AppControllersTests
                     services.ReplaceContextWithTestDb();
 
                     var descriptor = services.SingleOrDefault(
-                        d => d.ServiceType == typeof(VenueApi.Clients.UserApi.IUserClient));
+                        d => d.ServiceType == typeof(Core.Clients.UserApi.IUserClient));
 
                     if (descriptor != null)
                     {
                         services.Remove(descriptor);
                     }
 
-                    var userClient = RestClient.For<VenueApi.Clients.UserApi.IUserClient>(userApiCLient);
+                    var userClient = RestClient.For<Core.Clients.UserApi.IUserClient>(userApiCLient);
 
                     services.AddScoped(p => userClient);
                 }));
@@ -78,14 +78,14 @@ namespace TicketManagement.IntegrationTests.AppControllersTests
                     services.ReplaceContextWithTestDb();
 
                     var descriptor = services.SingleOrDefault(
-                        d => d.ServiceType == typeof(PurchaseApi.Clients.UserApi.IUserClient));
+                        d => d.ServiceType == typeof(Core.Clients.UserApi.IUserClient));
 
                     if (descriptor != null)
                     {
                         services.Remove(descriptor);
                     }
 
-                    var userClient = RestClient.For<PurchaseApi.Clients.UserApi.IUserClient>(userApiCLient);
+                    var userClient = RestClient.For<Core.Clients.UserApi.IUserClient>(userApiCLient);
 
                     services.AddScoped(p => userClient);
                 }));

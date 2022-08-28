@@ -2,12 +2,14 @@ using System.Reflection;
 using AutoMapper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.OpenApi.Models;
+using RestEase.HttpClientFactory;
 using Serilog;
 using Serilog.Events;
+using TicketManagement.Core.Clients.UserApi;
+using TicketManagement.Core.JwtAuthentication;
+using TicketManagement.Core.Validation;
 using TicketManagement.DataAccess.DependencyResolving;
 using TicketManagement.UserApi.Data;
-using TicketManagement.UserApi.Filters;
-using TicketManagement.UserApi.JwtAuthentication;
 using TicketManagement.UserApi.MappingConfig;
 using TicketManagement.UserApi.Services.Implementations;
 using TicketManagement.UserApi.Services.Interfaces;
@@ -46,6 +48,8 @@ builder.Services.AddScoped<ContextSeeder>();
 
 builder.Services.AddAuthentication(JwtAutheticationConstants.SchemeName)
                 .AddScheme<JwtAuthenticationOptions, JwtAuthenticationHandler>(JwtAutheticationConstants.SchemeName, null);
+
+builder.Services.AddRestEaseClient<IUserClient>(builder.Configuration["UserApi:BaseAddress"]);
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();

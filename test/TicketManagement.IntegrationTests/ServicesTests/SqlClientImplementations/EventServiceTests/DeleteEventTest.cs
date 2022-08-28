@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using FluentAssertions;
 using NUnit.Framework;
+using TicketManagement.Core.Validation;
 using TicketManagement.DataAccess.SqlClientImplementations;
 using TicketManagement.EventApi.MappingConfig;
 using TicketManagement.EventApi.Models;

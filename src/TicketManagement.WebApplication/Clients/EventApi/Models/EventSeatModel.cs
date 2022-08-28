@@ -10,6 +10,6 @@
 
         public int Number { get; set; }
 
-        public EventSeatStateModel State { get; set; }
+        public EventSeatState State { get; set; }
     }
 }

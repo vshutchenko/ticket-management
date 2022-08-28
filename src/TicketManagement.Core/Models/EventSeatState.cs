@@ -1,4 +1,4 @@
-﻿namespace TicketManagement.WebApplication.Models.EventSeat
+﻿namespace TicketManagement.Core.Models
 {
     public enum EventSeatState
     {

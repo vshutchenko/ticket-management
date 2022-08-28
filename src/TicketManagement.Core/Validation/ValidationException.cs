@@ -1,6 +1,6 @@
 ﻿using System.Runtime.Serialization;
 
-namespace TicketManagement.VenueApi.Services.Validation
+namespace TicketManagement.Core.Validation
 {
     [Serializable]
     public class ValidationException : Exception

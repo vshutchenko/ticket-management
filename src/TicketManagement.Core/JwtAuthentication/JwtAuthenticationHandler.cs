@@ -2,27 +2,25 @@
 using System.Security.Claims;
 using System.Text.Encodings.Web;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using TicketManagement.EventApi.Clients.UserApi;
+using TicketManagement.Core.Clients.UserApi;
 
-namespace TicketManagement.EventApi.JwtAuthentication
+namespace TicketManagement.Core.JwtAuthentication
 {
-    internal class JwtAuthenticationHandler : AuthenticationHandler<JwtAuthenticationOptions>
+    public class JwtAuthenticationHandler : AuthenticationHandler<JwtAuthenticationOptions>
     {
         private readonly IUserClient _userClient;
-        private readonly ILogger<JwtAuthenticationHandler> _logger;
 
         public JwtAuthenticationHandler(
             IOptionsMonitor<JwtAuthenticationOptions> options,
             ILoggerFactory loggerFactory,
             UrlEncoder encoder,
             ISystemClock clock,
-            IUserClient userClient,
-            ILogger<JwtAuthenticationHandler> logger)
+            IUserClient userClient)
             : base(options, loggerFactory, encoder, clock)
         {
             _userClient = userClient;
-            _logger = logger;
         }
 
         protected override async Task<AuthenticateResult> HandleAuthenticateAsync()

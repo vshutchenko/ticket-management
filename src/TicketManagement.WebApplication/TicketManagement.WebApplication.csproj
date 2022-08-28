@@ -37,4 +37,8 @@
 		<Folder Include="wwwroot\EventImages\" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <ProjectReference Include="..\TicketManagement.Core\TicketManagement.Core.csproj" />
+	</ItemGroup>
+
 </Project>

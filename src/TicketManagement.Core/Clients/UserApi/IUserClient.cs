@@ -1,6 +1,6 @@
 ﻿using RestEase;
 
-namespace TicketManagement.EventApi.Clients.UserApi
+namespace TicketManagement.Core.Clients.UserApi
 {
     public interface IUserClient
     {

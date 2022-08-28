@@ -3,6 +3,7 @@ using AutoMapper;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using NUnit.Framework;
+using TicketManagement.Core.Models;
 using TicketManagement.DataAccess.EntityFrameworkImplementations;
 using TicketManagement.EventApi.MappingConfig;
 using TicketManagement.EventApi.Models;
@@ -45,13 +46,13 @@ namespace TicketManagement.IntegrationTests.EFImplemetations.EventSeatServiceTes
             // Arrange
             var id = 1;
 
-            var stateBeforeUpdate = EventSeatStateModel.Available;
+            var stateBeforeUpdate = EventSeatState.Available;
 
             var actualSeatBeforeUpdate = await _eventSeatService.GetByIdAsync(id);
 
             actualSeatBeforeUpdate.State.Should().Be(stateBeforeUpdate);
 
-            var stateToUpdate = EventSeatStateModel.Ordered;
+            var stateToUpdate = EventSeatState.Ordered;
 
             // Act
             await _eventSeatService.SetSeatStateAsync(id, stateToUpdate);

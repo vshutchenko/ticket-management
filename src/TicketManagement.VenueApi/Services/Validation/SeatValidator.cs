@@ -1,4 +1,5 @@
-﻿using TicketManagement.DataAccess.Entities;
+﻿using TicketManagement.Core.Validation;
+using TicketManagement.DataAccess.Entities;
 using TicketManagement.DataAccess.Interfaces;
 
 namespace TicketManagement.VenueApi.Services.Validation

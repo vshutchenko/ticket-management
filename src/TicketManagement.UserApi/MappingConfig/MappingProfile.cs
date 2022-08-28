@@ -8,7 +8,6 @@ namespace TicketManagement.UserApi.MappingConfig
     {
         public MappingProfile()
         {
-            CreateMap<Language, LanguageModel>().ReverseMap();
             CreateMap<User, UserModel>().ReverseMap();
         }
     }

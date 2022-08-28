@@ -11,7 +11,6 @@ namespace TicketManagement.EventApi.MappingConfig
             CreateMap<Event, EventModel>().ReverseMap();
             CreateMap<EventArea, EventAreaModel>();
             CreateMap<EventSeat, EventSeatModel>();
-            CreateMap<EventSeatState, EventSeatStateModel>().ReverseMap();
         }
     }
 }

@@ -6,6 +6,7 @@ using AutoMapper;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using NUnit.Framework;
+using TicketManagement.Core.Validation;
 using TicketManagement.DataAccess.EntityFrameworkImplementations;
 using TicketManagement.EventApi.MappingConfig;
 using TicketManagement.EventApi.Models;

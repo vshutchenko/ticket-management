@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using TicketManagement.Core.Models;
+using TicketManagement.Core.Validation;
 using TicketManagement.DataAccess.Entities;
 using TicketManagement.DataAccess.Interfaces;
 using TicketManagement.EventApi.Models;
@@ -45,7 +47,7 @@ namespace TicketManagement.EventApi.Services.Implementations
             var orderedSeatsExist = _eventAreaService
                 .GetByEventId(id)
                 .SelectMany(a => _eventSeatService.GetByEventAreaId(a.Id))
-                .Any(s => s.State == EventSeatStateModel.Ordered);
+                .Any(s => s.State == EventSeatState.Ordered);
 
             if (orderedSeatsExist)
             {
@@ -96,7 +98,7 @@ namespace TicketManagement.EventApi.Services.Implementations
             var orderedSeatsExist = _eventAreaService
                 .GetByEventId(eventModel.Id)
                 .SelectMany(a => _eventSeatService.GetByEventAreaId(a.Id))
-                .Any(s => s.State == EventSeatStateModel.Ordered);
+                .Any(s => s.State == EventSeatState.Ordered);
 
             if (orderedSeatsExist)
             {

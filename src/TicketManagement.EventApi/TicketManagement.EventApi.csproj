@@ -21,6 +21,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <ProjectReference Include="..\TicketManagement.Core\TicketManagement.Core.csproj" />
 	  <ProjectReference Include="..\TicketManagement.DataAccess\TicketManagement.DataAccess.csproj" />
 	</ItemGroup>
 

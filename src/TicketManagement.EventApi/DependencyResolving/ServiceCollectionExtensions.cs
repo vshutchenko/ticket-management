@@ -1,4 +1,5 @@
-﻿using TicketManagement.DataAccess.DependencyResolving;
+﻿using TicketManagement.Core.Validation;
+using TicketManagement.DataAccess.DependencyResolving;
 using TicketManagement.DataAccess.Entities;
 using TicketManagement.EventApi.Services.Implementations;
 using TicketManagement.EventApi.Services.Interfaces;

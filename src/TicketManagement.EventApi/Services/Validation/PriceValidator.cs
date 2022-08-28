@@ -1,4 +1,6 @@
-﻿namespace TicketManagement.EventApi.Services.Validation
+﻿using TicketManagement.Core.Validation;
+
+namespace TicketManagement.EventApi.Services.Validation
 {
     internal class PriceValidator : IValidator<decimal>
     {

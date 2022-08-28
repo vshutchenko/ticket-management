@@ -1,8 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
-using TicketManagement.PurchaseApi.Services.Validation;
 
-namespace TicketManagement.PurchaseApi.Filters
+namespace TicketManagement.Core.Validation
 {
     public class ValidationExceptionFilter : Attribute, IExceptionFilter
     {

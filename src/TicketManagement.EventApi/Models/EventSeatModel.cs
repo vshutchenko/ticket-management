@@ -1,4 +1,6 @@
-﻿namespace TicketManagement.EventApi.Models
+﻿using TicketManagement.Core.Models;
+
+namespace TicketManagement.EventApi.Models
 {
     public class EventSeatModel
     {
@@ -10,6 +12,6 @@
 
         public int Number { get; set; }
 
-        public EventSeatStateModel State { get; set; }
+        public EventSeatState State { get; set; }
     }
 }

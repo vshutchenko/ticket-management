@@ -8,11 +8,11 @@ using FluentAssertions;
 using Microsoft.AspNetCore.Identity;
 using Moq;
 using NUnit.Framework;
+using TicketManagement.Core.Validation;
 using TicketManagement.DataAccess.Entities;
 using TicketManagement.UserApi.Models;
 using TicketManagement.UserApi.Services.Implementations;
 using TicketManagement.UserApi.Services.Interfaces;
-using TicketManagement.UserApi.Services.Validation;
 
 namespace TicketManagement.UnitTests.ServicesUnitTests
 {

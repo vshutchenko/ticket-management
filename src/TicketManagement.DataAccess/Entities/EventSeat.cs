@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
+using TicketManagement.Core.Models;
 
 namespace TicketManagement.DataAccess.Entities
 {

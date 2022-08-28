@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
 using RestEase;
 using RestEase.Implementation;
-using TicketManagement.PurchaseApi.Clients.UserApi;
+using TicketManagement.Core.Clients.UserApi;
 
 namespace TicketManagement.IntegrationTests.Factories
 {

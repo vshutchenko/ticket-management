@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using FluentAssertions;
 using NUnit.Framework;
+using TicketManagement.Core.Models;
 using TicketManagement.DataAccess.SqlClientImplementations;
 using TicketManagement.EventApi.MappingConfig;
 using TicketManagement.EventApi.Models;
@@ -142,11 +143,11 @@ namespace TicketManagement.IntegrationTests.SqlClientImplementations.EventServic
 
             var expectedEventSeatsBeforeUpdate = new List<EventSeatModel>
             {
-                new EventSeatModel { Id = 1, EventAreaId = 1, Row = 1, Number = 1, State = EventSeatStateModel.Available },
-                new EventSeatModel { Id = 2, EventAreaId = 1, Row = 1, Number = 2, State = EventSeatStateModel.Available },
-                new EventSeatModel { Id = 3, EventAreaId = 1, Row = 1, Number = 3, State = EventSeatStateModel.Available },
-                new EventSeatModel { Id = 4, EventAreaId = 1, Row = 2, Number = 2, State = EventSeatStateModel.Available },
-                new EventSeatModel { Id = 5, EventAreaId = 1, Row = 2, Number = 1, State = EventSeatStateModel.Available },
+                new EventSeatModel { Id = 1, EventAreaId = 1, Row = 1, Number = 1, State = EventSeatState.Available },
+                new EventSeatModel { Id = 2, EventAreaId = 1, Row = 1, Number = 2, State = EventSeatState.Available },
+                new EventSeatModel { Id = 3, EventAreaId = 1, Row = 1, Number = 3, State = EventSeatState.Available },
+                new EventSeatModel { Id = 4, EventAreaId = 1, Row = 2, Number = 2, State = EventSeatState.Available },
+                new EventSeatModel { Id = 5, EventAreaId = 1, Row = 2, Number = 1, State = EventSeatState.Available },
             };
 
             var actualEventSeatsBeforeUpdate = _eventAreaService.GetAll()
@@ -158,12 +159,12 @@ namespace TicketManagement.IntegrationTests.SqlClientImplementations.EventServic
 
             var expectedEventSeats = new List<EventSeatModel>
             {
-                new EventSeatModel { Id = 6, EventAreaId = 2, Row = 1, Number = 1, State = EventSeatStateModel.Available },
-                new EventSeatModel { Id = 7, EventAreaId = 2, Row = 1, Number = 2, State = EventSeatStateModel.Available },
-                new EventSeatModel { Id = 8, EventAreaId = 2, Row = 1, Number = 3, State = EventSeatStateModel.Available },
-                new EventSeatModel { Id = 9, EventAreaId = 2, Row = 2, Number = 1, State = EventSeatStateModel.Available },
-                new EventSeatModel { Id = 10, EventAreaId = 2, Row = 2, Number = 2, State = EventSeatStateModel.Available },
-                new EventSeatModel { Id = 11, EventAreaId = 3, Row = 1, Number = 1, State = EventSeatStateModel.Available },
+                new EventSeatModel { Id = 6, EventAreaId = 2, Row = 1, Number = 1, State = EventSeatState.Available },
+                new EventSeatModel { Id = 7, EventAreaId = 2, Row = 1, Number = 2, State = EventSeatState.Available },
+                new EventSeatModel { Id = 8, EventAreaId = 2, Row = 1, Number = 3, State = EventSeatState.Available },
+                new EventSeatModel { Id = 9, EventAreaId = 2, Row = 2, Number = 1, State = EventSeatState.Available },
+                new EventSeatModel { Id = 10, EventAreaId = 2, Row = 2, Number = 2, State = EventSeatState.Available },
+                new EventSeatModel { Id = 11, EventAreaId = 3, Row = 1, Number = 1, State = EventSeatState.Available },
             };
 
             var eventToUpdate = new EventModel

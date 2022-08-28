@@ -6,6 +6,8 @@ using AutoMapper;
 using FluentAssertions;
 using Moq;
 using NUnit.Framework;
+using TicketManagement.Core.Models;
+using TicketManagement.Core.Validation;
 using TicketManagement.DataAccess.Entities;
 using TicketManagement.DataAccess.Interfaces;
 using TicketManagement.EventApi.Models;
@@ -333,8 +335,8 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
 
             var eventSeats = new List<EventSeatModel>
             {
-                new EventSeatModel { Id = 1, Row = 1, Number = 1, EventAreaId = 1, State = EventSeatStateModel.Available },
-                new EventSeatModel { Id = 2, Row = 1, Number = 2, EventAreaId = 1, State = EventSeatStateModel.Ordered },
+                new EventSeatModel { Id = 1, Row = 1, Number = 1, EventAreaId = 1, State = EventSeatState.Available },
+                new EventSeatModel { Id = 2, Row = 1, Number = 2, EventAreaId = 1, State = EventSeatState.Ordered },
             };
 
             var id = 1;
@@ -384,7 +386,7 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
 
             var eventSeats = new List<EventSeatModel>
             {
-                new EventSeatModel { Id = 1, Row = 1, Number = 1, EventAreaId = 1, State = EventSeatStateModel.Available },
+                new EventSeatModel { Id = 1, Row = 1, Number = 1, EventAreaId = 1, State = EventSeatState.Available },
             };
 
             var id = 1;
@@ -454,8 +456,8 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
 
             var eventSeats = new List<EventSeatModel>
             {
-                new EventSeatModel { Id = 1, Row = 1, Number = 1, EventAreaId = 1, State = EventSeatStateModel.Available },
-                new EventSeatModel { Id = 2, Row = 1, Number = 2, EventAreaId = 1, State = EventSeatStateModel.Ordered },
+                new EventSeatModel { Id = 1, Row = 1, Number = 1, EventAreaId = 1, State = EventSeatState.Available },
+                new EventSeatModel { Id = 2, Row = 1, Number = 2, EventAreaId = 1, State = EventSeatState.Ordered },
             };
 
             var id = 1;
@@ -527,7 +529,7 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
 
             var eventSeats = new List<EventSeatModel>
             {
-                new EventSeatModel { Id = 1, Row = 1, Number = 1, EventAreaId = 1, State = EventSeatStateModel.Available },
+                new EventSeatModel { Id = 1, Row = 1, Number = 1, EventAreaId = 1, State = EventSeatState.Available },
             };
 
             var id = 1;
@@ -600,7 +602,7 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
 
             var eventSeats = new List<EventSeatModel>
             {
-                new EventSeatModel { Id = 1, Row = 1, Number = 1, EventAreaId = 1, State = EventSeatStateModel.Available },
+                new EventSeatModel { Id = 1, Row = 1, Number = 1, EventAreaId = 1, State = EventSeatState.Available },
             };
 
             var id = 1;
@@ -673,7 +675,7 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
 
             var eventSeats = new List<EventSeatModel>
             {
-                new EventSeatModel { Id = 1, Row = 1, Number = 1, EventAreaId = 1, State = EventSeatStateModel.Available },
+                new EventSeatModel { Id = 1, Row = 1, Number = 1, EventAreaId = 1, State = EventSeatState.Available },
             };
 
             var id = 2;
@@ -744,7 +746,7 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
 
             var eventSeats = new List<EventSeatModel>
             {
-                new EventSeatModel { Id = 1, Row = 1, Number = 1, EventAreaId = 1, State = EventSeatStateModel.Available },
+                new EventSeatModel { Id = 1, Row = 1, Number = 1, EventAreaId = 1, State = EventSeatState.Available },
             };
 
             var id = 1;

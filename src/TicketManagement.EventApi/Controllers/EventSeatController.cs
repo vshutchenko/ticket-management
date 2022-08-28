@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using TicketManagement.Core.Models;
 using TicketManagement.EventApi.Models;
 using TicketManagement.EventApi.Services.Interfaces;
 
@@ -42,7 +43,7 @@ namespace TicketManagement.EventApi.Controllers
         [Authorize(Roles = "Event manager")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> UpdateSeatState(int seatId, [FromBody] EventSeatStateModel state)
+        public async Task<IActionResult> UpdateSeatState(int seatId, [FromBody] EventSeatState state)
         {
             await _eventSeatService.SetSeatStateAsync(seatId, state);
 

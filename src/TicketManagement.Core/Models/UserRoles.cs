@@ -1,4 +1,4 @@
-﻿namespace TicketManagement.UserApi.Models
+﻿namespace TicketManagement.Core.Models
 {
     public static class Roles
     {

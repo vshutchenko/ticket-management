@@ -2,6 +2,7 @@
 using AutoMapper;
 using FluentAssertions;
 using NUnit.Framework;
+using TicketManagement.Core.Validation;
 using TicketManagement.DataAccess.SqlClientImplementations;
 using TicketManagement.VenueApi.MappingConfig;
 using TicketManagement.VenueApi.Models;

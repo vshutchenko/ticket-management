@@ -1,4 +1,4 @@
-﻿namespace TicketManagement.VenueApi.Services.Validation
+﻿namespace TicketManagement.Core.Validation
 {
     public interface IValidator<T>
     {

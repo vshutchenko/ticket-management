@@ -1,9 +1,10 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Identity;
+using TicketManagement.Core.Models;
+using TicketManagement.Core.Validation;
 using TicketManagement.DataAccess.Entities;
 using TicketManagement.UserApi.Models;
 using TicketManagement.UserApi.Services.Interfaces;
-using TicketManagement.UserApi.Services.Validation;
 
 namespace TicketManagement.UserApi.Services.Implementations
 {
