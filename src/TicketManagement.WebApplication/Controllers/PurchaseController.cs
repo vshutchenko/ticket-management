@@ -47,13 +47,13 @@ namespace TicketManagement.WebApplication.Controllers
 
             var eventVM = _mapper.Map<PurchaseSeatsViewModel>(@event);
 
-            var areas = await _eventAreaClient.GetByEventIdAsync(id, _tokenService.GetToken());
+            var areas = await _eventClient.GetAreasByEventIdAsync(id, _tokenService.GetToken());
 
             foreach (var area in areas)
             {
                 var areaVM = _mapper.Map<EventAreaViewModel>(area);
 
-                var seats = await _eventSeatClient.GetByAreaIdAsync(areaVM.Id, _tokenService.GetToken());
+                var seats = await _eventAreaClient.GetSeatsByAreaIdAsync(areaVM.Id, _tokenService.GetToken());
 
                 var seatsVM = seats.Select(s => _mapper.Map<EventSeatViewModel>(s)).ToList();
 

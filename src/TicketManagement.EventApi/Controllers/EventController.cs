@@ -11,10 +11,12 @@ namespace TicketManagement.EventApi.Controllers
     public class EventController : ControllerBase
     {
         private readonly IEventService _eventService;
+        private readonly IEventAreaService _eventAreaService;
 
-        public EventController(IEventService eventService)
+        public EventController(IEventService eventService, IEventAreaService eventAreaService)
         {
             _eventService = eventService ?? throw new ArgumentNullException(nameof(eventService));
+            _eventAreaService = eventAreaService ?? throw new ArgumentNullException(nameof(eventAreaService));
         }
 
         /// <summary>
@@ -37,7 +39,7 @@ namespace TicketManagement.EventApi.Controllers
         /// Get not published events.
         /// </summary>
         /// <returns>List of not published events.</returns>
-        [HttpGet("not-published")]
+        [HttpGet("notPublished")]
         [Authorize(Roles = "Event manager")]
         [ProducesResponseType(typeof(List<EventModel>), StatusCodes.Status200OK)]
         public IActionResult GetNotPublishedEvents()
@@ -109,6 +111,22 @@ namespace TicketManagement.EventApi.Controllers
             await _eventService.DeleteAsync(id);
 
             return NoContent();
+        }
+
+        /// <summary>
+        /// Get event areas by event id.
+        /// </summary>
+        /// <param name="eventId">Id of the event.</param>
+        /// <returns>List of event areas.</returns>
+        [HttpGet("{id}/areas")]
+        [Authorize(Roles = "Event manager,User")]
+        [ProducesResponseType(typeof(List<EventAreaModel>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public IActionResult GetAreasByEventId(int eventId)
+        {
+            var areas = _eventAreaService.GetByEventId(eventId);
+
+            return Ok(areas);
         }
     }
 }

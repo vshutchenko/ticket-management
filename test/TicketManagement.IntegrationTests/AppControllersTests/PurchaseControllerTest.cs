@@ -111,7 +111,7 @@ namespace TicketManagement.IntegrationTests.AppControllersTests
             var provider = TestClaimsProvider.WithUserClaims();
             var client = AppFactory.CreateClientWithTestAuth(provider);
 
-            var getResponse = await client.GetAsync("/Purchase/PurchaseSeats?id=1");
+            var getResponse = await client.GetAsync("/Account/Login");
             var antiForgery = await AntiForgeryTokenExtractor.ExtractAntiForgeryValues(getResponse);
 
             var formModel = new Dictionary<string, string>
@@ -137,7 +137,7 @@ namespace TicketManagement.IntegrationTests.AppControllersTests
             var provider = TestClaimsProvider.WithUserClaims();
             var client = AppFactory.CreateClientWithTestAuth(provider);
 
-            var getResponse = await client.GetAsync("/Purchase/PurchaseSeats?id=1");
+            var getResponse = await client.GetAsync("/Account/Login");
             var antiForgery = await AntiForgeryTokenExtractor.ExtractAntiForgeryValues(getResponse);
 
             var notExistingSeatId = "99";

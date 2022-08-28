@@ -6,31 +6,17 @@ using TicketManagement.EventApi.Services.Interfaces;
 namespace TicketManagement.EventApi.Controllers
 {
     [ApiController]
-    [Route("event-areas")]
+    [Route("eventAreas")]
     [Produces("application/json")]
     public class EventAreaController : ControllerBase
     {
         private readonly IEventAreaService _eventAreaService;
+        private readonly IEventSeatService _eventSeatService;
 
-        public EventAreaController(IEventAreaService eventAreaService)
+        public EventAreaController(IEventAreaService eventAreaService, IEventSeatService eventSeatService)
         {
             _eventAreaService = eventAreaService ?? throw new ArgumentNullException(nameof(eventAreaService));
-        }
-
-        /// <summary>
-        /// Get event areas by event id.
-        /// </summary>
-        /// <param name="eventId">Id of the event.</param>
-        /// <returns>List of event areas.</returns>
-        [HttpGet("events/{eventId}")]
-        [Authorize(Roles = "Event manager,User")]
-        [ProducesResponseType(typeof(List<EventAreaModel>), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public IActionResult GetAreasByEventId(int eventId)
-        {
-            var areas = _eventAreaService.GetByEventId(eventId);
-
-            return Ok(areas);
+            _eventSeatService = eventSeatService ?? throw new ArgumentNullException(nameof(eventSeatService));
         }
 
         /// <summary>
@@ -63,6 +49,22 @@ namespace TicketManagement.EventApi.Controllers
             await _eventAreaService.SetPriceAsync(areaId, price);
 
             return NoContent();
+        }
+
+        /// <summary>
+        /// Get event seats by event area id.
+        /// </summary>
+        /// <param name="areaId">Id of the event area.</param>
+        /// <returns>List of event seats.</returns>
+        [HttpGet("{id}/seats")]
+        [Authorize(Roles = "Event manager,User")]
+        [ProducesResponseType(typeof(List<EventSeatModel>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public IActionResult GetSeatsByAreaId(int areaId)
+        {
+            var seats = _eventSeatService.GetByEventAreaId(areaId);
+
+            return Ok(seats);
         }
     }
 }

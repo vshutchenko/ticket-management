@@ -31,8 +31,13 @@ namespace TicketManagement.WebApplication.Clients.EventApi
             [Header("Authorization")] string jwtToken,
             CancellationToken cancellationToken = default);
 
-        [Get("events/not-published")]
+        [Get("events/notPublished")]
         public Task<List<EventModel>> GetNotPublishedEventsAsync(
+            [Header("Authorization")] string jwtToken,
+            CancellationToken cancellationToken = default);
+
+        [Get("events/{id}/areas")]
+        public Task<List<EventAreaModel>> GetAreasByEventIdAsync([Path] int id,
             [Header("Authorization")] string jwtToken,
             CancellationToken cancellationToken = default);
     }

@@ -133,7 +133,7 @@ namespace TicketManagement.WebApplication.Controllers
 
             var eventVM = @event.Create(layouts.Where(l => l.VenueId == selectedVenue.Id).ToList(), selectedLayout.Id, venues, selectedVenue.Id);
 
-            var areas = await _eventAreaClient.GetByEventIdAsync(id, _tokenService.GetToken());
+            var areas = await _eventClient.GetAreasByEventIdAsync(id, _tokenService.GetToken());
 
             var areasVM = areas
                 .Select(a => _mapper.Map<EventAreaViewModel>(a))

@@ -6,7 +6,7 @@ using TicketManagement.EventApi.Services.Interfaces;
 namespace TicketManagement.EventApi.Controllers
 {
     [ApiController]
-    [Route("event-seats")]
+    [Route("eventSeats")]
     [Produces("application/json")]
     public class EventSeatController : ControllerBase
     {
@@ -15,22 +15,6 @@ namespace TicketManagement.EventApi.Controllers
         public EventSeatController(IEventSeatService eventSeatService)
         {
             _eventSeatService = eventSeatService ?? throw new ArgumentNullException(nameof(eventSeatService));
-        }
-
-        /// <summary>
-        /// Get event seats by event area id.
-        /// </summary>
-        /// <param name="areaId">Id of the event area.</param>
-        /// <returns>List of event seats.</returns>
-        [HttpGet("areas/{areaId}")]
-        [Authorize(Roles = "Event manager,User")]
-        [ProducesResponseType(typeof(List<EventSeatModel>), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public IActionResult GetSeatsByAreaId(int areaId)
-        {
-            var seats = _eventSeatService.GetByEventAreaId(areaId);
-
-            return Ok(seats);
         }
 
         /// <summary>
@@ -58,7 +42,7 @@ namespace TicketManagement.EventApi.Controllers
         [Authorize(Roles = "Event manager")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> UpdateAreaPrice(int seatId, [FromBody] EventSeatStateModel state)
+        public async Task<IActionResult> UpdateSeatState(int seatId, [FromBody] EventSeatStateModel state)
         {
             await _eventSeatService.SetSeatStateAsync(seatId, state);
 
