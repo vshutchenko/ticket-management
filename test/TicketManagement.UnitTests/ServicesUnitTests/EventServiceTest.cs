@@ -845,7 +845,7 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
             _eventRepositoryMock.Setup(x => x.GetAll()).Returns(events.AsQueryable());
 
             // Act
-            var actualEvents = _eventService.GetPublishedEvents();
+            var actualEvents = _eventService.GetAll(EventFilter.Published);
 
             // Assert
             actualEvents.Should().BeEquivalentTo(expectedEvents);
@@ -882,7 +882,7 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
             _eventRepositoryMock.Setup(x => x.GetAll()).Returns(events.AsQueryable());
 
             // Act
-            var actualEvents = _eventService.GetNotPublishedEvents();
+            var actualEvents = _eventService.GetAll(EventFilter.NotPublished);
 
             // Assert
             actualEvents.Should().BeEquivalentTo(expectedEvents);

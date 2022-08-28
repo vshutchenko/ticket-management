@@ -1,4 +1,5 @@
 ﻿using RestEase;
+using TicketManagement.Core.Models;
 using TicketManagement.WebApplication.Clients.EventApi.Models;
 
 namespace TicketManagement.WebApplication.Clients.EventApi
@@ -27,12 +28,8 @@ namespace TicketManagement.WebApplication.Clients.EventApi
             CancellationToken cancellationToken = default);
 
         [Get("events")]
-        public Task<List<EventModel>> GetPublishedEventsAsync(
-            [Header("Authorization")] string jwtToken,
-            CancellationToken cancellationToken = default);
-
-        [Get("events/notPublished")]
-        public Task<List<EventModel>> GetNotPublishedEventsAsync(
+        public Task<List<EventModel>> GetEventsAsync(
+            EventFilter filter,
             [Header("Authorization")] string jwtToken,
             CancellationToken cancellationToken = default);
 

@@ -5,7 +5,6 @@ using TicketManagement.DataAccess.Entities;
 using TicketManagement.DataAccess.Interfaces;
 using TicketManagement.EventApi.Models;
 using TicketManagement.EventApi.Services.Interfaces;
-using TicketManagement.EventApi.Services.Validation;
 
 namespace TicketManagement.EventApi.Services.Implementations
 {
@@ -57,26 +56,6 @@ namespace TicketManagement.EventApi.Services.Implementations
             await _eventRepository.DeleteAsync(id);
         }
 
-        public IEnumerable<EventModel> GetNotPublishedEvents()
-        {
-            var models = _eventRepository.GetAll()
-                .Where(e => !e.Published)
-                .Select(e => _mapper.Map<EventModel>(e))
-                .ToList();
-
-            return models;
-        }
-
-        public IEnumerable<EventModel> GetPublishedEvents()
-        {
-            var models = _eventRepository.GetAll()
-                .Where(e => e.Published)
-                .Select(e => _mapper.Map<EventModel>(e))
-                .ToList();
-
-            return models;
-        }
-
         public async Task<EventModel> GetByIdAsync(int id)
         {
             await ValidateEventExistsAsync(id);
@@ -122,6 +101,24 @@ namespace TicketManagement.EventApi.Services.Implementations
             {
                 throw new ValidationException("Entity was not found.");
             }
+        }
+
+        public IEnumerable<EventModel> GetAll(EventFilter filter)
+        {
+            var events = filter switch
+            {
+                EventFilter.Published =>
+                    _eventRepository.GetAll().Where(e => e.Published),
+
+                EventFilter.NotPublished =>
+                    _eventRepository.GetAll().Where(e => !e.Published),
+
+                _ => _eventRepository.GetAll(),
+            };
+
+            return events
+                .Select(e => _mapper.Map<EventModel>(e))
+                .ToList();
         }
     }
 }

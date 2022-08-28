@@ -36,7 +36,7 @@ namespace TicketManagement.WebApplication.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> Index()
         {
-            var events = await _eventClient.GetPublishedEventsAsync(TokenService.GetToken());
+            var events = await _eventClient.GetEventsAsync(EventFilter.Published, TokenService.GetToken());
 
             var eventsVM = events
                 .Select(e => _mapper.Map<EventViewModel>(e))
@@ -48,7 +48,7 @@ namespace TicketManagement.WebApplication.Controllers
         [HttpGet]
         public async Task<IActionResult> NotPublishedEvents()
         {
-            var events = await _eventClient.GetNotPublishedEventsAsync(TokenService.GetToken());
+            var events = await _eventClient.GetEventsAsync(EventFilter.NotPublished, TokenService.GetToken());
 
             var eventsVM = events
                 .Select(e => _mapper.Map<EventViewModel>(e))

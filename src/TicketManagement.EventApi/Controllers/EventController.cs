@@ -21,32 +21,16 @@ namespace TicketManagement.EventApi.Controllers
         }
 
         /// <summary>
-        /// Get published events.
+        /// Get events.
         /// </summary>
-        /// <returns>List of published events.</returns>
+        /// <returns>List of events.</returns>
         [HttpGet]
         [AllowAnonymous]
         [ProducesResponseType(typeof(List<EventModel>), StatusCodes.Status200OK)]
-        public IActionResult GetPublishedEvents()
+        public IActionResult GetEvents(EventFilter filter)
         {
             var events = _eventService
-                .GetPublishedEvents()
-                .ToList();
-
-            return Ok(events);
-        }
-
-        /// <summary>
-        /// Get not published events.
-        /// </summary>
-        /// <returns>List of not published events.</returns>
-        [HttpGet("notPublished")]
-        [AuthorizeRoles(Roles.EventManager)]
-        [ProducesResponseType(typeof(List<EventModel>), StatusCodes.Status200OK)]
-        public IActionResult GetNotPublishedEvents()
-        {
-            var events = _eventService
-                .GetNotPublishedEvents()
+                .GetAll(filter)
                 .ToList();
 
             return Ok(events);
