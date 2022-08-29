@@ -2,12 +2,12 @@
 using AutoMapper;
 using FluentAssertions;
 using NUnit.Framework;
-using TicketManagement.BusinessLogic.Implementations;
-using TicketManagement.BusinessLogic.Interfaces;
-using TicketManagement.BusinessLogic.MappingConfig;
-using TicketManagement.BusinessLogic.Models;
-using TicketManagement.BusinessLogic.Validation;
 using TicketManagement.DataAccess.SqlClientImplementations;
+using TicketManagement.VenueApi.MappingConfig;
+using TicketManagement.VenueApi.Models;
+using TicketManagement.VenueApi.Services.Implementations;
+using TicketManagement.VenueApi.Services.Interfaces;
+using TicketManagement.VenueApi.Services.Validation;
 
 namespace TicketManagement.IntegrationTests.SqlClientImplementations.VenueServiceTests
 {
@@ -18,19 +18,22 @@ namespace TicketManagement.IntegrationTests.SqlClientImplementations.VenueServic
         [SetUp]
         public void CreateServices()
         {
-            var connectionString = new TestDatabase.TestDatabase().ConnectionString;
+            var testDbInfo = new TestDatabase.TestDatabaseInfo();
+            var connectionString = testDbInfo.ConnectionString;
+            testDbInfo.CreateDb();
 
             var venueRepo = new VenueSqlClientRepository(connectionString);
+            var layoutRepo = new LayoutSqlClientRepository(connectionString);
+            var eventRepo = new EventSqlClientRepository(connectionString);
             var venueValidator = new VenueValidator(venueRepo);
 
             var mapper = new MapperConfiguration(mc =>
                 {
                     mc.AddProfile(new MappingProfile());
-                    mc.AddProfile(new TicketManagement.BusinessLogic.MappingConfig.MappingProfile());
                 })
                 .CreateMapper();
 
-            _venueService = new VenueService(venueRepo, venueValidator, mapper);
+            _venueService = new VenueService(venueRepo, layoutRepo, eventRepo, venueValidator, mapper);
         }
 
         [Test]

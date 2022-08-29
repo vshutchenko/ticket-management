@@ -12,6 +12,7 @@ namespace TicketManagement.DataAccess.Entities
 
         public string CultureName { get; set; }
 
+        [Column(TypeName = "decimal(16,2)")]
         public decimal Balance { get; set; }
 
         public string TimeZoneId { get; set; }

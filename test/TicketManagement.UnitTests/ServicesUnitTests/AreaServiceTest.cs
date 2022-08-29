@@ -5,12 +5,13 @@ using AutoMapper;
 using FluentAssertions;
 using Moq;
 using NUnit.Framework;
-using TicketManagement.BusinessLogic.Implementations;
-using TicketManagement.BusinessLogic.Interfaces;
-using TicketManagement.BusinessLogic.Models;
-using TicketManagement.BusinessLogic.Validation;
+using TicketManagement.Core.Validation;
 using TicketManagement.DataAccess.Entities;
 using TicketManagement.DataAccess.Interfaces;
+using TicketManagement.VenueApi.Models;
+using TicketManagement.VenueApi.Services.Implementations;
+using TicketManagement.VenueApi.Services.Interfaces;
+using TicketManagement.VenueApi.Services.Validation;
 
 namespace TicketManagement.UnitTests.ServicesUnitTests
 {
@@ -18,6 +19,7 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
     internal class AreaServiceTest
     {
         private Mock<IRepository<Area>> _areaRepositoryMock;
+        private Mock<IRepository<Layout>> _layoutRepositoryMock;
         private IAreaService _areaService;
         private Mock<IMapper> _mapperMock;
 
@@ -25,10 +27,11 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
         public void SetUp()
         {
             _areaRepositoryMock = new Mock<IRepository<Area>>();
+            _layoutRepositoryMock = new Mock<IRepository<Layout>>();
             _mapperMock = new Mock<IMapper>();
 
             var areaValidator = new AreaValidator(_areaRepositoryMock.Object);
-            _areaService = new AreaService(_areaRepositoryMock.Object, areaValidator, _mapperMock.Object);
+            _areaService = new AreaService(_areaRepositoryMock.Object, _layoutRepositoryMock.Object, areaValidator, _mapperMock.Object);
         }
 
         [Test]

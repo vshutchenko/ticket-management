@@ -1,12 +1,14 @@
 ﻿using AutoMapper;
-using TicketManagement.BusinessLogic.Models;
+using TicketManagement.Core.Clients.UserApi.Models;
+using TicketManagement.WebApplication.Clients.EventApi.Models;
+using TicketManagement.WebApplication.Clients.PurchaseApi.Models;
+using TicketManagement.WebApplication.Clients.VenueApi.Models;
 using TicketManagement.WebApplication.Models.Account;
 using TicketManagement.WebApplication.Models.Event;
 using TicketManagement.WebApplication.Models.EventArea;
 using TicketManagement.WebApplication.Models.EventSeat;
-using TicketManagement.WebApplication.Models.Layout;
 using TicketManagement.WebApplication.Models.Purchase;
-using TicketManagement.WebApplication.Models.Venue;
+using TicketManagement.WebApplication.Models.VenueManagement;
 
 namespace TicketManagement.WebApplication.Infrastructure
 {
@@ -27,12 +29,24 @@ namespace TicketManagement.WebApplication.Infrastructure
 
             CreateMap<EventSeatModel, EventSeatViewModel>();
 
-            CreateMap<LayoutModel, LayoutViewModel>();
+            CreateMap<LayoutModel, Models.Event.LayoutViewModel>();
 
-            CreateMap<VenueModel, VenueViewModel>();
+            CreateMap<VenueModel, Models.Event.VenueViewModel>();
+
+            CreateMap<LayoutModel, Models.VenueManagement.LayoutViewModel>().ReverseMap();
+
+            CreateMap<SeatModel, SeatViewModel>().ReverseMap();
+
+            CreateMap<VenueModel, Models.VenueManagement.VenueViewModel>()
+                .ForMember(vm => vm.Layouts, opt => opt.Ignore())
+                .ReverseMap();
+
+            CreateMap<AreaModel, AreaViewModel>()
+                .ForMember(vm => vm.Seats, opt => opt.Ignore())
+                .ReverseMap();
 
             CreateMap<CreatePurchaseViewModel, PurchaseModel>()
-                .ForMember(p => p.Id, opt => opt.Ignore());
+            .ForMember(p => p.Id, opt => opt.Ignore());
 
             CreateMap<EditUserViewModel, UserModel>()
                 .ForSourceMember(m => m.Cultures, opt => opt.DoNotValidate())
@@ -43,6 +57,15 @@ namespace TicketManagement.WebApplication.Infrastructure
                 .ForSourceMember(m => m.TimeZones, opt => opt.DoNotValidate())
                 .ForSourceMember(m => m.Password, opt => opt.DoNotValidate())
                 .ForSourceMember(m => m.ConfirmPassword, opt => opt.DoNotValidate());
+
+            CreateMap<LoginViewModel, LoginModel>().ReverseMap();
+            CreateMap<RegisterViewModel, RegisterModel>().ReverseMap();
+
+            CreateMap<RegisterViewModel, RegisterModel>()
+                .ForSourceMember(vm => vm.Cultures, opt => opt.DoNotValidate())
+                .ForSourceMember(vm => vm.TimeZones, opt => opt.DoNotValidate())
+                .ForSourceMember(vm => vm.ConfirmPassword, opt => opt.DoNotValidate())
+                .ReverseMap();
         }
     }
 }

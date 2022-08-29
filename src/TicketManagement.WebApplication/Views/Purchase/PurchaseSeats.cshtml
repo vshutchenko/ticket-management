@@ -1,5 +1,6 @@
 ﻿@using System.Globalization
 @using System.Security.Claims
+@using TicketManagement.Core.Models
 @using TicketManagement.WebApplication.Models.Event
 @using TicketManagement.WebApplication.Models.EventSeat;
 @using TicketManagement.WebApplication.Models.Purchase
@@ -43,7 +44,7 @@
         </dd>
     </dl>
 </div>
-<form method="post" asp-controller="Purchase" asp-action="PurchaseSeats" asp-antiforgery="true">
+<form  asp-controller="Purchase" asp-action="PurchaseSeats">
     <input type="hidden" name="UserId" value="@User.FindFirst("id")!.Value" />
     <input type="hidden" name="EventName" value="@Model.Name" />
     <input type="hidden" name="EventId" value="@Model.Id" />

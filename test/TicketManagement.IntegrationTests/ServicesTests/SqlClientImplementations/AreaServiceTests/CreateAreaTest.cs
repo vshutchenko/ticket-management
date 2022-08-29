@@ -2,12 +2,12 @@
 using AutoMapper;
 using FluentAssertions;
 using NUnit.Framework;
-using TicketManagement.BusinessLogic.Implementations;
-using TicketManagement.BusinessLogic.Interfaces;
-using TicketManagement.BusinessLogic.MappingConfig;
-using TicketManagement.BusinessLogic.Models;
-using TicketManagement.BusinessLogic.Validation;
 using TicketManagement.DataAccess.SqlClientImplementations;
+using TicketManagement.VenueApi.MappingConfig;
+using TicketManagement.VenueApi.Models;
+using TicketManagement.VenueApi.Services.Implementations;
+using TicketManagement.VenueApi.Services.Interfaces;
+using TicketManagement.VenueApi.Services.Validation;
 
 namespace TicketManagement.IntegrationTests.SqlClientImplementations.AreaServiceTests
 {
@@ -18,18 +18,20 @@ namespace TicketManagement.IntegrationTests.SqlClientImplementations.AreaService
         [OneTimeSetUp]
         public void CreateServices()
         {
-            var connectionString = new TestDatabase.TestDatabase().ConnectionString;
+            var testDbInfo = new TestDatabase.TestDatabaseInfo();
+            var connectionString = testDbInfo.ConnectionString;
+            testDbInfo.CreateDb();
 
             var areaRepo = new AreaSqlClientRepository(connectionString);
+            var layoutRepo = new LayoutSqlClientRepository(connectionString);
             var areaValidator = new AreaValidator(areaRepo);
             var mapper = new MapperConfiguration(mc =>
                 {
                     mc.AddProfile(new MappingProfile());
-                    mc.AddProfile(new TicketManagement.BusinessLogic.MappingConfig.MappingProfile());
                 })
                 .CreateMapper();
 
-            _areaService = new AreaService(areaRepo, areaValidator, mapper);
+            _areaService = new AreaService(areaRepo, layoutRepo, areaValidator, mapper);
         }
 
         [Test]

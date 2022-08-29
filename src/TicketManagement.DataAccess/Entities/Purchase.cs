@@ -11,6 +11,7 @@ namespace TicketManagement.DataAccess.Entities
 
         public int EventId { get; set; }
 
+        [Column(TypeName = "decimal(16,2)")]
         public decimal Price { get; set; }
     }
 }

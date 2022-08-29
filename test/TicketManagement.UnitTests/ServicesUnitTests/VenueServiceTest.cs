@@ -5,12 +5,13 @@ using AutoMapper;
 using FluentAssertions;
 using Moq;
 using NUnit.Framework;
-using TicketManagement.BusinessLogic.Implementations;
-using TicketManagement.BusinessLogic.Interfaces;
-using TicketManagement.BusinessLogic.Models;
-using TicketManagement.BusinessLogic.Validation;
+using TicketManagement.Core.Validation;
 using TicketManagement.DataAccess.Entities;
 using TicketManagement.DataAccess.Interfaces;
+using TicketManagement.VenueApi.Models;
+using TicketManagement.VenueApi.Services.Implementations;
+using TicketManagement.VenueApi.Services.Interfaces;
+using TicketManagement.VenueApi.Services.Validation;
 
 namespace TicketManagement.UnitTests.ServicesUnitTests
 {
@@ -18,6 +19,8 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
     internal class VenueServiceTest
     {
         private Mock<IRepository<Venue>> _venueRepositoryMock;
+        private Mock<IRepository<Layout>> _layoutRepositoryMock;
+        private Mock<IRepository<Event>> _eventRepositoryMock;
         private IVenueService _venueService;
         private Mock<IMapper> _mapperMock;
 
@@ -25,10 +28,12 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
         public void SetUp()
         {
             _venueRepositoryMock = new Mock<IRepository<Venue>>();
+            _layoutRepositoryMock = new Mock<IRepository<Layout>>();
+            _eventRepositoryMock = new Mock<IRepository<Event>>();
             _mapperMock = new Mock<IMapper>();
 
             var venueValidator = new VenueValidator(_venueRepositoryMock.Object);
-            _venueService = new VenueService(_venueRepositoryMock.Object, venueValidator, _mapperMock.Object);
+            _venueService = new VenueService(_venueRepositoryMock.Object, _layoutRepositoryMock.Object, _eventRepositoryMock.Object, venueValidator, _mapperMock.Object);
         }
 
         [Test]

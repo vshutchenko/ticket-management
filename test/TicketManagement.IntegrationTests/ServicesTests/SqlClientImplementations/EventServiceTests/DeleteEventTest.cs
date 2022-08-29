@@ -1,13 +1,17 @@
-﻿using System.Linq;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using FluentAssertions;
 using NUnit.Framework;
-using TicketManagement.BusinessLogic.Implementations;
-using TicketManagement.BusinessLogic.Interfaces;
-using TicketManagement.BusinessLogic.MappingConfig;
-using TicketManagement.BusinessLogic.Validation;
+using TicketManagement.Core.Validation;
 using TicketManagement.DataAccess.SqlClientImplementations;
+using TicketManagement.EventApi.MappingConfig;
+using TicketManagement.EventApi.Models;
+using TicketManagement.EventApi.Services.Implementations;
+using TicketManagement.EventApi.Services.Interfaces;
+using TicketManagement.EventApi.Services.Validation;
 
 namespace TicketManagement.IntegrationTests.SqlClientImplementations.EventServiceTests
 {
@@ -20,7 +24,9 @@ namespace TicketManagement.IntegrationTests.SqlClientImplementations.EventServic
         [SetUp]
         public void CreateServices()
         {
-            var connectionString = new TestDatabase.TestDatabase().ConnectionString;
+            var testDbInfo = new TestDatabase.TestDatabaseInfo();
+            var connectionString = testDbInfo.ConnectionString;
+            testDbInfo.CreateDb();
 
             var eventRepo = new EventSqlClientRepository(connectionString);
             var areaRepo = new AreaSqlClientRepository(connectionString);
@@ -35,7 +41,6 @@ namespace TicketManagement.IntegrationTests.SqlClientImplementations.EventServic
             var mapper = new MapperConfiguration(mc =>
                 {
                     mc.AddProfile(new MappingProfile());
-                    mc.AddProfile(new TicketManagement.BusinessLogic.MappingConfig.MappingProfile());
                 })
                 .CreateMapper();
 

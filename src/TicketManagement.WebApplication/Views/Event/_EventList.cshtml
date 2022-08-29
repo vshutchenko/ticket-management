@@ -70,7 +70,7 @@
                                     </div>
                                     <div class="modal-footer">
                                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">@Localizer["Close"]</button>
-                                        <form asp-action="Delete" asp-antiforgery="true" method="post">
+                                        <form asp-action="Delete">
 
                                         <input type="hidden" name="id" value="@item.Id" />
 

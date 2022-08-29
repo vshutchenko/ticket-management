@@ -129,4 +129,7 @@
   <data name="Not published events" xml:space="preserve">
     <value>Неапублікаваныя падзеі</value>
   </data>
+  <data name="Venue management" xml:space="preserve">
+    <value>Кіраванне месцамі правядзення</value>
+  </data>
 </root>

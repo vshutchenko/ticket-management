@@ -5,12 +5,13 @@ using AutoMapper;
 using FluentAssertions;
 using Moq;
 using NUnit.Framework;
-using TicketManagement.BusinessLogic.Implementations;
-using TicketManagement.BusinessLogic.Interfaces;
-using TicketManagement.BusinessLogic.Models;
-using TicketManagement.BusinessLogic.Validation;
+using TicketManagement.Core.Validation;
 using TicketManagement.DataAccess.Entities;
 using TicketManagement.DataAccess.Interfaces;
+using TicketManagement.VenueApi.Models;
+using TicketManagement.VenueApi.Services.Implementations;
+using TicketManagement.VenueApi.Services.Interfaces;
+using TicketManagement.VenueApi.Services.Validation;
 
 namespace TicketManagement.UnitTests.ServicesUnitTests
 {
@@ -18,6 +19,7 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
     internal class SeatServiceTest
     {
         private Mock<IRepository<Seat>> _seatRepositoryMock;
+        private Mock<IRepository<Area>> _areaRepositoryMock;
         private ISeatService _seatService;
         private Mock<IMapper> _mapperMock;
 
@@ -25,11 +27,12 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
         public void SetUp()
         {
             _seatRepositoryMock = new Mock<IRepository<Seat>>();
+            _areaRepositoryMock = new Mock<IRepository<Area>>();
             _mapperMock = new Mock<IMapper>();
 
             var seatValidator = new SeatValidator(_seatRepositoryMock.Object);
 
-            _seatService = new SeatService(_seatRepositoryMock.Object, seatValidator, _mapperMock.Object);
+            _seatService = new SeatService(_seatRepositoryMock.Object, _areaRepositoryMock.Object, seatValidator, _mapperMock.Object);
         }
 
         [Test]
@@ -37,9 +40,11 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
         {
             // Arrange
             var seatToCreate = new SeatModel { Id = 1, Row = 1, Number = 4, AreaId = 1, };
+            var area = new Area { Id = 1, Description = "Area", LayoutId = 1, CoordX = 1, CoordY = 1 };
 
             var mappedSeat = new Seat { Id = 1, Row = 1, Number = 4, AreaId = 1, };
 
+            _areaRepositoryMock.Setup(x => x.GetByIdAsync(seatToCreate.AreaId)).ReturnsAsync(area);
             _mapperMock.Setup(m => m.Map<Seat>(seatToCreate)).Returns(mappedSeat);
 
             // Act

@@ -18,8 +18,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\TicketManagement.BusinessLogic\TicketManagement.BusinessLogic.csproj" />
     <ProjectReference Include="..\..\src\TicketManagement.DataAccess\TicketManagement.DataAccess.csproj" />
+    <ProjectReference Include="..\..\src\TicketManagement.EventApi\TicketManagement.EventApi.csproj" />
+    <ProjectReference Include="..\..\src\TicketManagement.PurchaseApi\TicketManagement.PurchaseApi.csproj" />
+    <ProjectReference Include="..\..\src\TicketManagement.UserApi\TicketManagement.UserApi.csproj" />
+    <ProjectReference Include="..\..\src\TicketManagement.VenueApi\TicketManagement.VenueApi.csproj" />
     <ProjectReference Include="..\..\src\TicketManagement.WebApplication\TicketManagement.WebApplication.csproj" />
   </ItemGroup>
 
@@ -46,6 +49,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="EventApiTests\" />
     <Folder Include="ServicesTests\EFImplemetations\IdentityServiceTests\" />
     <Folder Include="ServicesTests\EFImplemetations\PurchaseServiceTetss\" />
   </ItemGroup>

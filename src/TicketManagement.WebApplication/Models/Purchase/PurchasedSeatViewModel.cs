@@ -1,8 +1,6 @@
 ﻿using TicketManagement.WebApplication.Models.Event;
 using TicketManagement.WebApplication.Models.EventArea;
 using TicketManagement.WebApplication.Models.EventSeat;
-using TicketManagement.WebApplication.Models.Layout;
-using TicketManagement.WebApplication.Models.Venue;
 
 namespace TicketManagement.WebApplication.Models.Purchase
 {

@@ -3,52 +3,62 @@ using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using TicketManagement.BusinessLogic.Interfaces;
-using TicketManagement.BusinessLogic.Models;
-using TicketManagement.BusinessLogic.Validation;
+using RestEase;
+using TicketManagement.Core.Models;
+using TicketManagement.WebApplication.Clients.CommonModels;
+using TicketManagement.WebApplication.Clients.EventApi;
+using TicketManagement.WebApplication.Clients.EventApi.Models;
+using TicketManagement.WebApplication.Clients.VenueApi;
 using TicketManagement.WebApplication.Models.EventImport;
-using TicketManagement.WebApplication.Models.Layout;
-using TicketManagement.WebApplication.Models.Venue;
+using TicketManagement.WebApplication.Models.VenueManagement;
+using TicketManagement.WebApplication.Services;
 
 namespace TicketManagement.WebApplication.Controllers
 {
-    [Authorize(Roles = "Event manager")]
-    public class EventImportController : Controller
+    [AuthorizeRoles(Roles.EventManager)]
+    public class EventImportController : BaseController
     {
-        private readonly IEventService _eventService;
+        private readonly IEventClient _eventClient;
         private readonly IWebHostEnvironment _enviroment;
         private readonly IMapper _mapper;
 
-        public EventImportController(IEventService eventService, IWebHostEnvironment enviroment, IMapper mapper)
+        public EventImportController(
+            IEventClient eventClient,
+            ITokenService tokenService,
+            IWebHostEnvironment enviroment,
+            IMapper mapper)
+            : base(tokenService)
         {
-            _eventService = eventService ?? throw new ArgumentNullException(nameof(eventService));
+            _eventClient = eventClient ?? throw new ArgumentNullException(nameof(eventClient));
             _enviroment = enviroment ?? throw new ArgumentNullException(nameof(enviroment));
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
 
         [HttpGet]
-        public IActionResult ImportEvents([FromServices] IVenueService venueService, [FromServices] ILayoutService layoutService)
+        public async Task<IActionResult> ImportEvents([FromServices] IVenueClient venueClient, [FromServices] ILayoutClient layoutClient)
         {
-            var venues = venueService.GetAll()
+            var venues = await venueClient.GetAllAsync(TokenService.GetToken());
+            var layouts = await layoutClient.GetAllAsync(TokenService.GetToken());
+
+            var venuesVM = venues
                 .Select(v => _mapper.Map<VenueViewModel>(v))
                 .ToList();
 
-            var layouts = layoutService.GetAll()
+            var layoutsVM = layouts
                 .Where(l => l.VenueId == venues.First().Id)
                 .Select(l => _mapper.Map<LayoutViewModel>(l))
                 .ToList();
 
             var model = new ImportViewModel
             {
-                Layouts = new SelectList(layouts, "Id", "Description"),
-                Venues = new SelectList(venues, "Id", "Description"),
+                Layouts = new SelectList(layoutsVM, "Id", "Description"),
+                Venues = new SelectList(venuesVM, "Id", "Description"),
             };
 
             return View(model);
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> ImportEvents(ImportViewModel importModel)
         {
             var events = await JsonSerializer.DeserializeAsync<List<ThirdPartyEventModel>>(importModel.EventsJson!.OpenReadStream());
@@ -74,11 +84,11 @@ namespace TicketManagement.WebApplication.Controllers
 
                 try
                 {
-                    await _eventService.CreateAsync(eventToCreate);
+                    await _eventClient.CreateAsync(eventToCreate, TokenService.GetToken());
                 }
-                catch (ValidationException ex)
+                catch (ApiException ex)
                 {
-                    invalidEvents.Add(eventToCreate.Name, ex.Message);
+                    invalidEvents.Add(eventToCreate.Name, ex.DeserializeContent<ErrorModel>().Error!);
                 }
 
                 var physicalPath = Path.Combine(_enviroment.WebRootPath, imageUrl);

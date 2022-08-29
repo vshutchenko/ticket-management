@@ -2,11 +2,12 @@
 using AutoMapper;
 using FluentAssertions;
 using NUnit.Framework;
-using TicketManagement.BusinessLogic.Implementations;
-using TicketManagement.BusinessLogic.Interfaces;
-using TicketManagement.BusinessLogic.MappingConfig;
-using TicketManagement.BusinessLogic.Models;
+using TicketManagement.Core.Models;
 using TicketManagement.DataAccess.SqlClientImplementations;
+using TicketManagement.EventApi.MappingConfig;
+using TicketManagement.EventApi.Models;
+using TicketManagement.EventApi.Services.Implementations;
+using TicketManagement.EventApi.Services.Interfaces;
 
 namespace TicketManagement.IntegrationTests.SqlClientImplementations.EventSeatServiceTests
 {
@@ -17,7 +18,9 @@ namespace TicketManagement.IntegrationTests.SqlClientImplementations.EventSeatSe
         [OneTimeSetUp]
         public void CreateServices()
         {
-            var connectionString = new TestDatabase.TestDatabase().ConnectionString;
+            var testDbInfo = new TestDatabase.TestDatabaseInfo();
+            var connectionString = testDbInfo.ConnectionString;
+            testDbInfo.CreateDb();
 
             var eventSeatRepo = new EventSeatSqlClientRepository(connectionString);
             var eventAreaRepo = new EventAreaSqlClientRepository(connectionString);
@@ -25,7 +28,6 @@ namespace TicketManagement.IntegrationTests.SqlClientImplementations.EventSeatSe
             var mapper = new MapperConfiguration(mc =>
                 {
                     mc.AddProfile(new MappingProfile());
-                    mc.AddProfile(new TicketManagement.BusinessLogic.MappingConfig.MappingProfile());
                 })
                 .CreateMapper();
 
@@ -38,13 +40,13 @@ namespace TicketManagement.IntegrationTests.SqlClientImplementations.EventSeatSe
             // Arrange
             var id = 1;
 
-            var stateBeforeUpdate = EventSeatStateModel.Available;
+            var stateBeforeUpdate = EventSeatState.Available;
 
             var actualSeatBeforeUpdate = await _eventSeatService.GetByIdAsync(id);
 
             actualSeatBeforeUpdate.State.Should().Be(stateBeforeUpdate);
 
-            var stateToUpdate = EventSeatStateModel.Ordered;
+            var stateToUpdate = EventSeatState.Ordered;
 
             // Act
             await _eventSeatService.SetSeatStateAsync(id, stateToUpdate);

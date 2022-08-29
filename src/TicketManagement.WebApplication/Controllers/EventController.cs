@@ -2,43 +2,43 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using TicketManagement.BusinessLogic.Interfaces;
-using TicketManagement.BusinessLogic.Models;
+using TicketManagement.Core.Models;
+using TicketManagement.WebApplication.Clients.EventApi;
+using TicketManagement.WebApplication.Clients.EventApi.Models;
+using TicketManagement.WebApplication.Clients.VenueApi;
 using TicketManagement.WebApplication.Extensions;
 using TicketManagement.WebApplication.Models.Event;
 using TicketManagement.WebApplication.Models.EventArea;
-using TicketManagement.WebApplication.Models.Layout;
-using TicketManagement.WebApplication.Models.Venue;
+using TicketManagement.WebApplication.Services;
 
 namespace TicketManagement.WebApplication.Controllers
 {
-    public class EventController : Controller
+    [AuthorizeRoles(Roles.EventManager)]
+    public class EventController : BaseController
     {
-        private readonly IEventService _eventService;
-        private readonly IEventAreaService _eventAreaService;
-        private readonly ILayoutService _layoutService;
-        private readonly IVenueService _venueService;
+        private readonly IEventClient _eventClient;
+        private readonly IEventAreaClient _eventAreaClient;
         private readonly IMapper _mapper;
 
         public EventController(
-            IEventService eventService,
-            IEventAreaService eventAreaService,
-            ILayoutService layoutService,
-            IVenueService venueService,
+            IEventClient eventClient,
+            IEventAreaClient eventAreaClient,
+            ITokenService tokenService,
             IMapper mapper)
+            : base(tokenService)
         {
-            _eventService = eventService ?? throw new ArgumentNullException(nameof(eventService));
-            _eventAreaService = eventAreaService ?? throw new ArgumentNullException(nameof(eventAreaService));
-            _layoutService = layoutService ?? throw new ArgumentNullException(nameof(layoutService));
-            _venueService = venueService ?? throw new ArgumentNullException(nameof(venueService));
+            _eventClient = eventClient ?? throw new ArgumentNullException(nameof(eventClient));
+            _eventAreaClient = eventAreaClient ?? throw new ArgumentNullException(nameof(eventAreaClient));
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
 
         [HttpGet]
-        public IActionResult Index()
+        [AllowAnonymous]
+        public async Task<IActionResult> Index()
         {
-            var eventsVM = _eventService.GetAll()
-                .Where(e => e.Published)
+            var events = await _eventClient.GetEventsAsync(EventFilter.Published, TokenService.GetToken());
+
+            var eventsVM = events
                 .Select(e => _mapper.Map<EventViewModel>(e))
                 .ToList();
 
@@ -46,11 +46,11 @@ namespace TicketManagement.WebApplication.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "Event manager")]
-        public IActionResult NotPublishedEvents()
+        public async Task<IActionResult> NotPublishedEvents()
         {
-            var eventsVM = _eventService.GetAll()
-                .Where(e => !e.Published)
+            var events = await _eventClient.GetEventsAsync(EventFilter.NotPublished, TokenService.GetToken());
+
+            var eventsVM = events
                 .Select(e => _mapper.Map<EventViewModel>(e))
                 .ToList();
 
@@ -58,42 +58,44 @@ namespace TicketManagement.WebApplication.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "Event manager")]
-        public PartialViewResult PartialLayoutList(int venueId)
+        public async Task<PartialViewResult> PartialLayoutList(int venueId, [FromServices] ILayoutClient layoutClient)
         {
-            var layouts = _layoutService.GetAll()
-                .Where(l => l.VenueId == venueId)
+            var layouts = await layoutClient.GetByVenueIdAsync(venueId, TokenService.GetToken());
+
+            var layoutsVM = layouts
                 .Select(l => _mapper.Map<LayoutViewModel>(l))
                 .ToList();
 
-            return PartialView(layouts);
+            return PartialView(layoutsVM);
         }
 
         [HttpGet]
-        [Authorize(Roles = "Event manager")]
-        public IActionResult CreateEvent()
+        public async Task<IActionResult> CreateEvent(
+            [FromServices] ILayoutClient layoutClient,
+            [FromServices] IVenueClient venueClient)
         {
-            var venues = _venueService.GetAll()
+            var venues = await venueClient.GetAllAsync(TokenService.GetToken());
+
+            var venuesVM = venues
                 .Select(v => _mapper.Map<VenueViewModel>(v))
                 .ToList();
 
-            var layouts = _layoutService.GetAll()
-                .Where(l => l.VenueId == venues.First().Id)
+            var layouts = await layoutClient.GetByVenueIdAsync(venues.First().Id, TokenService.GetToken());
+
+            var layoutsVM = layouts
                 .Select(l => _mapper.Map<LayoutViewModel>(l))
                 .ToList();
 
             var model = new CreateEventViewModel
             {
-                Layouts = new SelectList(layouts, "Id", "Description"),
-                Venues = new SelectList(venues, "Id", "Description"),
+                Layouts = new SelectList(layoutsVM, "Id", "Description"),
+                Venues = new SelectList(venuesVM, "Id", "Description"),
             };
 
             return View(model);
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        [Authorize(Roles = "Event manager")]
         public async Task<IActionResult> CreateEvent(CreateEventViewModel createModel)
         {
             var @event = _mapper.Map<EventModel>(createModel);
@@ -101,26 +103,38 @@ namespace TicketManagement.WebApplication.Controllers
             @event.StartDate = User.GetUtcTime(@event.StartDate);
             @event.EndDate = User.GetUtcTime(@event.EndDate);
 
-            var id = await _eventService.CreateAsync(@event);
+            var id = await _eventClient.CreateAsync(@event, TokenService.GetToken());
 
-            return RedirectToAction("EditEvent", new { id = id } );
+            return RedirectToAction(nameof(EditEvent), new { id = id });
         }
 
         [HttpGet]
-        [Authorize(Roles = "Event manager")]
-        public async Task<IActionResult> EditEvent(int id)
+        public async Task<IActionResult> EditEvent(int id,
+            [FromServices] ILayoutClient layoutClient,
+            [FromServices] IVenueClient venueClient)
         {
-            var @event = await _eventService.GetByIdAsync(id);
+            var @event = await _eventClient.GetByIdAsync(id, TokenService.GetToken());
 
-            List<VenueModel>? venues = _venueService.GetAll().ToList();
-            List<LayoutModel>? layouts = _layoutService.GetAll().ToList();
+            var venues = await venueClient.GetAllAsync(TokenService.GetToken());
 
-            var selectedLayout = layouts.First(l => l.Id == @event.LayoutId);
-            var selectedVenue = venues.First(v => v.Id == selectedLayout.VenueId);
+            var layouts = await layoutClient.GetAllAsync(TokenService.GetToken());
+
+            var venuesVM = venues
+                .Select(v => _mapper.Map<VenueViewModel>(v))
+                .ToList();
+
+            var layoutsVM = layouts
+                .Select(l => _mapper.Map<LayoutViewModel>(l))
+                .ToList();
+
+            var selectedLayout = layoutsVM.First(l => l.Id == @event.LayoutId);
+            var selectedVenue = venuesVM.First(v => v.Id == selectedLayout.VenueId);
 
             var eventVM = @event.Create(layouts.Where(l => l.VenueId == selectedVenue.Id).ToList(), selectedLayout.Id, venues, selectedVenue.Id);
 
-            var areasVM = _eventAreaService.GetByEventId(id)
+            var areas = await _eventClient.GetAreasByEventIdAsync(id, TokenService.GetToken());
+
+            var areasVM = areas
                 .Select(a => _mapper.Map<EventAreaViewModel>(a))
                 .ToList();
 
@@ -136,28 +150,24 @@ namespace TicketManagement.WebApplication.Controllers
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        [Authorize(Roles = "Event manager")]
         public async Task<IActionResult> EditNotPublishedEvent(EditEventViewModel model)
         {
-            foreach (var item in model.Areas)
-            {
-                await _eventAreaService.SetPriceAsync(item.Id, item.Price);
-            }
-
             var @event = _mapper.Map<EventModel>(model.Event);
 
             @event.StartDate = User.GetUtcTime(@event.StartDate);
             @event.EndDate = User.GetUtcTime(@event.EndDate);
 
-            await _eventService.UpdateAsync(@event);
+            await _eventClient.UpdateAsync(@event, TokenService.GetToken());
 
-            return RedirectToAction("PurchaseSeats", "Purchase",  new { id = @event.Id });
+            foreach (var item in model.Areas)
+            {
+                await _eventAreaClient.UpdatePriceAsync(item.Id, item.Price, TokenService.GetToken());
+            }
+
+            return RedirectToAction(nameof(PurchaseController.PurchaseSeats), nameof(PurchaseController), new { id = @event.Id });
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        [Authorize(Roles = "Event manager")]
         public async Task<IActionResult> EditPublishedEvent(EditEventViewModel model)
         {
             var @event = _mapper.Map<EventModel>(model.Event);
@@ -165,27 +175,26 @@ namespace TicketManagement.WebApplication.Controllers
             @event.StartDate = User.GetUtcTime(@event.StartDate);
             @event.EndDate = User.GetUtcTime(@event.EndDate);
 
-            await _eventService.UpdateAsync(@event);
+            await _eventClient.UpdateAsync(@event, TokenService.GetToken());
 
-            return RedirectToAction("EditEvent", new { id = @event.Id });
+            return RedirectToAction(nameof(EditEvent), new { id = @event.Id });
         }
 
         [HttpPost]
-        [Authorize(Roles = "Event manager")]
         public async Task<IActionResult> DeleteEvent(int id, [FromServices] IWebHostEnvironment enviroment)
         {
-            var @event = await _eventService.GetByIdAsync(id);
+            var @event = await _eventClient.GetByIdAsync(id, TokenService.GetToken());
 
-            var imagePath = Path.Combine(enviroment.WebRootPath, $"{@event.ImageUrl}");
+            var imagePath = Path.Combine(enviroment.WebRootPath, $"{@event!.ImageUrl}");
 
             if (System.IO.File.Exists(imagePath))
             {
                 System.IO.File.Delete(imagePath);
             }
 
-            await _eventService.DeleteAsync(id);
+            await _eventClient.DeleteAsync(id, TokenService.GetToken());
 
-            return RedirectToAction("Index");
+            return RedirectToAction(nameof(Index));
         }
     }
 }

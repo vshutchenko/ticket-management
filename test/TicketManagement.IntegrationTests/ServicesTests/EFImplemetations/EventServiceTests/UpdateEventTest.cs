@@ -6,12 +6,13 @@ using AutoMapper;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using NUnit.Framework;
-using TicketManagement.BusinessLogic.Implementations;
-using TicketManagement.BusinessLogic.Interfaces;
-using TicketManagement.BusinessLogic.MappingConfig;
-using TicketManagement.BusinessLogic.Models;
-using TicketManagement.BusinessLogic.Validation;
+using TicketManagement.Core.Models;
 using TicketManagement.DataAccess.EntityFrameworkImplementations;
+using TicketManagement.EventApi.MappingConfig;
+using TicketManagement.EventApi.Models;
+using TicketManagement.EventApi.Services.Implementations;
+using TicketManagement.EventApi.Services.Interfaces;
+using TicketManagement.EventApi.Services.Validation;
 
 namespace TicketManagement.IntegrationTests.EFImplemetations.EventServiceTests
 {
@@ -24,7 +25,9 @@ namespace TicketManagement.IntegrationTests.EFImplemetations.EventServiceTests
         [SetUp]
         public void CreateServices()
         {
-            var connectionString = new TestDatabase.TestDatabase().ConnectionString;
+            var testDbInfo = new TestDatabase.TestDatabaseInfo();
+            var connectionString = testDbInfo.ConnectionString;
+            testDbInfo.CreateDb();
 
             var optionsBuilder = new DbContextOptionsBuilder<TicketManagementContext>();
             optionsBuilder.UseSqlServer(connectionString);
@@ -44,7 +47,6 @@ namespace TicketManagement.IntegrationTests.EFImplemetations.EventServiceTests
             var mapper = new MapperConfiguration(mc =>
                 {
                     mc.AddProfile(new MappingProfile());
-                    mc.AddProfile(new TicketManagement.BusinessLogic.MappingConfig.MappingProfile());
                 })
                 .CreateMapper();
 
@@ -148,11 +150,11 @@ namespace TicketManagement.IntegrationTests.EFImplemetations.EventServiceTests
 
             var expectedEventSeatsBeforeUpdate = new List<EventSeatModel>
             {
-                new EventSeatModel { Id = 1, EventAreaId = 1, Row = 1, Number = 1, State = EventSeatStateModel.Available },
-                new EventSeatModel { Id = 2, EventAreaId = 1, Row = 1, Number = 2, State = EventSeatStateModel.Available },
-                new EventSeatModel { Id = 3, EventAreaId = 1, Row = 1, Number = 3, State = EventSeatStateModel.Available },
-                new EventSeatModel { Id = 4, EventAreaId = 1, Row = 2, Number = 2, State = EventSeatStateModel.Available },
-                new EventSeatModel { Id = 5, EventAreaId = 1, Row = 2, Number = 1, State = EventSeatStateModel.Available },
+                new EventSeatModel { Id = 1, EventAreaId = 1, Row = 1, Number = 1, State = EventSeatState.Available },
+                new EventSeatModel { Id = 2, EventAreaId = 1, Row = 1, Number = 2, State = EventSeatState.Available },
+                new EventSeatModel { Id = 3, EventAreaId = 1, Row = 1, Number = 3, State = EventSeatState.Available },
+                new EventSeatModel { Id = 4, EventAreaId = 1, Row = 2, Number = 2, State = EventSeatState.Available },
+                new EventSeatModel { Id = 5, EventAreaId = 1, Row = 2, Number = 1, State = EventSeatState.Available },
             };
 
             var actualEventSeatsBeforeUpdate = _eventAreaService.GetAll()
@@ -164,20 +166,20 @@ namespace TicketManagement.IntegrationTests.EFImplemetations.EventServiceTests
 
             var expectedEventSeats = new List<EventSeatModel>
             {
-                new EventSeatModel { Id = 6, EventAreaId = 2, Row = 1, Number = 1, State = EventSeatStateModel.Available },
-                new EventSeatModel { Id = 7, EventAreaId = 2, Row = 1, Number = 2, State = EventSeatStateModel.Available },
-                new EventSeatModel { Id = 8, EventAreaId = 2, Row = 2, Number = 1, State = EventSeatStateModel.Available },
-                new EventSeatModel { Id = 9, EventAreaId = 2, Row = 2, Number = 2, State = EventSeatStateModel.Available },
-                new EventSeatModel { Id = 10, EventAreaId = 2, Row = 3, Number = 1, State = EventSeatStateModel.Available },
-                new EventSeatModel { Id = 11, EventAreaId = 2, Row = 3, Number = 2, State = EventSeatStateModel.Available },
+                new EventSeatModel { Id = 6, EventAreaId = 2, Row = 1, Number = 1, State = EventSeatState.Available },
+                new EventSeatModel { Id = 7, EventAreaId = 2, Row = 1, Number = 2, State = EventSeatState.Available },
+                new EventSeatModel { Id = 8, EventAreaId = 2, Row = 2, Number = 1, State = EventSeatState.Available },
+                new EventSeatModel { Id = 9, EventAreaId = 2, Row = 2, Number = 2, State = EventSeatState.Available },
+                new EventSeatModel { Id = 10, EventAreaId = 2, Row = 3, Number = 1, State = EventSeatState.Available },
+                new EventSeatModel { Id = 11, EventAreaId = 2, Row = 3, Number = 2, State = EventSeatState.Available },
 
-                new EventSeatModel { Id = 12, EventAreaId = 3, Row = 1, Number = 1, State = EventSeatStateModel.Available },
-                new EventSeatModel { Id = 13, EventAreaId = 3, Row = 1, Number = 2, State = EventSeatStateModel.Available },
+                new EventSeatModel { Id = 12, EventAreaId = 3, Row = 1, Number = 1, State = EventSeatState.Available },
+                new EventSeatModel { Id = 13, EventAreaId = 3, Row = 1, Number = 2, State = EventSeatState.Available },
 
-                new EventSeatModel { Id = 14, EventAreaId = 4, Row = 1, Number = 1, State = EventSeatStateModel.Available },
-                new EventSeatModel { Id = 15, EventAreaId = 4, Row = 1, Number = 2, State = EventSeatStateModel.Available },
-                new EventSeatModel { Id = 16, EventAreaId = 4, Row = 1, Number = 3, State = EventSeatStateModel.Available },
-                new EventSeatModel { Id = 17, EventAreaId = 4, Row = 2, Number = 1, State = EventSeatStateModel.Available },
+                new EventSeatModel { Id = 14, EventAreaId = 4, Row = 1, Number = 1, State = EventSeatState.Available },
+                new EventSeatModel { Id = 15, EventAreaId = 4, Row = 1, Number = 2, State = EventSeatState.Available },
+                new EventSeatModel { Id = 16, EventAreaId = 4, Row = 1, Number = 3, State = EventSeatState.Available },
+                new EventSeatModel { Id = 17, EventAreaId = 4, Row = 2, Number = 1, State = EventSeatState.Available },
             };
 
             var eventToUpdate = new EventModel
@@ -296,11 +298,11 @@ namespace TicketManagement.IntegrationTests.EFImplemetations.EventServiceTests
 
             var expectedEventSeatsBeforeUpdate = new List<EventSeatModel>
             {
-                new EventSeatModel { Id = 1, EventAreaId = 1, Row = 1, Number = 1, State = EventSeatStateModel.Available },
-                new EventSeatModel { Id = 2, EventAreaId = 1, Row = 1, Number = 2, State = EventSeatStateModel.Available },
-                new EventSeatModel { Id = 3, EventAreaId = 1, Row = 1, Number = 3, State = EventSeatStateModel.Available },
-                new EventSeatModel { Id = 4, EventAreaId = 1, Row = 2, Number = 2, State = EventSeatStateModel.Available },
-                new EventSeatModel { Id = 5, EventAreaId = 1, Row = 2, Number = 1, State = EventSeatStateModel.Available },
+                new EventSeatModel { Id = 1, EventAreaId = 1, Row = 1, Number = 1, State = EventSeatState.Available },
+                new EventSeatModel { Id = 2, EventAreaId = 1, Row = 1, Number = 2, State = EventSeatState.Available },
+                new EventSeatModel { Id = 3, EventAreaId = 1, Row = 1, Number = 3, State = EventSeatState.Available },
+                new EventSeatModel { Id = 4, EventAreaId = 1, Row = 2, Number = 2, State = EventSeatState.Available },
+                new EventSeatModel { Id = 5, EventAreaId = 1, Row = 2, Number = 1, State = EventSeatState.Available },
             };
 
             var actualEventSeatsBeforeUpdate = _eventAreaService.GetAll()
@@ -312,11 +314,11 @@ namespace TicketManagement.IntegrationTests.EFImplemetations.EventServiceTests
 
             var expectedEventSeats = new List<EventSeatModel>
             {
-                new EventSeatModel { Id = 1, EventAreaId = 1, Row = 1, Number = 1, State = EventSeatStateModel.Available },
-                new EventSeatModel { Id = 2, EventAreaId = 1, Row = 1, Number = 2, State = EventSeatStateModel.Available },
-                new EventSeatModel { Id = 3, EventAreaId = 1, Row = 1, Number = 3, State = EventSeatStateModel.Available },
-                new EventSeatModel { Id = 4, EventAreaId = 1, Row = 2, Number = 2, State = EventSeatStateModel.Available },
-                new EventSeatModel { Id = 5, EventAreaId = 1, Row = 2, Number = 1, State = EventSeatStateModel.Available },
+                new EventSeatModel { Id = 1, EventAreaId = 1, Row = 1, Number = 1, State = EventSeatState.Available },
+                new EventSeatModel { Id = 2, EventAreaId = 1, Row = 1, Number = 2, State = EventSeatState.Available },
+                new EventSeatModel { Id = 3, EventAreaId = 1, Row = 1, Number = 3, State = EventSeatState.Available },
+                new EventSeatModel { Id = 4, EventAreaId = 1, Row = 2, Number = 2, State = EventSeatState.Available },
+                new EventSeatModel { Id = 5, EventAreaId = 1, Row = 2, Number = 1, State = EventSeatState.Available },
             };
 
             var eventToUpdate = new EventModel

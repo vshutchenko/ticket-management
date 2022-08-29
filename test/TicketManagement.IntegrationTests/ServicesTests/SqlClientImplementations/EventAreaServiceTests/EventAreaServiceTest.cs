@@ -2,11 +2,11 @@
 using AutoMapper;
 using FluentAssertions;
 using NUnit.Framework;
-using TicketManagement.BusinessLogic.Implementations;
-using TicketManagement.BusinessLogic.Interfaces;
-using TicketManagement.BusinessLogic.MappingConfig;
-using TicketManagement.BusinessLogic.Validation;
 using TicketManagement.DataAccess.SqlClientImplementations;
+using TicketManagement.EventApi.MappingConfig;
+using TicketManagement.EventApi.Services.Implementations;
+using TicketManagement.EventApi.Services.Interfaces;
+using TicketManagement.EventApi.Services.Validation;
 
 namespace TicketManagement.IntegrationTests.SqlClientImplementations.EventAreaServiceTests
 {
@@ -17,7 +17,9 @@ namespace TicketManagement.IntegrationTests.SqlClientImplementations.EventAreaSe
         [OneTimeSetUp]
         public void CreateServices()
         {
-            var connectionString = new TestDatabase.TestDatabase().ConnectionString;
+            var testDbInfo = new TestDatabase.TestDatabaseInfo();
+            var connectionString = testDbInfo.ConnectionString;
+            testDbInfo.CreateDb();
 
             var eventAreaRepo = new EventAreaSqlClientRepository(connectionString);
             var eventRepo = new EventSqlClientRepository(connectionString);
@@ -25,7 +27,6 @@ namespace TicketManagement.IntegrationTests.SqlClientImplementations.EventAreaSe
             var mapper = new MapperConfiguration(mc =>
                 {
                     mc.AddProfile(new MappingProfile());
-                    mc.AddProfile(new TicketManagement.BusinessLogic.MappingConfig.MappingProfile());
                 })
                 .CreateMapper();
 

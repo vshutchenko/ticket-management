@@ -3,11 +3,12 @@ using AutoMapper;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using NUnit.Framework;
-using TicketManagement.BusinessLogic.Implementations;
-using TicketManagement.BusinessLogic.Interfaces;
-using TicketManagement.BusinessLogic.MappingConfig;
-using TicketManagement.BusinessLogic.Validation;
+using TicketManagement.Core.Validation;
 using TicketManagement.DataAccess.EntityFrameworkImplementations;
+using TicketManagement.VenueApi.MappingConfig;
+using TicketManagement.VenueApi.Services.Implementations;
+using TicketManagement.VenueApi.Services.Interfaces;
+using TicketManagement.VenueApi.Services.Validation;
 
 namespace TicketManagement.IntegrationTests.EFImplemetations.VenueServiceTests
 {
@@ -18,7 +19,9 @@ namespace TicketManagement.IntegrationTests.EFImplemetations.VenueServiceTests
         [OneTimeSetUp]
         public void CreateServices()
         {
-            var connectionString = new TestDatabase.TestDatabase().ConnectionString;
+            var testDbInfo = new TestDatabase.TestDatabaseInfo();
+            var connectionString = testDbInfo.ConnectionString;
+            testDbInfo.CreateDb();
 
             var optionsBuilder = new DbContextOptionsBuilder<TicketManagementContext>();
             optionsBuilder.UseSqlServer(connectionString);
@@ -26,22 +29,39 @@ namespace TicketManagement.IntegrationTests.EFImplemetations.VenueServiceTests
             var context = new TicketManagementContext(optionsBuilder.Options);
 
             var venueRepo = new VenueRepository(context);
+            var layoutRepo = new LayoutRepository(context);
+            var eventRepo = new EventRepository(context);
             var venueValidator = new VenueValidator(venueRepo);
 
             var mapper = new MapperConfiguration(mc =>
                 {
                     mc.AddProfile(new MappingProfile());
-                    mc.AddProfile(new TicketManagement.BusinessLogic.MappingConfig.MappingProfile());
                 })
                 .CreateMapper();
 
-            _venueService = new VenueService(venueRepo, venueValidator, mapper);
+            _venueService = new VenueService(venueRepo, layoutRepo, eventRepo, venueValidator, mapper);
         }
 
-        public async Task Delete_VenueExists_DeletesVenue()
+        [Test]
+        public async Task Delete_VenueHostsEvent_ThrowsValidationException()
         {
             // Arrange
             var id = 1;
+
+            // Act
+            var deletingVenue = _venueService.Invoking(s => s.DeleteAsync(id));
+
+            // Assert
+            await deletingVenue
+                .Should().ThrowAsync<ValidationException>()
+                .WithMessage("This venue cannot be deleted as it will host an event.");
+        }
+
+        [Test]
+        public async Task Delete_VenueExists_DeletesVenue()
+        {
+            // Arrange
+            var id = 2;
 
             // Act
             await _venueService.DeleteAsync(id);

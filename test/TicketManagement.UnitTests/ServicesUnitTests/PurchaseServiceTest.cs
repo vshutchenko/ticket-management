@@ -1,16 +1,18 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using FluentAssertions;
 using Microsoft.AspNetCore.Identity;
 using Moq;
 using NUnit.Framework;
-using TicketManagement.BusinessLogic.Implementations;
-using TicketManagement.BusinessLogic.Interfaces;
-using TicketManagement.BusinessLogic.Models;
-using TicketManagement.BusinessLogic.Validation;
+using TicketManagement.Core.Models;
+using TicketManagement.Core.Validation;
 using TicketManagement.DataAccess.Entities;
 using TicketManagement.DataAccess.Interfaces;
+using TicketManagement.PurchaseApi.Models;
+using TicketManagement.PurchaseApi.Services.Implementations;
+using TicketManagement.PurchaseApi.Services.Interfaces;
 
 namespace TicketManagement.UnitTests.ServicesUnitTests
 {
@@ -20,8 +22,9 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
         private Mock<UserManager<User>> _userManagerMock;
         private Mock<IRepository<Purchase>> _purchaseRepositoryMock;
         private Mock<IRepository<PurchasedSeat>> _purchasedSeatRepositoryMock;
-        private Mock<IEventSeatService> _eventSeatServiceMock;
-        private Mock<IEventAreaService> _eventAreaServiceMock;
+        private Mock<IRepository<EventSeat>> _eventSeatRepositoryMock;
+        private Mock<IRepository<EventArea>> _eventAreaRepositoryMock;
+        private Mock<IMapper> _mapperMock;
         private IPurchaseService _purchaseService;
 
         [SetUp]
@@ -32,15 +35,17 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
 
             _purchaseRepositoryMock = new Mock<IRepository<Purchase>>();
             _purchasedSeatRepositoryMock = new Mock<IRepository<PurchasedSeat>>();
-            _eventSeatServiceMock = new Mock<IEventSeatService>();
-            _eventAreaServiceMock = new Mock<IEventAreaService>();
+            _eventSeatRepositoryMock = new Mock<IRepository<EventSeat>>();
+            _eventAreaRepositoryMock = new Mock<IRepository<EventArea>>();
+            _mapperMock = new Mock<IMapper>();
 
             _purchaseService = new PurchaseService(
                 _userManagerMock.Object,
                 _purchaseRepositoryMock.Object,
                 _purchasedSeatRepositoryMock.Object,
-                _eventSeatServiceMock.Object,
-                _eventAreaServiceMock.Object);
+                _eventSeatRepositoryMock.Object,
+                _eventAreaRepositoryMock.Object,
+                _mapperMock.Object);
         }
 
         [Test]
@@ -49,24 +54,24 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
             // Arrange
             var purchase = new PurchaseModel { EventId = 1, UserId = "13fd42af-6a64-4022-bed4-8c7507cb67b9", SeatIds = new List<int> { 1, 2, 3 } };
 
-            var seats = new List<EventSeatModel>
+            var seats = new List<EventSeat>
             {
-                new EventSeatModel { Id = 1, EventAreaId = 1, Row = 1, Number = 1, State = EventSeatStateModel.Available },
-                new EventSeatModel { Id = 2, EventAreaId = 1, Row = 1, Number = 2, State = EventSeatStateModel.Available },
-                new EventSeatModel { Id = 3, EventAreaId = 1, Row = 2, Number = 1, State = EventSeatStateModel.Available },
+                new EventSeat { Id = 1, EventAreaId = 1, Row = 1, Number = 1, State = EventSeatState.Available },
+                new EventSeat { Id = 2, EventAreaId = 1, Row = 1, Number = 2, State = EventSeatState.Available },
+                new EventSeat { Id = 3, EventAreaId = 1, Row = 2, Number = 1, State = EventSeatState.Available },
             };
 
             var areaId = 1;
-            var area = new EventAreaModel { Id = 1, CoordX = 1, CoordY = 2, EventId = 1, Description = "Description", Price = 15 };
+            var area = new EventArea { Id = 1, CoordX = 1, CoordY = 2, EventId = 1, Description = "Description", Price = 15 };
 
             var user = new User { Email = "user1@gmail.com", Balance = 100 };
 
             for (var i = 0; i < seats.Count; i++)
             {
-                _eventSeatServiceMock.Setup(x => x.GetByIdAsync(seats[i].Id)).ReturnsAsync(seats[i]);
+                _eventSeatRepositoryMock.Setup(x => x.GetByIdAsync(seats[i].Id)).ReturnsAsync(seats[i]);
             }
 
-            _eventAreaServiceMock.Setup(x => x.GetByIdAsync(areaId)).ReturnsAsync(area);
+            _eventAreaRepositoryMock.Setup(x => x.GetByIdAsync(areaId)).ReturnsAsync(area);
             _userManagerMock.Setup(x => x.FindByIdAsync(purchase.UserId)).ReturnsAsync(user);
 
             var purchaseId = 1;
@@ -76,7 +81,7 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
             await _purchaseService.PurchaseSeatAsync(purchase);
 
             // Assert
-            _eventSeatServiceMock.Verify(x => x.SetSeatStateAsync(It.IsAny<int>(), EventSeatStateModel.Ordered), Times.Exactly(purchase.SeatIds.Count));
+            _eventSeatRepositoryMock.Verify(x => x.UpdateAsync(It.IsAny<EventSeat>()), Times.Exactly(purchase.SeatIds.Count));
             _purchasedSeatRepositoryMock.Verify(x => x.CreateAsync(It.IsAny<PurchasedSeat>()), Times.Exactly(purchase.SeatIds.Count));
         }
 
@@ -86,24 +91,24 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
             // Arrange
             var purchase = new PurchaseModel { EventId = 1, UserId = "13fd42af-6a64-4022-bed4-8c7507cb67b9", SeatIds = new List<int> { 1, 2, 3 } };
 
-            var seats = new List<EventSeatModel>
+            var seats = new List<EventSeat>
             {
-                new EventSeatModel { Id = 1, EventAreaId = 1, Row = 1, Number = 1, State = EventSeatStateModel.Available },
-                new EventSeatModel { Id = 2, EventAreaId = 1, Row = 1, Number = 2, State = EventSeatStateModel.Available },
-                new EventSeatModel { Id = 3, EventAreaId = 1, Row = 2, Number = 1, State = EventSeatStateModel.Available },
+                new EventSeat { Id = 1, EventAreaId = 1, Row = 1, Number = 1, State = EventSeatState.Available },
+                new EventSeat { Id = 2, EventAreaId = 1, Row = 1, Number = 2, State = EventSeatState.Available },
+                new EventSeat { Id = 3, EventAreaId = 1, Row = 2, Number = 1, State = EventSeatState.Available },
             };
 
             var areaId = 1;
-            var area = new EventAreaModel { Id = 1, CoordX = 1, CoordY = 2, EventId = 1, Description = "Description", Price = 15 };
+            var area = new EventArea { Id = 1, CoordX = 1, CoordY = 2, EventId = 1, Description = "Description", Price = 15 };
 
             var user = new User { Email = "user1@gmail.com", Balance = 0 };
 
             for (var i = 0; i < seats.Count; i++)
             {
-                _eventSeatServiceMock.Setup(x => x.GetByIdAsync(seats[i].Id)).ReturnsAsync(seats[i]);
+                _eventSeatRepositoryMock.Setup(x => x.GetByIdAsync(seats[i].Id)).ReturnsAsync(seats[i]);
             }
 
-            _eventAreaServiceMock.Setup(x => x.GetByIdAsync(areaId)).ReturnsAsync(area);
+            _eventAreaRepositoryMock.Setup(x => x.GetByIdAsync(areaId)).ReturnsAsync(area);
             _userManagerMock.Setup(x => x.FindByIdAsync(purchase.UserId)).ReturnsAsync(user);
 
             var purchaseId = 1;
@@ -124,24 +129,24 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
             // Arrange
             var purchase = new PurchaseModel { EventId = 1, UserId = "13fd42af-6a64-4022-bed4-8c7507cb67b9", SeatIds = new List<int>() };
 
-            var seats = new List<EventSeatModel>
+            var seats = new List<EventSeat>
             {
-                new EventSeatModel { Id = 1, EventAreaId = 1, Row = 1, Number = 1, State = EventSeatStateModel.Available },
-                new EventSeatModel { Id = 2, EventAreaId = 1, Row = 1, Number = 2, State = EventSeatStateModel.Available },
-                new EventSeatModel { Id = 3, EventAreaId = 1, Row = 2, Number = 1, State = EventSeatStateModel.Available },
+                new EventSeat { Id = 1, EventAreaId = 1, Row = 1, Number = 1, State = EventSeatState.Available },
+                new EventSeat { Id = 2, EventAreaId = 1, Row = 1, Number = 2, State = EventSeatState.Available },
+                new EventSeat { Id = 3, EventAreaId = 1, Row = 2, Number = 1, State = EventSeatState.Available },
             };
 
             var areaId = 1;
-            var area = new EventAreaModel { Id = 1, CoordX = 1, CoordY = 2, EventId = 1, Description = "Description", Price = 15 };
+            var area = new EventArea { Id = 1, CoordX = 1, CoordY = 2, EventId = 1, Description = "Description", Price = 15 };
 
             var user = new User { Email = "user1@gmail.com", Balance = 100 };
 
             for (var i = 0; i < seats.Count; i++)
             {
-                _eventSeatServiceMock.Setup(x => x.GetByIdAsync(seats[i].Id)).ReturnsAsync(seats[i]);
+                _eventSeatRepositoryMock.Setup(x => x.GetByIdAsync(seats[i].Id)).ReturnsAsync(seats[i]);
             }
 
-            _eventAreaServiceMock.Setup(x => x.GetByIdAsync(areaId)).ReturnsAsync(area);
+            _eventAreaRepositoryMock.Setup(x => x.GetByIdAsync(areaId)).ReturnsAsync(area);
             _userManagerMock.Setup(x => x.FindByIdAsync(purchase.UserId)).ReturnsAsync(user);
 
             var purchaseId = 1;
@@ -162,16 +167,16 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
             // Arrange
             var purchase = new PurchaseModel { EventId = 1, UserId = "13fd42af-6a64-4022-bed4-8c7507cb67b9", SeatIds = new List<int> { 1, 2, 3 } };
 
-            var seats = new List<EventSeatModel>
+            var seats = new List<EventSeat>
             {
-                new EventSeatModel { Id = 1, EventAreaId = 1, Row = 1, Number = 1, State = EventSeatStateModel.Available },
-                new EventSeatModel { Id = 2, EventAreaId = 1, Row = 1, Number = 2, State = EventSeatStateModel.Available },
-                new EventSeatModel { Id = 3, EventAreaId = 1, Row = 2, Number = 1, State = EventSeatStateModel.Ordered },
+                new EventSeat { Id = 1, EventAreaId = 1, Row = 1, Number = 1, State = EventSeatState.Available },
+                new EventSeat { Id = 2, EventAreaId = 1, Row = 1, Number = 2, State = EventSeatState.Available },
+                new EventSeat { Id = 3, EventAreaId = 1, Row = 2, Number = 1, State = EventSeatState.Ordered },
             };
 
             for (var i = 0; i < seats.Count; i++)
             {
-                _eventSeatServiceMock.Setup(x => x.GetByIdAsync(seats[i].Id)).ReturnsAsync(seats[i]);
+                _eventSeatRepositoryMock.Setup(x => x.GetByIdAsync(seats[i].Id)).ReturnsAsync(seats[i]);
             }
 
             // Act
@@ -230,15 +235,28 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
                 new PurchasedSeat { Id = 3, EventSeatId = 3, PurchaseId = 1 },
             };
 
-            var seats = new List<EventSeatModel>
+            var seats = new List<EventSeat>
             {
-                new EventSeatModel { Id = 1, EventAreaId = 1, Row = 1, Number = 1, State = EventSeatStateModel.Ordered },
-                new EventSeatModel { Id = 2, EventAreaId = 1, Row = 1, Number = 2, State = EventSeatStateModel.Ordered },
-                new EventSeatModel { Id = 3, EventAreaId = 1, Row = 2, Number = 1, State = EventSeatStateModel.Ordered },
+                new EventSeat { Id = 1, EventAreaId = 1, Row = 1, Number = 1, State = EventSeatState.Ordered },
+                new EventSeat { Id = 2, EventAreaId = 1, Row = 1, Number = 2, State = EventSeatState.Ordered },
+                new EventSeat { Id = 3, EventAreaId = 1, Row = 2, Number = 1, State = EventSeatState.Ordered },
+            };
+
+            var mappedSeats = new List<EventSeatModel>
+            {
+                new EventSeatModel { Id = 1, EventAreaId = 1, Row = 1, Number = 1, State = EventSeatState.Ordered },
+                new EventSeatModel { Id = 2, EventAreaId = 1, Row = 1, Number = 2, State = EventSeatState.Ordered },
+                new EventSeatModel { Id = 3, EventAreaId = 1, Row = 2, Number = 1, State = EventSeatState.Ordered },
             };
 
             _purchasedSeatRepositoryMock.Setup(x => x.GetAll()).Returns(purchasedSeats.AsQueryable());
-            _eventSeatServiceMock.Setup(x => x.GetAll()).Returns(seats.AsQueryable());
+            _eventSeatRepositoryMock.Setup(x => x.GetAll()).Returns(seats.AsQueryable());
+
+            foreach (var s in seats)
+            {
+                _mapperMock.Setup(m => m.Map<EventSeatModel>(s))
+                    .Returns(mappedSeats.First(ms => ms.Id == s.Id));
+            }
 
             // Act
             var actualSeaats = _purchaseService.GetByPurchaseId(purchaseId);

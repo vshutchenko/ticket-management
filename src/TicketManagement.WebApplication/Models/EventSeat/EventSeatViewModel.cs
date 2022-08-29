@@ -1,4 +1,6 @@
-﻿namespace TicketManagement.WebApplication.Models.EventSeat
+﻿using TicketManagement.Core.Models;
+
+namespace TicketManagement.WebApplication.Models.EventSeat
 {
     public class EventSeatViewModel
     {
