@@ -2,10 +2,10 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using TicketManagement.Core.Clients.EventApi;
+using TicketManagement.Core.Clients.EventApi.Models;
+using TicketManagement.Core.Clients.VenueApi;
 using TicketManagement.Core.Models;
-using TicketManagement.WebApplication.Clients.EventApi;
-using TicketManagement.WebApplication.Clients.EventApi.Models;
-using TicketManagement.WebApplication.Clients.VenueApi;
 using TicketManagement.WebApplication.Extensions;
 using TicketManagement.WebApplication.Models.Event;
 using TicketManagement.WebApplication.Models.EventArea;

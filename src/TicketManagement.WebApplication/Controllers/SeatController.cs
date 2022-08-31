@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using TicketManagement.Core.Clients.VenueApi;
+using TicketManagement.Core.Clients.VenueApi.Models;
 using TicketManagement.Core.Models;
-using TicketManagement.WebApplication.Clients.VenueApi;
-using TicketManagement.WebApplication.Clients.VenueApi.Models;
 using TicketManagement.WebApplication.Models.VenueManagement;
 using TicketManagement.WebApplication.Services;
 

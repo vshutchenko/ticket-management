@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc.Rendering;
-using TicketManagement.WebApplication.Clients.EventApi.Models;
-using TicketManagement.WebApplication.Clients.VenueApi.Models;
+using TicketManagement.Core.Clients.EventApi.Models;
+using TicketManagement.Core.Clients.VenueApi.Models;
 
 namespace TicketManagement.WebApplication.Models.Event
 {
