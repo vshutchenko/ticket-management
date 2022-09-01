@@ -10,6 +10,7 @@ src/TicketManagement.VenueApi/Logs
 src/TicketManagement.EventApi/Logs
 src/TicketManagement.PurchaseApi/Logs
 src/TicketManagement.UserApi/Logs
+src/TicketManagement.WebUI/Logs
 
 # Event Images
 src/TicketManagement.WebApplication/wwwroot/EventImages/*.png

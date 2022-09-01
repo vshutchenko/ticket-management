@@ -1,7 +1,23 @@
+using RestEase.HttpClientFactory;
+using Serilog;
+using Serilog.Events;
+using TicketManagement.Core.Clients.EventApi;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+Log.Logger = new LoggerConfiguration()
+            .MinimumLevel.Debug()
+            .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
+            .Enrich.FromLogContext()
+            .WriteTo.Console()
+            .WriteTo.File(builder.Configuration["LogsPath"])
+            .CreateLogger();
+
 builder.Services.AddControllersWithViews();
+
+builder.Services.AddRestEaseClient<IEventClient>(builder.Configuration["EventApi:BaseAddress"]);
+builder.Services.AddRestEaseClient<IEventAreaClient>(builder.Configuration["EventApi:BaseAddress"]);
 
 var app = builder.Build();
 
@@ -15,6 +31,9 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
+
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
