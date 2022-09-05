@@ -19,7 +19,7 @@ namespace TicketManagement.Core.Clients.UserApi
             CancellationToken cancellationToken = default);
 
         [Put("users/{id}/password")]
-        public Task<string> ChangePassword([Path] string id,
+        public Task<string> ChangePasswordAsync([Path] string id,
             [Body] PasswordModel passwordModel,
             [Header("Authorization")] string jwtToken,
             CancellationToken cancellationToken = default);

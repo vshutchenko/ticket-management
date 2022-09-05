@@ -58,9 +58,9 @@ namespace TicketManagement.WebApplication.Controllers
         }
 
         [HttpGet]
-        public async Task<PartialViewResult> PartialLayoutList(int venueId, [FromServices] ILayoutClient layoutClient)
+        public async Task<PartialViewResult> PartialLayoutList(int venueId, [FromServices] IVenueClient venueClient)
         {
-            var layouts = await layoutClient.GetByVenueIdAsync(venueId, TokenService.GetToken());
+            var layouts = await venueClient.GetLayoutsByVenueIdAsync(venueId, TokenService.GetToken());
 
             var layoutsVM = layouts
                 .Select(l => _mapper.Map<LayoutViewModel>(l))
@@ -70,9 +70,7 @@ namespace TicketManagement.WebApplication.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> CreateEvent(
-            [FromServices] ILayoutClient layoutClient,
-            [FromServices] IVenueClient venueClient)
+        public async Task<IActionResult> CreateEvent([FromServices] IVenueClient venueClient)
         {
             var venues = await venueClient.GetAllAsync(TokenService.GetToken());
 
@@ -80,7 +78,7 @@ namespace TicketManagement.WebApplication.Controllers
                 .Select(v => _mapper.Map<VenueViewModel>(v))
                 .ToList();
 
-            var layouts = await layoutClient.GetByVenueIdAsync(venues.First().Id, TokenService.GetToken());
+            var layouts = await venueClient.GetLayoutsByVenueIdAsync(venues.First().Id, TokenService.GetToken());
 
             var layoutsVM = layouts
                 .Select(l => _mapper.Map<LayoutViewModel>(l))

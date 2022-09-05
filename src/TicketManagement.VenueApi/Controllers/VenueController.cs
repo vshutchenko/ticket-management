@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TicketManagement.Core.Models;
 using TicketManagement.VenueApi.Models;
@@ -11,10 +12,12 @@ namespace TicketManagement.VenueApi.Controllers
     public class VenueController : ControllerBase
     {
         private readonly IVenueService _venueService;
+        private readonly ILayoutService _layoutService;
 
-        public VenueController(IVenueService venueService)
+        public VenueController(IVenueService venueService, ILayoutService layoutService)
         {
             _venueService = venueService ?? throw new ArgumentNullException(nameof(venueService));
+            _layoutService = layoutService ?? throw new ArgumentNullException(nameof(layoutService));
         }
 
         /// <summary>
@@ -22,7 +25,7 @@ namespace TicketManagement.VenueApi.Controllers
         /// </summary>
         /// <returns>List of venues.</returns>
         [HttpGet]
-        [AuthorizeRoles(Roles.VenueManager, Roles.EventManager)]
+        [AllowAnonymous]
         [ProducesResponseType(typeof(List<VenueModel>), StatusCodes.Status200OK)]
         public IActionResult GetVenues()
         {
@@ -30,6 +33,21 @@ namespace TicketManagement.VenueApi.Controllers
                 .ToList();
 
             return Ok(venues);
+        }
+
+        /// <summary>
+        /// Get layouts by venue id.
+        /// </summary>
+        /// <param name="id">Id of the venue.</param>
+        /// <returns>List of layouts.</returns>
+        [HttpGet("{id}/layouts")]
+        [AllowAnonymous]
+        [ProducesResponseType(typeof(List<LayoutModel>), StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetLayoutsByVenueId(int id)
+        {
+            var layouts = await _layoutService.GetByVenueIdAsync(id);
+
+            return Ok(layouts);
         }
 
         /// <summary>

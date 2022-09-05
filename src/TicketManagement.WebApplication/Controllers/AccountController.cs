@@ -211,7 +211,7 @@ namespace TicketManagement.WebApplication.Controllers
                 NewPassword = model.NewPassword,
             };
 
-            await _userClient.ChangePassword(userId, passwordModel, TokenService.GetToken());
+            await _userClient.ChangePasswordAsync(userId, passwordModel, TokenService.GetToken());
 
             ViewBag.Message = "Profile information was successfully updated!";
 

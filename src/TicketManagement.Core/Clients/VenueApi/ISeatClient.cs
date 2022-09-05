@@ -26,11 +26,6 @@ namespace TicketManagement.Core.Clients.VenueApi
             [Header("Authorization")] string jwtToken,
             CancellationToken cancellationToken = default);
 
-        [Get("seats/areas/{areaId}")]
-        public Task<List<SeatModel>> GetByAreaIdAsync([Path] int areaId,
-            [Header("Authorization")] string jwtToken,
-            CancellationToken cancellationToken = default);
-
         [Get("seats")]
         public Task<List<SeatModel>> GetAllAsync(
             [Header("Authorization")] string jwtToken,

@@ -12,17 +12,20 @@ namespace TicketManagement.WebApplication.Controllers
     public class AreaController : BaseController
     {
         private readonly IAreaClient _areaClient;
+        private readonly ILayoutClient _layoutClient;
         private readonly ISeatClient _seatClient;
         private readonly IMapper _mapper;
 
         public AreaController(
             IAreaClient areaClient,
+            ILayoutClient layoutClient,
             ISeatClient seatClient,
             ITokenService tokenService,
             IMapper mapper)
             : base(tokenService)
         {
             _areaClient = areaClient ?? throw new ArgumentNullException(nameof(areaClient));
+            _layoutClient = layoutClient ?? throw new ArgumentNullException(nameof(layoutClient));
             _seatClient = seatClient ?? throw new ArgumentNullException(nameof(seatClient));
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
@@ -30,13 +33,13 @@ namespace TicketManagement.WebApplication.Controllers
         [HttpGet]
         public async Task<IActionResult> AreaList(int layoutId)
         {
-            var areas = await _areaClient.GetByLayoutIdAsync(layoutId, TokenService.GetToken());
+            var areas = await _layoutClient.GetAreasByLayoutIdAsync(layoutId, TokenService.GetToken());
 
             var areasVM = new List<AreaViewModel>();
 
             foreach (var area in areas)
             {
-                var seats = await _seatClient.GetByAreaIdAsync(area.Id, TokenService.GetToken());
+                var seats = await _areaClient.GetSeatsByAreaIdAsync(area.Id, TokenService.GetToken());
 
                 var seatsVM = seats.Select(a => _mapper.Map<SeatViewModel>(a)).ToList();
 

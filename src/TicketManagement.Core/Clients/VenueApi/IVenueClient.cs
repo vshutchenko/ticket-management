@@ -30,5 +30,10 @@ namespace TicketManagement.Core.Clients.VenueApi
         public Task<List<VenueModel>> GetAllAsync(
             [Header("Authorization")] string jwtToken,
             CancellationToken cancellationToken = default);
+
+        [Get("venues/{id}/layouts")]
+        public Task<List<LayoutModel>> GetLayoutsByVenueIdAsync([Path] int id,
+            [Header("Authorization")] string jwtToken,
+            CancellationToken cancellationToken = default);
     }
 }
