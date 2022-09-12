@@ -32,9 +32,11 @@ namespace TicketManagement.UserApi.Services.Implementations
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
             };
 
-            var roleClaims = roles.Select(role => new Claim(JwtClaimTypes.Role, role)).ToList();
+            var roleClaims = roles.Select(role => new Claim(ClaimTypes.Role, role)).ToList();
+            var jwtRoleClaims = roles.Select(role => new Claim(JwtClaimTypes.Role, role)).ToList();
 
             claims.AddRange(roleClaims);
+            claims.AddRange(jwtRoleClaims);
 
             var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_key));
 
