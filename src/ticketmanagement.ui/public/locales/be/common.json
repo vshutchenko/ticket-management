@@ -1,0 +1,36 @@
+{
+  "Events": "Падзеі",
+  "Not published events": "Неапублікаваныя падзеі",
+  "Import events": "Імпарт падзей",
+  "Venue management": "Кіраванне месцамі правядзення",
+  "Add funds": "Унесці сродкі",
+  "Edit profile": "Рэдагаваць профіль",
+  "Logout": "Выйсці",
+  "Login": "Увайсці",
+  "Register": "Рэгістрацыя",
+  "Change password": "Змяніць пароль",
+
+  "Email": "Электронная пошта",
+  "Password": "Пароль",
+
+  "Name": "Назва",
+  "Description": "Апісанне",
+  "Venue": "Месца правядзення",
+  "Choose venue": "Выбраць месца правядзення",
+  "Layout": "Лакацыя",
+  "Choose layout": "Выбраць лакацыю",
+  "Date of start": "Час пачатку",
+  "Date of completion": "Час заканчэння",
+  "Image URL": "Спасылка на малюнак",
+  "Add event": "Стварыць падзею",
+
+  "Details": "Падрабязней",
+  "Loading...": "Загрузка...",
+  "All events": "Усе падзеі",
+  "Here you can see all events.": "Тут прадстаўлены ўсе падзеі.",
+
+  "Action": "Дзеянне",
+  "Edit": "Рэдагаваць",
+  "Delete": "Выдаліць",
+  "Here you can see events waiting for publicaiton.": "Тут прадстаўлены неапублікаваныя падзеі."
+}

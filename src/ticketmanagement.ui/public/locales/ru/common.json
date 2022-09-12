@@ -1,0 +1,36 @@
+{
+  "Events": "События",
+  "Not published events": "Неопубликованные события",
+  "Import events": "Импорт событий",
+  "Venue management": "Управление местами проведения",
+  "Add funds": "Внести средства",
+  "Edit profile": "Редактировать профиль",
+  "Logout": "Выйти",
+  "Login": "Вход",
+  "Register": "Регистрация",
+  "Change password": "Сменить пароль",
+
+  "Email": "Электронная почта",
+  "Password": "Пароль",
+
+  "Name": "Название",
+  "Description": "Описание",
+  "Venue": "Место проведения",
+  "Choose venue": "Выбрать место проведения",
+  "Layout": "Локация",
+  "Choose layout": "Выбрать локацию",
+  "Date of start": "Время начала",
+  "Date of completion": "Время окончания",
+  "Image URL": "Ссылка на изображение",
+  "Add event": "Создать событие",
+
+  "Details": "Подробней",
+  "Loading...": "Загрузка...",
+  "All events": "Все события",
+  "Here you can see all events.": "Здесь представлены все события.",
+
+  "Action": "Действие",
+  "Edit": "Редактировать",
+  "Delete": "Удалить",
+  "Here you can see events waiting for publicaiton.": "Здесь представлены неопубликованные события"
+}
