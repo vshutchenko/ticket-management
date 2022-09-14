@@ -6,8 +6,8 @@ namespace TicketManagement.Core.Clients.PurchaseApi
     [Header("Content-Type", "application/json")]
     public interface IPurchaseClient
     {
-        [Get("purchases/user/{userId}")]
-        public Task<List<PurchaseModel>> GetByUserIdAsync([Path] string userId,
+        [Get("purchases/user/{id}")]
+        public Task<List<PurchaseModel>> GetByUserIdAsync([Path] string id,
             [Header("Authorization")] string jwtToken,
             CancellationToken cancellationToken = default);
 

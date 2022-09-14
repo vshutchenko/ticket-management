@@ -24,7 +24,7 @@ namespace TicketManagement.VenueApi.Controllers
         /// </summary>
         /// <returns>List of layouts.</returns>
         [HttpGet]
-        [AuthorizeRoles(Roles.VenueManager)]
+        [AuthorizeRoles(Roles.VenueManager, Roles.EventManager)]
         [ProducesResponseType(typeof(List<LayoutModel>), StatusCodes.Status200OK)]
         public IActionResult GetLayouts()
         {

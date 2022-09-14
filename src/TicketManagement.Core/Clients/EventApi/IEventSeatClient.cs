@@ -11,8 +11,8 @@ namespace TicketManagement.Core.Clients.EventApi
             [Header("Authorization")] string jwtToken,
             CancellationToken cancellationToken = default);
 
-        [Put("eventSeats/{seatId}/state")]
-        public Task UpdateStateAsync([Path] int seatId,
+        [Put("eventSeats/{id}/state")]
+        public Task UpdateStateAsync([Path] int id,
             [Body] EventSeatState state,
             [Header("Authorization")] string jwtToken,
             CancellationToken cancellationToken = default);

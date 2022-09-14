@@ -36,15 +36,15 @@ namespace TicketManagement.EventApi.Controllers
         /// <summary>
         /// Update state for the event seat.
         /// </summary>
-        /// <param name="seatId">Id of the event seat.</param>
+        /// <param name="id">Id of the event seat.</param>
         /// <param name="state">State of the event seat.</param>
-        [HttpPut("{seatId}/state")]
+        [HttpPut("{id}/state")]
         [AuthorizeRoles(Roles.EventManager)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> UpdateSeatState(int seatId, [FromBody] EventSeatState state)
+        public async Task<IActionResult> UpdateSeatState(int id, [FromBody] EventSeatState state)
         {
-            await _eventSeatService.SetSeatStateAsync(seatId, state);
+            await _eventSeatService.SetSeatStateAsync(id, state);
 
             return NoContent();
         }

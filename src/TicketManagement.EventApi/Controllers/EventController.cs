@@ -117,15 +117,15 @@ namespace TicketManagement.EventApi.Controllers
         /// <summary>
         /// Get event areas by event id.
         /// </summary>
-        /// <param name="eventId">Id of the event.</param>
+        /// <param name="id">Id of the event.</param>
         /// <returns>List of event areas.</returns>
         [HttpGet("{id}/areas")]
         [AuthorizeRoles(Roles.EventManager, Roles.User)]
         [ProducesResponseType(typeof(List<EventAreaModel>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public IActionResult GetAreasByEventId(int eventId)
+        public IActionResult GetAreasByEventId(int id)
         {
-            var areas = _eventAreaService.GetByEventId(eventId);
+            var areas = _eventAreaService.GetByEventId(id);
 
             return Ok(areas);
         }
