@@ -23,14 +23,22 @@
   "Date of completion": "Час заканчэння",
   "Image URL": "Спасылка на малюнак",
   "Add event": "Стварыць падзею",
+  "Edit event": "Рэдагаваць падзею",
 
   "Details": "Падрабязней",
   "Loading...": "Загрузка...",
   "All events": "Усе падзеі",
   "Here you can see all events.": "Тут прадстаўлены ўсе падзеі.",
+  "Seat price": "{{area}} - кошт білета",
 
   "Action": "Дзеянне",
   "Edit": "Рэдагаваць",
   "Delete": "Выдаліць",
-  "Here you can see events waiting for publicaiton.": "Тут прадстаўлены неапублікаваныя падзеі."
+  "Submit": "Пацвердзіць",
+  "Here you can see events waiting for publicaiton.": "Тут прадстаўлены неапублікаваныя падзеі.",
+
+  "Delete confiramtion": "Пацвердзіце выдаленне",
+  "Are you sure you want to delete this event?": "Вы ўпэўненыя, што жадаеце адправіць дадзеную падзею?",
+  "Confirm": "Пацвердзіць",
+  "Cancel": "Адмяніць"
 }

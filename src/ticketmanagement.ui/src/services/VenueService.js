@@ -10,6 +10,16 @@ class VenueService {
     return response.data;
   }
 
+  async getById(id)
+  {
+    const response = await axios.get(venueApi + `/venues/${id}`, {
+        headers: {
+          'Authorization': AuthService.getTokenHeader()
+        }
+    });
+    return response.data;
+  }
+
   async getLayoutsByVenueId(venueId)
   {
     const response = await axios.get(venueApi + `/venues/${venueId}/layouts`, {

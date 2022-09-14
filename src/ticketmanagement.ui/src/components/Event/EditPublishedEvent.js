@@ -5,22 +5,26 @@ import VenueService from "../../services/VenueService";
 import AuthService from "../../services/AuthService";
 import EventService from "../../services/EventService";
 import { useTranslation } from 'react-i18next';
+import LayoutService from "../../services/LayoutService";
+import { useSearchParams } from "react-router-dom";
 import "flatpickr/dist/themes/material_green.css";
 import { Russian } from "flatpickr/dist/l10n/ru.js"
 import { Belarusian } from "flatpickr/dist/l10n/be.js"
 import { english } from "flatpickr/dist/l10n/default"
 import Flatpickr from "react-flatpickr";
 
-export default function CreateEvent() {
+export default function EditPublishedEvent() {
     const navigate = useNavigate();
     const { t } = useTranslation();
-    
+
+    const [params] = useSearchParams();
+    const [id, setId] = useState(0);
     const [name, setName] = useState('');
     const [description, setDescription] = useState('');
     const [currentLayout, setCurrentLayout] = useState(null);
     const [currentVenue, setCurrentVenue] = useState(null);
-    const [startDate, setStartDate] = useState(new Date());
-    const [endDate, setEndDate] = useState(new Date());
+    const [startDate, setStartDate] = useState(Date());
+    const [endDate, setEndDate] = useState(Date());
     const [imageUrl, setImageUrl] = useState('');
     const [layouts, setLayouts] = useState([]);
     const [venues, setVenues] = useState([]);
@@ -29,30 +33,27 @@ export default function CreateEvent() {
 
     useEffect(() => {
         async function fetchData() {
-            await VenueService.getAll().then(venues => {
-                VenueService.getLayoutsByVenueId(venues[0].id).then(layouts => {
-                    setVenues(venues);
-                    setLayouts(layouts);
-                    setCurrentVenue(venues[0]);
-                    setCurrentLayout(layouts[0]);
-                });
-            });
+            const eventId = params.get('id');
+            const event = await EventService.getById(eventId);
+            const currentLayout = await LayoutService.getById(event.layoutId);
+            const currentVenue = await VenueService.getById(currentLayout.venueId);
+            const venues = await VenueService.getAll();
+            const layouts = await VenueService.getLayoutsByVenueId(currentVenue.id);
+
+            setVenues(venues);
+            setLayouts(layouts);
+            setCurrentLayout(currentLayout);
+            setCurrentVenue(currentVenue);
+            setId(event.id);
+            setName(event.name);
+            setDescription(event.description);
+            setImageUrl(event.imageUrl);
+            setStartDate(event.startDate);
+            setEndDate(event.endDate);
         }
 
         fetchData();
-    }, []);
-
-    async function handleVenueChange(venue) {
-
-        const layouts = await VenueService.getLayoutsByVenueId(venue.id);
-        setLayouts(layouts);
-        setCurrentLayout(layouts[0]);
-        setCurrentVenue(venue);
-    }
-
-    function handleLayoutChange(layout) {
-        setCurrentLayout(layout);
-    }
+    }, [params]);
 
     function getPickerLocale() {
         const user = AuthService.getCurrentUser();
@@ -68,11 +69,23 @@ export default function CreateEvent() {
             return english;
     }
 
+    async function handleVenueChange(venue) {
+
+        const layouts = await VenueService.getLayoutsByVenueId(venue.id);
+        setLayouts(layouts);
+        setCurrentLayout(layouts[0]);
+        setCurrentVenue(venue);
+    }
+
+    function handleLayoutChange(layout) {
+        setCurrentLayout(layout);
+    }
+
     async function handleSubmit(e) {
         e.preventDefault();
 
         let event = {
-            id: 0,
+            id: id,
             name: name,
             description: description,
             startDate: new Date(startDate).toJSON(),
@@ -82,8 +95,8 @@ export default function CreateEvent() {
             imageUrl: imageUrl
         }
 
-        await EventService.create(event).then(() => {
-            navigate('/Event/NotPublishedEvents');
+        await EventService.update(event).then(() => {
+            navigate(`/Event/EditNotPublishedEvent?id=${id}`);
         }).catch(error => {
             setFailed(true);
             setError(error.response.data.error);
@@ -91,9 +104,9 @@ export default function CreateEvent() {
     }
 
     return (
-        <div className="event-form">
+        <div>
             {failed && (<div className="alert alert-danger">{t(error, { ns: 'validation' })}</div>)}
-            <h3>{t('Add event')}</h3>
+            <h3>{t('Edit event')}</h3>
             <form onSubmit={handleSubmit}>
                 <div className="form-group">
                     <label>{t("Name")}:</label>
@@ -143,7 +156,7 @@ export default function CreateEvent() {
                             data-enable-time
                             value={startDate}
                             onChange={setStartDate}
-                            options={{ minDate: new Date().setHours(0, 0, 0, 0), locale: getPickerLocale() }}
+                            options={{ minDate: Date(), locale: getPickerLocale() }}
                         />
                     </div>
                     <div className="col">
@@ -153,10 +166,11 @@ export default function CreateEvent() {
                             data-enable-time
                             value={endDate}
                             onChange={setEndDate}
-                            options={{ minDate: new Date().setHours(0, 0, 0, 0), locale: getPickerLocale() }}
+                            options={{ minDate: Date(), locale: getPickerLocale() }}
                         />
                     </div>
                 </div>
+
                 <div className="form-group">
                     <label>{t("Image URL")}:</label>
                     <input
@@ -168,7 +182,7 @@ export default function CreateEvent() {
                 </div>
 
                 <div className="form-group mt-2">
-                    <input type="submit" value={t("Add event")} className="btn btn-primary" />
+                    <input type="submit" value={t("Submit")} className="btn btn-primary" />
                 </div>
             </form>
         </div>

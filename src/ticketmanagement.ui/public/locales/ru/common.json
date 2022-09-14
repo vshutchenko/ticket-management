@@ -23,14 +23,22 @@
   "Date of completion": "Время окончания",
   "Image URL": "Ссылка на изображение",
   "Add event": "Создать событие",
+  "Edit event": "Редактировать событие",
 
   "Details": "Подробней",
   "Loading...": "Загрузка...",
   "All events": "Все события",
   "Here you can see all events.": "Здесь представлены все события.",
+  "Seat price": "{{area}} - цена билета",
 
   "Action": "Действие",
   "Edit": "Редактировать",
   "Delete": "Удалить",
-  "Here you can see events waiting for publicaiton.": "Здесь представлены неопубликованные события"
+  "Submit": "Подтвердить",
+  "Here you can see events waiting for publicaiton.": "Здесь представлены неопубликованные события",
+
+  "Delete confiramtion": "Подтвердите удаление",
+  "Are you sure you want to delete this event?": "Вы уверены, что хотите удлаить данное событие?",
+  "Confirm": "Подтвердить",
+  "Cancel": "Отменить"
 }
