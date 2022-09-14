@@ -12,6 +12,7 @@ import { Russian } from "flatpickr/dist/l10n/ru.js"
 import { Belarusian } from "flatpickr/dist/l10n/be.js"
 import { english } from "flatpickr/dist/l10n/default"
 import Flatpickr from "react-flatpickr";
+import { getUserTime, utcToLocaleDate } from "../../helpers/ConvertTimeZone";
 
 export default function EditPublishedEvent() {
     const navigate = useNavigate();
@@ -23,8 +24,8 @@ export default function EditPublishedEvent() {
     const [description, setDescription] = useState('');
     const [currentLayout, setCurrentLayout] = useState(null);
     const [currentVenue, setCurrentVenue] = useState(null);
-    const [startDate, setStartDate] = useState(Date());
-    const [endDate, setEndDate] = useState(Date());
+    const [startDate, setStartDate] = useState(new Date());
+    const [endDate, setEndDate] = useState(new Date());
     const [imageUrl, setImageUrl] = useState('');
     const [layouts, setLayouts] = useState([]);
     const [venues, setVenues] = useState([]);
@@ -48,8 +49,8 @@ export default function EditPublishedEvent() {
             setName(event.name);
             setDescription(event.description);
             setImageUrl(event.imageUrl);
-            setStartDate(event.startDate);
-            setEndDate(event.endDate);
+            setStartDate(utcToLocaleDate(event.startDate));
+            setEndDate(utcToLocaleDate(event.endDate));
         }
 
         fetchData();
@@ -70,7 +71,6 @@ export default function EditPublishedEvent() {
     }
 
     async function handleVenueChange(venue) {
-
         const layouts = await VenueService.getLayoutsByVenueId(venue.id);
         setLayouts(layouts);
         setCurrentLayout(layouts[0]);
@@ -88,8 +88,8 @@ export default function EditPublishedEvent() {
             id: id,
             name: name,
             description: description,
-            startDate: new Date(startDate).toJSON(),
-            endDate: new Date(endDate).toJSON(),
+            startDate: startDate,
+            endDate: endDate,
             layoutId: currentLayout.id,
             published: false,
             imageUrl: imageUrl
@@ -155,8 +155,8 @@ export default function EditPublishedEvent() {
                             className="form-control"
                             data-enable-time
                             value={startDate}
-                            onChange={setStartDate}
-                            options={{ minDate: Date(), locale: getPickerLocale() }}
+                            onChange={d => setStartDate(d.pop())}
+                            options={{ minDate: getUserTime(), locale: getPickerLocale() }}
                         />
                     </div>
                     <div className="col">
@@ -165,8 +165,8 @@ export default function EditPublishedEvent() {
                             className="form-control"
                             data-enable-time
                             value={endDate}
-                            onChange={setEndDate}
-                            options={{ minDate: Date(), locale: getPickerLocale() }}
+                            onChange={d => setEndDate(d.pop())}
+                            options={{ minDate: getUserTime(), locale: getPickerLocale() }}
                         />
                     </div>
                 </div>

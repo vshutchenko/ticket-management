@@ -8,15 +8,9 @@ import Register from './components/Account/Register';
 import { Container } from 'reactstrap';
 import CreateEvent from './components/Event/CreateEvent';
 import NotPublishedEvents from './components/Event/NotPublishedEvents';
-import '@eonasdan/tempus-dominus/dist/css/tempus-dominus.css';
-import { library, dom } from '@fortawesome/fontawesome-svg-core';
-import { fas } from '@fortawesome/free-solid-svg-icons';
 import ProtectedRoute from './components/Account/ProtectedRoute';
 import EditNotPublishedEvent from './components/Event/EditNotPublishedEvent';
 import EditPublishedEvent from './components/Event/EditPublishedEvent';
-
-library.add(fas);
-dom.watch();
 
 function App() {
   return (
@@ -48,6 +42,14 @@ function App() {
             element={
               <ProtectedRoute roles={['Event manager']}>
                 <EditNotPublishedEvent />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/Event/EditPublishedEvent"
+            element={
+              <ProtectedRoute roles={['Event manager']}>
+                <EditPublishedEvent />
               </ProtectedRoute>
             }
           />

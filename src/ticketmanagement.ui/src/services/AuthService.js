@@ -2,12 +2,12 @@ import axios from "axios";
 import jwtDecode from "jwt-decode";
 import i18n from 'i18next';
 
-const eventApi = 'https://localhost:7021';
+const userApi = process.env.REACT_APP_USER_API;
 
 class AuthService {
   async login(email, password) {
     await axios
-      .post(eventApi + '/users/login', {
+      .post(userApi + '/users/login', {
         email,
         password
       })
@@ -27,7 +27,7 @@ class AuthService {
   }
 
   async register(user) {
-    await axios.post(eventApi + '/users/register', user).then(response => {
+    await axios.post(userApi + '/users/register', user).then(response => {
       const token = response.data;
       localStorage.setItem('jwt', token);
       const user = jwtDecode(token);
@@ -42,9 +42,9 @@ class AuthService {
     return token ? jwtDecode(token) : null;
   }
 
-  getTokenHeader() {
+  getToken() {
     const token = localStorage.getItem('jwt');
-    return `Bearer ${token}`;
+    return token;
   }
 
   isAuthenticated(){

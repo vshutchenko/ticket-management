@@ -3,7 +3,7 @@ import AuthService from "./AuthService";
 
 const eventApi = process.env.REACT_APP_EVENT_API;
 
-class EventService {
+class UserService {
   async getPublished() {
     const response = await axios.get(eventApi + '/events/published');
     return response.data;

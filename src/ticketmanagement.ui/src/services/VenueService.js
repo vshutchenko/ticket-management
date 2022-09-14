@@ -1,7 +1,7 @@
 import axios from "axios";
 import AuthService from "./AuthService";
 
-const venueApi = 'https://localhost:7162';
+const venueApi = process.env.REACT_APP_VENUE_API;
 
 class VenueService {
   async getAll()
@@ -14,7 +14,7 @@ class VenueService {
   {
     const response = await axios.get(venueApi + `/venues/${id}`, {
         headers: {
-          'Authorization': AuthService.getTokenHeader()
+          'Authorization': `Bearer ${AuthService.getToken()}`
         }
     });
     return response.data;
@@ -24,7 +24,7 @@ class VenueService {
   {
     const response = await axios.get(venueApi + `/venues/${venueId}/layouts`, {
         headers: {
-          'Authorization': AuthService.getTokenHeader()
+          'Authorization': `Bearer ${AuthService.getToken()}`
         }
     });
     return response.data;
@@ -34,7 +34,7 @@ class VenueService {
   {
     await axios.post(venueApi + '/venues', venue, {
         headers: {
-          'Authorization': AuthService.getTokenHeader()
+          'Authorization': `Bearer ${AuthService.getToken()}`
         }
     });
   }

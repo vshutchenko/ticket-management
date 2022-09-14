@@ -10,6 +10,7 @@ import { Russian } from "flatpickr/dist/l10n/ru.js"
 import { Belarusian } from "flatpickr/dist/l10n/be.js"
 import { english } from "flatpickr/dist/l10n/default"
 import Flatpickr from "react-flatpickr";
+import { localeDateToUtc } from "../../helpers/ConvertTimeZone";
 
 export default function CreateEvent() {
     const navigate = useNavigate();
@@ -70,13 +71,12 @@ export default function CreateEvent() {
 
     async function handleSubmit(e) {
         e.preventDefault();
-
         let event = {
             id: 0,
             name: name,
             description: description,
-            startDate: new Date(startDate).toJSON(),
-            endDate: new Date(endDate).toJSON(),
+            startDate: localeDateToUtc(startDate),
+            endDate: localeDateToUtc(endDate),
             layoutId: currentLayout.id,
             published: false,
             imageUrl: imageUrl
@@ -142,7 +142,7 @@ export default function CreateEvent() {
                             className="form-control"
                             data-enable-time
                             value={startDate}
-                            onChange={setStartDate}
+                            onChange={d => setStartDate(d.pop())}
                             options={{ minDate: new Date().setHours(0, 0, 0, 0), locale: getPickerLocale() }}
                         />
                     </div>
@@ -152,7 +152,7 @@ export default function CreateEvent() {
                             className="form-control"
                             data-enable-time
                             value={endDate}
-                            onChange={setEndDate}
+                            onChange={d => setEndDate(d.pop())}
                             options={{ minDate: new Date().setHours(0, 0, 0, 0), locale: getPickerLocale() }}
                         />
                     </div>

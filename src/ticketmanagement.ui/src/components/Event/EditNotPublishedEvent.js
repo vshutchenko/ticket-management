@@ -1,10 +1,10 @@
 import { useState, React, useEffect } from "react";
 import { useNavigate } from "react-router";
-import AuthService from "../../services/AuthService";
 import EventService from "../../services/EventService";
 import { useTranslation } from 'react-i18next';
 import { useSearchParams } from "react-router-dom";
 import CurrencyInput from 'react-currency-input-field';
+import { toLocaleDate, utcToLocaleDate, localeDateToUtc } from "../../helpers/ConvertTimeZone";
 
 export default function EditNotPublishedEvent() {
     const navigate = useNavigate();
@@ -14,8 +14,8 @@ export default function EditNotPublishedEvent() {
     const [name, setName] = useState('');
     const [description, setDescription] = useState('');
     const [layoutId, setLayoutId] = useState(0);
-    const [startDate, setStartDate] = useState(Date());
-    const [endDate, setEndDate] = useState(Date());
+    const [startDate, setStartDate] = useState(new Date());
+    const [endDate, setEndDate] = useState(new Date());
     const [imageUrl, setImageUrl] = useState('');
     const [error, setError] = useState('');
     const [failed, setFailed] = useState(false);
@@ -33,8 +33,8 @@ export default function EditNotPublishedEvent() {
             await EventService.getById(eventId).then(event => {
                 setName(event.name);
                 setDescription(event.description);
-                setStartDate(event.startDate);
-                setEndDate(event.endDate);
+                setStartDate(utcToLocaleDate(event.startDate));
+                setEndDate(utcToLocaleDate(event.endDate));
                 setImageUrl(event.imageUrl);
                 setLayoutId(event.layoutId);
             });
@@ -52,8 +52,8 @@ export default function EditNotPublishedEvent() {
             id: id,
             name: name,
             description: description,
-            startDate: startDate,
-            endDate: endDate,
+            startDate: localeDateToUtc(startDate),
+            endDate: localeDateToUtc(endDate),
             layoutId: layoutId,
             published: true,
             imageUrl: imageUrl
@@ -86,9 +86,9 @@ export default function EditNotPublishedEvent() {
                     <h5>{t("Description")}:</h5>
                     <div>{description}</div>
                     <h5>{t("Date of start")}:</h5>
-                    <div>{new Date(startDate).toLocaleString(AuthService.getCurrentUser().culture)}</div>
+                    <div>{toLocaleDate(startDate)}</div>
                     <h5>{t("Date of completion")}:</h5>
-                    <div>{new Date(endDate).toLocaleString(AuthService.getCurrentUser().culture)}</div>
+                    <div>{toLocaleDate(endDate)}</div>
                 </div>
                 {areas.map((area, index) => (
                     <div key={area.id}>

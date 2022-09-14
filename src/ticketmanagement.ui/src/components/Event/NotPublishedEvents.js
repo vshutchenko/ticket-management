@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import EventService from "../../services/EventService";
 import { useTranslation } from 'react-i18next';
 import { Button, Modal, } from "react-bootstrap";
+import { utcToLocaleString } from "../../helpers/ConvertTimeZone";
 
 export default function NotPublishedEvents() {
     const { t } = useTranslation();
@@ -62,8 +63,8 @@ export default function NotPublishedEvents() {
                                 <tr key={event.id}>
                                     <td>{event.name}</td>
                                     <td>{event.description}</td>
-                                    <td>{new Date(event.startDate).toLocaleDateString()}</td>
-                                    <td>{new Date(event.endDate).toLocaleDateString()}</td>
+                                    <td>{utcToLocaleString(event.startDate)}</td>
+                                    <td>{utcToLocaleString(event.endDate)}</td>
                                     <td>
                                         <Link className="btn btn-success m-1" to={`/Purchase/PurchaseSeats?id=${event.id}`}>{t("Details")}</Link>
                                         <Link className="btn btn-primary m-1" to={`/Event/EditNotPublishedEvent?id=${event.id}`}>{t("Edit")}</Link>

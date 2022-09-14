@@ -4,6 +4,7 @@ import EventService from "../../services/EventService";
 import { useTranslation } from 'react-i18next';
 import AuthService from "../../services/AuthService";
 import { Button, Modal, } from "react-bootstrap";
+import { utcToLocaleString } from "../../helpers/ConvertTimeZone";
 
 export default function Events() {
     const { t } = useTranslation();
@@ -63,8 +64,8 @@ export default function Events() {
                                 <tr key={event.id}>
                                     <td>{event.name}</td>
                                     <td>{event.description}</td>
-                                    <td>{new Date(event.startDate).toLocaleDateString()}</td>
-                                    <td>{new Date(event.endDate).toLocaleDateString()}</td>
+                                    <td>{utcToLocaleString(event.startDate)}</td>
+                                    <td>{utcToLocaleString(event.endDate)}</td>
                                     <td>
                                         <Link className="btn btn-success m-1" to={`/Purchase/PurchaseSeats?id=${event.id}`}>{t("Details")}</Link>
                                         {AuthService.isEventManager() && (
