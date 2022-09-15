@@ -40,5 +40,11 @@
   "Delete confiramtion": "Подтвердите удаление",
   "Are you sure you want to delete this event?": "Вы уверены, что хотите удлаить данное событие?",
   "Confirm": "Подтвердить",
-  "Cancel": "Отменить"
+  "Cancel": "Отменить",
+
+  "Edit user": "Редактировать пользователя",
+  "First name": "Имя",
+  "Last name": "Фамилия",
+  "Time zone": "Часовой пояс",
+  "Language": "Язык"
 }

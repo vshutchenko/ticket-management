@@ -11,6 +11,7 @@ import NotPublishedEvents from './components/Event/NotPublishedEvents';
 import ProtectedRoute from './components/Account/ProtectedRoute';
 import EditNotPublishedEvent from './components/Event/EditNotPublishedEvent';
 import EditPublishedEvent from './components/Event/EditPublishedEvent';
+import EditUser from './components/Account/EditUser';
 
 function App() {
   return (
@@ -58,6 +59,14 @@ function App() {
             element={
               <ProtectedRoute roles={['Event manager']}>
                 <EditPublishedEvent />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/Account/EditUser"
+            element={
+              <ProtectedRoute roles={['Event manager', 'Venue manager', 'User']}>
+                <EditUser />
               </ProtectedRoute>
             }
           />

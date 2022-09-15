@@ -12,7 +12,7 @@ import { Russian } from "flatpickr/dist/l10n/ru.js"
 import { Belarusian } from "flatpickr/dist/l10n/be.js"
 import { english } from "flatpickr/dist/l10n/default"
 import Flatpickr from "react-flatpickr";
-import { getUserTime, utcToLocaleDate } from "../../helpers/ConvertTimeZone";
+import { getUserTime, utcToLocaleDate, localeDateToUtc } from "../../helpers/ConvertTimeZone";
 
 export default function EditPublishedEvent() {
     const navigate = useNavigate();
@@ -88,8 +88,8 @@ export default function EditPublishedEvent() {
             id: id,
             name: name,
             description: description,
-            startDate: startDate,
-            endDate: endDate,
+            startDate: localeDateToUtc(startDate),
+            endDate: localeDateToUtc(endDate),
             layoutId: currentLayout.id,
             published: false,
             imageUrl: imageUrl
@@ -155,7 +155,7 @@ export default function EditPublishedEvent() {
                             className="form-control"
                             data-enable-time
                             value={startDate}
-                            onChange={d => setStartDate(d.pop())}
+                            onChange={d => setStartDate(d[0])}
                             options={{ minDate: getUserTime(), locale: getPickerLocale() }}
                         />
                     </div>
@@ -165,7 +165,7 @@ export default function EditPublishedEvent() {
                             className="form-control"
                             data-enable-time
                             value={endDate}
-                            onChange={d => setEndDate(d.pop())}
+                            onChange={d => setEndDate(d[0])}
                             options={{ minDate: getUserTime(), locale: getPickerLocale() }}
                         />
                     </div>

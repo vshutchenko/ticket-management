@@ -1,25 +1,11 @@
 import axios from "axios";
 import AuthService from "./AuthService";
 
-const eventApi = process.env.REACT_APP_EVENT_API;
+const userApi = process.env.REACT_APP_USER_API;
 
 class UserService {
-  async getPublished() {
-    const response = await axios.get(eventApi + '/events/published');
-    return response.data;
-  }
-
-  async getNotPublished() {
-    const response = await axios.get(eventApi + '/events/notPublished', {
-      headers: {
-        'Authorization': `Bearer ${AuthService.getToken()}`
-      }
-    });
-    return response.data;
-  }
-
   async getById(id) {
-    const response = await axios.get(eventApi + `/events/${id}`, {
+    const response = await axios.get(userApi + `/users/${id}`, {
       headers: {
         'Authorization': `Bearer ${AuthService.getToken()}`
       }
@@ -27,37 +13,25 @@ class UserService {
     return response.data;
   }
 
-  async getAreasById(id) {
-    const response = await axios.get(eventApi + `/events/${id}/areas`, {
-      headers: {
-        'Authorization': `Bearer ${AuthService.getToken()}`
-      }
-    });
-    return response.data;
-  }
-
-  async create(event) {
-    await axios.post(eventApi + '/events', event, {
+  async update(user) {
+    await axios.put(userApi + '/users', user, {
       headers: {
         'Authorization': `Bearer ${AuthService.getToken()}`
       }
     });
   }
 
-  async update(event) {
-    await axios.put(eventApi + '/events', event, {
-      headers: {
-        'Authorization': `Bearer ${AuthService.getToken()}`
-      }
-    });
-  }
+  async changePassword(id, currentPassword, newPasword) {
+    let data = {
+      currentPassword: currentPassword,
+      newPassword: newPasword
+    }
 
-  async delete(id) {
-    await axios.delete(eventApi + `/events/${id}`, {
+    await axios.put(userApi + `/users/${id}/password`, data, {
       headers: {
         'Authorization': `Bearer ${AuthService.getToken()}`
       }
     });
   }
 }
-export default new EventService();
+export default new UserService();

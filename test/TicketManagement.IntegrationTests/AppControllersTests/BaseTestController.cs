@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
 using RestEase;
@@ -91,7 +93,7 @@ namespace TicketManagement.IntegrationTests.AppControllersTests
             var purchaseApiCLient = PurchaseApiFactory.CreateClient();
 
             AppFactory = new WebApplicationFactory<WebApplication.Program>()
-                .WithWebHostBuilder(c => c.ConfigureServices(services =>
+                .WithWebHostBuilder(c => c.ConfigureServices((ctx, services) =>
                 {
                     services.AddAntiforgery(t =>
                     {

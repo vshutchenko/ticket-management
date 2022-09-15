@@ -59,7 +59,7 @@ export default function Layout() {
                     <NavLink href="/">{t("Add funds")}</NavLink>
                   </DropdownItem>
                   <DropdownItem>
-                    <NavLink href="/">{t("Edit profile")}</NavLink>
+                    <NavLink href={`/Account/EditUser?id=${AuthService.getCurrentUser().id}`}>{t("Edit profile")}</NavLink>
                   </DropdownItem>
                   <DropdownItem>
                     <NavLink href="/">{t("Change password")}</NavLink>

@@ -40,5 +40,11 @@
   "Delete confiramtion": "Пацвердзіце выдаленне",
   "Are you sure you want to delete this event?": "Вы ўпэўненыя, што жадаеце адправіць дадзеную падзею?",
   "Confirm": "Пацвердзіць",
-  "Cancel": "Адмяніць"
+  "Cancel": "Адмяніць",
+
+  "Edit user": "Рэдагаваць карыстальніка",
+  "First name": "Імя",
+  "Last name": "Прозвішча",
+  "Time zone": "Гадзінны пояс",
+  "Language": "Мова"
 }

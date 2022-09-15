@@ -30,3 +30,7 @@ To run solution in a debug mode you need to specify multiple startup projects in
 ## Third Party Event Editor
 
 This project is an utility for the Ticket management application. It provides the possibility to manage and extract events from another vendor. The application uses JSON file as storage and supports CRUD operations fo events. JSON file with events can be downloaded and used for import in the main application.
+
+## React UI Application
+
+The new UI was provided for Event management and Profile management. The main MVC application uses feature flags to redirect all requests to a new UI.

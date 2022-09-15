@@ -4,18 +4,15 @@ import 'moment-timezone';
 import { findIana } from "windows-iana";
 
 export function getUserTime() {
-    const tzString = authService.isAuthenticated()
-        ? authService.getCurrentUser().timezoneId
-        : Intl.DateTimeFormat().resolvedOptions().timeZone;
+    let ianaTimeZone = getIanaTimeZone();
 
-    return new Date(Date().toLocaleString({ timeZone: tzString }));
+    return new Date(Date().toLocaleString({ timeZone: ianaTimeZone }));
 }
 
 export function localeDateToUtc(date) {
-    const timeZone = authService.getCurrentUser().timezoneId;
-    var ianaTimeZone = findIana(timeZone)[0];
+    let ianaTimeZone = getIanaTimeZone();
 
-    var utc = moment
+    let utc = moment
         .tz(date, Intl.DateTimeFormat().resolvedOptions().timeZone)
         .tz(ianaTimeZone, true)
         .tz("UTC").format();
@@ -24,13 +21,9 @@ export function localeDateToUtc(date) {
 }
 
 export function utcToLocaleDate(date) {
-    const timeZone = authService.isAuthenticated()
-        ? authService.getCurrentUser().timezoneId
-        : Intl.DateTimeFormat().resolvedOptions().timeZone;
-
-    var ianaTimeZone = findIana(timeZone)[0];
+    let ianaTimeZone = getIanaTimeZone();
     
-    var utc = moment.tz(date, "UTC").tz(ianaTimeZone).format();
+    let utc = moment.tz(date, "UTC").tz(ianaTimeZone).format();
 
     const options = {
         timeZone: ianaTimeZone,
@@ -47,17 +40,13 @@ export function utcToLocaleDate(date) {
 }
 
 export function utcToLocaleString(date) {
-    const timeZone = authService.isAuthenticated()
-        ? authService.getCurrentUser().timezoneId
-        : Intl.DateTimeFormat().resolvedOptions().timeZone;
-
-    var ianaTimeZone = findIana(timeZone)[0];
+    let ianaTimeZone = getIanaTimeZone();
 
     const culture = authService.isAuthenticated()
         ? authService.getCurrentUser().culture
         : "en-US";
 
-    var utc = moment.tz(date, "UTC").tz(ianaTimeZone).format();
+    let utc = moment.tz(date, "UTC").tz(ianaTimeZone).format();
     
     const options = {
         timeZone: ianaTimeZone,
@@ -85,4 +74,19 @@ export function toLocaleDate(date) {
         : "en-US";
 
     return new Date(date).toLocaleString(culture, options);
+}
+
+function getIanaTimeZone()
+{
+    let ianaTimeZone;
+
+    if (authService.isAuthenticated()) {
+        let timeZone = authService.getCurrentUser().timezoneId;
+        ianaTimeZone = findIana(timeZone)[0];
+    }
+    else {
+        ianaTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    }
+
+    return ianaTimeZone;
 }

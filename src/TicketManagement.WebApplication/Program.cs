@@ -3,6 +3,7 @@ using AutoMapper;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
+using Microsoft.FeatureManagement;
 using RestEase.HttpClientFactory;
 using Serilog;
 using Serilog.Events;
@@ -13,6 +14,7 @@ using TicketManagement.Core.Clients.VenueApi;
 using TicketManagement.Core.JwtAuthentication;
 using TicketManagement.WebApplication.Filters;
 using TicketManagement.WebApplication.Infrastructure;
+using TicketManagement.WebApplication.Middlewares;
 using TicketManagement.WebApplication.ModelBinders;
 using TicketManagement.WebApplication.Services;
 
@@ -82,6 +84,8 @@ builder.Services.AddRestEaseClient<IUserClient>(builder.Configuration["UserApi:B
 builder.Services.AddAuthentication(JwtAutheticationConstants.SchemeName)
                 .AddScheme<JwtAuthenticationOptions, JwtAuthenticationHandler>(JwtAutheticationConstants.SchemeName, null);
 
+builder.Services.AddFeatureManagement();
+
 builder.Host.UseSerilog();
 
 var app = builder.Build();
@@ -119,6 +123,8 @@ app.Use(async (context, next) =>
 
     await next();
 });
+
+app.UseFeatureMiddleware();
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();

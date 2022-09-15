@@ -25,6 +25,7 @@
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
+		<PackageReference Include="Microsoft.FeatureManagement" Version="2.5.1" />
 		<PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="6.0.7" />
 		<PackageReference Include="RestEase" Version="1.5.7" />
 		<PackageReference Include="RestEase.HttpClientFactory" Version="1.5.7" />
