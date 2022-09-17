@@ -14,7 +14,6 @@ using TicketManagement.Core.Clients.VenueApi;
 using TicketManagement.Core.JwtAuthentication;
 using TicketManagement.WebApplication.Filters;
 using TicketManagement.WebApplication.Infrastructure;
-using TicketManagement.WebApplication.Middlewares;
 using TicketManagement.WebApplication.ModelBinders;
 using TicketManagement.WebApplication.Services;
 
@@ -123,8 +122,6 @@ app.Use(async (context, next) =>
 
     await next();
 });
-
-app.UseFeatureMiddleware();
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();

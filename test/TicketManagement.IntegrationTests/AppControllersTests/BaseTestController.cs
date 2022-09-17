@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc.Testing;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
 using RestEase;
@@ -100,6 +98,8 @@ namespace TicketManagement.IntegrationTests.AppControllersTests
                         t.Cookie.Name = AntiForgeryTokenExtractor.Cookie;
                         t.FormFieldName = AntiForgeryTokenExtractor.Field;
                     });
+
+                    ctx.Configuration["FeatureManagement:ReactUI"] = "false";
 
                     var servicesToRemove = new List<Type>
                     {

@@ -7,15 +7,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Files\appsettings.json" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Content Include="Files\appsettings.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-    </Content>
+    <Compile Remove="EventApiTests\**" />
+    <EmbeddedResource Remove="EventApiTests\**" />
+    <None Remove="EventApiTests\**" />
   </ItemGroup>
 
   <ItemGroup>
@@ -61,7 +55,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="EventApiTests\" />
     <Folder Include="ServicesTests\EFImplemetations\IdentityServiceTests\" />
     <Folder Include="ServicesTests\EFImplemetations\PurchaseServiceTetss\" />
   </ItemGroup>
