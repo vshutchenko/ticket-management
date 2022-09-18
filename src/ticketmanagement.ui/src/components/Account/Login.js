@@ -15,12 +15,14 @@ export default function Login() {
     async function handleSubmit(e) {
         e.preventDefault();
 
-        await AuthService.login(email, password).catch(error => {
+        await AuthService.login(email, password).then(() =>{
+            navigate('/');
+        }).catch(error => {
             setFailed(true);
             setError(error.response.data.error);
         });
 
-        navigate('/');
+       
     }
 
     return (

@@ -46,5 +46,19 @@
   "First name": "Имя",
   "Last name": "Фамилия",
   "Time zone": "Часовой пояс",
-  "Language": "Язык"
+  "Language": "Язык",
+
+  "Add funds to account": "Внести средства",
+  "Current balance: {{balance}}": "Текущий баланс: {{balance}}",
+  "Add {{amount}}": "Добавить {{amount}}",
+
+  "Old password is required": "Введите старый пароль",
+  "Password must be at least 5 charaters long": "Пароль должен состоять хотя бы из 5 символов",
+  "New password is required": "Введите нвоый пароль",
+  "New password confirmation is required": "Подвердите новый пароль",
+  "Passwords does not match": "Пароли не совпадают",
+  "Password was changed!": "Пароль был изменен!",
+  "Old password": "Старый пароль",
+  "New password": "Новый пароль",
+  "Confirm new password": "Подтвердите новый пароль"
 }

@@ -18,6 +18,9 @@ class UserService {
       headers: {
         'Authorization': `Bearer ${AuthService.getToken()}`
       }
+    }).then(response => {
+      const token = response.data;
+      AuthService.refreshToken(token)
     });
   }
 

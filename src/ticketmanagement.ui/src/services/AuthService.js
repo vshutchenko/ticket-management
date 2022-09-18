@@ -26,6 +26,14 @@ class AuthService {
     i18n.changeLanguage('en');
   }
 
+  refreshToken(token) {
+
+    localStorage.setItem('jwt', token);
+    const user = jwtDecode(token);
+    const lang = user.culture.slice(0, 2);
+    i18n.changeLanguage(lang);
+  }
+
   async register(user) {
     await axios.post(userApi + '/users/register', user).then(response => {
       const token = response.data;
@@ -47,46 +55,46 @@ class AuthService {
     return token;
   }
 
-  isAuthenticated(){
+  isAuthenticated() {
     const token = localStorage.getItem('jwt');
 
-    if(token) {
-        return true;
+    if (token) {
+      return true;
     }
-    
+
     return false;
   }
 
-  isUser(){
+  isUser() {
     const token = localStorage.getItem('jwt');
 
-    if(token) {
+    if (token) {
       const user = jwtDecode(token);
       return user.role.includes('User');
     }
-    
+
     return false;
   }
 
-  isEventManager(){
+  isEventManager() {
     const token = localStorage.getItem('jwt');
-    
-    if(token) {
+
+    if (token) {
       const user = jwtDecode(token);
       return user.role.includes('Event manager');
     }
-    
+
     return false;
   }
 
-  isVenueManager(){
+  isVenueManager() {
     const token = localStorage.getItem('jwt');
 
-    if(token) {
+    if (token) {
       const user = jwtDecode(token);
       return user.role.includes('Venue manager');
     }
-    
+
     return false;
   }
 }

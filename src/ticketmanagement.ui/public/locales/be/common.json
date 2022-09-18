@@ -46,5 +46,19 @@
   "First name": "Імя",
   "Last name": "Прозвішча",
   "Time zone": "Гадзінны пояс",
-  "Language": "Мова"
+  "Language": "Мова",
+
+  "Add funds to account": "Унесці сродкі",
+  "Current balance: {{balance}}": "Бягучы баланс: {{balance}}",
+  "Add {{amount}}": "Дадаць {{amount}}",
+
+  "Old password is required": "Увядзіце стары пароль",
+  "Password must be at least 5 charaters long": "Пароль павінен складацца хаця б з 5 сімвалаў.",
+  "New password is required": "Увядзіце новы пароль",
+  "New password confirmation is required": "Пацвердзіце новы пароль",
+  "Passwords does not match": "Паролі не супадаюць",
+  "Password was changed!": "Пароль быў зменены!",
+  "Old password": "Стары пароль",
+  "New password": "Новы пароль",
+  "Confirm new password": "Пацвердзіце новы пароль"
 }

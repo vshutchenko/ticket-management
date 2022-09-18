@@ -55,14 +55,15 @@ export default function Layout() {
                   {AuthService.getCurrentUser().email}
                 </DropdownToggle>
                 <DropdownMenu end>
+                {AuthService.isUser() && (
                   <DropdownItem>
-                    <NavLink href="/">{t("Add funds")}</NavLink>
-                  </DropdownItem>
+                    <NavLink href={`/Account/AddFunds?id=${AuthService.getCurrentUser().id}`}>{t("Add funds")}</NavLink>
+                  </DropdownItem>)}
                   <DropdownItem>
                     <NavLink href={`/Account/EditUser?id=${AuthService.getCurrentUser().id}`}>{t("Edit profile")}</NavLink>
                   </DropdownItem>
                   <DropdownItem>
-                    <NavLink href="/">{t("Change password")}</NavLink>
+                    <NavLink href={`/Account/ChangePassword?id=${AuthService.getCurrentUser().id}`}>{t("Change password")}</NavLink>
                   </DropdownItem>
                   <DropdownItem divider />
                   <DropdownItem>

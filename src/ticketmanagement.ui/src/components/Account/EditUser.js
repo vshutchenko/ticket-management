@@ -2,10 +2,10 @@ import { useState, React, useEffect } from "react";
 import { useNavigate } from "react-router";
 import UserService from "../../services/UserService";
 import { useTranslation } from 'react-i18next';
-import TimezoneSelect from 'react-timezone-select'
 import Select from "react-select";
 import { useSearchParams } from "react-router-dom";
-import { findIana, findWindows } from "windows-iana";
+import { findWindows, WINDOWS_TO_IANA_MAP } from "windows-iana";
+import timeZonesData from '../../data/timeZones.json';
 
 export default function EditUser() {
     const navigate = useNavigate();
@@ -17,12 +17,13 @@ export default function EditUser() {
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
     const [culture, setCulture] = useState(cultures[0]);
-    const [timeZone, setTimeZone] = useState(Intl.DateTimeFormat().resolvedOptions().timeZone);
+    const [timeZone, setTimeZone] = useState('');
     const [email, setEmail] = useState('');
     const [balance, setBalance] = useState(0);
     const [error, setError] = useState('');
     const [failed, setFailed] = useState(false);
-   
+    const [timeZones, setTimeZones] = useState([]);
+
     useEffect(() => {
         async function fetchData() {
             const cultures = [
@@ -30,16 +31,24 @@ export default function EditUser() {
                 { value: 'ru-RU', label: 'Русский' },
                 { value: 'be-BY', label: 'Беларуская' }
             ];
-            
+
             const id = params.get('id');
             const user = await UserService.getById(id);
-            let userTimeZone = findIana(user.timeZoneId)[0];
+
+            let timeZones2 = timeZonesData.map(tz => {
+                return { value: tz.id, label: tz.name };
+            })
+
+            let userTimeZone = timeZones2.find(tz => {
+                return tz.value === user.timeZoneId;
+            })
 
             setId(id);
             setFirstName(user.firstName);
             setLastName(user.lastName);
             setEmail(user.email);
-            setBalance(user.balance);            
+            setBalance(user.balance);
+            setTimeZones(timeZones2);
             setTimeZone(userTimeZone);
             setCulture(cultures.find(c => {
                 return c.value === user.cultureName;
@@ -60,7 +69,7 @@ export default function EditUser() {
             firstName: firstName,
             lastName: lastName,
             cultureName: culture.value,
-            timeZoneId: findWindows(timeZone.altName),
+            timeZoneId: timeZone.value,
             email: email,
             balance: balance,
         };
@@ -107,9 +116,10 @@ export default function EditUser() {
                 </div>
                 <div className="form-group">
                     <label>{t("Time zone")}:</label>
-                    <TimezoneSelect
-                        value={timeZone}
+                    <Select
                         onChange={setTimeZone}
+                        options={timeZones}
+                        value={timeZone}
                     />
                 </div>
                 <div className="form-group">
