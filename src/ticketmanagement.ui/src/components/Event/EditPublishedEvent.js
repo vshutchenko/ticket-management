@@ -2,35 +2,45 @@ import { useState, React, useEffect } from "react";
 import { useNavigate } from "react-router";
 import Select from "react-select";
 import VenueService from "../../services/VenueService";
-import AuthService from "../../services/AuthService";
 import EventService from "../../services/EventService";
 import { useTranslation } from 'react-i18next';
 import LayoutService from "../../services/LayoutService";
 import { useSearchParams } from "react-router-dom";
 import "flatpickr/dist/themes/material_green.css";
-import { Russian } from "flatpickr/dist/l10n/ru.js"
-import { Belarusian } from "flatpickr/dist/l10n/be.js"
-import { english } from "flatpickr/dist/l10n/default"
 import Flatpickr from "react-flatpickr";
 import { getUserTime, utcToLocaleDate, localeDateToUtc } from "../../helpers/ConvertTimeZone";
+import { getPickerLocale } from "../../helpers/DatePicker";
+import { useAlert } from "react-alert";
+import { useForm } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+import * as Yup from 'yup';
 
 export default function EditPublishedEvent() {
-    const navigate = useNavigate();
     const { t } = useTranslation();
+    const navigate = useNavigate();
+    const alert = useAlert();
+
+    const formSchema = Yup.object().shape({
+        name: Yup.string()
+            .required(t('Name is required')),
+        description: Yup.string()
+            .required(t('Description is required')),
+        imageUrl: Yup.string()
+            .required(t('Image URL is required'))
+    })
+
+    const formOptions = { mode: "onChange", resolver: yupResolver(formSchema) }
+    const { register, handleSubmit, getValues, formState, setValue } = useForm(formOptions)
+    const { errors } = formState
 
     const [params] = useSearchParams();
     const [id, setId] = useState(0);
-    const [name, setName] = useState('');
-    const [description, setDescription] = useState('');
-    const [currentLayout, setCurrentLayout] = useState(null);
-    const [currentVenue, setCurrentVenue] = useState(null);
+    const [currentLayout, setCurrentLayout] = useState({});
+    const [currentVenue, setCurrentVenue] = useState({});
     const [startDate, setStartDate] = useState(new Date());
     const [endDate, setEndDate] = useState(new Date());
-    const [imageUrl, setImageUrl] = useState('');
     const [layouts, setLayouts] = useState([]);
     const [venues, setVenues] = useState([]);
-    const [error, setError] = useState('');
-    const [failed, setFailed] = useState(false);
 
     useEffect(() => {
         async function fetchData() {
@@ -46,29 +56,15 @@ export default function EditPublishedEvent() {
             setCurrentLayout(currentLayout);
             setCurrentVenue(currentVenue);
             setId(event.id);
-            setName(event.name);
-            setDescription(event.description);
-            setImageUrl(event.imageUrl);
+            setValue('name', event.name);
+            setValue('description', event.description);
+            setValue('imageUrl', event.imageUrl);
             setStartDate(utcToLocaleDate(event.startDate));
             setEndDate(utcToLocaleDate(event.endDate));
         }
 
         fetchData();
-    }, [params]);
-
-    function getPickerLocale() {
-        const user = AuthService.getCurrentUser();
-        const culture = user ? user.culture : 'en-US';
-
-        if (culture === 'ru-RU')
-            return Russian;
-
-        if (culture === 'be-BY')
-            return Belarusian;
-
-        if (culture === 'en-US')
-            return english;
-    }
+    }, [params, setValue]);
 
     async function handleVenueChange(venue) {
         const layouts = await VenueService.getLayoutsByVenueId(venue.id);
@@ -81,51 +77,53 @@ export default function EditPublishedEvent() {
         setCurrentLayout(layout);
     }
 
-    async function handleSubmit(e) {
-        e.preventDefault();
-
+    async function onSubmit() {
         let event = {
             id: id,
-            name: name,
-            description: description,
+            name: getValues('name'),
+            description: getValues('description'),
             startDate: localeDateToUtc(startDate),
             endDate: localeDateToUtc(endDate),
             layoutId: currentLayout.id,
             published: false,
-            imageUrl: imageUrl
+            imageUrl: getValues('imageUrl')
         }
 
         await EventService.update(event).then(() => {
             navigate(`/Event/EditNotPublishedEvent?id=${id}`);
+            alert.success('Event was updated!');
         }).catch(error => {
-            setFailed(true);
-            setError(error.response.data.error);
+            alert.error(t(error.response.data.error, { ns: 'validation'}));
         });
     }
 
     return (
-        <div>
-            {failed && (<div className="alert alert-danger">{t(error, { ns: 'validation' })}</div>)}
-            <h3>{t('Edit event')}</h3>
-            <form onSubmit={handleSubmit}>
-                <div className="form-group">
-                    <label>{t("Name")}:</label>
+        <div className="event-form">
+            <form onSubmit={handleSubmit(onSubmit)}>
+                <div>
+                    <h2 className="text-center">{t('Edit event')}</h2>
+                </div>
+
+                <div>
+                    <label className="form-label">{t("Name")}:</label>
                     <input
                         type="text"
-                        className="form-control"
-                        value={name}
-                        onChange={e => setName(e.target.value)}
+                        {...register('name')}
+                        className={`form-control ${errors.name ? 'is-invalid' : ''}`}
                     />
+                    <div className="invalid-feedback">{errors.name?.message}</div>
                 </div>
-                <div className="form-group">
-                    <label>{t("Description")}:</label>
+
+                <div>
+                    <label className="form-label">{t("Description")}:</label>
                     <textarea
                         type="text"
-                        className="form-control"
-                        value={description}
-                        onChange={e => setDescription(e.target.value)}
+                        {...register('description')}
+                        className={`form-control ${errors.description ? 'is-invalid' : ''}`}
                     />
+                    <div className="invalid-feedback">{errors.description?.message}</div>
                 </div>
+
                 <div className="form-group">
                     <label>{t("Venue")}:</label>
                     <Select
@@ -171,17 +169,17 @@ export default function EditPublishedEvent() {
                     </div>
                 </div>
 
-                <div className="form-group">
-                    <label>{t("Image URL")}:</label>
+                <div>
+                    <label className="form-label">{t("Image URL")}:</label>
                     <input
                         type="text"
-                        className="form-control"
-                        value={imageUrl}
-                        onChange={e => setImageUrl(e.target.value)}
+                        {...register('imageUrl')}
+                        className={`form-control ${errors.imageUrl ? 'is-invalid' : ''}`}
                     />
+                    <div className="invalid-feedback">{errors.imageUrl?.message}</div>
                 </div>
 
-                <div className="form-group mt-2">
+                <div className="form-group mt-2 text-center">
                     <input type="submit" value={t("Submit")} className="btn btn-primary" />
                 </div>
             </form>

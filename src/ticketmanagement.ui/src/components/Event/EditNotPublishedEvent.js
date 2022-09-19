@@ -5,10 +5,15 @@ import { useTranslation } from 'react-i18next';
 import { useSearchParams } from "react-router-dom";
 import CurrencyInput from 'react-currency-input-field';
 import { toLocaleDate, utcToLocaleDate, localeDateToUtc } from "../../helpers/ConvertTimeZone";
+import { useAlert } from "react-alert";
+import isAbsoluteUrl from 'is-absolute-url';
+
+const mvcAppUrl = process.env.REACT_APP_MVC_APP;
 
 export default function EditNotPublishedEvent() {
     const navigate = useNavigate();
     const { t } = useTranslation();
+    const alert = useAlert();
 
     const [params] = useSearchParams();
     const [name, setName] = useState('');
@@ -17,8 +22,6 @@ export default function EditNotPublishedEvent() {
     const [startDate, setStartDate] = useState(new Date());
     const [endDate, setEndDate] = useState(new Date());
     const [imageUrl, setImageUrl] = useState('');
-    const [error, setError] = useState('');
-    const [failed, setFailed] = useState(false);
 
     const [areas, setAreas] = useState([]);
 
@@ -61,9 +64,9 @@ export default function EditNotPublishedEvent() {
 
         await EventService.update(event).then(() => {
             navigate(`/`);
+            alert.success(t("Event was updated!"));
         }).catch(error => {
-            setFailed(true);
-            setError(error.response.data.error);
+            alert.error(t(error.response.data.error, { ns: 'validation' }));
         });
     }
 
@@ -76,11 +79,13 @@ export default function EditNotPublishedEvent() {
 
     return (
         <div>
-            {failed && (<div className="alert alert-danger">{t(error, { ns: 'validation' })}</div>)}
             <h3>{t('Edit event')}</h3>
             <form onSubmit={handleSubmit}>
                 <div className="form-group">
-                    <img src={imageUrl} width={300} height={300} style={{objectFit: 'contain', objectPosition: 'left'}} alt=''/>
+                    {isAbsoluteUrl(imageUrl)
+                        ? <img src={imageUrl} width={300} height={300} style={{ objectFit: 'contain', objectPosition: 'left' }} alt='' />
+                        : <img src={`${mvcAppUrl}/${imageUrl}`} width={300} height={300} style={{ objectFit: 'contain', objectPosition: 'left' }} alt='' />
+                    }
                     <h5>{t("Name")}:</h5>
                     <div>{name}</div>
                     <h5>{t("Description")}:</h5>
@@ -92,12 +97,13 @@ export default function EditNotPublishedEvent() {
                 </div>
                 {areas.map((area, index) => (
                     <div key={area.id}>
-                        <h5>{t('Seat price', { area: area.description})}</h5>
+                        <h5>{t('Seat price', { area: area.description })}</h5>
                         <CurrencyInput
                             name="price"
                             prefix="$"
                             defaultValue={0}
                             decimalsLimit={2}
+                            maxLength={7}
                             onValueChange={(value) => handleChangePrice(value, index)}
                             className="form-control"
                         />

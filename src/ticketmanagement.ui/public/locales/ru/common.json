@@ -38,7 +38,7 @@
   "Here you can see events waiting for publicaiton.": "Здесь представлены неопубликованные события",
 
   "Delete confiramtion": "Подтвердите удаление",
-  "Are you sure you want to delete this event?": "Вы уверены, что хотите удлаить данное событие?",
+  "Are you sure you want to delete this event?": "Вы уверены, что хотите удалить данное событие?",
   "Confirm": "Подтвердить",
   "Cancel": "Отменить",
 
@@ -60,5 +60,19 @@
   "Password was changed!": "Пароль был изменен!",
   "Old password": "Старый пароль",
   "New password": "Новый пароль",
-  "Confirm new password": "Подтвердите новый пароль"
+  "Confirm new password": "Подтвердите новый пароль",
+
+  "First name is required": "Введите имя",
+  "Last name is required": "Введите фамилию",
+  "Email is required": "Введите электронную почту",
+  "Enter valid email": "Введите валидную электронную почту",
+  "Password is required": "Введите пароль",
+  "Password confirmation is required": "Подтвердите пароль",
+  "Name is required": "Введите имя",
+  "Description is required": "Введите описание",
+  "Image URL is required": "Введите ссылку на изображение",
+  "Event was updated!": "Событие обновлено!",
+  "Event was created!": "Событие создано!",
+  "Profile was updated!": "Профиль обновлен!",
+  "Event import": "Импорт событий"
 }

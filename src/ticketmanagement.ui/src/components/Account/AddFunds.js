@@ -37,7 +37,7 @@ export default function AddFunds() {
         await UserService.update(updatedUser).then(() => {
             setUser(updatedUser);
         }).catch(error => {
-            alert.error(error.response.data.error);
+            alert.error(t(error.response.data.error, { ns: 'validation'}));
         });
     }
 

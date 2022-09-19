@@ -1,5 +1,6 @@
 using System.Globalization;
 using AutoMapper;
+using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
@@ -34,6 +35,8 @@ builder.Services.AddScoped(provider => new MapperConfiguration(mc =>
     mc.AddProfile(new MappingProfile());
 })
 .CreateMapper());
+
+builder.Services.AddCors(c => { c.AddPolicy("AllowOrigin", options => options.AllowAnyOrigin()); });
 
 builder.Services.AddControllersWithViews(options =>
 {
@@ -114,6 +117,12 @@ app.Use(async (context, next) =>
         var token = context.Request.Headers.Authorization.ToString()["Bearer ".Length..];
         tokenService.SaveToken(token);
     }
+    else if (context.Request.Cookies.ContainsKey("jwt"))
+    {
+        var token = context.Request.Cookies["jwt"];
+        context.Request.Headers.Add("Authorization", $"Bearer {token}");
+        tokenService.SaveToken(token!);
+    }
     else
     {
         var token = tokenService.GetToken();
@@ -130,6 +139,7 @@ app.UseRouting();
 
 app.UseAuthentication();
 app.UseAuthorization();
+app.UseCors(cors => cors.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
 
 app.UseRequestLocalization(app.Services.GetRequiredService<IOptions<RequestLocalizationOptions>>().Value);
 

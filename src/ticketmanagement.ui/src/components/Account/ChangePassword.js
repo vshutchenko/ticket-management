@@ -1,4 +1,4 @@
-import { useState, React } from "react";
+import { React } from "react";
 import UserService from "../../services/UserService";
 import { useTranslation } from 'react-i18next';
 import { useSearchParams } from "react-router-dom";
@@ -23,67 +23,69 @@ export default function ChangePassword() {
     })
 
     const formOptions = { resolver: yupResolver(formSchema) }
-    const { register, handleSubmit, formState } = useForm(formOptions)
+    const { register, handleSubmit, formState, getValues } = useForm(formOptions)
     const { errors } = formState
 
     const alert = useAlert();
     const [params] = useSearchParams();
-    const [oldPassword, setOldPassword] = useState('');
-    const [newPassword, setNewPassword] = useState('');
-    const [confirmNewPassword, setConfirmNewPassword] = useState('');
 
     async function onSubmit() {
         const id = params.get('id');
+        const oldPassword = getValues('oldPassword');
+        const newPassword = getValues('newPassword');
 
         await UserService.changePassword(id, oldPassword, newPassword).then(() => {
             alert.success(t("Password was changed!"));
         }).catch(error => {
-            alert.error(error.response.data.error);
+            alert.error(t(error.response.data.error, { ns: 'validation'}));
         });
     }
 
     return (
-        <form onSubmit={handleSubmit(onSubmit)}>
-            <h3>{t("Change password")}</h3>
-            <div className="form-group">
-                <label>{t("Old password")}:</label>
-                <input
-                    type="password"
-                    name="oldPassword"
-                    {...register('oldPassword')}
-                    className={`form-control ${errors.oldPassword ? 'is-invalid' : ''}`}
-                    value={oldPassword}
-                    onChange={e => setOldPassword(e.target.value)}
-                />
-                <div className="invalid-feedback">{errors.oldPassword?.message}</div>
+        <div className="container mt-3">
+            <div className="row">
+                <div className="col-md-6">
+                    <form onSubmit={handleSubmit(onSubmit)}>
+                        <div className="mb-4">
+                            <h2>{t("Change password")}</h2>
+                        </div>
+                        <div className="form-group">
+                            <label>{t("Old password")}:</label>
+                            <input
+                                type="password"
+                                name="oldPassword"
+                                {...register('oldPassword')}
+                                className={`form-control ${errors.oldPassword ? 'is-invalid' : ''}`}
+                            />
+                            <div className="invalid-feedback">{errors.oldPassword?.message}</div>
+                        </div>
+                        <div className="form-group">
+                            <label>{t("New password")}:</label>
+                            <input
+                                type="password"
+                                name="newPassword"
+                                {...register('newPassword')}
+                                className={`form-control ${errors.newPassword ? 'is-invalid' : ''}`}
+                            />
+                            <div className="invalid-feedback">{errors.newPassword?.message}</div>
+                        </div>
+                        <div className="form-group">
+                            <label>{t("Confirm new password")}:</label>
+                            <input
+                                type="password"
+                                name="confirmNewPassword"
+                                {...register('confirmNewPassword')}
+                                className={`form-control ${errors.confirmNewPassword ? 'is-invalid' : ''}`}
+                            />
+                            <div className="invalid-feedback">{errors.confirmNewPassword?.message}</div>
+                        </div>
+                        <div className="form-group mt-3">
+                            <input type="submit" value={t("Submit")} className="btn btn-primary" />
+                        </div>
+                    </form>
+                </div>
             </div>
-            <div className="form-group">
-                <label>{t("New password")}:</label>
-                <input
-                    type="password"
-                    name="newPassword"
-                    {...register('newPassword')}
-                    className={`form-control ${errors.newPassword ? 'is-invalid' : ''}`}
-                    value={newPassword}
-                    onChange={e => setNewPassword(e.target.value)}
-                />
-                <div className="invalid-feedback">{errors.newPassword?.message}</div>
-            </div>
-            <div className="form-group">
-                <label>{t("Confirm new password")}:</label>
-                <input
-                    type="password"
-                    name="confirmNewPassword"
-                    {...register('confirmNewPassword')}
-                    className={`form-control ${errors.confirmNewPassword ? 'is-invalid' : ''}`}
-                    value={confirmNewPassword}
-                    onChange={e => setConfirmNewPassword(e.target.value)}
-                />
-                <div className="invalid-feedback">{errors.confirmNewPassword?.message}</div>
-            </div>
-            <div className="form-group mt-3">
-                <input type="submit" value={t("Submit")} className="btn btn-primary" />
-            </div>
-        </form>
+        </div>
+
     )
 }
