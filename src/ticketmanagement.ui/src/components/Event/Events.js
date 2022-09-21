@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import AuthService from "../../services/AuthService";
 import { Button, Modal, } from "react-bootstrap";
 import { utcToLocaleString } from "../../helpers/ConvertTimeZone";
+import Cookies from 'universal-cookie';
 
 export default function Events() {
     const { t } = useTranslation();
@@ -15,6 +16,12 @@ export default function Events() {
     const [show, setShow] = useState(false);
     const [error, setError] = useState('');
     const [failed, setFailed] = useState(false);
+
+    const mvcAppUrl = process.env.REACT_APP_MVC_APP;
+    const cookies = new Cookies();
+    if (AuthService.isAuthenticated()) {
+        cookies.set('jwt', AuthService.getToken(), { path: '/' });
+    }
 
     useEffect(() => {
         async function fetchData() {
@@ -67,7 +74,7 @@ export default function Events() {
                                     <td>{utcToLocaleString(event.startDate)}</td>
                                     <td>{utcToLocaleString(event.endDate)}</td>
                                     <td>
-                                        <Link className="btn btn-success m-1" to={`/Purchase/PurchaseSeats?id=${event.id}`}>{t("Details")}</Link>
+                                        <a className="btn btn-success m-1" href={`${mvcAppUrl}/Purchase/PurchaseSeats?id=${event.id}`}>{t("Details")}</a>
                                         {AuthService.isEventManager() && (
                                             <>
                                                 <Link className="btn btn-primary m-1" to={`/Event/EditPublishedEvent?id=${event.id}`}>{t("Edit")}</Link>
