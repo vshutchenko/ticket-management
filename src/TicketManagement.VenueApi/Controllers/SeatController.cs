@@ -33,20 +33,6 @@ namespace TicketManagement.VenueApi.Controllers
         }
 
         /// <summary>
-        /// Get seats by area id.
-        /// </summary>
-        /// <param name="areaId">Id of the area.</param>
-        /// <returns>List of seats.</returns>
-        [HttpGet("areas/{areaId}")]
-        [ProducesResponseType(typeof(List<SeatModel>), StatusCodes.Status200OK)]
-        public async Task<IActionResult> GetSatsByAreaId(int areaId)
-        {
-            var seats = await _seatService.GetByAreaIdAsync(areaId);
-
-            return Ok(seats);
-        }
-
-        /// <summary>
         /// Get seat by id.
         /// </summary>
         /// <param name="id">Id of the seat.</param>

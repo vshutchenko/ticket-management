@@ -1,16 +1,18 @@
 using System.Globalization;
 using AutoMapper;
+using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
+using Microsoft.FeatureManagement;
 using RestEase.HttpClientFactory;
 using Serilog;
 using Serilog.Events;
+using TicketManagement.Core.Clients.EventApi;
+using TicketManagement.Core.Clients.PurchaseApi;
 using TicketManagement.Core.Clients.UserApi;
+using TicketManagement.Core.Clients.VenueApi;
 using TicketManagement.Core.JwtAuthentication;
-using TicketManagement.WebApplication.Clients.EventApi;
-using TicketManagement.WebApplication.Clients.PurchaseApi;
-using TicketManagement.WebApplication.Clients.VenueApi;
 using TicketManagement.WebApplication.Filters;
 using TicketManagement.WebApplication.Infrastructure;
 using TicketManagement.WebApplication.ModelBinders;
@@ -33,6 +35,8 @@ builder.Services.AddScoped(provider => new MapperConfiguration(mc =>
     mc.AddProfile(new MappingProfile());
 })
 .CreateMapper());
+
+builder.Services.AddCors(c => { c.AddPolicy("AllowOrigin", options => options.AllowAnyOrigin()); });
 
 builder.Services.AddControllersWithViews(options =>
 {
@@ -82,6 +86,8 @@ builder.Services.AddRestEaseClient<IUserClient>(builder.Configuration["UserApi:B
 builder.Services.AddAuthentication(JwtAutheticationConstants.SchemeName)
                 .AddScheme<JwtAuthenticationOptions, JwtAuthenticationHandler>(JwtAutheticationConstants.SchemeName, null);
 
+builder.Services.AddFeatureManagement();
+
 builder.Host.UseSerilog();
 
 var app = builder.Build();
@@ -111,6 +117,12 @@ app.Use(async (context, next) =>
         var token = context.Request.Headers.Authorization.ToString()["Bearer ".Length..];
         tokenService.SaveToken(token);
     }
+    else if (context.Request.Cookies.ContainsKey("jwt"))
+    {
+        var token = context.Request.Cookies["jwt"];
+        context.Request.Headers.Add("Authorization", $"Bearer {token}");
+        tokenService.SaveToken(token!);
+    }
     else
     {
         var token = tokenService.GetToken();
@@ -127,6 +139,7 @@ app.UseRouting();
 
 app.UseAuthentication();
 app.UseAuthorization();
+app.UseCors(cors => cors.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
 
 app.UseRequestLocalization(app.Services.GetRequiredService<IOptions<RequestLocalizationOptions>>().Value);
 

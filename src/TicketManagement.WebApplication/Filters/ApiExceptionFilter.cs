@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using RestEase;
-using TicketManagement.WebApplication.Clients.CommonModels;
+using TicketManagement.Core.Clients.CommonModels;
 
 namespace TicketManagement.WebApplication.Filters
 {

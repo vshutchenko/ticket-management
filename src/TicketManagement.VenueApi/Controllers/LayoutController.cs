@@ -11,10 +11,12 @@ namespace TicketManagement.VenueApi.Controllers
     public class LayoutController : ControllerBase
     {
         private readonly ILayoutService _layoutService;
+        private readonly IAreaService _areaService;
 
-        public LayoutController(ILayoutService layoutService)
+        public LayoutController(ILayoutService layoutService, IAreaService areaService)
         {
             _layoutService = layoutService ?? throw new ArgumentNullException(nameof(layoutService));
+            _areaService = areaService ?? throw new ArgumentNullException(nameof(areaService));
         }
 
         /// <summary>
@@ -22,7 +24,7 @@ namespace TicketManagement.VenueApi.Controllers
         /// </summary>
         /// <returns>List of layouts.</returns>
         [HttpGet]
-        [AuthorizeRoles(Roles.VenueManager)]
+        [AuthorizeRoles(Roles.VenueManager, Roles.EventManager)]
         [ProducesResponseType(typeof(List<LayoutModel>), StatusCodes.Status200OK)]
         public IActionResult GetLayouts()
         {
@@ -33,18 +35,17 @@ namespace TicketManagement.VenueApi.Controllers
         }
 
         /// <summary>
-        /// Get layouts by venue id.
+        /// Get areas by layout id.
         /// </summary>
-        /// <param name="venueId">Id of the venue.</param>
-        /// <returns>List of layouts.</returns>
-        [HttpGet("venues/{venueId}")]
-        [AuthorizeRoles(Roles.EventManager, Roles.VenueManager)]
-        [ProducesResponseType(typeof(List<LayoutModel>), StatusCodes.Status200OK)]
-        public async Task<IActionResult> GetLayoutsByVenueId(int venueId)
+        /// <param name="id">Id of the layout.</param>
+        /// <returns>List of areas.</returns>
+        [HttpGet("{id}/areas")]
+        [ProducesResponseType(typeof(List<AreaModel>), StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetAreasByLayoutId(int id)
         {
-            var layouts = await _layoutService.GetByVenueIdAsync(venueId);
+            var areas = await _areaService.GetByLayoutIdAsync(id);
 
-            return Ok(layouts);
+            return Ok(areas);
         }
 
         /// <summary>

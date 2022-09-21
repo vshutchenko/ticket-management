@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using TicketManagement.Core.Clients.VenueApi;
+using TicketManagement.Core.Clients.VenueApi.Models;
 using TicketManagement.Core.Models;
-using TicketManagement.WebApplication.Clients.VenueApi;
-using TicketManagement.WebApplication.Clients.VenueApi.Models;
 using TicketManagement.WebApplication.Models.VenueManagement;
 using TicketManagement.WebApplication.Services;
 
@@ -50,7 +50,7 @@ namespace TicketManagement.WebApplication.Controllers
         [HttpPost]
         public async Task<IActionResult> DeleteSeatRow(int areaId, int row)
         {
-            var seats = await _seatClient.GetByAreaIdAsync(areaId, TokenService.GetToken());
+            var seats = await _areaClient.GetSeatsByAreaIdAsync(areaId, TokenService.GetToken());
 
             var seatsToDelete = seats.Where(s => s.Row == row);
 

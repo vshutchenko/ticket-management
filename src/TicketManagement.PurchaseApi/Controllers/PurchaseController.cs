@@ -21,14 +21,14 @@ namespace TicketManagement.PurchaseApi.Controllers
         /// <summary>
         /// Get purchases by user id.
         /// </summary>
-        /// <param name="userId">If of the user.</param>
+        /// <param name="id">If of the user.</param>
         /// <returns>List of purchases.</returns>
-        [HttpGet("user/{userId}")]
+        [HttpGet("user/{id}")]
         [ProducesResponseType(typeof(List<PurchaseModel>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public IActionResult GetByUserId(string userId)
+        public IActionResult GetByUserId(string id)
         {
-            var purchases = _purchaseService.GetByUserId(userId).ToList();
+            var purchases = _purchaseService.GetByUserId(id).ToList();
 
             return Ok(purchases);
         }

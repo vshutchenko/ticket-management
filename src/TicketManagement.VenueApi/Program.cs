@@ -28,6 +28,7 @@ builder.Services.AddScoped(provider => new MapperConfiguration(mc =>
 })
 .CreateMapper());
 
+builder.Services.AddCors(c => { c.AddPolicy("AllowOrigin", options => options.AllowAnyOrigin()); });
 builder.Services.AddControllers(options =>
 {
     options.Filters.Add<ValidationExceptionFilter>();
@@ -94,6 +95,7 @@ app.UseSerilogRequestLogging();
 app.UseHttpsRedirection();
 
 app.UseAuthentication();
+app.UseCors(cors => cors.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
 app.UseAuthorization();
 
 app.MapControllers();

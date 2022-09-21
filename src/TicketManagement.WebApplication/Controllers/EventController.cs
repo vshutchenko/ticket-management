@@ -2,11 +2,12 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using TicketManagement.Core.Clients.EventApi;
+using TicketManagement.Core.Clients.EventApi.Models;
+using TicketManagement.Core.Clients.VenueApi;
 using TicketManagement.Core.Models;
-using TicketManagement.WebApplication.Clients.EventApi;
-using TicketManagement.WebApplication.Clients.EventApi.Models;
-using TicketManagement.WebApplication.Clients.VenueApi;
 using TicketManagement.WebApplication.Extensions;
+using TicketManagement.WebApplication.Filters;
 using TicketManagement.WebApplication.Models.Event;
 using TicketManagement.WebApplication.Models.EventArea;
 using TicketManagement.WebApplication.Services;
@@ -14,6 +15,7 @@ using TicketManagement.WebApplication.Services;
 namespace TicketManagement.WebApplication.Controllers
 {
     [AuthorizeRoles(Roles.EventManager)]
+    [RedirectFilter]
     public class EventController : BaseController
     {
         private readonly IEventClient _eventClient;
@@ -36,7 +38,7 @@ namespace TicketManagement.WebApplication.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> Index()
         {
-            var events = await _eventClient.GetEventsAsync(EventFilter.Published, TokenService.GetToken());
+            var events = await _eventClient.GetPublishedEventsAsync(TokenService.GetToken());
 
             var eventsVM = events
                 .Select(e => _mapper.Map<EventViewModel>(e))
@@ -48,7 +50,7 @@ namespace TicketManagement.WebApplication.Controllers
         [HttpGet]
         public async Task<IActionResult> NotPublishedEvents()
         {
-            var events = await _eventClient.GetEventsAsync(EventFilter.NotPublished, TokenService.GetToken());
+            var events = await _eventClient.GetNotPublishedEventsAsync(TokenService.GetToken());
 
             var eventsVM = events
                 .Select(e => _mapper.Map<EventViewModel>(e))
@@ -58,9 +60,9 @@ namespace TicketManagement.WebApplication.Controllers
         }
 
         [HttpGet]
-        public async Task<PartialViewResult> PartialLayoutList(int venueId, [FromServices] ILayoutClient layoutClient)
+        public async Task<PartialViewResult> PartialLayoutList(int venueId, [FromServices] IVenueClient venueClient)
         {
-            var layouts = await layoutClient.GetByVenueIdAsync(venueId, TokenService.GetToken());
+            var layouts = await venueClient.GetLayoutsByVenueIdAsync(venueId, TokenService.GetToken());
 
             var layoutsVM = layouts
                 .Select(l => _mapper.Map<LayoutViewModel>(l))
@@ -70,9 +72,7 @@ namespace TicketManagement.WebApplication.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> CreateEvent(
-            [FromServices] ILayoutClient layoutClient,
-            [FromServices] IVenueClient venueClient)
+        public async Task<IActionResult> CreateEvent([FromServices] IVenueClient venueClient)
         {
             var venues = await venueClient.GetAllAsync(TokenService.GetToken());
 
@@ -80,7 +80,7 @@ namespace TicketManagement.WebApplication.Controllers
                 .Select(v => _mapper.Map<VenueViewModel>(v))
                 .ToList();
 
-            var layouts = await layoutClient.GetByVenueIdAsync(venues.First().Id, TokenService.GetToken());
+            var layouts = await venueClient.GetLayoutsByVenueIdAsync(venues.First().Id, TokenService.GetToken());
 
             var layoutsVM = layouts
                 .Select(l => _mapper.Map<LayoutViewModel>(l))

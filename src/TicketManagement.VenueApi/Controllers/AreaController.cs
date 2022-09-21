@@ -12,10 +12,12 @@ namespace TicketManagement.VenueApi.Controllers
     public class AreaController : ControllerBase
     {
         private readonly IAreaService _areaService;
+        private readonly ISeatService _seatService;
 
-        public AreaController(IAreaService areaService)
+        public AreaController(IAreaService areaService, ISeatService seatService)
         {
             _areaService = areaService ?? throw new ArgumentNullException(nameof(areaService));
+            _seatService = seatService ?? throw new ArgumentNullException(nameof(seatService));
         }
 
         /// <summary>
@@ -33,17 +35,17 @@ namespace TicketManagement.VenueApi.Controllers
         }
 
         /// <summary>
-        /// Get areas by layout id.
+        /// Get seats by area id.
         /// </summary>
-        /// <param name="layoutId">Id of the layout.</param>
-        /// <returns>List of areas.</returns>
-        [HttpGet("layouts/{layoutId}")]
-        [ProducesResponseType(typeof(List<AreaModel>), StatusCodes.Status200OK)]
-        public async Task<IActionResult> GetAreasByLayoutId(int layoutId)
+        /// <param name="id">Id of the area.</param>
+        /// <returns>List of seats.</returns>
+        [HttpGet("{id}/seats")]
+        [ProducesResponseType(typeof(List<SeatModel>), StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetSeatsByAreaId(int id)
         {
-            var areas = await _areaService.GetByLayoutIdAsync(layoutId);
+            var seats = await _seatService.GetByAreaIdAsync(id);
 
-            return Ok(areas);
+            return Ok(seats);
         }
 
         /// <summary>

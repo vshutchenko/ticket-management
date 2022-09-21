@@ -5,12 +5,12 @@ using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
 using RestEase;
+using TicketManagement.Core.Clients.EventApi;
+using TicketManagement.Core.Clients.PurchaseApi;
 using TicketManagement.Core.Clients.UserApi;
+using TicketManagement.Core.Clients.VenueApi;
 using TicketManagement.IntegrationTests.Addition;
 using TicketManagement.IntegrationTests.Factories;
-using TicketManagement.WebApplication.Clients.EventApi;
-using TicketManagement.WebApplication.Clients.PurchaseApi;
-using TicketManagement.WebApplication.Clients.VenueApi;
 
 namespace TicketManagement.IntegrationTests.AppControllersTests
 {
@@ -38,14 +38,14 @@ namespace TicketManagement.IntegrationTests.AppControllersTests
                     services.ReplaceContextWithTestDb();
 
                     var descriptor = services.SingleOrDefault(
-                        d => d.ServiceType == typeof(Core.Clients.UserApi.IUserClient));
+                        d => d.ServiceType == typeof(IUserClient));
 
                     if (descriptor != null)
                     {
                         services.Remove(descriptor);
                     }
 
-                    var userClient = RestClient.For<Core.Clients.UserApi.IUserClient>(userApiCLient);
+                    var userClient = RestClient.For<IUserClient>(userApiCLient);
 
                     services.AddScoped(p => userClient);
                 }));
@@ -56,14 +56,14 @@ namespace TicketManagement.IntegrationTests.AppControllersTests
                     services.ReplaceContextWithTestDb();
 
                     var descriptor = services.SingleOrDefault(
-                        d => d.ServiceType == typeof(Core.Clients.UserApi.IUserClient));
+                        d => d.ServiceType == typeof(IUserClient));
 
                     if (descriptor != null)
                     {
                         services.Remove(descriptor);
                     }
 
-                    var userClient = RestClient.For<Core.Clients.UserApi.IUserClient>(userApiCLient);
+                    var userClient = RestClient.For<IUserClient>(userApiCLient);
 
                     services.AddScoped(p => userClient);
                 }));
@@ -74,14 +74,14 @@ namespace TicketManagement.IntegrationTests.AppControllersTests
                     services.ReplaceContextWithTestDb();
 
                     var descriptor = services.SingleOrDefault(
-                        d => d.ServiceType == typeof(Core.Clients.UserApi.IUserClient));
+                        d => d.ServiceType == typeof(IUserClient));
 
                     if (descriptor != null)
                     {
                         services.Remove(descriptor);
                     }
 
-                    var userClient = RestClient.For<Core.Clients.UserApi.IUserClient>(userApiCLient);
+                    var userClient = RestClient.For<IUserClient>(userApiCLient);
 
                     services.AddScoped(p => userClient);
                 }));
@@ -91,13 +91,15 @@ namespace TicketManagement.IntegrationTests.AppControllersTests
             var purchaseApiCLient = PurchaseApiFactory.CreateClient();
 
             AppFactory = new WebApplicationFactory<WebApplication.Program>()
-                .WithWebHostBuilder(c => c.ConfigureServices(services =>
+                .WithWebHostBuilder(c => c.ConfigureServices((ctx, services) =>
                 {
                     services.AddAntiforgery(t =>
                     {
                         t.Cookie.Name = AntiForgeryTokenExtractor.Cookie;
                         t.FormFieldName = AntiForgeryTokenExtractor.Field;
                     });
+
+                    ctx.Configuration["FeatureManagement:ReactUI"] = "false";
 
                     var servicesToRemove = new List<Type>
                     {

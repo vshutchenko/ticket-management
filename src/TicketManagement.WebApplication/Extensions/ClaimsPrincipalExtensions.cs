@@ -1,4 +1,5 @@
 ﻿using System.Security.Claims;
+using IdentityModel;
 using TicketManagement.Core.Models;
 
 namespace TicketManagement.WebApplication.Extensions
@@ -7,17 +8,17 @@ namespace TicketManagement.WebApplication.Extensions
     {
         public static bool IsEventManager(this ClaimsPrincipal principal)
         {
-            return principal.Identities.First().HasClaim(ClaimTypes.Role, Roles.EventManager);
+            return principal.Identities.First().HasClaim(JwtClaimTypes.Role, Roles.EventManager);
         }
 
         public static bool IsVenueManager(this ClaimsPrincipal principal)
         {
-            return principal.Identities.First().HasClaim(ClaimTypes.Role, Roles.VenueManager);
+            return principal.Identities.First().HasClaim(JwtClaimTypes.Role, Roles.VenueManager);
         }
 
         public static bool IsUser(this ClaimsPrincipal principal)
         {
-            return principal.Identities.First().HasClaim(ClaimTypes.Role, Roles.User);
+            return principal.Identities.First().HasClaim(JwtClaimTypes.Role, Roles.User);
         }
 
         public static DateTime GetLocalTime(this ClaimsPrincipal principal, DateTime date)

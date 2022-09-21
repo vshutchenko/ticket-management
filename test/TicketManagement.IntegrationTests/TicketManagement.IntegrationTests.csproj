@@ -7,6 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="EventApiTests\**" />
+    <EmbeddedResource Remove="EventApiTests\**" />
+    <None Remove="EventApiTests\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="FluentAssertions" Version="6.7.0" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="6.0.7" />
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="6.0.1" />
@@ -49,7 +55,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="EventApiTests\" />
     <Folder Include="ServicesTests\EFImplemetations\IdentityServiceTests\" />
     <Folder Include="ServicesTests\EFImplemetations\PurchaseServiceTetss\" />
   </ItemGroup>

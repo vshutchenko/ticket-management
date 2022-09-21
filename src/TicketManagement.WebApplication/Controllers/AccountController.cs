@@ -8,11 +8,13 @@ using Microsoft.Extensions.Options;
 using TicketManagement.Core.Clients.UserApi;
 using TicketManagement.Core.Clients.UserApi.Models;
 using TicketManagement.Core.Models;
+using TicketManagement.WebApplication.Filters;
 using TicketManagement.WebApplication.Models.Account;
 using TicketManagement.WebApplication.Services;
 
 namespace TicketManagement.WebApplication.Controllers
 {
+    [RedirectFilter]
     public class AccountController : BaseController
     {
         private readonly IUserClient _userClient;
@@ -211,7 +213,7 @@ namespace TicketManagement.WebApplication.Controllers
                 NewPassword = model.NewPassword,
             };
 
-            await _userClient.ChangePassword(userId, passwordModel, TokenService.GetToken());
+            await _userClient.ChangePasswordAsync(userId, passwordModel, TokenService.GetToken());
 
             ViewBag.Message = "Profile information was successfully updated!";
 

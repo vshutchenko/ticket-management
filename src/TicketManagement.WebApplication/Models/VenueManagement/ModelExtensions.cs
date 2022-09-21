@@ -1,4 +1,4 @@
-﻿using TicketManagement.WebApplication.Clients.VenueApi.Models;
+﻿using TicketManagement.Core.Clients.VenueApi.Models;
 
 namespace TicketManagement.WebApplication.Models.VenueManagement
 {

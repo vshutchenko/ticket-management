@@ -1,6 +1,7 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using IdentityModel;
 using Microsoft.IdentityModel.Tokens;
 using TicketManagement.UserApi.Models;
 using TicketManagement.UserApi.Services.Interfaces;
@@ -24,7 +25,7 @@ namespace TicketManagement.UserApi.Services.Implementations
         {
             var claims = new List<Claim>
             {
-                new Claim(ClaimTypes.Email, user.Email),
+                new Claim(JwtClaimTypes.Email, user.Email),
                 new Claim("id", user.Id),
                 new Claim("timezoneId", user.TimeZoneId!),
                 new Claim("culture", user.CultureName!),
@@ -32,8 +33,10 @@ namespace TicketManagement.UserApi.Services.Implementations
             };
 
             var roleClaims = roles.Select(role => new Claim(ClaimTypes.Role, role)).ToList();
+            var jwtRoleClaims = roles.Select(role => new Claim(JwtClaimTypes.Role, role)).ToList();
 
             claims.AddRange(roleClaims);
+            claims.AddRange(jwtRoleClaims);
 
             var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_key));
 

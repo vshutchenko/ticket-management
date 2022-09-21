@@ -38,15 +38,15 @@ namespace TicketManagement.EventApi.Controllers
         /// <summary>
         /// Update ticket price for the event area.
         /// </summary>
-        /// <param name="areaId">Id of the event area.</param>
+        /// <param name="id">Id of the event area.</param>
         /// <param name="price">Price of the event area.</param>
-        [HttpPut("{areaId}/price")]
+        [HttpPut("{id}/price")]
         [AuthorizeRoles(Roles.EventManager)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> UpdateAreaPrice(int areaId, [FromBody] decimal price)
+        public async Task<IActionResult> UpdateAreaPrice(int id, [FromBody] decimal price)
         {
-            await _eventAreaService.SetPriceAsync(areaId, price);
+            await _eventAreaService.SetPriceAsync(id, price);
 
             return NoContent();
         }
@@ -54,15 +54,15 @@ namespace TicketManagement.EventApi.Controllers
         /// <summary>
         /// Get event seats by event area id.
         /// </summary>
-        /// <param name="areaId">Id of the event area.</param>
+        /// <param name="id">Id of the event area.</param>
         /// <returns>List of event seats.</returns>
         [HttpGet("{id}/seats")]
         [AuthorizeRoles(Roles.EventManager, Roles.User)]
         [ProducesResponseType(typeof(List<EventSeatModel>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public IActionResult GetSeatsByAreaId(int areaId)
+        public IActionResult GetSeatsByAreaId(int id)
         {
-            var seats = _eventSeatService.GetByEventAreaId(areaId);
+            var seats = _eventSeatService.GetByEventAreaId(id);
 
             return Ok(seats);
         }

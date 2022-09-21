@@ -1,11 +1,12 @@
-﻿@using Microsoft.AspNetCore.Identity
+﻿@using IdentityModel
+@using Microsoft.AspNetCore.Identity
 @using System.Security.Claims;
 
 <ul class="navbar-nav">
     @if (User.Identity!.IsAuthenticated)
     {
         <li class="nav-item dropdown">
-            <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">@User.FindFirst(ClaimTypes.Email)!.Value</a>
+            <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">@User.FindFirst(JwtClaimTypes.Email)!.Value</a>
             <div class="dropdown-menu dropdown-menu-right">
                 <a class="dropdown-item" asp-controller="Account" asp-action="EditUser" asp-route-userId="@User.FindFirst("id")!.Value">@Localizer["Edit profile"]</a>
                 <a class="dropdown-item" asp-controller="Account" asp-action="ChangePassword">@Localizer["Change password"]</a>

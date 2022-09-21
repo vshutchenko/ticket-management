@@ -21,16 +21,32 @@ namespace TicketManagement.EventApi.Controllers
         }
 
         /// <summary>
-        /// Get events.
+        /// Get published events.
         /// </summary>
         /// <returns>List of events.</returns>
-        [HttpGet]
+        [HttpGet("published")]
         [AllowAnonymous]
         [ProducesResponseType(typeof(List<EventModel>), StatusCodes.Status200OK)]
-        public IActionResult GetEvents(EventFilter filter)
+        public IActionResult GetPublishedEvents()
         {
             var events = _eventService
-                .GetAll(filter)
+                .GetAll(EventFilter.Published)
+                .ToList();
+
+            return Ok(events);
+        }
+
+        /// <summary>
+        /// Get not published events.
+        /// </summary>
+        /// <returns>List of events.</returns>
+        [HttpGet("notPublished")]
+        [AuthorizeRoles(Roles.EventManager)]
+        [ProducesResponseType(typeof(List<EventModel>), StatusCodes.Status200OK)]
+        public IActionResult GetNotPublishedEvents()
+        {
+            var events = _eventService
+                .GetAll(EventFilter.NotPublished)
                 .ToList();
 
             return Ok(events);
@@ -101,15 +117,15 @@ namespace TicketManagement.EventApi.Controllers
         /// <summary>
         /// Get event areas by event id.
         /// </summary>
-        /// <param name="eventId">Id of the event.</param>
+        /// <param name="id">Id of the event.</param>
         /// <returns>List of event areas.</returns>
         [HttpGet("{id}/areas")]
         [AuthorizeRoles(Roles.EventManager, Roles.User)]
         [ProducesResponseType(typeof(List<EventAreaModel>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public IActionResult GetAreasByEventId(int eventId)
+        public IActionResult GetAreasByEventId(int id)
         {
-            var areas = _eventAreaService.GetByEventId(eventId);
+            var areas = _eventAreaService.GetByEventId(id);
 
             return Ok(areas);
         }

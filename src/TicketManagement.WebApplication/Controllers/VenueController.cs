@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using TicketManagement.Core.Clients.VenueApi;
+using TicketManagement.Core.Clients.VenueApi.Models;
 using TicketManagement.Core.Models;
-using TicketManagement.WebApplication.Clients.VenueApi;
-using TicketManagement.WebApplication.Clients.VenueApi.Models;
 using TicketManagement.WebApplication.Models.VenueManagement;
 using TicketManagement.WebApplication.Services;
 
@@ -11,18 +11,15 @@ namespace TicketManagement.WebApplication.Controllers
     [AuthorizeRoles(Roles.VenueManager)]
     public class VenueController : BaseController
     {
-        private readonly ILayoutClient _layoutClient;
         private readonly IVenueClient _venueClient;
         private readonly IMapper _mapper;
 
         public VenueController(
-            ILayoutClient layoutClient,
             IVenueClient venueClient,
             ITokenService tokenService,
             IMapper mapper)
             : base(tokenService)
         {
-            _layoutClient = layoutClient ?? throw new ArgumentNullException(nameof(layoutClient));
             _venueClient = venueClient ?? throw new ArgumentNullException(nameof(venueClient));
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
@@ -36,7 +33,7 @@ namespace TicketManagement.WebApplication.Controllers
 
             foreach (var venue in venues)
             {
-                var layouts = await _layoutClient.GetByVenueIdAsync(venue.Id, TokenService.GetToken());
+                var layouts = await _venueClient.GetLayoutsByVenueIdAsync(venue.Id, TokenService.GetToken());
 
                 var layoutsVM = layouts.Select(layout => _mapper.Map<LayoutViewModel>(layout)).ToList();
 
