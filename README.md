@@ -83,5 +83,5 @@ The new UI was provided for Event management and Profile management. The main MV
 	- [TicketManagement.VenueApi](/src/TicketManagement.VenueApi)
 	- [TicketManagement.EventApi](/src/TicketManagement.EventApi)
 	- [TicketManagement.PurchaseApi](/src/TicketManagement.PurchaseApi)
-	- [TicketManagement.UI](/src/TicketManagement.UI)
+	- [TicketManagement.UI](/src/TicketManagement.UI/ticketmanagement.ui)
 	- [TicketManagement.WebApplication](/src/TicketManagement.WebApplication)

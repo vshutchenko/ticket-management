@@ -35,7 +35,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TicketManagement.PurchaseAp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TicketManagement.Core", "src\TicketManagement.Core\TicketManagement.Core.csproj", "{ADDC51D0-7098-43BE-8374-F02CD58E4F4F}"
 EndProject
-Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "TicketManagement.UI", "src\TicketManagement.UI\TicketManagement.UI.esproj", "{814D6354-C107-46CF-A044-61D0CDD91632}"
+Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "TicketManagement.UI", "src\TicketManagement.UI\ticketmanagement.ui\TicketManagement.UI.esproj", "{814D6354-C107-46CF-A044-61D0CDD91632}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
