@@ -1,0 +1,161 @@
+name: On push on master
+
+on:
+  push:
+    branches:
+    - master
+
+jobs:
+  build:
+
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set Version
+      run: echo "PACKAGE_VERSION=$(date +'%Y.%m.%d').$env:GITHUB_RUN_NUMBER" >> $env:GITHUB_ENV
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v2
+      with:
+        dotnet-version: 6.0.x
+
+    - name: Install a SQL Server suite of tools
+      uses: potatoqualitee/mssqlsuite@v1.5.1
+      with:
+        install: sqlclient, sqlpackage, localdb
+        
+    - name: Add msbuild to PATH
+      uses: microsoft/setup-msbuild@v1.1
+  
+    - name: Restore dependencies
+      run: msbuild -t:restore /v:q
+      
+    - name: Build
+      run: |
+        msbuild src\TicketManagement.Core\TicketManagement.Core.csproj -t:build -verbosity:m /p:RestorePackages=false
+        msbuild src\TicketManagement.DataAccess\TicketManagement.DataAccess.csproj -t:build -verbosity:m /p:RestorePackages=false
+        msbuild src\TicketManagement.Database\TicketManagement.Database.sqlproj -t:build -verbosity:m /p:RestorePackages=false
+        msbuild src\TicketManagement.EventApi\TicketManagement.EventApi.csproj -t:build -verbosity:m /p:RestorePackages=false
+        msbuild src\TicketManagement.PurchaseApi\TicketManagement.PurchaseApi.csproj -t:build -verbosity:m /p:RestorePackages=false
+        msbuild src\TicketManagement.UserApi\TicketManagement.UserApi.csproj -t:build -verbosity:m /p:RestorePackages=false
+        msbuild src\TicketManagement.VenueApi\TicketManagement.VenueApi.csproj -t:build -verbosity:m /p:RestorePackages=false
+        msbuild src\TicketManagement.WebApplication\TicketManagement.WebApplication.csproj -t:build -verbosity:m /p:RestorePackages=false
+
+    - name: Unit test
+      run: 
+        dotnet test test/TicketManagement.UnitTests/TicketManagement.UnitTests.csproj
+        
+    - name: Deploy test database
+      run: SqlPackage /Action:Publish /SourceFile:"test\TicketManagement.IntegrationTests\TestDatabase\TicketManagement.Database.dacpac" /TargetDatabaseName:TicketManagement.Database /TargetServerName:"(localdb)\MSSQLLocalDB"
+        
+    - name: Integration test
+      run:
+        dotnet test test/TicketManagement.IntegrationTests/TicketManagement.IntegrationTests.csproj
+
+    - name: Create artifacts folder
+      run:
+        mkdir "$env:GITHUB_WORKSPACE/artifacts",
+        "$env:GITHUB_WORKSPACE/artifacts/TicketManagement.EventApi",
+        "$env:GITHUB_WORKSPACE/artifacts/TicketManagement.PurchaseApi",
+        "$env:GITHUB_WORKSPACE/artifacts/TicketManagement.UserApi",
+        "$env:GITHUB_WORKSPACE/artifacts/TicketManagement.VenueApi",
+        "$env:GITHUB_WORKSPACE/artifacts/TicketManagement.WebApplication",
+        "$env:GITHUB_WORKSPACE/artifacts/TicketManagement.Database",
+        "$env:GITHUB_WORKSPACE/artifacts/TicketManagement.UI"
+
+    - name: Publish EventApi
+      run:
+        dotnet publish src\TicketManagement.EventApi\TicketManagement.EventApi.csproj --configuration Release --no-restore --output "$env:GITHUB_WORKSPACE/artifacts/TicketManagement.EventApi"
+
+    - name: Publish PurchaseApi
+      run:
+        dotnet publish src\TicketManagement.PurchaseApi\TicketManagement.PurchaseApi.csproj --configuration Release --no-restore --output "$env:GITHUB_WORKSPACE/artifacts/TicketManagement.PurchaseApi"
+
+    - name: Publish UserApi
+      run:
+        dotnet publish src\TicketManagement.UserApi\TicketManagement.UserApi.csproj --configuration Release --no-restore --output "$env:GITHUB_WORKSPACE/artifacts/TicketManagement.UserApi"
+
+    - name: Publish VenueApi
+      run:
+        dotnet publish src\TicketManagement.VenueApi\TicketManagement.VenueApi.csproj --configuration Release --no-restore --output "$env:GITHUB_WORKSPACE/artifacts/TicketManagement.VenueApi"
+
+    - name: Publish WebApplication
+      run:
+        dotnet publish src\TicketManagement.WebApplication\TicketManagement.WebApplication.csproj --configuration Release --no-restore --output "$env:GITHUB_WORKSPACE/artifacts/TicketManagement.WebApplication"
+        
+    - name: Publish UI
+      run: |
+        dotnet build src/TicketManagement.UI/ticketmanagement.ui/TicketManagement.UI.esproj
+        dir 
+        dir src\
+        dir src\TicketManagement.UI\
+        dir src\TicketManagement.UI\ticketManagement.ui\
+        dir src\TicketManagement.UI\ticketManagement.ui\build\
+        Copy-Item -Path src\TicketManagement.UI\ticketManagement.ui\build\* -Destination $env:GITHUB_WORKSPACE/artifacts/TicketManagement.UI/ -recurse
+
+    - name: Publish database
+      run:
+        msbuild /t:build  src\TicketManagement.Database\TicketManagement.Database.sqlproj /property:Configuration=Release /property:OutDir=$env:GITHUB_WORKSPACE/artifacts/TicketManagement.Database
+
+    - name: Install Octopus CLI
+      uses: OctopusDeploy/install-octopus-cli-action@v1.1.6
+      with:
+        version: latest
+
+    - name: Package EventApi
+      run:
+        octo pack --id="TicketManagement.EventApi" --format="Zip" --version="${{env.PACKAGE_VERSION}}" --basePath="$env:GITHUB_WORKSPACE/artifacts/TicketManagement.EventApi" --outFolder="$env:GITHUB_WORKSPACE/artifacts"
+
+    - name: Package PurchaseApi
+      run:
+        octo pack --id="TicketManagement.PurchaseApi" --format="Zip" --version="${{env.PACKAGE_VERSION}}" --basePath="$env:GITHUB_WORKSPACE/artifacts/TicketManagement.PurchaseApi" --outFolder="$env:GITHUB_WORKSPACE/artifacts"
+
+    - name: Package UserApi
+      run:
+        octo pack --id="TicketManagement.UserApi" --format="Zip" --version="${{env.PACKAGE_VERSION}}" --basePath="$env:GITHUB_WORKSPACE/artifacts/TicketManagement.UserApi" --outFolder="$env:GITHUB_WORKSPACE/artifacts"
+
+    - name: Package VenueApi
+      run:
+        octo pack --id="TicketManagement.VenueApi" --format="Zip" --version="${{env.PACKAGE_VERSION}}" --basePath="$env:GITHUB_WORKSPACE/artifacts/TicketManagement.VenueApi" --outFolder="$env:GITHUB_WORKSPACE/artifacts"
+
+    - name: Package WebApplication
+      run:
+        octo pack --id="TicketManagement.WebApplication" --format="Zip" --version="${{env.PACKAGE_VERSION}}" --basePath="$env:GITHUB_WORKSPACE/artifacts/TicketManagement.WebApplication" --outFolder="$env:GITHUB_WORKSPACE/artifacts"
+
+    - name: Package UI
+      run:
+        octo pack --id="TicketManagement.UI" --format="Zip" --version="${{env.PACKAGE_VERSION}}" --basePath="$env:GITHUB_WORKSPACE/artifacts/TicketManagement.UI" --outFolder="$env:GITHUB_WORKSPACE/artifacts"
+
+    - name: Package Database
+      run:
+        octo pack --id="TicketManagement.Database" --format="Zip" --version="${{env.PACKAGE_VERSION}}" --basePath="$env:GITHUB_WORKSPACE/artifacts/TicketManagement.Database" --outFolder="$env:GITHUB_WORKSPACE/artifacts"
+
+    - name: Push packages
+      uses: OctopusDeploy/push-package-action@v1.1.1
+      with:
+        api_key: ${{ secrets.OCTOPUSSERVERAPIKEY }}
+        server: ${{ secrets.OCTOPUSSERVERURL }}
+        packages: "artifacts/TicketManagement.EventApi.${{env.PACKAGE_VERSION}}.zip,artifacts/TicketManagement.PurchaseApi.${{env.PACKAGE_VERSION}}.zip,artifacts/TicketManagement.UserApi.${{env.PACKAGE_VERSION}}.zip,artifacts/TicketManagement.VenueApi.${{env.PACKAGE_VERSION}}.zip,artifacts/TicketManagement.WebApplication.${{env.PACKAGE_VERSION}}.zip,artifacts/TicketManagement.Database.${{env.PACKAGE_VERSION}}.zip,artifacts/TicketManagement.UI.${{env.PACKAGE_VERSION}}.zip"
+        space: ${{ secrets.OCTOPUSSERVER_SPACE }}
+    
+    - name: Deploy on Development
+      uses: OctopusDeploy/create-release-action@v1.1.1
+      with:
+        api_key: ${{ secrets.OCTOPUSSERVERAPIKEY }}
+        server: ${{ secrets.OCTOPUSSERVERURL }}
+        space: ${{ secrets.OCTOPUSSERVER_SPACE }}
+        project: "TicketManagement"
+        deploy_to: "Development"
+        progress: true
+
+    - name: Deploy on Stage
+      uses: OctopusDeploy/create-release-action@v1.1.1
+      with:
+        api_key: ${{ secrets.OCTOPUSSERVERAPIKEY }}
+        server: ${{ secrets.OCTOPUSSERVERURL }}
+        space: ${{ secrets.OCTOPUSSERVER_SPACE }}
+        project: "TicketManagement"
+        deploy_to: "Stage"
+        progress: true

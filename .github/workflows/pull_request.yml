@@ -1,0 +1,52 @@
+name: On pull request
+
+on:
+  pull_request:
+    types: [opened, reopened]
+
+jobs:
+  build:
+
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v2
+      with:
+        dotnet-version: 6.0.x
+        
+    - name: Install a SQL Server suite of tools
+      uses: potatoqualitee/mssqlsuite@v1.5.1
+      with:
+        install: sqlclient, sqlpackage, localdb
+        
+    - name: Add msbuild to PATH
+      uses: microsoft/setup-msbuild@v1.1
+  
+    - name: Restore dependencies
+      run: msbuild -t:restore
+      
+    - name: Build
+      run:
+        msbuild src\TicketManagement.Core\TicketManagement.Core.csproj -t:build -verbosity:m /p:RestorePackages=false
+        msbuild src\TicketManagement.DataAccess\TicketManagement.DataAccess.csproj -t:build -verbosity:m /p:RestorePackages=false
+        msbuild src\TicketManagement.Database\TicketManagement.Database.sqlproj -t:build -verbosity:m /p:RestorePackages=false
+        msbuild src\TicketManagement.EventApi\TicketManagement.EventApi.csproj -t:build -verbosity:m /p:RestorePackages=false
+        msbuild src\TicketManagement.PurchaseApi\TicketManagement.PurchaseApi.csproj -t:build -verbosity:m /p:RestorePackages=false
+        msbuild src\TicketManagement.UserApi\TicketManagement.UserApi.csproj -t:build -verbosity:m /p:RestorePackages=false
+        msbuild src\TicketManagement.VenueApi\TicketManagement.VenueApi.csproj -t:build -verbosity:m /p:RestorePackages=false
+        msbuild src\TicketManagement.WebApplication\TicketManagement.WebApplication.csproj -t:build -verbosity:m /p:RestorePackages=false
+        
+        npm install src\TicketManagement.UI\ticketmanagement.ui --legacy-peer-deps
+      
+    - name: Unit test
+      run: 
+        dotnet test test/TicketManagement.UnitTests/TicketManagement.UnitTests.csproj
+        
+    - name: Deploy test database
+      run: SqlPackage /Action:Publish /SourceFile:"test\TicketManagement.IntegrationTests\TestDatabase\TicketManagement.Database.dacpac" /TargetDatabaseName:TicketManagement.Database /TargetServerName:"(localdb)\MSSQLLocalDB"
+        
+    - name: Integration test
+      run:
+        dotnet test test/TicketManagement.IntegrationTests/TicketManagement.IntegrationTests.csproj

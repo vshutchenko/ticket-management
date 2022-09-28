@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.VisualStudio.JavaScript.Sdk/0.5.26-alpha">
+<Project Sdk="Microsoft.VisualStudio.JavaScript.Sdk/0.5.55-alpha">
   <PropertyGroup Label="Globals">
     <ProjectGuid>814d6354-c107-46cf-a044-61d0cdd91632</ProjectGuid>
   </PropertyGroup>
@@ -6,6 +6,7 @@
     <StartupCommand>set BROWSER=none&amp;&amp;npm start</StartupCommand>
     <JavaScriptTestRoot>src\</JavaScriptTestRoot>
     <JavaScriptTestFramework>Jest</JavaScriptTestFramework>
+	<BuildCommand>npm install --legacy-peer-deps&amp;&amp;npm run build</BuildCommand>
   </PropertyGroup>
   <ItemGroup>
     <Folder Include="src\components\" />

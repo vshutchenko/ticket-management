@@ -64,6 +64,13 @@ namespace TicketManagement.WebApplication.Controllers
 
             var invalidEvents = new Dictionary<string, string>();
 
+            var imageFolderPath = Path.Combine(_enviroment.WebRootPath, "EventImages");
+
+            if (!Directory.Exists(imageFolderPath))
+            {
+                Directory.CreateDirectory(imageFolderPath);
+            }
+
             foreach (var e in events!)
             {
                 byte[] imgBytes = Convert.FromBase64String(e.PosterImage);
