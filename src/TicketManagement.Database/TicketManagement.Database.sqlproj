@@ -106,6 +106,6 @@
     <RefactorLog Include="TicketManagement.Database.refactorlog" />
   </ItemGroup>
   <PropertyGroup>
-    <PostBuildEvent>xcopy /y "$(ProjectDir)$(OutDir)*.dacpac" "$(SolutionDir)\test\TicketManagement.IntegrationTests\TestDatabase"</PostBuildEvent>
+    <PostBuildEvent>if $(ConfigurationName) == Debug xcopy /y "$(ProjectDir)$(OutDir)*.dacpac" "$(SolutionDir)\test\TicketManagement.IntegrationTests\TestDatabase"</PostBuildEvent>
   </PropertyGroup>
 </Project>
