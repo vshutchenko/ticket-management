@@ -88,11 +88,6 @@ jobs:
     - name: Publish UI
       run: |
         dotnet build src/TicketManagement.UI/ticketmanagement.ui/TicketManagement.UI.esproj
-        dir 
-        dir src\
-        dir src\TicketManagement.UI\
-        dir src\TicketManagement.UI\ticketManagement.ui\
-        dir src\TicketManagement.UI\ticketManagement.ui\build\
         Copy-Item -Path src\TicketManagement.UI\ticketManagement.ui\build\* -Destination $env:GITHUB_WORKSPACE/artifacts/TicketManagement.UI/ -recurse
 
     - name: Publish database
@@ -131,31 +126,14 @@ jobs:
     - name: Package Database
       run:
         octo pack --id="TicketManagement.Database" --format="Zip" --version="${{env.PACKAGE_VERSION}}" --basePath="$env:GITHUB_WORKSPACE/artifacts/TicketManagement.Database" --outFolder="$env:GITHUB_WORKSPACE/artifacts"
-
-    - name: Push packages
+   
+    - name: Push packages to Octopus
       uses: OctopusDeploy/push-package-action@v1.1.1
       with:
         api_key: ${{ secrets.OCTOPUSSERVERAPIKEY }}
         server: ${{ secrets.OCTOPUSSERVERURL }}
         packages: "artifacts/TicketManagement.EventApi.${{env.PACKAGE_VERSION}}.zip,artifacts/TicketManagement.PurchaseApi.${{env.PACKAGE_VERSION}}.zip,artifacts/TicketManagement.UserApi.${{env.PACKAGE_VERSION}}.zip,artifacts/TicketManagement.VenueApi.${{env.PACKAGE_VERSION}}.zip,artifacts/TicketManagement.WebApplication.${{env.PACKAGE_VERSION}}.zip,artifacts/TicketManagement.Database.${{env.PACKAGE_VERSION}}.zip,artifacts/TicketManagement.UI.${{env.PACKAGE_VERSION}}.zip"
         space: ${{ secrets.OCTOPUSSERVER_SPACE }}
-    
-    - name: Deploy on Development
-      uses: OctopusDeploy/create-release-action@v1.1.1
-      with:
-        api_key: ${{ secrets.OCTOPUSSERVERAPIKEY }}
-        server: ${{ secrets.OCTOPUSSERVERURL }}
-        space: ${{ secrets.OCTOPUSSERVER_SPACE }}
-        project: "TicketManagement"
-        deploy_to: "Development"
-        progress: true
 
-    - name: Deploy on Stage
-      uses: OctopusDeploy/create-release-action@v1.1.1
-      with:
-        api_key: ${{ secrets.OCTOPUSSERVERAPIKEY }}
-        server: ${{ secrets.OCTOPUSSERVERURL }}
-        space: ${{ secrets.OCTOPUSSERVER_SPACE }}
-        project: "TicketManagement"
-        deploy_to: "Stage"
-        progress: true
+    - name: Create Release
+      run: octo create-release --project TicketManagement --server=${{ secrets.OCTOPUSSERVERURL }} --apiKey=${{ secrets.OCTOPUSSERVERAPIKEY }} --space=${{ secrets.OCTOPUSSERVER_SPACE }}
