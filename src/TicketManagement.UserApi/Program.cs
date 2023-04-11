@@ -94,7 +94,7 @@ var app = builder.Build();
 
 using var scope = app.Services.CreateScope();
 
-var seeder = scope.ServiceProvider.GetRequiredService<ContextSeeder>();
+var seeder = scope.ServiceProvider.GetRequiredService<IContextSeeder>();
 
 await seeder.SeedInitialDataAsync();
 

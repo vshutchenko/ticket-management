@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -128,8 +129,8 @@ namespace TicketManagement.IntegrationTests.AppControllersTests
                 { "Name", "First Event" },
                 { "Description", "Test description" },
                 { "Layout", "1" },
-                { "StartDate", "01.01.2023, 12:00" },
-                { "EndDate", "02.01.2023, 10:00" },
+                { "StartDate", $"01.01.{DateTime.Now.Year + 1}, 12:00" },
+                { "EndDate", $"02.01.{DateTime.Now.Year + 1}, 10:00" },
                 { "ImageUrl", "url" },
                 { "Published", "false" },
             };
@@ -159,8 +160,8 @@ namespace TicketManagement.IntegrationTests.AppControllersTests
                 { "Name", "First Event" },
                 { "Description", "Test description" },
                 { "Layout", "1" },
-                { "StartDate", "02.01.2023, 12:00" },
-                { "EndDate", "01.01.2023, 10:00" },
+                { "StartDate", $"02.01.{DateTime.Now.Year + 1}, 12:00" },
+                { "EndDate", $"01.01.{DateTime.Now.Year + 1}, 10:00" },
                 { "ImageUrl", "url" },
                 { "Published", "false" },
             };
@@ -239,8 +240,8 @@ namespace TicketManagement.IntegrationTests.AppControllersTests
                 { "Event.Name", "First Event" },
                 { "Event.Description", "Test description" },
                 { "Event.Layout", "1" },
-                { "Event.StartDate", "01.01.2023, 12:00" },
-                { "Event.EndDate", "02.01.2023, 10:00" },
+                { "Event.StartDate", $"01.01.{DateTime.Now.Year + 1}, 12:00" },
+                { "Event.EndDate", $"02.01.{DateTime.Now.Year + 1}, 10:00" },
                 { "Event.ImageUrl", "url" },
                 { "Event.Published", "true" },
             };
@@ -271,8 +272,8 @@ namespace TicketManagement.IntegrationTests.AppControllersTests
                 { "Event.Name", "First Event" },
                 { "Event.Description", "Test description" },
                 { "Event.Layout", "1" },
-                { "Event.StartDate", "02.01.2023, 12:00" },
-                { "Event.EndDate", "01.01.2023, 10:00" },
+                { "Event.StartDate", $"02.01.{DateTime.Now.Year + 1}, 12:00" },
+                { "Event.EndDate", $"01.01.{DateTime.Now.Year + 1}, 10:00" },
                 { "Event.ImageUrl", "url" },
                 { "Event.Published", "true" },
             };
@@ -305,8 +306,8 @@ namespace TicketManagement.IntegrationTests.AppControllersTests
                 { "Event.Name", "First Event" },
                 { "Event.Description", "Test description" },
                 { "Event.Layout", "1" },
-                { "Event.StartDate", "01.01.2023, 12:00" },
-                { "Event.EndDate", "02.01.2023, 10:00" },
+                { "Event.StartDate", $"01.01.{DateTime.Now.Year + 1}, 12:00" },
+                { "Event.EndDate", $"02.01.{DateTime.Now.Year + 1}, 10:00" },
                 { "Event.ImageUrl", "url" },
                 { "Event.Published", "true" },
                 { "Areas[0].Id", "1" },
@@ -339,8 +340,8 @@ namespace TicketManagement.IntegrationTests.AppControllersTests
                 { "Event.Name", "First Event" },
                 { "Event.Description", "Test description" },
                 { "Event.Layout", "1" },
-                { "Event.StartDate", "02.01.2023, 12:00" },
-                { "Event.EndDate", "01.01.2023, 10:00" },
+                { "Event.StartDate", $"02.01.{DateTime.Now.Year + 1}, 12:00" },
+                { "Event.EndDate", $"01.01.{DateTime.Now.Year + 1}, 10:00" },
                 { "Event.ImageUrl", "url" },
                 { "Event.Published", "true" },
                 { "Areas[0].Id", "1" },

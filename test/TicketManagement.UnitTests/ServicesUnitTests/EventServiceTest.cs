@@ -113,7 +113,7 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
                 Description = "Description",
                 LayoutId = 1,
                 StartDate = new DateTime(2021, 1, 1),
-                EndDate = new DateTime(2024, 1, 2),
+                EndDate = new DateTime(DateTime.Now.Year + 1, 1, 2),
             };
 
             var mappedEventToCreate = new Event
@@ -123,7 +123,7 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
                 Description = "Description",
                 LayoutId = 1,
                 StartDate = new DateTime(2021, 1, 1),
-                EndDate = new DateTime(2024, 1, 2),
+                EndDate = new DateTime(DateTime.Now.Year + 1, 1, 2),
             };
 
             _mapperMock.Setup(m => m.Map<Event>(eventToCreate)).Returns(mappedEventToCreate);
@@ -160,8 +160,8 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
                 Name = "New Event",
                 Description = "Description",
                 LayoutId = 1,
-                StartDate = new DateTime(2025, 1, 1),
-                EndDate = new DateTime(2024, 1, 2),
+                StartDate = new DateTime(DateTime.Now.Year + 2, 1, 1),
+                EndDate = new DateTime(DateTime.Now.Year + 1, 1, 2),
             };
 
             var mappedEventToCreate = new Event
@@ -170,8 +170,8 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
                 Name = "New Event",
                 Description = "Description",
                 LayoutId = 1,
-                StartDate = new DateTime(2025, 1, 1),
-                EndDate = new DateTime(2024, 1, 2),
+                StartDate = new DateTime(DateTime.Now.Year + 2, 1, 1),
+                EndDate = new DateTime(DateTime.Now.Year + 1, 1, 2),
             };
 
             _mapperMock.Setup(m => m.Map<Event>(eventToCreate)).Returns(mappedEventToCreate);
@@ -201,7 +201,10 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
 
             var events = new List<Event>
             {
-                new Event { Id = 1, Name = "Event 1", Description = "Description 1", LayoutId = 1, StartDate = new DateTime(2023, 1, 1), EndDate = new DateTime(2023, 1, 2) },
+                new Event
+                {
+                    Id = 1, Name = "Event 1", Description = "Description 1", LayoutId = 1, StartDate = new DateTime(DateTime.Now.Year + 1, 1, 1), EndDate = new DateTime(DateTime.Now.Year + 1, 1, 2),
+                },
             };
 
             _seatRepositoryMock.Setup(x => x.GetAll()).Returns(seats.AsQueryable());
@@ -213,8 +216,8 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
                 Name = "New Event",
                 Description = "Description 1",
                 LayoutId = 1,
-                StartDate = new DateTime(2023, 1, 1),
-                EndDate = new DateTime(2023, 1, 2),
+                StartDate = new DateTime(DateTime.Now.Year + 1, 1, 1),
+                EndDate = new DateTime(DateTime.Now.Year + 1, 1, 2),
             };
 
             var mappedEventToCreate = new Event
@@ -222,8 +225,8 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
                 Name = "New Event",
                 Description = "Description 1",
                 LayoutId = 1,
-                StartDate = new DateTime(2023, 1, 1),
-                EndDate = new DateTime(2023, 1, 2),
+                StartDate = new DateTime(DateTime.Now.Year + 1, 1, 1),
+                EndDate = new DateTime(DateTime.Now.Year + 1, 1, 2),
             };
 
             _mapperMock.Setup(m => m.Map<Event>(eventToCreate)).Returns(mappedEventToCreate);
@@ -255,8 +258,8 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
                 Name = "New Event",
                 Description = "Description 1",
                 LayoutId = 1,
-                StartDate = new DateTime(2023, 1, 1),
-                EndDate = new DateTime(2023, 1, 2),
+                StartDate = new DateTime(DateTime.Now.Year + 1, 1, 1),
+                EndDate = new DateTime(DateTime.Now.Year + 1, 1, 2),
             };
 
             var mappedEventToCreate = new Event
@@ -265,8 +268,8 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
                 Name = "New Event",
                 Description = "Description 1",
                 LayoutId = 1,
-                StartDate = new DateTime(2023, 1, 1),
-                EndDate = new DateTime(2023, 1, 2),
+                StartDate = new DateTime(DateTime.Now.Year + 1, 1, 1),
+                EndDate = new DateTime(DateTime.Now.Year + 1, 1, 2),
             };
 
             _mapperMock.Setup(m => m.Map<Event>(eventToCreate)).Returns(mappedEventToCreate);
@@ -412,8 +415,8 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
                 Name = "Updated Event",
                 Description = "Description 1",
                 LayoutId = 1,
-                StartDate = new DateTime(2024, 1, 1),
-                EndDate = new DateTime(2024, 1, 2),
+                StartDate = new DateTime(DateTime.Now.Year + 1, 1, 1),
+                EndDate = new DateTime(DateTime.Now.Year + 1, 1, 2),
             };
 
             var mappedEventToUpdate = new Event
@@ -422,8 +425,8 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
                 Name = "Updated Event",
                 Description = "Description 1",
                 LayoutId = 1,
-                StartDate = new DateTime(2024, 1, 1),
-                EndDate = new DateTime(2024, 1, 2),
+                StartDate = new DateTime(DateTime.Now.Year + 1, 1, 1),
+                EndDate = new DateTime(DateTime.Now.Year + 1, 1, 2),
             };
 
             _mapperMock.Setup(m => m.Map<Event>(eventToUpdate)).Returns(mappedEventToUpdate);
@@ -483,8 +486,8 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
                 Name = "Updated Event",
                 Description = "Description 1",
                 LayoutId = 1,
-                StartDate = new DateTime(2024, 1, 1),
-                EndDate = new DateTime(2024, 1, 2),
+                StartDate = new DateTime(DateTime.Now.Year + 1, 1, 1),
+                EndDate = new DateTime(DateTime.Now.Year + 1, 1, 2),
             };
 
             var mappedEventToUpdate = new Event
@@ -493,8 +496,8 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
                 Name = "Updated Event",
                 Description = "Description 1",
                 LayoutId = 1,
-                StartDate = new DateTime(2024, 1, 1),
-                EndDate = new DateTime(2024, 1, 2),
+                StartDate = new DateTime(DateTime.Now.Year + 1, 1, 1),
+                EndDate = new DateTime(DateTime.Now.Year + 1, 1, 2),
             };
 
             _mapperMock.Setup(m => m.Map<Event>(eventToUpdate)).Returns(mappedEventToUpdate);
@@ -557,7 +560,7 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
                 Description = "Description",
                 LayoutId = 1,
                 StartDate = new DateTime(2021, 1, 1),
-                EndDate = new DateTime(2024, 1, 2),
+                EndDate = new DateTime(DateTime.Now.Year + 1, 1, 2),
             };
 
             var mappedEventToUpdate = new Event
@@ -567,7 +570,7 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
                 Description = "Description",
                 LayoutId = 1,
                 StartDate = new DateTime(2021, 1, 1),
-                EndDate = new DateTime(2024, 1, 2),
+                EndDate = new DateTime(DateTime.Now.Year + 1, 1, 2),
             };
 
             _mapperMock.Setup(m => m.Map<Event>(eventToUpdate)).Returns(mappedEventToUpdate);
@@ -629,8 +632,8 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
                 Name = "New Event",
                 Description = "Description",
                 LayoutId = 1,
-                StartDate = new DateTime(2025, 1, 1),
-                EndDate = new DateTime(2024, 1, 2),
+                StartDate = new DateTime(DateTime.Now.Year + 2, 1, 1),
+                EndDate = new DateTime(DateTime.Now.Year + 1, 1, 2),
             };
 
             var mappedEventToUpdate = new Event
@@ -639,8 +642,8 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
                 Name = "New Event",
                 Description = "Description",
                 LayoutId = 1,
-                StartDate = new DateTime(2025, 1, 1),
-                EndDate = new DateTime(2024, 1, 2),
+                StartDate = new DateTime(DateTime.Now.Year + 2, 1, 1),
+                EndDate = new DateTime(DateTime.Now.Year + 1, 1, 2),
             };
 
             _mapperMock.Setup(m => m.Map<Event>(eventToUpdate)).Returns(mappedEventToUpdate);
@@ -681,8 +684,14 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
             var id = 2;
             var events = new List<Event>
             {
-                new Event { Id = 1, Name = "Event 1", Description = "Description 1", LayoutId = 1, StartDate = new DateTime(2023, 1, 1), EndDate = new DateTime(2023, 1, 2) },
-                new Event { Id = 2, Name = "Event 2", Description = "Description 2", LayoutId = 1, StartDate = new DateTime(2024, 1, 1), EndDate = new DateTime(2024, 1, 2) },
+                new Event
+                {
+                    Id = 1, Name = "Event 1", Description = "Description 1", LayoutId = 1, StartDate = new DateTime(DateTime.Now.Year + 1, 1, 1), EndDate = new DateTime(DateTime.Now.Year + 1, 1, 2),
+                },
+                new Event
+                {
+                    Id = 2, Name = "Event 2", Description = "Description 2", LayoutId = 1, StartDate = new DateTime(DateTime.Now.Year + 2, 1, 1), EndDate = new DateTime(DateTime.Now.Year + 2, 1, 2),
+                },
             };
 
             _eventRepositoryMock.Setup(x => x.GetByIdAsync(id)).ReturnsAsync(events.First(e => e.Id == id));
@@ -705,8 +714,8 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
                 Name = "Updated Event",
                 Description = "Updated Description",
                 LayoutId = 1,
-                StartDate = new DateTime(2023, 1, 1),
-                EndDate = new DateTime(2023, 1, 2),
+                StartDate = new DateTime(DateTime.Now.Year + 1, 1, 1),
+                EndDate = new DateTime(DateTime.Now.Year + 1, 1, 2),
             };
 
             var mappedEventToUpdate = new Event
@@ -715,8 +724,8 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
                 Name = "Updated Event",
                 Description = "Updated Description",
                 LayoutId = 1,
-                StartDate = new DateTime(2023, 1, 1),
-                EndDate = new DateTime(2023, 1, 2),
+                StartDate = new DateTime(DateTime.Now.Year + 1, 1, 1),
+                EndDate = new DateTime(DateTime.Now.Year + 1, 1, 2),
             };
 
             _mapperMock.Setup(m => m.Map<Event>(eventToUpdate)).Returns(mappedEventToUpdate);
@@ -773,8 +782,8 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
                 Name = "New Event",
                 Description = "Description 1",
                 LayoutId = 3,
-                StartDate = new DateTime(2023, 1, 1),
-                EndDate = new DateTime(2023, 1, 2),
+                StartDate = new DateTime(DateTime.Now.Year + 1, 1, 1),
+                EndDate = new DateTime(DateTime.Now.Year + 1, 1, 2),
             };
 
             var mappedEventToUpdate = new Event
@@ -783,8 +792,8 @@ namespace TicketManagement.UnitTests.ServicesUnitTests
                 Name = "New Event",
                 Description = "Description 1",
                 LayoutId = 3,
-                StartDate = new DateTime(2023, 1, 1),
-                EndDate = new DateTime(2023, 1, 2),
+                StartDate = new DateTime(DateTime.Now.Year + 1, 1, 1),
+                EndDate = new DateTime(DateTime.Now.Year + 1, 1, 2),
             };
 
             _mapperMock.Setup(m => m.Map<Event>(eventToUpdate)).Returns(mappedEventToUpdate);

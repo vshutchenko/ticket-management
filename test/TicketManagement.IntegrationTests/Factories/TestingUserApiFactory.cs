@@ -1,9 +1,13 @@
-﻿using System.Linq;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
 using RestEase;
+using TicketManagement.Core.Clients.UserApi;
 using TicketManagement.IntegrationTests.Addition;
+using TicketManagement.UserApi.Data;
 
 namespace TicketManagement.IntegrationTests.Factories
 {
@@ -17,19 +21,55 @@ namespace TicketManagement.IntegrationTests.Factories
 
                 new TestDatabase.TestDatabaseInfo().CreateDb();
 
-                services.AddScoped<ContextSeeder>();
+                var servicesToRemove = new List<Type>
+                        {
+                            typeof(UserApi.Data.ContextSeeder),
+                            typeof(IUserClient),
+                        };
 
-                var descriptor = services.SingleOrDefault(
-                        d => d.ServiceType == typeof(Core.Clients.UserApi.IUserClient));
-
-                if (descriptor != null)
+                foreach (var t in servicesToRemove)
                 {
-                    services.Remove(descriptor);
+                    var descriptor = services.SingleOrDefault(
+                    d => d.ServiceType == t);
+
+                    if (descriptor != null)
+                    {
+                        services.Remove(descriptor);
+                    }
                 }
 
-                var userApiCLient = new WebApplicationFactory<UserApi.Program>().CreateClient();
+                services.AddScoped<IContextSeeder, Addition.ContextSeeder>();
 
-                var userClient = RestClient.For<Core.Clients.UserApi.IUserClient>(userApiCLient);
+                var userApiCLient = new WebApplicationFactory<UserApi.Program>().WithWebHostBuilder(b =>
+                {
+                    b.ConfigureServices(s =>
+                    {
+                        s.ReplaceContextWithTestDb();
+
+                        new TestDatabase.TestDatabaseInfo().CreateDb();
+
+                        var servicesToRemove = new List<Type>
+                        {
+                            typeof(UserApi.Data.ContextSeeder),
+                            typeof(IUserClient),
+                        };
+
+                        foreach (var t in servicesToRemove)
+                        {
+                            var descriptor = services.SingleOrDefault(
+                            d => d.ServiceType == t);
+
+                            if (descriptor != null)
+                            {
+                                services.Remove(descriptor);
+                            }
+                        }
+
+                        s.AddScoped<IContextSeeder, Addition.ContextSeeder>();
+                    });
+                }).CreateClient();
+
+                var userClient = RestClient.For<IUserClient>(userApiCLient);
 
                 services.AddScoped(p => userClient);
 
@@ -37,7 +77,7 @@ namespace TicketManagement.IntegrationTests.Factories
 
                 using var scope = sp.CreateScope();
 
-                var seeder = scope.ServiceProvider.GetRequiredService<ContextSeeder>();
+                var seeder = scope.ServiceProvider.GetRequiredService<IContextSeeder>();
 
                 seeder.SeedInitialDataAsync().Wait();
             });

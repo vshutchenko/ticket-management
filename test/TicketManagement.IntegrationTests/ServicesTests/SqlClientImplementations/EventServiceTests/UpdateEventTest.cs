@@ -78,8 +78,8 @@ namespace TicketManagement.IntegrationTests.SqlClientImplementations.EventServic
                 Name = "First Updated Event",
                 Description = "Test description",
                 LayoutId = 1,
-                StartDate = new DateTime(2023, 1, 2),
-                EndDate = new DateTime(2023, 1, 3),
+                StartDate = new DateTime(DateTime.Now.Year + 1, 1, 2),
+                EndDate = new DateTime(DateTime.Now.Year + 1, 1, 3),
                 ImageUrl = "new url",
                 Published = true,
             };
@@ -120,8 +120,8 @@ namespace TicketManagement.IntegrationTests.SqlClientImplementations.EventServic
                 Name = "First Updated Event",
                 Description = "Test description",
                 LayoutId = 1,
-                StartDate = new DateTime(2023, 1, 2),
-                EndDate = new DateTime(2023, 1, 3),
+                StartDate = new DateTime(DateTime.Now.Year + 1, 1, 2),
+                EndDate = new DateTime(DateTime.Now.Year + 1, 1, 3),
                 ImageUrl = "url",
                 Published = true,
             };
@@ -173,8 +173,8 @@ namespace TicketManagement.IntegrationTests.SqlClientImplementations.EventServic
                 Name = "First Updated Event",
                 Description = "Test description",
                 LayoutId = 1,
-                StartDate = new DateTime(2023, 1, 2),
-                EndDate = new DateTime(2023, 1, 3),
+                StartDate = new DateTime(DateTime.Now.Year + 1, 1, 2),
+                EndDate = new DateTime(DateTime.Now.Year + 1, 1, 3),
                 ImageUrl = "url",
                 Published = true,
             };

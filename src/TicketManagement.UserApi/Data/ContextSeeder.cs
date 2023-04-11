@@ -1,11 +1,10 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using TicketManagement.Core.Models;
 using TicketManagement.DataAccess.Entities;
-using TicketManagement.UserApi.Models;
 
 namespace TicketManagement.UserApi.Data
 {
-    public class ContextSeeder
+    public class ContextSeeder : IContextSeeder
     {
         private readonly UserManager<User> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
